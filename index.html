@@ -432,7 +432,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.03";
+const GAME_VERSION = "6.04";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -584,7 +584,7 @@ const QUESTS = {
   M01:{hub:"KY01", name:"故郷からの第一声", kills:1, boss:"LB01", stream:false, main:true,
        goal:"福岡市のA1～A3で通常敵を1体倒し、放送塔の丘の奥でコメラモスに挑む。"},
   M02:{hub:"KY02", name:"港の声リレー", kills:2, boss:"B01", stream:true, main:true,
-       goal:"北九州市のA1～A3で通常敵を2体倒し、灯台の段丘の奥でハートーマに挑む。その後、配信で配信目標の達成。"},
+       goal:"北九州市のA1～A3で通常敵を2体倒し、灯台の段丘の奥でハートーマに挑む。その後、配信目標を達成する。"},
   S01:{hub:"KY01", name:"ふるさとの紹介文", kills:1, main:false, npc:"akari",
        goal:"灯里と故郷の紹介文を考え、福岡市のA1～A3で通常敵を1体倒す。"},
   S02:{hub:"KY02", name:"港の拍手練習", kills:1, main:false, npc:"sota",
@@ -1323,7 +1323,7 @@ const AREA_SKY = {};
     const kills=H.quest.kills||3;
     QUESTS[H.quest.id] = {hub:H.id, name:H.quest.name, kills, boss:H.boss.id, stream:!!H.quest.stream, main:true, rank:H.quest.rank,
       scene:H.sceneId||("RANK_"+MOE_RANKS[H.quest.rank]), post:!!H.post, bossScene:H.quest.stream?H.quest.id+"_BOSS":null,
-      goal:`${H.name}のA1～A3で通常敵を${kills}体倒し、${H.areas[2][0]}の奥で${H.boss.name}に挑む。`+(H.quest.stream?"その後、配信で配信目標の達成。":"")};
+      goal:`${H.name}のA1～A3で通常敵を${kills}体倒し、${H.areas[2][0]}の奥で${H.boss.name}に挑む。`+(H.quest.stream?"その後、配信目標を達成する。":"")};
     QUESTS[H.side.id] = {hub:H.id, name:H.side.name, kills:H.side.kills, main:false, npc:H.rep.id, goal:H.side.goal, scene:H.side.id+"_DONE"};
     // 住民
     const R=H.rep;
@@ -1682,9 +1682,10 @@ function generateTown(id,seed){
 function ensureWorld(st){
   if(!st)return;
   if(!Number.isInteger(st.worldSeed))st.worldSeed=(Math.floor(Math.random()*4294967295)>>>0);
+  const changed=activeWorldSeed!==st.worldSeed||st.worldLayoutVersion!==1;
   if(activeWorldSeed!==st.worldSeed){for(const id of HUB_ORDER)MAPS[id]=generateTown(id,st.worldSeed);activeWorldSeed=st.worldSeed;}
-  const repair=(p,id)=>{const m=MAPS[id];if(!m||m.kind!=='out'||!p)return;if(!walkable(m,p.x,p.y)){p.x=m.safeAnchor[0];p.y=m.safeAnchor[1];}};
-  repair(st.pos,st.mapId);if(st.run&&st.run.returnPos)repair(st.run.returnPos,st.run.returnPos.map);
+  const repair=(p,id)=>{const m=MAPS[id];if(!m||m.kind!=='out'||!p)return;const same=p.x===m.safeAnchor[0]&&p.y===m.safeAnchor[1];if(!walkable(m,p.x,p.y)||(changed&&!same&&!bfs(m,m.safeAnchor[0],m.safeAnchor[1],(x,y)=>x===p.x&&y===p.y))){p.x=m.safeAnchor[0];p.y=m.safeAnchor[1];}};
+  repair(st.pos,st.mapId);if(st.run&&st.run.returnPos)repair(st.run.returnPos,st.run.returnPos.map);st.worldLayoutVersion=1;
 }
 
 /* ---- v5.33 能力値（ユーザー指定）：体力・ちから・身の守り・すばやさ・魅力。職業ごとに初期値と伸び方が違う ----
@@ -1890,8 +1891,9 @@ function cueProgress(run, actor, kind){
 }
 /* 行動の予測と可否。effects 配列は適用用の差分を表す */
 function planAction(run, idx, act){
-  const a = run.party[idx]; const S=a.S, V=run.V, L=run.L;
+  const a = run.party[idx];
   if(!a || a.hp<=0) return {ok:false, reason:"戦闘不能です。"};
+  const S=a.S, V=run.V, L=run.L;
   if(a.acted) return {ok:false, reason:"このターンは行動済みです。"};
   if(run.state!=="input") return {ok:false, reason:"入力待ちではありません。"};
   const al = alive(run); const en = run.enemies.filter(e=>e.hp>0);
@@ -2188,7 +2190,7 @@ function eqChangeOk(st, mutate){ // 装備の付け替え・ジョブ変更の�
 function completeQuest(st, qid, res){
   if(st.quests[qid]==="complete") return;
   const Q=QUESTS[qid]; st.quests[qid]="complete"; st.activeQuest=null;
-  const xp = Q.main?40:10, tk = Q.main?200:80;
+  const xp = Math.max(0,Math.min(XP_CAP-st.xp,Q.main?40:10)), tk = Q.main?200:80;
   const ev = ITEM_EVENTS[qid]; if(ev) giveItem(st, ev[0], ev[1], res, `依頼${qid}の達成`);
   st.xp=Math.min(XP_CAP, st.xp+xp); st.tickets+=tk;
   if(res){ res.xp+=xp; res.tickets+=tk; res.quest=qid; }
@@ -3057,7 +3059,7 @@ const CLOUD=(()=>{
 function afterCloud(ok){ if(!G.localOK) return; setSave(ok?"保存済み（端末とクラウド）":"保存済み（端末のみ。クラウド："+CLOUD.state()+"）"); }
 function commit(){
   const st=G.st; if(!st) return Promise.resolve();
-  if(G.readOnly){ setSave("未保存：別のタブを閉じ、この画面を再読み込みしてください。"); return Promise.resolve(); }
+  if(G.readOnly){ G.localOK=false; setSave("未保存：別のタブを閉じ、この画面を再読み込みしてください。"); return Promise.resolve(); }
   if(!st.run) ensureVitals(st);
   st.saveGeneration=(Number.isFinite(st.saveGeneration)?st.saveGeneration:0)+1;
   const json=JSON.stringify(st); const rec={app:"toplivermichi-kyushu", gen:st.saveGeneration, time:Date.now(), state:json, sum:checksum(json)};
@@ -3074,7 +3076,7 @@ function commit(){
   return saveChain;
 }
 async function loadSave(){
-  const valid = r => r && typeof r.state==="string" && checksum(r.state)===r.sum && (()=>{try{const st=JSON.parse(r.state);return !!(st&&st.profile&&st.settings);}catch(e){return false;}})();
+  const valid = r => r && typeof r.state==="string" && checksum(r.state)===r.sum && (()=>{try{const st=JSON.parse(r.state);validateState(st);return true;}catch(e){return false;}})();
   const cur=[], prev=[];
   try{ const a=await storageDeadline(DB.get("auto")); if(valid(a)) cur.push({...a,src:"端末"}); const b=await storageDeadline(DB.get("auto-prev")); if(valid(b)) prev.push({...b,src:"端末"}); }catch(e){}
   try{ const l=JSON.parse(localStorage.getItem("tlr-kyushu-auto")||"null"); if(valid(l)) cur.push({...l,src:"端末"}); }catch(e){}
@@ -3200,7 +3202,7 @@ function renderTitle(){
       <button class="btn share-btn" data-a="openSheet" data-k="share">📣 友だちに教える（URLを共有）</button>
     </div>
     <p class="note">配信文化を参考にした非公式の創作ゲームです。実在のサービス・アカウントとは連携しません。BGMと効果音は最初からONです（画面に触れると鳴り始めます。設定で消音にできます）。${IS_PUBLIC?"記録はこの端末のブラウザへ自動保存されます。":"記録は端末とクラウドへ自動保存されます。"}</p>
-    <p class="note">${IS_PUBLIC?`公開版 v${GAME_VERSION}（${window.TLR_BUILD||""}）・`:""}この版（v${GAME_VERSION}）の収録範囲：第1章 福岡（福岡市・北九州市、M01・M02と初配信まで）。</p>
+    <p class="note">${IS_PUBLIC?`公開版 v${GAME_VERSION}（${window.TLR_BUILD||""}）・`:""}この版（v${GAME_VERSION}）の収録範囲：九州・沖縄の全17拠点、本編M01～M17（大牟田市は本編クリア後）。</p>
   </section>`;
 }
 /* タイトル画面：星のまたたき・流れ雲・流れ星・2人の呼吸（v5.36） */
@@ -3986,7 +3988,7 @@ function renderSheet(){
   switch(k){
     case "about": return sheetWrap("この作品について",`
       <h3 class="label">あらすじ</h3>
-      <p>福岡市を故郷とする主人公は、男女混合アイドルグループを脱退したヒロインと出会います。PocochaのE1から再出発し、S6トップライバーを目指すヒロインを補佐するため、2人は九州・沖縄を巡る旅「九州エール便」に出発します。各県で出会う仲間と力を合わせ、町の声を配信で届けていきます。</p>
+      <p>福岡市を故郷とする主人公は、男女混合アイドルグループを脱退したヒロインと出会います。PocochaのE帯から再出発し、S6トップライバーを目指すヒロインを補佐するため、2人は九州・沖縄を巡る旅「九州エール便」に出発します。各県で出会う仲間と力を合わせ、町の声を配信で届けていきます。</p>
       <h3 class="label">遊びの特徴</h3>
       <ul class="list">
         <li>主人公とヒロイン役の名前（全角1～12文字）と性別を選べる</li>
@@ -4000,7 +4002,7 @@ function renderSheet(){
         <li>スマホ縦画面の片手操作（スティック・A/Bボタン・タップ）。スティックの左右は設定で入れ替え可能</li>
       </ul>
       <h3 class="label">この版の収録範囲</h3>
-      <p>第1章 福岡（福岡市・北九州市）。必須依頼M01・M02、任意依頼S01・S02、地域ボス2体、初配信まで遊べます。佐賀以降は制作中です。</p>
+      <p>福岡から九州・沖縄へ続く全17拠点、本編M01～M17、各街の任意依頼・地域ボス・配信イベントを実装しています。大牟田市は九州編クリア後に進めます。</p>
       <h3 class="label">記録について</h3>
       ${IS_PUBLIC?`<p>行動を決めるたびに、この端末のブラウザ内へ自動保存します。ブラウザの閲覧データを消すと記録も消えるため、設定の「バックアップを表示」で控えを取っておいてください。別の端末へ移すときも、この控えを「記録の復元」に貼り付けます。</p>`:`<p>行動を決めるたびに自動保存します。端末のブラウザ内に加え、claude.ai上のあなただけが読める保存場所にも送るので、アプリの更新やタブを閉じても続きから遊べます。念のため、設定の「バックアップを表示」で控えておくこともできます。</p>`}
       <h3 class="label">創作と非公式について</h3>
@@ -4441,7 +4443,7 @@ const ACT = {
   copyBackup(){ const t=$("#backupOut"); try{ navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました。メモ帳などへ貼り付けて保管してください。"),()=>{t.select();toast("文字列を選択しました。コピーしてください。");}); }catch(e){ t.select(); toast("文字列を選択しました。コピーしてください。"); } },
   async restore(){ const t=$("#restoreIn"); const raw=(t.value||"").trim(); if(raw.length>5000000) return toast("大きすぎます（上限5,000,000バイト）。");
     try{ const o=JSON.parse(raw); if(o.app!=="toplivermichi-kyushu"||!o.state||o.state.schemaVersion!==SCHEMA_VERSION||!o.state.profile) throw 0; validateState(o.state);
-      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":"explore"; render(); toast("記録を読み込みました。"); }
+      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.kind==="boss"?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); toast("記録を読み込みました。"); }
     catch(e){ toast("読み込めませんでした。文字列が途中で切れていないか確認してください。"); } },
   partyView(el){ G.sheetData={cid:el.dataset.c||null, view:el.dataset.v||""}; render(); drawMiniSprites(); },
   partyUp(el){ const st=G.st,i=+el.dataset.v; [st.party[i-1],st.party[i]]=[st.party[i],st.party[i-1]]; commit(); render(); },
@@ -4488,10 +4490,17 @@ function drawMiniSprites(){
   document.querySelectorAll("canvas[data-dex]").forEach(c=>{ const [a,i]=c.dataset.dex.split("|"); const e=enemyDef(a,+i); const g=c.getContext("2d"); g.imageSmoothingEnabled=false; g.drawImage(ART.enemy(e.profile,e.species,e.attr,a,0),0,0); });
 }
 function validateState(s){
-  const okNum=v=>Number.isFinite(v)&&v>=0;
-  if(!okNum(s.xp)||!okNum(s.gold)||!okNum(s.tickets)||!MAPS[s.mapId]||!Array.isArray(s.party)||s.party.some(c=>!CHARS[c])) throw new Error("bad");
-  for(const c of s.party) if(!JOBS[s.jobs[c]]) throw new Error("bad job");
+  const obj=v=>v&&typeof v==="object"&&!Array.isArray(v),num=v=>Number.isFinite(v)&&v>=0;
+  if(!obj(s)||s.schemaVersion!==SCHEMA_VERSION||!obj(s.profile)||typeof s.profile.name!=="string"||!obj(s.settings))throw Error("bad state");
+  if(!num(s.xp)||s.xp>XP_CAP||!num(s.gold)||!num(s.tickets)||!num(s.day)||!num(s.slots)||!MAPS[s.mapId]||!obj(s.pos)||!Number.isInteger(s.pos.x)||!Number.isInteger(s.pos.y))throw Error("bad values");
+  for(const k of ["jobs","jp","equip","owned","quests","qprog","talked","boxes","bossDefeated","killCount","streamBest"])if(!obj(s[k]))throw Error("bad "+k);
+  if(!Array.isArray(s.roster)||!s.roster.length||new Set(s.roster).size!==s.roster.length||s.roster.some(c=>!CHARS[c]))throw Error("bad roster");
+  if(!Array.isArray(s.party)||!s.party.length||s.party.length>4||new Set(s.party).size!==s.party.length||s.party.some(c=>!s.roster.includes(c)))throw Error("bad party");
+  for(const c of s.roster)if(!JOBS[s.jobs[c]]||!obj(s.jp[c])||!obj(s.equip[c]))throw Error("bad character");
+  if(s.run&&(!Array.isArray(s.run.party)||!s.run.party.length||!Array.isArray(s.run.enemies)||!s.run.enemies.length||!obj(s.run.returnPos)||!MAPS[s.run.returnPos.map]))throw Error("bad battle");
+  if(s.stream&&(!HUBS[s.stream.hub]||!STREAM_THEMES[s.stream.theme]||!CHARS[s.stream.host]||!Array.isArray(s.stream.requestIds)||s.stream.requestIds.length!==4||s.stream.requestIds.some(k=>!STREAM_ACTS[k])||!Array.isArray(s.stream.used)||!Array.isArray(s.stream.picks)||!num(s.stream.score)||!Number.isInteger(s.stream.hand)||s.stream.hand<0||s.stream.hand>4))throw Error("bad stream");
 }
+
 function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdvance==="tap"||s.autoAdvance==="timer")) return s.autoAdvance; try{ const v=localStorage.getItem("tlr-kyushu-autoadv"); if(v==="tap"||v==="timer") return v; }catch(e){} return "timer"; }
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
