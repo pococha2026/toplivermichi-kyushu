@@ -285,6 +285,7 @@ body:not(.reduce-motion) .autonext{animation:blink 1s steps(2) infinite}
 .statgrid .sgk{font-size:11px;color:var(--sand);white-space:nowrap}.statgrid b{font-family:var(--f-dot);font-size:16px}
 .sdiff.final td{white-space:normal}
 .pop.crit{color:var(--gold);font-size:26px}
+.qfilters{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:0;background:var(--cream);padding:8px 0;z-index:2}.qfilters .btn{min-height:44px}.qsummary{padding:10px;border:2px solid var(--gold);margin-bottom:8px}.quest-title{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;gap:6px;min-height:56px}.qcard progress{width:100%;height:12px}.qdetails{padding:8px;border-top:1px solid var(--slate);margin:8px 0}
 /* v5.36 グラフィック強化 */
 .esprite{filter:drop-shadow(0 3px 0 rgba(16,24,32,.5))}
 body:not(.reduce-motion) .esprite{animation:ebob 1.1s steps(2) infinite}
@@ -432,7 +433,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.05";
+const GAME_VERSION = "6.06";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1574,7 +1575,7 @@ function fixQuestChain(st){
 function sideQuestOf(hub){ return Object.keys(QUESTS).find(k=>!QUESTS[k].main&&QUESTS[k].hub===hub); }
 
 /* 施設のマーク */
-const FACILITY = { shop:{mark:"店",name:"ショップ",color:"#D5B34C"}, inn:{mark:"宿",name:"宿屋",color:"#83B9AE"}, door:{mark:"控",name:"控室（実家）",color:"#E88470"}, gate:{mark:"道",name:"街の出口",color:"#C9BFA6"}, rest:{mark:"休",name:"休息",color:"#83B9AE"}, board:{mark:"編",name:"編成",color:"#D5B34C"} };
+const FACILITY = { station:{mark:"駅",name:"新幹線駅",color:"#83B9AE"}, shop:{mark:"店",name:"ショップ",color:"#D5B34C"}, inn:{mark:"宿",name:"宿屋",color:"#83B9AE"}, door:{mark:"控",name:"控室（実家）",color:"#E88470"}, gate:{mark:"道",name:"街の出口",color:"#C9BFA6"}, rest:{mark:"休",name:"休息",color:"#83B9AE"}, board:{mark:"編",name:"編成",color:"#D5B34C"} };
 
 /* ---- 職歴ごとの初期装備（非売品。売却・捨てるは可能）。能力はCW01・CA01と同程度 ----
    武器 A型：単体攻撃力＋2 ／ B型：単体攻撃力＋1・応援コメントのエール＋1
@@ -1623,8 +1624,8 @@ CAREERS.forEach((c,i)=>{ const g=CAREER_GEAR[c]; if(!g) return; const n=String(i
   CAREER_GEAR_ID[c]=[wid,aid]; });
 
 /* ===== core: 計算・条件・報酬（状態はJSONで保持し、純粋関数で更新） ===== */
-const XP_CAP = 10029900, JP_CAP = 1997996;
-const xpFor = L => 10*(L-1)*(L+6);
+const xpFor = L => legacyXpFor(L)+Math.floor(0.12*Math.max(0,L-20)**3);
+const XP_CAP = xpFor(999), JP_CAP = 1997996;
 const jpFor = R => 2*R*(R+1)-4;
 function levelOf(xp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(xpFor(m)<=xp) lo=m; else hi=m-1;} return lo; }
 function rankOf(jp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(jpFor(m)<=jp) lo=m; else hi=m-1;} return lo; }
@@ -1640,7 +1641,7 @@ const charName = (st,cid) => cid==="hero" ? st.profile.name : cid==="moe" ? hero
 /* ---- 新規開始（第06D・16節） ---- */
 function newGame(name, gender, heroine, career){
   const st = {
-    schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0,
+    schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:2,
     profile:{name, gender, career:career||"社会福祉士", heroine:{name:(heroine&&heroine.name)||HEROINE_DEFAULT.name, gender:(heroine&&heroine.gender)||"女性"}}, day:1, slots:6, mapId:"KY01", pos:{x:19,y:19}, dir:0,
     visitedMaps:["KY01"], visitedHubs:["KY01"], xp:0,
     roster:["hero","moe"], party:["hero","moe"], vitals:null,
@@ -1685,6 +1686,7 @@ function generateTown(id,seed){
   if(style===6)for(let y=6;y<29;y+=6)rect(5,y,38,1,'#');
   for(let b=0;b<18;b++){const x=ri(3,41),y=ri(3,26);rect(x,y,ri(2,4),ri(2,3),b%3?'T':'#');if(b%3===0)rect(x,y-1,3,1,'c');}
   rect(cx-3,cy-3,7,7,',');
+  m.objects.push({id:"station_"+id,x:24,y:20,type:"station",label:m.name+"駅（新幹線）"});
   const pinned=m.objects.filter(o=>['door','gate','boss','tower'].includes(o.type));
   const used=new Set(pinned.map(o=>o.x+','+o.y));
   const anchors=[base.safeAnchor.slice(),[19,19]];
@@ -1697,7 +1699,7 @@ function generateTown(id,seed){
     const q=[[cx,cy]],prev=new Map([[cx+','+cy,null]]);let end=null;
     for(let k=0;k<q.length;k++){const [x,y]=q[k];if(x===tx&&y===ty){end=[x,y];break;}const ds=(i%2)?[[1,0],[0,1],[-1,0],[0,-1]]:[[0,1],[1,0],[0,-1],[-1,0]];
       for(const [dx,dy]of ds){const a=x+dx,b=y+dy,key=a+','+b;if(a<1||b<1||a>=m.w-1||b>=m.h-1||prev.has(key)||blocked(a,b))continue;prev.set(key,[x,y]);q.push([a,b]);}}
-    while(end){const[x,y]=end;put(x,y,grid[y][x]==='~'?'=':',');end=prev.get(x+','+y);}
+    while(end){const[x,y]=end;if(!'123'.includes(grid[y][x]))put(x,y,grid[y][x]==='~'?'=':',');end=prev.get(x+','+y);}
   }
   for(const a of anchors){if(!blocked(...a))route(...a);}
   for(const o of m.objects){if(o.walk){route(o.x,o.y);continue;}const adj=[[o.x,o.y+1],[o.x+1,o.y],[o.x-1,o.y],[o.x,o.y-1]].find(([x,y])=>x>0&&y>0&&x<m.w-1&&y<m.h-1&&!blocked(x,y));if(adj)route(...adj);}
@@ -1708,8 +1710,27 @@ function generateTown(id,seed){
     // 各危険地帯に最低1マスを保証する。
     if(!grid.some(row=>row.includes(String(z)))){for(let yy=2;yy<m.h-2;yy++){let done=false;for(let xx=2;xx<m.w-2;xx++)if(grid[yy][xx]===','&&!blocked(xx,yy)&&!m.objects.some(o=>Math.max(Math.abs(xx-o.x),Math.abs(yy-o.y))<=2)&&!anchors.some(a=>Math.max(Math.abs(xx-a[0]),Math.abs(yy-a[1]))<=2)){put(xx,yy,String(z));done=true;break;}if(done)break;}}
   }
-  // 看板から各エリアへ辿れるよう、案内に方角を添える。
-  for(const o of m.objects.filter(o=>o.type==='sign'&&o.area)){const z=Object.keys(m.zones).find(z=>m.zones[z]===o.area),p=centers[Number(z)-1];if(p)o.label+='（'+(p[1]<cy?'北':'南')+(p[0]<cx?'西':'東')+'方面）';}
+  // 看板は対応する危険地帯の境界に置き、施設・安全地点と重ねない。
+  const signDirs=[[0,1],[1,0],[0,-1],[-1,0]];
+  for(const o of m.objects.filter(o=>o.type==='sign'&&o.area)){
+    const z=Object.keys(m.zones).find(z=>m.zones[z]===o.area),oldKey=o.x+','+o.y;
+    const candidates=[];
+    for(let y=2;y<m.h-2;y++)for(let x=2;x<m.w-2;x++)if(grid[y][x]===z)for(const[dx,dy]of signDirs){const a=x+dx,b=y+dy;if(a<2||b<2||a>=m.w-2||b>=m.h-2||!'.,'.includes(grid[b][a])||m.objects.some(v=>v!==o&&v.x===a&&v.y===b)||anchors.some(v=>v[0]===a&&v[1]===b))continue;const stand=signDirs.map(([xx,yy])=>[a+xx,b+yy]).find(([xx,yy])=>xx>0&&yy>0&&xx<m.w-1&&yy<m.h-1&&!(xx===x&&yy===y)&&!blocked(xx,yy));if(stand)candidates.push({x:a,y:b,stand,score:Math.abs(a-cx)+Math.abs(b-cy)});}
+    candidates.sort((a,b)=>a.score-b.score||a.y-b.y||a.x-b.x);let c=candidates[0];
+    if(!c){ // 境界に空きがない場合は小さな専用エリアと安全な看板前を作る。
+      for(let margin=3;margin>=1&&!c;margin--)for(let y=3;y<m.h-4&&!c;y++)for(let x=3;x<m.w-3&&!c;x++){
+        if(m.objects.some(v=>v!==o&&Math.max(Math.abs(v.x-x),Math.abs(v.y-(y+1)))<=margin)||anchors.some(v=>Math.max(Math.abs(v[0]-x),Math.abs(v[1]-(y+1)))<=margin)||[0,1,2].some(d=>'123'.includes(grid[y+d][x])))continue;
+        put(x,y,z);put(x,y+1,',');put(x,y+2,',');c={x,y:y+1,stand:[x,y+2]};
+      }
+    }
+    if(!c)throw Error('看板を配置できません: '+id+' '+z);
+    blockedCells.delete(oldKey);o.x=c.x;o.y=c.y;blockedCells.add(o.x+','+o.y);put(o.x,o.y,',');route(...c.stand);
+    const ds=signDirs.find(([dx,dy])=>grid[o.y+dy]&&grid[o.y+dy][o.x+dx]===z);const direction=ds?(ds[0]===1?'東':ds[0]===-1?'西':ds[1]===1?'南':'北'):'';
+    o.label='案内板（'+AREAS[o.area].name+'・'+direction+'側）';o.zoneDirection=direction;
+  }
+  // 看板の移設後に入口と全施設の経路を再接続する。
+  for(const a of anchors)if(!blocked(...a))route(...a);
+  for(const o of m.objects){if(o.walk){route(o.x,o.y);continue;}const adj=signDirs.map(([dx,dy])=>[o.x+dx,o.y+dy]).find(([x,y])=>x>0&&y>0&&x<m.w-1&&y<m.h-1&&!blocked(x,y));if(adj)route(...adj);}
   m.tiles=grid;m.layoutKey=seed+':'+id;m.safeAnchor=base.safeAnchor.slice();m.layoutStyle=style;return m;
 }
 function ensureWorld(st){
@@ -2679,6 +2700,7 @@ const ART = (()=>{
       case "box": px(g,2,13,12,9,PAL.brown); px(g,2,13,12,1,light(PAL.brown,.3)); px(g,2,11,12,3,PAL.gold); px(g,2,11,12,1,light(PAL.gold,.4)); px(g,7,13,2,4,PAL.cream); px(g,11,14,2,7,dark(PAL.brown));
         if(frame%2) px(g,12,9,1,1,PAL.cream); break;
       case "boxOpen": px(g,2,14,12,8,PAL.brown); px(g,3,15,10,2,dark(PAL.brown,.5)); px(g,1,8,14,3,PAL.gold); px(g,1,8,14,1,light(PAL.gold,.4)); break;
+      case "station": ol=false;px(g,0,8,16,16,PAL.slate);px(g,0,5,16,4,PAL.sea);px(g,2,10,12,5,PAL.cream);px(g,4,11,2,2,PAL.navy);px(g,10,11,2,2,PAL.navy);px(g,6,17,4,7,PAL.ink);px(g,0,23,16,1,PAL.gold);break;
       case "sign": px(g,7,14,2,9,PAL.brown); px(g,1,7,14,8,PAL.cream); px(g,1,7,14,1,light(PAL.cream,.5)); px(g,3,9,10,1,PAL.slate); px(g,3,11,7,1,PAL.slate); px(g,11,11,2,2,PAL.red); break;
       case "bench": px(g,1,14,14,3,PAL.brown); px(g,1,14,14,1,light(PAL.brown,.3)); px(g,2,17,2,5,dark(PAL.brown)); px(g,12,17,2,5,dark(PAL.brown)); px(g,1,10,14,2,PAL.sand); break;
       case "tower": ol=false; px(g,7,0,2,24,PAL.mist); px(g,8,0,1,24,dark(PAL.mist,.3)); for(let y=3;y<24;y+=5){ px(g,4,y,8,1,PAL.mist); px(g,5,y+1,1,3,PAL.slate); px(g,10,y+1,1,3,PAL.slate); }
@@ -3607,6 +3629,7 @@ function interact(o){
   const face=()=>{ const dx=o.x-st.pos.x, dy=o.y-st.pos.y; if(dx||dy) st.dir = Math.abs(dy)>=Math.abs(dx)?(dy>0?0:1):(dx<0?2:3); };
   face();
   switch(o.type){
+    case "station": return openSheet("station");
     case "npc": return talkNpc(o.npc);
     case "shop": return openSheet("shop",{shop:o.shop, npc:o.npc, tab:"buy"});
     case "door": return travelMap(o.to,o.tx,o.ty);
@@ -4061,7 +4084,9 @@ function renderSheet(){
     case "share": return sheetWrap("友だちに教える", renderShare());
     case "nearby": { const near=nearbyObjects(); return sheetWrap("近くを調べる", near.length? `<div class="stack">${near.map(o=>`<button class="btn" data-a="interactId" data-v="${o.id}">${facBadge(o)}${esc(o.label)}</button>`).join("")}</div>` : `<p>近くに調べられるものはありません。道しるべから目的地を選べます。</p>`); }
     case "guide": { const m=MAPS[st.mapId]; return sheetWrap("道しるべ", `<p class="small">選ぶと、その場所まで実際に歩きます（途中の遭遇エリアでは抽選があります）。</p><div class="stack">${m.objects.filter(o=>o.type!=="tower").map(o=>{ const a=o.area?AREAS[o.area]:null; return `<button class="btn" data-a="guideTo" data-v="${o.id}">${facBadge(o)}${esc(o.label)}${a?`（推奨レベル${a.q}）`:""}</button>`; }).join("")}</div>`); }
-    case "quests": return sheetWrap("依頼帳", renderQuests());
+    case "quests": return sheetWrap("イベント・依頼リスト", renderQuests());
+    case "station": return sheetWrap("新幹線の駅", renderStation());
+    case "questAbandon": return sheetWrap("依頼の放棄を確認",`<p>「${esc(QUESTS[d.id].name)}」を放棄しますか？ 討伐数はリセットされ、受注時の旅程枠は戻りません。</p><div class="stack"><button class="btn" data-a="abandonQuest" data-v="${d.id}">放棄する</button><button class="btn primary" data-a="openSheet" data-k="quests">続ける</button></div>`);
     case "map": return sheetWrap("九州と沖縄の地図", renderWorld());
     case "travel": return sheetWrap("移動", `<p>${esc(HUBS[d.to].name)}へ向かいますか？（旅程枠1を使います。残り${st.slots}枠）</p><div class="stack"><button class="btn primary" data-a="doTravel">向かう</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "rest": return sheetWrap("休息", `${d.reason?`<p class="warn">${esc(d.reason)}</p>`:""}<p>日付を進めると翌日になり、旅程枠が6に戻ります（費用なし）。HPとMPは回復しません。回復は宿屋で。今は${st.day}日目・残り${st.slots}枠。</p><div class="stack"><button class="btn primary" data-a="doRest">日付を進める</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
@@ -4161,20 +4186,30 @@ function renderShare(){
     <p class="small dim">記録（セーブ）は送られません。受け取った人は「はじめから」で遊べます。</p>`;
 }
 function renderQuests(){
-  const st=G.st; const hub=curHub(); const safe=isSafe();
-  const stat={locked:"未解放",available:"受注できる",active:"受注中",bossReady:"ボスに挑戦できる",combatDone:"配信待ち",complete:"完了"};
-  let h=`<p class="small">受注は同時に1件。本編・任意とも受注時に旅程枠2を使います（残り${st.slots}枠）。</p>`;
-  for(const [id,Q] of Object.entries(QUESTS)){
-    const s=st.quests[id]; if(s==="locked" && !st.visitedHubs.includes(Q.hub) && !(Q.main && hubUnlocked(st,Q.hub))) continue; const prog = ["active","bossReady","combatDone","complete"].includes(s)?`討伐 ${st.qprog[id]||0}/${Q.kills}`:"";
-    let btn="";
-    if(s==="available"){ const can = !st.activeQuest && hub===Q.hub && safe; btn=`<button class="btn primary" data-a="acceptQuest" data-v="${id}" ${can?"":"disabled"}>受注する（2枠）</button>${can?"":`<p class="small">${st.activeQuest?"ほかの依頼を受注中です。":`${HUBS[Q.hub].name}の安全地帯で受注できます。`}</p>`}`; }
-    if(s==="active"||s==="bossReady") btn=`<button class="btn" data-a="abandonQuest" data-v="${id}">放棄する（受注費は戻りません）</button>`;
-    if(s==="combatDone") btn=`<button class="btn primary" data-a="openSheet" data-k="streamSetup" ${hub===Q.hub&&safe?"":"disabled"}>配信を始める（0枠）</button>${hub===Q.hub?"":`<p class="small">${HUBS[Q.hub].name}で始められます。</p>`}`;
-    const lockNote = s==="locked"? (Q.main?"前の本編依頼の完了で解放":`代表の住民（${NPCS[Q.npc].name}）と初めて話すと解放`):"";
-    h+=`<div class="qcard ${s}"><div class="srow"><b>${id} ${esc(Q.name)}</b><span class="tag">${stat[s]}</span></div><p class="small">${esc(HUBS[Q.hub].name)}・${Q.main?"本編":"任意"}　${prog}</p><p>${esc(Q.goal)}</p>${lockNote?`<p class="small">${lockNote}</p>`:""}${btn}</div>`;
-  }
-  return h;
+ const st=G.st,hub=curHub(),safe=isSafe(),d=G.sheetData,filter=d.questFilter||'recommended';
+ const labels={locked:'未解放',available:'受注可能',active:'進行中',bossReady:'ボスに挑戦',combatDone:'配信待ち',complete:'完了'},order={combatDone:0,bossReady:1,active:2,available:3,locked:4,complete:5};
+ const visible=Object.entries(QUESTS).filter(([id,q])=>st.quests[id]!=='locked'||st.visitedHubs.includes(q.hub)||(q.main&&hubUnlocked(st,q.hub)));
+ const list=visible.filter(([id,q])=>filter==='complete'?st.quests[id]==='complete':filter==='active'?['active','bossReady','combatDone'].includes(st.quests[id]):filter==='all'?st.quests[id]!=='complete':st.quests[id]!=='complete'&&(q.hub===hub||['active','bossReady','combatDone'].includes(st.quests[id]))).sort((a,b)=>(order[st.quests[a[0]]]-order[st.quests[b[0]]])||(a[1].hub===hub?-1:1)-(b[1].hub===hub?-1:1)||Number(b[1].main)-Number(a[1].main)||a[0].localeCompare(b[0]));
+ let h=`<div class="qsummary"><b>${esc(HUBS[hub].name)}のイベント・依頼</b><p class="small">残り${st.slots}枠／受注は同時に1件・受注時2枠</p><p>${esc(objective())}</p></div><div class="qfilters">${[['recommended','この街・おすすめ'],['active','進行中'],['all','一覧'],['complete','完了']].map(([v,n])=>`<button class="btn ${filter===v?'primary':''}" aria-pressed="${filter===v}" data-a="questFilter" data-v="${v}">${n}</button>`).join('')}</div>`;
+ for(const[id,q]of list){const state=st.quests[id],progress=Math.min(q.kills,st.qprog[id]||0),expanded=d.questFocus===id;let action='',reason='';
+ if(state==='available'){reason=st.activeQuest?'別の依頼を進行中':q.hub!==hub?HUBS[q.hub].name+'で受注できます':!safe?'安全地帯へ移動してください':st.slots<2?'旅程枠が2枠必要です':'';action=`<button class="btn primary wide" data-a="acceptQuest" data-v="${id}" ${reason?'disabled':''}>この依頼を受注する（2枠）</button>`;}
+ if(state==='active')reason=`通常敵の討伐：あと${Math.max(0,q.kills-progress)}体`;
+ if(state==='bossReady')reason=`${BOSSES[q.boss].name}への挑戦準備が整っています`;
+ if(state==='combatDone'){const ready=hub===q.hub&&safe;action=`<button class="btn primary wide" data-a="openSheet" data-k="streamSetup" ${ready?'':'disabled'}>配信の準備へ（0枠）</button>${retryDescription(st,q.hub)}`;if(!ready)reason=HUBS[q.hub].name+'の安全地帯で配信できます';}
+ if(state==='locked')reason=q.main?'前の街の本編依頼を完了すると解放':NPCS[q.npc].name+'に話しかけると解放';
+ h+=`<section class="qcard ${state}"><div class="srow"><span class="tag">${q.main?'本編':'任意'}・${labels[state]}</span><span class="small">${esc(HUBS[q.hub].name)}</span></div><button class="btn quest-title" data-a="questDetail" data-v="${id}" aria-expanded="${expanded}"><b>${esc(q.name)}</b><span class="small">${id}　${expanded?'詳細を閉じる':'目的・報酬を見る'}</span></button>${['active','bossReady','combatDone'].includes(state)?`<p class="small">討伐 ${progress}/${q.kills}</p><progress value="${progress}" max="${q.kills}" aria-label="討伐の進行"></progress>`:''}${reason?`<p class="small ${state==='locked'?'dim':'warn'}">${esc(reason)}</p>`:''}${expanded?`<div class="qdetails"><p>${esc(q.goal)}</p><p class="small">完了報酬：経験値${q.main?40:10}・チケット${q.main?200:80}（ボス報酬は別途）</p>${['active','bossReady'].includes(state)?`<button class="btn" data-a="questAbandonPrompt" data-v="${id}">依頼を放棄する…</button>`:''}</div>`:''}${action}</section>`;
+ }
+ return h+(list.length?'':'<p class="small">この分類に該当する依頼はありません。「一覧」からほかの街も確認できます。</p>');
 }
+
+function legacyXpFor(L){return 10*(L-1)*(L+6);}
+function migrateExperience(st){if(st.xpCurveVersion===2)return;const old=Math.max(0,Math.min(legacyXpFor(999),st.xp||0));let L=1;while(L<999&&legacyXpFor(L+1)<=old)L++;const ratio=L<999?(old-legacyXpFor(L))/(legacyXpFor(L+1)-legacyXpFor(L)):0;st.xp=L===999?XP_CAP:xpFor(L)+Math.floor(ratio*(xpFor(L+1)-xpFor(L)));st.xpCurveVersion=2;}
+function stationNear(st){const m=MAPS[st.mapId];return m&&m.kind==='out'&&m.objects.some(o=>o.type==='station'&&Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1);}
+function railUnlocked(st,id){const i=HUB_ORDER.indexOf(id);return i===0||i>0&&st.quests[mainQuestOf(HUB_ORDER[i-1])]==='complete';}
+function stationDestinations(st){return HUB_ORDER.filter(id=>id!==MAPS[st.mapId].hub&&railUnlocked(st,id));}
+function railTravel(st,to){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||G.dlg||!stationNear(st)||!stationDestinations(st).includes(to))return false;if(st.slots<1){openSheet('rest',{reason:'新幹線の移動には旅程枠1が必要です。'});return false;}const m=MAPS[to],station=m.objects.find(o=>o.type==='station');if(!station)return false;const p=[[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>[station.x+dx,station.y+dy]).find(([x,y])=>walkable(m,x,y)&&!zoneAt(m,x,y));if(!p)return false;travelHub(to,...p);return true;}
+function renderStation(){const st=G.st;return `<p>新幹線で解放済みの街へ直接移動します。移動は旅程枠1・運賃なし。</p><p class="small dim">前の街の本編クリアで次の駅が解放されます。ゲーム内の架空路線です。</p><div class="stack">${stationDestinations(st).map(id=>`<button class="btn" data-a="railGo" data-v="${id}" ${st.slots<1?'disabled':''}><b>${esc(HUBS[id].pref)}・${esc(HUBS[id].name)}</b><span class="small">${st.visitedHubs.includes(id)?'訪問済み':'イベント進行で解放・未訪問'} → 移動する</span></button>`).join('')||'<p>ほかの街はまだ解放されていません。</p>'}</div>${st.slots<1?'<p class="warn">旅程枠が不足しています。宿泊・休息後に利用してください。</p>':''}`;}
+
 function renderWorld(){
   const st=G.st; const safe=isSafe();
   let h=`<p class="small">拠点間の移動は旅程枠1。安全地帯から出発できます。</p><div class="stack">`;
@@ -4408,6 +4443,10 @@ function renderStreamSetup(){
 
 /* ===== 操作の受付 ===== */
 const ACT = {
+  railGo(el){railTravel(G.st,el.dataset.v);},
+  questFilter(el){if(!['recommended','active','all','complete'].includes(el.dataset.v))return;G.sheetData.questFilter=el.dataset.v;G.sheetData.questFocus=null;render();},
+  questAbandonPrompt(el){const id=el.dataset.v;if(!QUESTS[id]||!["active","bossReady"].includes(G.st.quests[id]))return;openSheet("questAbandon",{id});},
+  questDetail(el){G.sheetData.questFocus=G.sheetData.questFocus===el.dataset.v?null:el.dataset.v;render();},
   townEvent(){const t=townChange(G.st,curHub());if(!t||t.phase<1)return;openSheet("townEvent");},
   townResolve(el){const st=G.st,hub=curHub(),t=townChange(st,hub);if(!t||t.phase<1||!["quiet","live"].includes(el.dataset.v)||(st.townChoices||{})[hub])return;st.townChoices=st.townChoices||{};st.townChoices[hub]=el.dataset.v;st.tickets+=1;commit();G.sheet=null;render();say([["",t.title+"："+t.text],["",el.dataset.v==="quiet"?"住民の声を短く録り、街に声の展示を残した。静かに楽しむ人が集まり始めた。":"住民が交代で話す交流会を開いた。初めて会う人同士が挨拶を交わし始めた。"],["","街の協力へのお礼にチケットを1枚受け取った。"]]);},
   newGame(){ G.newGame={name:"",gender:null,composing:false,step:1}; G.screen="new"; render(); },
@@ -4447,10 +4486,10 @@ const ACT = {
   worldGo(el){ const to=el.dataset.v; if(!hubUnlocked(G.st,to)) return toast("まだ進めません。"); const s=MAPS[to].safeAnchor; if(to==="KY01"||to==="KY02"){ const gate=MAPS[to].objects.find(o=>o.type==="gate"); return travelHub(to, gate?gate.x+(to==="KY02"?1:-1):s[0], gate?gate.y:s[1]); } travelHub(to, s[0], s[1]); },
   doInn(el){ el.disabled=true; const st=G.st; const total=(INN_PRICE[curHub()]||10)*st.roster.length; if(st.gold<total) return toast("ゴールドが足りません。"); st.gold-=total; restoreAll(st); st.day++; st.slots=6; keepFlush(); commit(); G.sheet=null; render(); SND.sfx("heal"); say([["",`${total}ゴールドを払って泊まった。`],["",`${st.day}日目の朝。全員のHPとMPが全回復した！`]]); },
   doRest(){ const st=G.st; st.day++; st.slots=6; commit(); G.sheet=null; render(); toast(`${st.day}日目の朝。旅程枠が6に戻った。`); },
-  acceptQuest(el){ const st=G.st, id=el.dataset.v; if(st.slots<2) return openSheet("rest",{reason:"受注には旅程枠2が必要です。"});
+  acceptQuest(el){ const st=G.st, id=el.dataset.v,Q=QUESTS[id];if(!Q||st.quests[id]!=="available"||st.activeQuest||Q.hub!==curHub()||!isSafe()||st.run||st.stream)return toast("この依頼は今は受注できません。"); if(st.slots<2) return openSheet("rest",{reason:"受注には旅程枠2が必要です。"});
     st.slots-=2; st.quests[id]="active"; st.activeQuest=id; st.qprog[id]=st.qprog[id]||0; commit(); G.sheet=null; render();
     say([["",`依頼「${id} ${QUESTS[id].name}」を受けた。`],["もえ",QUESTS[id].main&&HUB_TEXT[QUESTS[id].hub]?HUB_TEXT[QUESTS[id].hub].accept:"一緒に考えよう。"],["",QUESTS[id].goal]]); },
-  abandonQuest(el){ const st=G.st, id=el.dataset.v; st.quests[id]="available"; st.qprog[id]=0; st.activeQuest=null; commit(); render(); toast("依頼を放棄した。受注費は戻りません。"); },
+  abandonQuest(el){ const st=G.st, id=el.dataset.v; st.quests[id]="available"; st.qprog[id]=0; st.activeQuest=null; G.sheet="quests";G.sheetData={};commit(); render(); toast("依頼を放棄した。受注費は戻りません。"); },
   bossGo(el){ startBattle(createBossRun(G.st, el.dataset.v)); },
   pickActor(el){ const i=+el.dataset.i; const m=G.st.run.party[i]; if(m.hp<=0||m.acted) return; G.cmd={actor:i}; render(); },
   cmdType(el){ const t=el.dataset.v; G.cmd={actor:G.cmd.actor, type:t}; render(); },
@@ -4552,13 +4591,13 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){ try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.maxC=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureWorld(s); return s; }
+function migrate(s){ migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.maxC=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureWorld(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
-  if(G.readOnly && !["openSheet","closeSheet","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
+  if(G.readOnly && !["openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
@@ -4641,7 +4680,8 @@ const PAD = (()=>{
   function mount(){
     const dock=document.getElementById("dock"); if(!dock || dock.dataset.ready) return; dock.dataset.ready="1";
     const base=dock.querySelector(".stick"), knob=dock.querySelector(".knob");
-    let pid=null;
+    let pid=null,centerTap=false,tapAt=0;
+    const isCenter=e=>{const r=base.getBoundingClientRect();return Math.hypot(e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2)<r.width*0.34*0.28;};
     const upd=e=>{
       const r=base.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, R=r.width*0.34;
       let dx=e.clientX-cx, dy=e.clientY-cy; const d=Math.hypot(dx,dy);
@@ -4657,9 +4697,10 @@ const PAD = (()=>{
       stickAlt = nd===hd ? (ay>R*0.3?vd:null) : (ax>R*0.3?hd:null);
       setDir(nd, "stick");
     };
-    base.addEventListener("pointerdown",e=>{ pid=e.pointerId; base.setPointerCapture(pid); base.classList.add("on"); SND.sfx("step"); upd(e); e.preventDefault(); });
-    base.addEventListener("pointermove",e=>{ if(e.pointerId===pid) upd(e); });
-    const end=e=>{ if(e.pointerId!==pid) return; pid=null; base.classList.remove("on"); knob.style.transform=""; stickAlt=null; setDir(null,"stick"); };
+    base.addEventListener("pointerdown",e=>{ if(pid!==null||e.button>0)return;centerTap=isCenter(e);tapAt=Date.now();pid=e.pointerId; base.setPointerCapture(pid); base.classList.add("on"); SND.sfx("step"); upd(e); e.preventDefault(); });
+    base.addEventListener("pointermove",e=>{ if(e.pointerId===pid){if(!isCenter(e))centerTap=false;upd(e);} });
+    const end=e=>{ if(e.pointerId!==pid) return;const confirm=e.type==="pointerup"&&centerTap&&isCenter(e)&&Date.now()-tapAt<650;pid=null;centerTap=false;base.classList.remove("on");knob.style.transform="";stickAlt=null;setDir(null,"stick");if(confirm){e.preventDefault();pressA();} };
+    base.tabIndex=0;base.setAttribute("aria-label","スティック。中央タップで決定、ドラッグで移動");base.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();if(!e.repeat)pressA();}});
     base.addEventListener("pointerup",end); base.addEventListener("pointercancel",end); base.addEventListener("lostpointercapture",end);
     dock.querySelector("[data-pad=a]").addEventListener("click",()=>pressA());
     dock.querySelector("[data-pad=b]").addEventListener("click",()=>pressB());
