@@ -1,4 +1,5 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+</style></head><body>
 <title>トップライバーへの道 九州編</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -446,6 +447,36 @@ body.in-end #screen{gap:0}
 .end-view.tight{gap:3px}.end-view.tight .end-content{gap:3px}.end-view.tight .end-member{padding:3px 5px;gap:1px 6px}.end-view.tight .end-member>b{font-size:13px}.end-view.tight .end-stat,.end-view.tight .end-check{padding:2px;font-size:12px}.end-view.tight .end-head{padding:3px 6px}.end-view.tight .end-head h2{font-size:18px}
 @media(max-height:680px){.end-view{gap:4px;font-size:13px}.end-head{padding:3px 6px}.end-head h2{font-size:18px}.end-member{padding:3px 5px;gap:1px 6px}.end-member>b{font-size:13px}.end-rewards b{font-size:14px}.end-content{gap:4px}.end-stat,.end-check{padding:2px;font-size:12px}}
 
+/* v6.13: battle overview stays in the viewport; long choices/details use pages. */
+body.in-battle{overflow:hidden}
+.battle.battle-live{display:block;overflow:hidden;height:calc(100dvh - 12px - var(--dockH) - var(--vcut) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}
+.battle-inner{display:flex;flex-direction:column;gap:4px;font-size:13px;line-height:1.2;transform-origin:top left}
+.battle-live .bhead{font-size:12px;gap:2px;align-items:center}.chain-status{flex-basis:100%}
+.battle-detail,.battle-rule{font:inherit;color:var(--gold);background:var(--ink);border:1px solid var(--gold);padding:3px 5px;text-align:left;cursor:pointer}
+.battle-rule{font-size:12px;color:var(--cream)}
+.battle-live .gauge{font-size:13px}.battle-live .cue{font-size:12px;padding:2px 4px}
+.battle-live .battle-support{max-height:none;overflow:visible;background:#F4ECD8;color:#101820;padding:3px;border:1px solid var(--slate)}
+.battle-live .support-actions{display:grid;grid-template-columns:1.3fr 1fr .5fr;gap:3px}.battle-live .support-actions .btn{font-size:12px;padding:3px;min-height:30px;color:#101820;background:#e4ddc6}
+.battle-live .support-summary{font-size:12px;margin:2px 0 0;line-height:1.2}
+.battle-live .enemies{grid-template-columns:1fr;gap:3px}
+.battle-live .ecard,.battle-live .ecard.isboss{grid-template-columns:38px minmax(0,1fr);padding:3px 5px;gap:2px 5px;background:rgba(16,24,32,.92)}
+.battle-live .ecard .esprite,.battle-live .ecard.isboss .esprite{grid-column:1;grid-row:1/5;width:34px;height:34px}
+.battle-live .ecard .ename,.battle-live .ecard .bar,.battle-live .ecard .estat,.battle-live .ecard .tele{grid-column:2;grid-row:auto}
+.battle-live .ename{font-size:13px;line-height:1.15}.battle-live .estat,.battle-live .tele{font-size:12px;line-height:1.15}.battle-live .rar{font-size:11px}
+.battle-live .ecard .bar{height:4px}.battle-live .stagebg{opacity:.25}
+.battle-live .party{gap:3px}.battle-live .party .pcard{min-height:0;padding:3px 4px;gap:2px}.battle-live .psprite{display:none}
+.battle-live .pline{font-size:13px;flex-wrap:wrap;gap:0 3px}.battle-live .pline b{flex:1}.battle-live .pjob{display:none}.battle-live .pst{font-size:10px;padding:0 1px}
+.battle-live .pstat{display:flex;flex-wrap:wrap;gap:0 5px;font-size:12px;white-space:normal;overflow:visible}.battle-live .pcard .bar{height:4px}
+.battle-live .win.cmd{flex:none;overflow:visible;gap:3px;padding:4px;border-width:2px}
+.battle-live .cmdgrid .btn{font-size:12px;min-height:32px;padding:2px;overflow-wrap:anywhere}
+.battle-live .chips{overflow:visible;display:block;flex:none}.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}.choice-grid .chip{min-height:30px;font-size:12px;padding:2px 4px;line-height:1.15}
+.choice-pages{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:3px;font-size:12px}.choice-pages .chip{min-height:28px;padding:2px 12px}
+.battle-live .confirmrow{gap:4px;align-items:center;margin:0}.battle-live .confirmrow>.btn{min-height:36px;font-size:14px;padding:3px 10px}
+.battle-live .preview{font:inherit;font-size:12px;line-height:1.25;text-align:left;border:1px solid var(--slate);background:var(--ink);color:var(--cream);padding:3px;min-width:0;cursor:pointer;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-height:3.1em}
+.battle-live .log{font-size:12px;min-height:0;max-height:2.6em;padding:3px 5px;overflow:hidden;line-height:1.2}.battle-live .log span{display:block}
+.battle-live .autopanel .automsg{font-size:12px;max-height:5em;overflow:hidden}.battle-live .autohead{gap:3px}.battle-live .autohead p{font-size:14px;margin:0}
+@supports not (height:100dvh){.battle.battle-live{height:calc(100vh - 12px - var(--dockH) - var(--vcut))}}
+
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -465,7 +496,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.12";
+const GAME_VERSION = "6.13";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -604,7 +635,14 @@ const BOSS_HP_UP = 1.3;
 const ENEMY_TUNE = { hp:2.35, def:3, atkMul:1.85, atkAdd:5, rarHp:0.16, rarAtk:0.1, rageAt:0.45, rage:1.35, bossHp:2.6, bossAtk:1.9, bossAdd:6, bossRage:1.25, bossRageAt:0.4 };
 /* 出現数：r=0..99。前半（強度5未満）1体40%・2体45%・3体15%／後半 1体25%・2体50%・3体25% */
 function encounterSize(q, r){ r=Math.max(0,Math.min(99,r|0)); return q<5 ? (r<40?1:r<85?2:3) : (r<25?1:r<75?2:3); }
-const bossRecommendedLevel=q=>Math.min(999,Math.ceil(q*1.2)+4);
+// 装備・職業熟練度を含む攻略目安。入場を制限するレベルではない。
+const areaRequiredLevel=q=>Math.min(999,Math.ceil(q*1.25)+2);
+const areaRecommendedLevel=q=>Math.min(999,Math.ceil(q*1.5)+5);
+const bossRecommendedLevel=q=>Math.min(999,Math.ceil(q*1.5)+7);
+function areaStrength(q){return {hp:1.12+Math.min(0.48,q*0.008),atk:1.08+Math.min(0.32,q*0.006),def:Math.ceil(q/12)};}
+function autoAllowed(run){return !!run&&run.kind==='field'&&!run.challengeId&&!run.enemies.some(e=>e.boss);}
+function enforceManualBattle(run){if(run&&!autoAllowed(run)){clearTimeout(G.autoT);G.auto=false;G.autoWait=false;G.autoAct=null;G.autoLast=null;}}
+
 function bossScale(bid, n){ n=Math.min(4,Math.max(1,n)); const o=BOSS_SCALE_OVERRIDE[bid]; return (o&&o[n]) || BOSS_PARTY_SCALE[n]; }
 
 /* 宿屋：1人あたりの宿泊料（ゴールド）。泊まると翌朝になり、HPとMPが全回復 */
@@ -2027,12 +2065,13 @@ function challengeReward(st,run,res){
  if(!giveGear(st,d.reward,res,'特別チャレンジ初回達成')){res.challenge.first=false;res.challenge.passed=false;res.notes.push('報酬の保管場所がいっぱいです。空きを作って再挑戦してください。');return;}
  record.cleared=true;record.bestTurns=run.turn;record.day=st.day;res.xp=Math.min(XP_CAP-st.xp,60+d.q*6);res.gold=150+d.q*20;res.tickets=100;st.xp+=res.xp;st.gold+=res.gold;st.tickets+=res.tickets;res.notes.push('特別チャレンジ「'+d.name+'」初回達成！ 限定装備を獲得。');
 }
-function renderChallenges(){const st=G.st;return `<p>Pocochaを題材にした特別実技チャレンジ。本編とは別の達成記録です。</p><p class="small">街の安全地帯から挑戦。参加料は毎回必要です。HP・MP・道具は持ち越し、制限ターン超過は失敗。全滅時の追加ゴールド損失はありません。報酬・経験値・熟練度は初回達成のみ。</p><div class="stack">${POCO_TRIALS.map(d=>{const r=(st.challenges||{})[d.id]||{},reason=trialEntryReason(st,d);return `<section class="setcard"><h3 class="label">${esc(d.name)} ${r.cleared?'✓ 達成済み':''}</h3><p>${esc(d.desc)}</p><p class="small">推奨レベル${d.level}／参加料${d.fee}G／挑戦${r.attempts||0}回</p><p>${esc(trialRequirements(d))}</p><p class="small good">初回報酬：${esc(EQUIP[d.reward].name)}・経験値${60+d.q*6}・${150+d.q*20}G・チケット100</p>${reason?`<p class="small warn">${esc(reason)}</p>`:''}<button class="btn primary" data-a="trialStart" data-v="${d.id}" ${reason?'disabled':''}>${r.cleared?'練習に挑戦（報酬なし）':'参加料を払って挑戦'}</button></section>`;}).join('')}</div>`;}
+function renderChallenges(){const st=G.st;return `<p>Pocochaを題材にした特別実技チャレンジ。本編とは別の達成記録です。</p><p class="small">ボス戦・特別チャレンジは手動操作のみ（オート使用不可）。街の安全地帯から挑戦。参加料は毎回必要です。HP・MP・道具は持ち越し、制限ターン超過は失敗。全滅時の追加ゴールド損失はありません。報酬・経験値・熟練度は初回達成のみ。</p><div class="stack">${POCO_TRIALS.map(d=>{const r=(st.challenges||{})[d.id]||{},reason=trialEntryReason(st,d);return `<section class="setcard"><h3 class="label">${esc(d.name)} ${r.cleared?'✓ 達成済み':''}</h3><p>${esc(d.desc)}</p><p class="small">推奨レベル${d.level}／参加料${d.fee}G／挑戦${r.attempts||0}回</p><p>${esc(trialRequirements(d))}</p><p class="small good">初回報酬：${esc(EQUIP[d.reward].name)}・経験値${60+d.q*6}・${150+d.q*20}G・チケット100</p>${reason?`<p class="small warn">${esc(reason)}</p>`:''}<button class="btn primary" data-a="trialStart" data-v="${d.id}" ${reason?'disabled':''}>${r.cleared?'練習に挑戦（報酬なし）':'参加料を払って挑戦'}</button></section>`;}).join('')}</div>`;}
 function localFestivalStatus(st,hub){return {talks:Object.entries(NPCS).filter(([id,n])=>n.hub===hub&&id!=='moe'&&st.talked[id]).length,wins:(st.townBattles||{})[hub]||0,rank:Math.max(...st.roster.map(c=>rankOf(jpOf(st,c,st.jobs[c]))))};}
 function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `<h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
 function claimFestival(){const st=G.st,hub=curHub(),s=localFestivalStatus(st,hub);if(G.readOnly||st.run||st.stream||!isSafe()||s.talks<2||s.wins<2||s.rank<3||(st.festivals||{})[hub])return false;st.festivals=st.festivals||{};st.festivals[hub]=true;st.gold+=60+HUB_ORDER.indexOf(hub)*20;st.tickets+=40;giveItem(st,'PC02',2,null,'街イベント');commit();render();say([['',POCO_TOWNS[HUB_ORDER.indexOf(hub)][3]],['もえ','私たちの枠にも、この街でできた家族みたいな絆を持って帰ろう。']]);return true;}
-function pocoBattleStatus(run){if(!run.pocoRules)return '';const d=trialOf(run.challengeId);return `<div class="poco-battle"><b>${d?'特別チャレンジ：'+esc(d.name):run.enemies.some(e=>e.boss)?'ライバル枠との決戦':'枠を乱すノイズ戦'}</b>${run.enemies.some(e=>e.boss)?`<p class="small">ノイズシールド：${run.A<40&&!run.kiraDone?'通常攻撃を35％軽減。エール40以上・キラコメ完成で解除。職業技は軽減されません。':'解除中'}／6ターン目以降は3ターンごとに敵攻撃＋10％（最大50％）</p>`:''}${run.aleLeak?'<p class="small">毎ターン、エール−'+run.aleLeak+'</p>':''}${run.mpLeak?'<p class="small">毎ターン、生存者全員のMP−'+run.mpLeak+'</p>':''}${d?`<ul class="list">${trialConditions(run).map(c=>`<li>${c.ok?'✓':'未'} ${esc(c.label)}（現在${c.value}）</li>`).join('')}</ul>`:''}</div>`;}
+function pocoBattleStatusFull(run){if(!run.pocoRules)return '';const d=trialOf(run.challengeId);return `<div class="poco-battle"><b>${d?'特別チャレンジ：'+esc(d.name):run.enemies.some(e=>e.boss)?'ライバル枠との決戦':'枠を乱すノイズ戦'}</b>${run.enemies.some(e=>e.boss)?`<p class="small">ノイズシールド：${run.A<40&&!run.kiraDone?'通常攻撃を35％軽減。エール40以上・キラコメ完成で解除。職業技は軽減されません。':'解除中'}／6ターン目以降は3ターンごとに敵攻撃＋10％（最大50％）</p>`:''}${run.aleLeak?'<p class="small">毎ターン、エール−'+run.aleLeak+'</p>':''}${run.mpLeak?'<p class="small">毎ターン、生存者全員のMP−'+run.mpLeak+'</p>':''}${d?`<ul class="list">${trialConditions(run).map(c=>`<li>${c.ok?'✓':'未'} ${esc(c.label)}（現在${c.value}）</li>`).join('')}</ul>`:''}</div>`;}
 
+function pocoBattleStatus(run){const d=trialOf(run.challengeId),boss=run.enemies.some(e=>e.boss);if(!boss&&!d)return '';const conditions=d?trialConditions(run):[];return `<button class="battle-rule" data-a="battleInspect" data-v="rules">手動のみ・オート不可${boss&&run.pocoRules?`／シールド${run.A<40&&!run.kiraDone?'有効':'解除'}`:''}${d?`／課題${conditions.filter(c=>c.ok).length}/${conditions.length}・${run.turn}/${run.turnLimit}T`:''} ▶</button>`;}
 function baseRun(st, kind){
   const L = levelOf(st.xp), diff = DIFFICULTY[st.settings.difficulty];
   let A0 = diff.startA; const sup = st.support && SUPPORTS[st.support];
@@ -2059,17 +2098,20 @@ function traitsTurnStart(run, log){
     if(hasTrait(m,"J14")){ const o=al.filter(t=>t!==m).sort((x,y)=>x.c-y.c)[0]; if(o&&o.c<(o.maxC||10)){ o.c+=1; log.push(`${m.name}のまかない：${o.name}のMP＋1`); } }
   }
 }
+function fieldEnemyStats(d,q,diff=DIFFICULTY.std){const T=ENEMY_TUNE,rb=(d.rarity||1)-1,x=areaStrength(q);return {
+ hp:Math.ceil((d.baseHP+12*(q-1))*diff.hp*T.hp*(1+T.rarHp*rb)*x.hp),
+ def:d.baseDEF+Math.floor((q-1)/3)+T.def+(rb>=2?1:0)+x.def,
+ cycle:d.cycle.map(([t,p])=>({t,p:t==='c'?0:Math.ceil((p*T.atkMul+T.atkAdd+Math.floor(4*(q-1)/5))*(1+T.rarAtk*rb)*diff.atk*x.atk)}))};}
 function createFieldRun(st, areaId, rolls){ // rolls: {count:0|1, picks:[r0,r1]}
   const run = baseRun(st,"field"); const ar=AREAS[areaId]; const q=ar.q; const diff=DIFFICULTY[run.difficulty];
   run.areaId=areaId; run.q=q; run.hub=areaId.slice(0,4); run.returnPos={map:st.mapId,x:st.pos.x,y:st.pos.y};
-  const n = encounterSize(q, rolls.count), T=ENEMY_TUNE;
+  const n = encounterSize(q, rolls.count);
   for(let s=0;s<n;s++){
     const d = enemyDef(areaId, pickEnemyIndex(areaId, rolls.picks[s]));
-    const rb=(d.rarity||1)-1;
-    const hp = Math.ceil((d.baseHP+12*(q-1))*diff.hp*T.hp*(1+T.rarHp*rb));
+    const stats=fieldEnemyStats(d,q,diff),hp=stats.hp;
     run.enemies.push({ slot:s, id:d.id, name:d.shortName, fullName:d.name, profile:d.profile, species:d.species, attr:d.attr, rarity:d.rarity,
-      maxHP:hp, hp, def:d.baseDEF+Math.floor((q-1)/3)+T.def+(rb>=2?1:0),
-      cycle:d.cycle.map(([t,p])=>({t, p: t==="c"?0:Math.ceil((p*T.atkMul+T.atkAdd+Math.floor(4*(q-1)/5))*(1+T.rarAtk*rb)*diff.atk)})) });
+      maxHP:hp, hp, def:stats.def,
+      cycle:stats.cycle });
   }
   assignLabels(run.enemies);
   traitsBattleStart(run);
@@ -3421,7 +3463,7 @@ function render(){
   const root=$("#screen"); if(!root) return;
   stopBattleTimer();
   const s=G.screen;
-  if(!(s==="result"||s==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input"))G.endPager=null;
+  if(!(s==="result"||s==="battle"&&G.st&&G.st.run&&(G.st.run.state!=="input"||G.battleInspect)))G.endPager=null;
   let html="";
   if(s==="title") html=renderTitle();
   else if(s==="new") html=renderNew();
@@ -3432,7 +3474,7 @@ function render(){
   root.innerHTML = heroSub(html + renderSheet() + renderDialog()) + `<div id="toast" class="toast" role="status" hidden></div>`;
   if(s==="explore") mountCanvas();
   document.body.classList.toggle("in-battle", s==="battle"); document.body.classList.toggle("in-explore", s==="explore");
-  document.body.classList.toggle("in-end",s==="result"||s==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input");
+  document.body.classList.toggle("in-end",s==="result"||s==="battle"&&G.st&&G.st.run&&(G.st.run.state!=="input"||G.battleInspect));
   if(s==="battle"&&G.st.run&&G.st.run.state==="input"){ drawEnemies(); startBattleTimer(); }
   if(s==="new") mountNew();
   if(s==="title"){ drawTitleArt(); if(!G.titleRaf) G.titleRaf=requestAnimationFrame(titleLoop); }
@@ -3446,13 +3488,14 @@ function render(){
   syncDockAuto();
   if(G.endPager&&G.endPager.resetScroll){G.endPager.resetScroll=false;if(typeof window.scrollTo==="function")window.scrollTo(0,0);}
   PAD.restore();
-  fitEndView();
+  fitEndView();fitBattleView();
 }
 /* 戦闘中だけ、スティックの隣にオートボタンを出す（オート中は「停止」に切り替わる） */
 function syncDockAuto(){
   const da=document.getElementById("dockAuto"); if(!da) return;
-  const run=G.st&&G.st.run; const show = G.screen==="battle" && run && run.state==="input" && !G.sheet && !G.dlg;
+  const run=G.st&&G.st.run; const show = G.screen==="battle" && run && run.state==="input" && !G.sheet && !G.dlg && !G.battleInspect;
   da.hidden=!show; if(!show) return;
+  if(!autoAllowed(run)){da.disabled=true;da.classList.remove("on");da.dataset.a="noop";da.innerHTML="<b>手動</b><small>オート不可</small>";da.setAttribute("aria-label","ボス戦・特別チャレンジはオート使用不可");return;}
   const on=!!G.auto; da.dataset.a=on?"autoOff":"autoOn"; da.classList.toggle("on",on); da.disabled=!!G.readOnly;
   da.innerHTML=on?"<b>停止</b><small>オート中</small>":"<b>AUTO</b><small>オート</small>";
   da.setAttribute("aria-label", on?"オートを中断する":"戦闘オートを始める");
@@ -3660,7 +3703,7 @@ function renderExplore(){
 }
 function hereHtml(){
   const st=G.st, m=MAPS[st.mapId], near=nearbyObjects(), zone=zoneAt(m,st.pos.x,st.pos.y), ar=zone?AREAS[zone]:null;
-  return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（推奨レベル${ar.q}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
+  return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（挑戦目安Lv${areaRequiredLevel(ar.q)}・適正Lv${areaRecommendedLevel(ar.q)}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
 }
 function nearbyObjects(){ const st=G.st, m=MAPS[st.mapId]; return m.objects.filter(o=>Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1 && o.type!=="tower"); }
 function mountCanvas(){
@@ -3858,7 +3901,7 @@ function interact(o){
       return openSheet("travel",{to:o.to,tx:o.tx,ty:o.ty}); }
     case "box": return openBox(o);
     case "sign": { const a=AREAS[o.area]; const b=Object.values(BOSSES).find(x=>x.areaId===o.area);
-      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・推奨レベル${a.q}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${bossRecommendedLevel(b.q)}）。`:"")],["案内板",a.lore]]); }
+      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・挑戦目安Lv${areaRequiredLevel(a.q)}・適正Lv${areaRecommendedLevel(a.q)}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${bossRecommendedLevel(b.q)}）。`:"")],["案内板",a.lore]]); }
     case "boss": return bossPrompt(o.boss);
     case "rest": return openSheet("rest");
     case "inn": return openSheet("inn",{label:o.label});
@@ -3940,7 +3983,8 @@ function travelHub(to,tx,ty){
 
 /* ---- 戦闘 ---- */
 function startBattle(run){
-  G.auto=false; clearTimeout(G.autoT); G.autoLast=null;
+  G.battleInspect=false;G.battleChoiceKey=null;G.battlePreview="";
+  G.auto=false;G.autoWait=false;G.autoAct=null; clearTimeout(G.autoT); G.autoLast=null;
   const st=G.st; st.run=run; st.runSeq=run.seq;
   for(const e of run.enemies) if(!e.boss) st.seen[e.id]=true;
   run.log=[`${run.enemies.map(e=>e.display).join("と")}が現れた！`];
@@ -3957,7 +4001,7 @@ function partyCard(m,i,run){
   return `<button class="pcard ${sel?"on":""} ${ko?"ko":""} ${isLow(m.hp,m.maxHP)?"low":""} ${m.acted?"done":""}" data-a="pickActor" data-i="${i}" ${ko||m.acted||run.state!=="input"?"aria-disabled=\"true\"":""}>
     <span class="pline"><b>${sel?"▶":""}${esc(m.name)}</b><span class="pjob">${esc(JOBS[m.job].name)} 熟練度${m.R}</span>${badges.map(t=>`<span class="pst">${t}</span>`).join("")}</span>
     <span class="bar"><i style="width:${pct}%"></i></span>
-    <span class="pstat">HP<b>${m.hp}</b>/${m.maxHP} MP<b>${m.c}</b>/${m.maxC||10}</span>
+    <span class="pstat"><span>HP <b>${m.hp}</b>/${m.maxHP}</span><span>MP <b>${m.c}</b>/${m.maxC||10}</span></span>
     <canvas class="psprite" data-char="${m.cid}" width="16" height="24" aria-hidden="true"></canvas>
   </button>`;
 }
@@ -3977,36 +4021,49 @@ function cueText(run){
 function renderBattle(){
   const st=G.st, run=st.run; if(!run) return "";
   if(run.state!=="input")return renderBattleEnd(run);
+  enforceManualBattle(run);
+  if(G.battleInspect)return renderBattleInspect(run);
   const tel=telegraph(run);
   const enemies=run.enemies.map(e=>{
     const t=tel.find(x=>x.slot===e.slot); const pct=Math.round(100*e.hp/e.maxHP);
     return `<div class="ecard ${e.hp<=0?"down":""} ${e.boss?"isboss":""}" id="ec${e.slot}">
       <canvas data-enemy="${e.slot}" width="${e.boss?64:32}" height="${e.boss?64:32}" class="esprite ${e.boss?"boss":""}" aria-hidden="true"></canvas>
-      <div class="einfo"><div class="ename">${esc(e.display)}${e.rarity>1?` <span class="rar">${"★".repeat(e.rarity)}${["","通常","やや珍しい","希少","極希少","幻影"][e.rarity]}</span>`:""}</div>
+      <div class="einfo"><div class="ename">${esc(e.display)}${e.rarity>1?` <span class="rar">★${e.rarity}</span>`:""}</div>
       <span class="bar enemy"><i style="width:${pct}%"></i></span>
       <div class="estat">HP ${e.hp}/${e.maxHP}・防御力${e.def}</div>
       <div class="tele">${e.hp<=0?"鎮まった":t?teleText(run,t):""}</div></div></div>`; }).join("");
   const chain = run.kiraDone?"キラコメ済":`キラコメ${run.chain.stage}/3 次:${["挨拶","作戦","感謝"][run.chain.stage]}`;
-  const last = (run.log||[]).slice(-3);
-  return `<section class="battle">
-    <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="challenge"?"特別チャレンジ":run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><span>コメント連携${run.B}・${chain}</span></div>
+  const last = (run.log||[]).slice(-1);
+  return `<section class="battle battle-live"><div class="battle-inner">
+    <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="challenge"?"特別チャレンジ":run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><button class="battle-detail" data-a="battleInspect" data-v="rules">詳細・ルール ▶</button><span class="chain-status">連携${run.B}・${chain}</span></div>
     <div class="gauge" aria-label="エール${run.A}"><span>エール</span><span class="bar ale"><i style="width:${run.A}%"></i></span><b>${run.A}</b></div>
     ${pocoBattleStatus(run)}${battleSupportPanel(run)}
     ${cueText(run)}
     <div class="enemies"><canvas class="stagebg" width="160" height="64" aria-hidden="true"></canvas>${enemies}</div>
     <div class="party">${run.party.map((m,i)=>partyCard(m,i,run)).join("")}</div>
     ${renderCommand(run)}
-    <button class="log" data-a="openSheet" data-k="battleLog" aria-live="polite" aria-label="戦闘ログ（タップで直近6件）">${last.map(l=>`<span>${esc(l)}</span>`).join("")}</button>
-  </section>`;
+    <button class="log" data-a="battleInspect" data-v="log" aria-live="polite" aria-label="戦闘ログ（タップで直近6件）">${last.map(l=>`<span>${esc(l)}</span>`).join("")}</button>
+  </div></section>`;
 }
-function battleSupportPanel(run){const stage=run.chain.stage,bonus=run.support==='PR06'?15:10,ready=run.party.filter(m=>m.hp>0).length;const notice=run.supportNotice;return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||run.state!=='input'||G.auto?'disabled':''}>回復・復活・防護<br>エール40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||run.state!=='input'||G.auto?'disabled':''}>敵全体を攻撃<br>エール80</button></div><p class="small">${run.A<40?`全員回復まであと${40-run.A}`:run.A<80?`全員回復が使えます／全体攻撃まであと${80-run.A}`:'全員回復・全体攻撃が使えます'}（エール上限100）</p><p class="small">コメント連携：${run.B?`次の通常攻撃・一部の単体技に基本＋${run.B*run.V}ダメージ`:'応援コメントで次の攻撃を強化'}</p><p class="small">キラコメ：${run.kiraDone?'この戦闘で発動済み':`挨拶 → 作戦 → 感謝　${stage}/3・次は${['挨拶','別の人の作戦','さらに別の人の感謝'][stage]}`}${!run.kiraDone&&ready<3?'（完成には生存者3人が必要）':''}</p>${notice?`<div class="support-notice" role="status"><b>${esc(notice.actor)}：${esc(notice.action)}</b><p class="small">エール ${notice.beforeA} → ${notice.afterA}${notice.costA?`（${notice.costA}消費）`:''}${notice.kira?`／キラコメ成功：エール追加${notice.kira.gain}・防護が増えた味方${notice.kira.protected}人`:''}</p></div>`:''}<button class="btn" data-a="openSheet" data-k="battleSupportHelp">応援・連携の効果とやり方</button></div>`;}
+function battleSupportPanel(run){return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||G.auto?'disabled':''}>回復・復活・防護 40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||G.auto?'disabled':''}>全体攻撃 80</button><button class="btn" data-a="battleInspect" data-v="support">効果 ▶</button></div><p class="support-summary">${run.B?`次の攻撃に基本＋${run.B*run.V}`:'コメントで連携強化'}／${run.A<40?`回復まで${40-run.A}`:'回復使用可'}${run.supportNotice?`／エール${run.supportNotice.beforeA}→${run.supportNotice.afterA}`:''}${run.supportNotice&&run.supportNotice.kira?`／キラコメ成功：＋${run.supportNotice.kira.gain}・防護${run.supportNotice.kira.protected}人`:''}</p></div>`;}
+function battleChoices(html){const choices=html.match(/<button\b[\s\S]*?<\/button>/g);if(!choices)return html;const sig=[G.cmd.actor,G.cmd.type].join(':');if(G.battleChoiceKey!==sig){G.battleChoiceKey=sig;G.battleChoicePage=0;}const pages=Math.ceil(choices.length/4);G.battleChoicePages=pages;const page=Math.max(0,Math.min(pages-1,G.battleChoicePage||0));G.battleChoicePage=page;return `<div class="choice-grid">${choices.slice(page*4,page*4+4).join('')}</div>${pages>1?`<div class="choice-pages"><button class="chip" data-a="battleChoicePage" data-v="${page-1}" ${page===0?'disabled':''}>◀</button><span>選択 ${page+1}/${pages}</span><button class="chip" data-a="battleChoicePage" data-v="${page+1}" ${page===pages-1?'disabled':''}>▶</button></div>`:''}`;}
+function renderBattleInspect(run){const pages=[];const add=(group,title,html)=>pages.push({group,title,blocks:endTextBlocks(html.replace(/<[^>]*>/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'),90)});
+ add('rules','戦闘ルール',autoAllowed(run)?'通常戦闘ではオートを使用できます。':'ボス戦・特別チャレンジは手動操作のみ。オート機能は使用できません。');
+ if(pocoBattleStatusFull(run))add('rules','戦闘ルール',pocoBattleStatusFull(run));if(run.cue)add('rules','ボス対処',cueText(run));
+ if(G.battlePreview)add('preview','決定前の効果',G.battlePreview);
+ add('support','応援・連携',renderBattleSupportHelp());if(run.supportNotice){const n=run.supportNotice;add('support','直前の応援効果',`${n.actor}：${n.action} エール${n.beforeA}→${n.afterA}${n.costA?`（${n.costA}消費）`:''}${n.kira?` キラコメ成功：追加エール${n.kira.gain}・防護が増えた味方${n.kira.protected}人`:''}`);}
+ for(const e of run.enemies)add('foes','敵の状態',`${e.fullName||e.name} ★${e.rarity||1} HP ${e.hp}/${e.maxHP} 防御力${e.def} ${e.hp<=0?'鎮まった':teleText(run,enemyAction(run,e))}`);
+ for(const m of run.party)add('growth','味方の状態',`${m.name} ${JOBS[m.job].name} 熟練度${m.R} HP ${m.hp}/${m.maxHP} MP ${m.c}/${m.maxC} ${m.acted?'行動済み':'未行動'} 防護${m.ward||0} ${m.guard?'ガード中':''}`);
+ add('log','直近の戦闘ログ',(run.log||[]).slice(-6).join('／'));
+ return renderEndFrame('battle-info:'+run.seq+':'+run.turn,pages,'戦闘の詳細','', 'battleInspectClose','戦闘に戻る');}
+function fitBattleView(){const view=document.querySelector('.battle-live'),inner=view&&view.querySelector('.battle-inner');if(!inner||!view.clientHeight)return;inner.style.zoom='1';for(let i=0;i<5;i++){const zoom=Number(inner.style.zoom)||1,total=inner.scrollHeight*zoom;if(total<=view.clientHeight+1)break;inner.style.zoom=String(zoom*view.clientHeight/total*0.99);}}
 function renderBattleSupportHelp(){return `<p class="small">ここで説明する効果・数値・連携順序は、このゲーム独自のルールです。</p><h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活・生存者へ防護1）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
 
 function skillNeeds(job){ return ({J01:"enemy",J02:"line",J03:"ally",J04:"mode",J05:"enemy",J06:"mode",J07:"none",J08:"ally",J09:"enemy",J10:"none",J11:"none",J12:"none",J13:"ally",J14:"none",J15:"enemy",J16:"enemy",J17:"none",J18:"ally",J19:"enemy",J20:"none",J21:"enemy",J22:"allyOther"})[job]; }
 function renderCommand(run){
   if(run.state==="won") return `<div class="win cmd"><p>勝利！ ノイズ体をすべて鎮めた。</p><button class="btn primary wide" data-a="toResult">結果を見る</button></div>`;
   if(run.state==="lost") return `<div class="win cmd"><p class="small">${run.turnLimit&&run.turn>run.turnLimit?"制限ターンを超えました。":"全員が戦闘不能。"}この戦闘の報酬は0。${run.kind==="challenge"?"特別挑戦の参加料は戻りませんが、追加のゴールド損失はありません。":"所持ゴールドの半分を失い、"}全員のHPとMPを回復して安全な場所へ戻ります。受注・討伐数・経験値・熟練度・所持品は保持。</p><button class="btn primary wide" data-a="defeatReturn">安全な場所へ戻る</button></div>`;
-  if(G.auto){
+  if(G.auto&&autoAllowed(run)){
     const al2=run.party.filter(m=>m.hp>0&&!m.acted);
     const tap=autoMode()==="tap", wait=tap&&G.autoWait;
     const lines=(run.log||[]).slice(-3);
@@ -4022,7 +4079,7 @@ function renderCommand(run){
   const a=run.party[c.actor]; if(!a) return "";
   const S=a.S;
   const entries=[["attack","アタック"],["comment","応援コメント"],["skill",JOBS[a.job].skill],["item","道具"],["guard","ガード"],["rest","ひと息つく"],["other","その他"]];
-  const chip=(k,v,on,label)=>`<button class="chip ${on?"on":""}" data-a="cmdSet" data-k="${k}" data-v="${v}" aria-pressed="${on}">${on?"▶":""}${label}</button>`;
+  const chip=(k,v,on,label)=>`<button class="chip ${on?"on":""}" data-a="cmdSet" data-k="${k}" data-v="${v}" aria-pressed="${on}">${on?"▶":""}${k==="target"?"敵：":k==="ally"?"味方：":""}${label}</button>`;
   const enemyPick=()=>`<span class="chiplabel">対象</span>`+run.enemies.filter(e=>e.hp>0).map(e=>chip("target",e.slot,c.target===e.slot,esc(e.display))).join("");
   const allyPick=(other)=>`<span class="chiplabel">対象</span>`+run.party.filter(m=>m.hp>0&&(!other||m!==a)).map(m=>chip("ally",m.pos,c.ally===m.pos,esc(m.name))).join("");
   const linePick=()=>["greet","plan","thanks"].map(l=>chip("line",l,c.line===l,LINE_NAMES[l])).join("");
@@ -4067,10 +4124,11 @@ function renderCommand(run){
   if(act){ const p=planAction(run,c.actor,act); ok=p.ok; prev = (info?`<span class="pinfo">${esc(info)}</span>`:"") + (p.ok? previewText(run,a,p) : `<span class="warn">${esc(p.reason)}</span>`); }
   else if(c.type) prev += `<span class="hint">対象・台詞を選んでください</span>`;
   else prev = `<span class="hint">${esc(a.name)}の行動を選んでください（未行動${al.length}人）</span>`;
+  G.battlePreview=prev;
   return `<div class="win cmd">
     <div class="cmdgrid">${entries.map(([k,n])=>`<button class="btn ${c.type===k?"on":""}" data-a="cmdType" data-v="${k}">${c.type===k?"▶":""}${esc(n)}</button>`).join("")}</div>
-    ${sub?`<div class="chips">${sub}</div>`:""}
-    <div class="confirmrow"><div class="preview">${prev}</div>${G.st.settings.dock===false?`<button class="btn auto" data-a="autoOn" ${G.readOnly?"disabled":""}>オート</button>`:""}<button class="btn primary" data-a="confirmAct" ${act&&ok&&!G.readOnly?"":"disabled"}>確定</button></div></div>`;
+    ${sub?`<div class="chips">${battleChoices(sub)}</div>`:""}
+    <div class="confirmrow"><button class="preview" data-a="battleInspect" data-v="preview" aria-label="行動予測の詳細">${prev}</button>${G.st.settings.dock===false&&autoAllowed(run)?`<button class="btn auto" data-a="autoOn" ${G.readOnly?"disabled":""}>オート</button>`:""}<button class="btn primary" data-a="confirmAct" ${act&&ok&&!G.readOnly?"":"disabled"}>確定</button></div></div>`;
 }
 function buildAct(a){
   const c=G.cmd; if(!c.type) return null;
@@ -4172,9 +4230,10 @@ function confirmAct(forced){
 function autoStep(){
   clearTimeout(G.autoT);
   const st=G.st, run=st&&st.run;
+  if(run&&!autoAllowed(run)){enforceManualBattle(run);render();return;}
   if(!G.auto || G.screen!=="battle" || !run) { G.auto=false; return; }
   if(run.state!=="input"){ G.auto=false; G.autoLast=null; render(); return; }
-  if(G.sheet||G.dlg||document.hidden){ G.autoT=setTimeout(autoStep,400); return; }
+  if(G.sheet||G.dlg||G.battleInspect||document.hidden){ G.autoT=setTimeout(autoStep,400); return; }
   const pick=aiChoose(run);
   if(!pick){ G.auto=false; render(); return toast("オートで選べる行動がありません。"); }
   G.autoLast=`${pick.name}：${pick.label}`;
@@ -4197,7 +4256,7 @@ function toResult(){
   if(res.levelAfter>res.levelBefore) SND.jingle("levelup","victory"); else if(SND.current!=="victory") SND.play("victory");
 }
 /* 戦闘終了・結果：画面内のページ切替で全項目を確認する。 */
-const END_GROUPS={summary:'概要',growth:'成長',loot:'入手',challenge:'課題',notes:'通知',foes:'敵',log:'ログ'};
+const END_GROUPS={rules:'ルール',support:'応援',preview:'予測',summary:'概要',growth:'成長',loot:'入手',challenge:'課題',notes:'通知',foes:'敵',log:'ログ'};
 function endTextBlocks(text,limit=84){const gs=graphemes(String(text||'')),out=[];for(let i=0;i<gs.length;i+=limit)out.push(`<p>${esc(gs.slice(i,i+limit).join(''))}</p>`);return out.length?out:['<p>記録なし</p>'];}
 function endMemberBlock(st,cid,hp,maxHP,c,maxMP,rank,jpLabel=''){return `<div class="end-member"><b>${esc(charName(st,cid))}</b><span>HP ${hp}/${maxHP}</span><span>MP ${c}/${maxMP}</span>${rank!=null?`<span class="end-jp">熟練${rank}${jpLabel}</span>`:''}</div>`;}
 function endSizeKey(){return `${window.innerWidth||390}:${window.innerHeight||844}:${typeof VFIT!=='undefined'?VFIT.value:0}`;}
@@ -4323,7 +4382,7 @@ function renderSheet(){
     case "settings": return sheetWrap("設定と保存", renderSettings());
     case "share": return sheetWrap("友だちに教える", renderShare());
     case "nearby": { const near=nearbyObjects(); return sheetWrap("近くを調べる", near.length? `<div class="stack">${near.map(o=>`<button class="btn" data-a="interactId" data-v="${o.id}">${facBadge(o)}${esc(o.label)}</button>`).join("")}</div>` : `<p>近くに調べられるものはありません。道しるべから目的地を選べます。</p>`); }
-    case "guide": { const m=MAPS[st.mapId]; return sheetWrap("道しるべ", `<p class="small">選ぶと、その場所まで実際に歩きます（途中の遭遇エリアでは抽選があります）。</p><div class="stack">${m.objects.filter(o=>o.type!=="tower").map(o=>{ const a=o.area?AREAS[o.area]:null; return `<button class="btn" data-a="guideTo" data-v="${o.id}">${facBadge(o)}${esc(o.label)}${a?`（推奨レベル${a.q}）`:""}</button>`; }).join("")}</div>`); }
+    case "guide": { const m=MAPS[st.mapId]; return sheetWrap("道しるべ", `<p class="small">選ぶと、その場所まで実際に歩きます（途中の遭遇エリアでは抽選があります）。挑戦目安は低めの攻略目安、適正は育成・装備・熟練技を含む推奨です。入場のレベル制限はありません。</p><div class="stack">${m.objects.filter(o=>o.type!=="tower").map(o=>{ const a=o.area?AREAS[o.area]:null; return `<button class="btn" data-a="guideTo" data-v="${o.id}">${facBadge(o)}${esc(o.label)}${a?`（挑戦目安Lv${areaRequiredLevel(a.q)}・適正Lv${areaRecommendedLevel(a.q)}）`:""}</button>`; }).join("")}</div>`); }
     case "quests": return sheetWrap("イベント・依頼リスト", renderQuests());
     case "station": return sheetWrap("新幹線の駅", renderStation());
     case "railConfirm": {const fare=railFare(curHub(),d.to);return sheetWrap("乗車の確認",`<p>${esc(HUBS[curHub()].name)} → ${esc(HUBS[d.to].name)}</p><p>路線距離${railDistance(curHub(),d.to)}／運賃<b>${fare}ゴールド</b>・旅程枠1</p><p>所持金 ${st.gold} → ${st.gold-fare}ゴールド</p><div class="stack"><button class="btn primary" data-a="railBoard" data-v="${d.to}" ${st.gold<fare||st.slots<1?"disabled":""}>運賃を払って移動する</button><button class="btn" data-a="openSheet" data-k="station">駅に戻る</button></div>`);}
@@ -4348,7 +4407,7 @@ function renderSheet(){
     case "dex": return sheetWrap("ノイズ図鑑", renderDex());
     case "shop": return sheetWrap(SHOPS[d.shop].name, renderShop());
     case "moe": return sheetWrap("もえ", renderMoe());
-    case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil((x+ENEMY_TUNE.bossAdd)*df.atk*ps.atk*ENEMY_TUNE.bossAtk),counter={guard:"ガード",comment:"応援コメント",damage:"攻撃"}[b.cue]||"ガード"; return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${bossRecommendedLevel(b.q)}。現在レベル${levelOf(st.xp)}。</p><p class="small">目安は強化した武器・防具、MP回復の道具、攻撃と回復の役割分担を含む推奨です。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人が${counter}</b>すると、直後の強攻撃が20%減り、エール＋12。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。通常攻撃を35％軽減するノイズシールドはエール40以上かキラコメ完成で解除でき、職業技は常に軽減を受けません。6ターン目以降、3ターンごとに攻撃が10％ずつ上がります（最大50％）。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
+    case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil((x+ENEMY_TUNE.bossAdd)*df.atk*ps.atk*ENEMY_TUNE.bossAtk),counter={guard:"ガード",comment:"応援コメント",damage:"攻撃"}[b.cue]||"ガード"; return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${bossRecommendedLevel(b.q)}。現在レベル${levelOf(st.xp)}。</p><p class="small warn">ボス戦は手動操作のみ。オートは使用できません。</p><p class="small">目安は強化した武器・防具、MP回復の道具、攻撃と回復の役割分担を含む推奨です。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人が${counter}</b>すると、直後の強攻撃が20%減り、エール＋12。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。通常攻撃を35％軽減するノイズシールドはエール40以上かキラコメ完成で解除でき、職業技は常に軽減を受けません。6ターン目以降、3ターンごとに攻撃が10％ずつ上がります（最大50％）。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
     case "streamSetup": return sheetWrap("配信の準備", renderStreamSetup());
     case "battleSupportHelp": return sheetWrap("エール応援・キラコメ連携",renderBattleSupportHelp());
     case "battleLog": return sheetWrap("戦闘ログ", `<div class="stack">${((G.st.run&&G.st.run.log)||[]).slice(-6).map(l=>`<p>${esc(l)}</p>`).join("")||"<p>まだありません。</p>"}</div>`);
@@ -4378,7 +4437,7 @@ function renderSettings(){
     ${setCard("BGM・効果音", snd?"ON":"OFF（消音）", [{label:"ON",on:snd,attrs:`data-a="toggleSound"`},{label:"OFF",sub:"消音",on:!snd,attrs:`data-a="toggleSound"`}], snd?"音楽と効果音が鳴ります。":"音は鳴りません。文字と画面表示だけで遊べます。")}
     ${setCard("演出を減らす", rm?"ON":"OFF", [{label:"OFF",sub:"通常",on:!rm,attrs:`data-a="setOpt" data-k="reduceMotion" data-v="false"`},{label:"ON",sub:"控えめ",on:rm,attrs:`data-a="setOpt" data-k="reduceMotion" data-v="true"`}], rm?"画面の揺れ・点滅・アニメーションを止め、切り替えを速くします。":"被弾時の揺れや点滅などの演出を表示します。")}
     <h3 class="label setgroup">操作</h3>
-    ${setCard("戦闘オートの進め方", am==="tap"?"タップで次へ":"自動で次へ", [{label:"自動で次へ",sub:"一定時間で進む",on:am==="timer",attrs:`data-a="autoMode"`},{label:"タップで次へ",sub:"1手ずつ止まる",on:am==="tap",attrs:`data-a="autoMode"`}], am==="tap"?"1手ごとに止まります。メッセージ欄・次へ・Aボタンで進みます。":"約0.65秒ごとに自動で次の行動へ進みます。", "戦闘中もオート画面上部の「進め方」で切り替えられます。")}
+    ${setCard("戦闘オートの進め方", am==="tap"?"タップで次へ":"自動で次へ", [{label:"自動で次へ",sub:"一定時間で進む",on:am==="timer",attrs:`data-a="autoMode"`},{label:"タップで次へ",sub:"1手ずつ止まる",on:am==="tap",attrs:`data-a="autoMode"`}], am==="tap"?"1手ごとに止まります。メッセージ欄・次へ・Aボタンで進みます。":"約0.65秒ごとに自動で次の行動へ進みます。", "通常戦闘のみ使用できます。ボス戦・特別チャレンジは手動操作のみです。戦闘中もオート画面上部で切替できます。")}
     ${setCard("移動の速さ", s.moveSpeed==="fast"?"速い":"ふつう", [{label:"ふつう",sub:"1マス0.16秒",on:s.moveSpeed!=="fast",attrs:`data-a="setOpt" data-k="moveSpeed" data-v="normal"`},{label:"速い",sub:"1マス0.11秒",on:s.moveSpeed==="fast",attrs:`data-a="setOpt" data-k="moveSpeed" data-v="fast"`}], s.moveSpeed==="fast"?"町や草むらをきびきび歩きます。遭遇の確率は同じです。":"標準の歩く速さです。", "スティックを斜めに倒すと、壁に当たった時にもう一方の向きへすべって進みます。")}
     ${setCard("ジョイコントローラー", dock?"表示する":"表示しない", [{label:"表示する",on:dock,attrs:`data-a="setOpt" data-k="dock" data-v="true"`},{label:"表示しない",sub:"タップのみ",on:!dock,attrs:`data-a="setOpt" data-k="dock" data-v="false"`}], dock?"画面下にスティックとA・Bボタンを出します。ゲームパッド・キーボードも使えます。":"画面下の操作帯を隠し、タップだけで操作します。")}
     ${setCard("スティックの位置", ps==="right"?"右（A・Bは左）":"左（A・Bは右）", [{label:"右",sub:padPic("right"),on:ps==="right",attrs:`data-a="setPad" data-v="right"`},{label:"左",sub:padPic("left"),on:ps==="left",attrs:`data-a="setPad" data-v="left"`}], ps==="right"?"スティックを右手、A・Bボタンを左手で操作します（標準）。":"スティックを左手、A・Bボタンを右手で操作します。")}
@@ -4544,10 +4603,10 @@ function renderDex(){
   const st=G.st; const d=G.sheetData; const area=d.area||"KY01-A1"; const page=d.page||0;
   if(d.detail){
     const [a,i]=d.detail.split("|"); const e=enemyDef(a,+i); const seen=st.seen[e.id];
-    const q=e.q,rb=(e.rarity||1)-1; const steps=e.cycle.map(([t,p])=>t==="c"?"ため":`${t==="s"?"単体":"全体"}${Math.ceil((p*ENEMY_TUNE.atkMul+ENEMY_TUNE.atkAdd+Math.floor(4*(q-1)/5))*(1+ENEMY_TUNE.rarAtk*rb))}`).join(" → ");
+    const q=e.q,stats=fieldEnemyStats(e,q); const steps=stats.cycle.map(({t,p})=>t==="c"?"ため":`${t==="s"?"単体":"全体"}${p}`).join(" → ");
     return `<div class="who"><canvas class="sprite-lg" data-dex="${a}|${i}" width="32" height="32" aria-hidden="true"></canvas><div><b>${esc(e.name)}</b><br><span class="small">${e.id}</span></div></div>
       <dl class="kv"><dt>種族／属性／種類</dt><dd>${esc(e.species)}／${esc(e.attr)}／${esc(e.type)}</dd><dt>レア度</dt><dd>${"★".repeat(e.rarity)} ${["","通常","やや珍しい","希少","極希少","幻影"][e.rarity]}</dd>
-      <dt>エリア</dt><dd>${esc(AREAS[a].name)}・推奨レベル${q}</dd><dt>HP／防御力</dt><dd>${Math.ceil((e.baseHP+12*(q-1))*ENEMY_TUNE.hp*(1+ENEMY_TUNE.rarHp*rb))}／${e.baseDEF+Math.floor((q-1)/3)+ENEMY_TUNE.def+(rb>=2?1:0)}（標準・通常状態）</dd>
+      <dt>エリア</dt><dd>${esc(AREAS[a].name)}・挑戦目安Lv${areaRequiredLevel(q)}・適正Lv${areaRecommendedLevel(q)}</dd><dt>HP／防御力</dt><dd>${stats.hp}／${stats.def}（標準・通常状態）</dd>
       <dt>行動周期</dt><dd>${steps}</dd><dt>対処</dt><dd>${esc(e.counter)}</dd>
       <dt>1枠の出現率</dt><dd>${(e.weight/100).toFixed(2)}%</dd><dt>歩行遭遇率</dt><dd>危険タイル1歩ごとに1/24</dd>
       <dt>記録</dt><dd>${seen?"遭遇済み":"未遭遇"}・討伐${st.killCount[e.id]||0}</dd></dl>
@@ -4755,10 +4814,13 @@ const ACT = {
   abandonQuest(el){ const st=G.st, id=el.dataset.v; st.quests[id]="available"; st.qprog[id]=0; st.activeQuest=null; G.sheet="quests";G.sheetData={};commit(); render(); toast("依頼を放棄した。受注費は戻りません。"); },
   bossGo(el){ startBattle(createBossRun(G.st, el.dataset.v)); },
   pickActor(el){ const i=+el.dataset.i; const m=G.st.run.party[i]; if(m.hp<=0||m.acted) return; G.cmd={actor:i}; render(); },
+  battleChoicePage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0&&n<G.battleChoicePages){G.battleChoicePage=n;render();}},
+  battleInspect(el){G.battleReturnCursor=G.cursorSig;G.battleInspect=true;G.endPager=null;render();const group=el.dataset.v;if(G.endPager){const i=G.endPager.pages.findIndex(p=>p.group===group);if(i>=0){G.endPager.index=i;render();}}},
+  battleInspectClose(){G.battleInspect=false;G.endPager=null;G.cursorSig=G.battleReturnCursor||null;render();},
   cmdType(el){ const t=el.dataset.v; G.cmd={actor:G.cmd.actor, type:t}; render(); },
   cmdSet(el){ const k=el.dataset.k; let v=el.dataset.v; if(k==="target"||k==="ally") v=+v; G.cmd[k]=v; if(k==="mode"||k==="item"||k==="skill"){ delete G.cmd.ally; delete G.cmd.target; } render(); },
   confirmAct(el){ el.disabled=true; confirmAct(); },
-  autoOn(){ const run=G.st.run; if(!run||run.state!=="input") return; G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); G.autoT=setTimeout(autoStep,300); },
+  autoOn(){ const run=G.st.run; if(!run||run.state!=="input") return; if(!autoAllowed(run)){enforceManualBattle(run);render();return toast("ボス戦・特別チャレンジは手動操作のみです。");} G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); G.autoT=setTimeout(autoStep,300); },
   autoNext(){ if(!G.auto||!G.autoWait) return; G.autoWait=false; G.cursorSig="autoOff||||||"; SND.sfx("ok"); autoStep(); },
   autoMode(){ const st=G.st; const nv=autoMode()==="tap"?"timer":"tap"; if(st){ st.settings.autoAdvance=nv; commit(); } else { G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}; G.tmpSettings.autoAdvance=nv; }
     try{ localStorage.setItem("tlr-kyushu-autoadv",nv); }catch(e){}
@@ -4866,7 +4928,7 @@ document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
-  if(G.readOnly && !["openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
+  if(G.readOnly && !["openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
@@ -4889,7 +4951,7 @@ const VFIT=(()=>{
   function cur(){ if(preview!=null) return preview; const m=manual(); return m!=null?m:autoCut(); }
   function apply(){ let cut=cur();
     cut=Math.max(0,Math.min(Math.round(cut),Math.round(window.innerHeight*0.4)));
-    if(Math.abs(cut-last)<2) return; last=cut; document.documentElement.style.setProperty("--vcut",cut+"px");requestAnimationFrame(()=>fitEndView());
+    if(Math.abs(cut-last)<2) return; last=cut; document.documentElement.style.setProperty("--vcut",cut+"px");requestAnimationFrame(()=>{fitEndView();fitBattleView();});
     window.dispatchEvent(new Event("resize")); }
   function calibrate(first){
     if(document.getElementById("vfitCal")) return;
@@ -4924,9 +4986,9 @@ const VFIT=(()=>{
   return { apply, calibrate, get mode(){ const m=manual(); return m==null?"auto":String(m); }, get value(){ return Math.round(cur()); } };
 })();
 document.addEventListener("visibilitychange",()=>{ if(document.hidden){ G.walk.path=G.walk.path.slice(0,1); if(G.st&&G.screen==="explore") commit(); SND.suspend(); } else { SND.resume(); if(G.screen==="explore") startLoop(); } });
-window.addEventListener("resize",()=>{if(G.screen==="result"||G.screen==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input"){clearTimeout(G.endResize);G.endResize=setTimeout(()=>render(),100);} if(G.screen==="explore"){ G.walk.path=[]; clearTimeout(G.rsz); G.rsz=setTimeout(()=>{ if(G.screen==="explore") mountCanvas(); },120); } });
+window.addEventListener("resize",()=>{if(G.screen==="result"||G.screen==="battle"&&G.st&&G.st.run){clearTimeout(G.endResize);G.endResize=setTimeout(()=>render(),100);} if(G.screen==="explore"){ G.walk.path=[]; clearTimeout(G.rsz); G.rsz=setTimeout(()=>{ if(G.screen==="explore") mountCanvas(); },120); } });
 
-if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitEndView()).catch(()=>{});
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitEndView();fitBattleView();}).catch(()=>{});
 
 async function boot(){
   acquireLock(); PAD.mount(); SND.play("title");
@@ -5065,6 +5127,7 @@ const PAD = (()=>{
   }
   function pressB(){
     if(G.dlg){ ACT.dlgSkip(); return; }
+    if(G.battleInspect&&G.screen==="battle"){ACT.battleInspectClose();return;}
     if(G.auto && !G.sheet && G.screen==="battle"){ ACT.autoOff(); return; }
     if(G.sheet){ const back=document.querySelector(".overlay [data-a=closeSheet]"); if(back) back.click(); return; }
     if(G.screen==="battle"&&G.auto){ ACT.autoOff(); return; }
