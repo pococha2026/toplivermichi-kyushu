@@ -553,7 +553,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.22";
+const GAME_VERSION = "7.23";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -628,23 +628,23 @@ const JOB_IDS = Object.keys(JOBS);
 const JOB_TRAITS = {
   J01:{name:"安全運転",     desc:"毎ターンのはじめに、自分に防護1。"},
   J02:{name:"自動化スクリプト",desc:"戦闘開始時からコメント連携4。キラコメ連携が進むたびエール＋4。"},
-  J03:{name:"注目の的",     desc:"自分がガード中は、敵の単体攻撃が自分に集まる。自分が与えた防護の相手はMP＋1。"},
-  J04:{name:"目利き",       desc:"自分が使う回復・蘇生の道具の効果1.25倍（切上げ。ポーチと重なる）。"},
+  J03:{name:"注目の的",     desc:"自分がガード中は、敵の単体攻撃が自分に集まる。自分以外で防護が実際に増えた味方は、それぞれMP＋1（1行動につき各1回）。"},
+  J04:{name:"目利き",       desc:"戦闘中、自分が使う回復・蘇生の道具の効果1.25倍（切上げ。ポーチと重なる）。"},
   J05:{name:"早打ち",       desc:"アタックの追加ダメージ＋3、得るエール＋4。"},
-  J06:{name:"一発逆転",     desc:"自分のHPが30%以下の時、攻撃の追加ダメージ＋8。"},
+  J06:{name:"一発逆転",     desc:"自分のHPが30%以下の時、通常攻撃・対応する単体技の追加ダメージ＋8。"},
   J07:{name:"省エネ",       desc:"ひと息つくで、MPに加えてHPも(6＋技能強化)×成長係数回復。"},
   J08:{name:"配信慣れ",     desc:"戦闘開始時のエール＋10。"},
   J09:{name:"5S点検",       desc:"自分がガードすると、味方全員に防護1。"},
-  J10:{name:"バズり",       desc:"自分の行動で敵を倒すたび、エール＋8。"},
-  J11:{name:"拡散力",       desc:"自分の行動で得るエール1.3倍（切上げ）。"},
+  J10:{name:"バズり",       desc:"道具以外の行動で敵を倒すたび、固定でエール＋8（上限100）。"},
+  J11:{name:"拡散力",       desc:"攻撃・コメント・技能の基礎獲得エール1.3倍（切上げ）。撃破・キラコメ・対処などの固定ボーナスは別。"},
   J12:{name:"やりくり上手", desc:"毎ターンのはじめに、HPの割合がいちばん低い味方のHPを(3＋技能強化)×成長係数回復。"},
-  J13:{name:"トリアージ",   desc:"HP30%以下の味方への自分の回復量1.5倍（切上げ）。"},
+  J13:{name:"トリアージ",   desc:"戦闘中、HP30%以下の生存者への自分の技能・道具によるHP回復量1.5倍（切上げ）。"},
   J14:{name:"まかない",     desc:"毎ターンのはじめに、自分以外でMPがいちばん低い味方のMP＋1。"},
-  J15:{name:"通電チェック", desc:"自分の単体攻撃で敵を倒すと、自分のMP＋2。"},
+  J15:{name:"通電チェック", desc:"道具以外の単体攻撃で敵を倒すと、自分のMP＋2（最大MPまで）。"},
   J16:{name:"詰まり解消",   desc:"自分の攻撃は、敵の防御力を半分（切捨て）にして計算する。"},
   J17:{name:"耐震設計",     desc:"自分が戦えるあいだ、味方全員が全体攻撃から受けるダメージ−成長係数×2。"},
-  J18:{name:"寄り添い",     desc:"自分が回復した味方に防護2。"},
-  J19:{name:"シャッターチャンス",desc:"「ため（攻撃なし）」予告中の敵への攻撃の追加ダメージ＋6。"},
+  J18:{name:"寄り添い",     desc:"戦闘中、自分の技能・道具でHPを実際に回復した生存者に防護2。"},
+  J19:{name:"シャッターチャンス",desc:"「ため（攻撃なし）」予告中の敵へ、通常攻撃・対応する単体技の追加ダメージ＋6。"},
   J20:{name:"道案内",       desc:"戦闘開始時、味方全員に防護2、エール＋6。"},
   J21:{name:"決定的瞬間",   desc:"自分の攻撃では、コメント連携の上乗せが1.5倍（切上げ）。"},
   J22:{name:"全力応援",     desc:"応援コメントのエール＋6。"}
@@ -1759,7 +1759,7 @@ function planExtraSkill(run,a,act,p,h){
  if(((a.skillReady||{})[sk.id]||0)>run.turn){p.ok=false;p.reason='再使用まで'+(a.skillReady[sk.id]-run.turn)+'ターンです。';return;}
  if(!h.payC(sk.cost))return;const{S,V,L}=h,k=sk.power;
  if(['strike','pierce'].includes(sk.effect)){if(!h.attackSingle(Math.floor((12+2*S)*k),{ignoreDef:sk.effect==='pierce'})){p.ok=false;p.reason='対象の敵を選んでください。';return;}}
- if(sk.effect==='all'){for(const e of h.en){const d=Math.max(1,Math.floor(((a.str||10)*0.65+(8+S)*V)*k)-e.def);p.dmg.push({slot:e.slot,amt:Math.min(d,e.hp),raw:d});}p.all=true;p.valid=true;p.aGain+=5;}
+ if(sk.effect==='all'){for(const e of h.en){const d=Math.max(1,Math.floor(((a.str||10)*0.65+(8+S)*V)*k)-effectiveEnemyDefense(a,e));p.dmg.push({slot:e.slot,amt:Math.min(d,e.hp),raw:d});}p.all=true;p.valid=true;p.aGain+=5;}
  if(sk.effect==='heal'||sk.effect==='ward'||sk.effect==='mp'){const t=h.needAlly(sk.effect==='mp');if(!t){p.ok=false;p.reason=sk.effect==='mp'?'自分以外の味方を選んでください。':'対象の味方を選んでください。';return;}if(sk.effect==='heal')h.heal(t,Math.floor(((18+2*S)*V+L)*k));if(sk.effect==='ward')h.addWard(t,Math.floor(5*k));if(sk.effect==='mp')h.addC(t,Math.ceil((8+Math.floor(L/10))*k));}
  if(sk.effect==='healAll')for(const t of h.al)h.heal(t,Math.floor(((10+S)*V+L/2)*k));
  if(sk.effect==='wardAll')for(const t of h.al)h.addWard(t,Math.floor(4*k));
@@ -2000,7 +2000,7 @@ function newGearDrop(st,run,res){if(!['field','boss'].includes(run.kind))return;
 }
 function gearRematchList(st,hub){return Object.entries(BOSSES).filter(([id,b])=>b.hub===hub&&b.specialStage==null&&st.bossDefeated[id]&&!id.startsWith('CB'));}
 
-function battleEntryReason(st){if(!st||st!==G.st||G.readOnly)return 'このタブでは戦闘を開始できません。';if(st.careerSession)return '活動準備を終えてから移動・戦闘へ進んでください。';if(G.screen!=='explore'||st.run||st.stream||G.dlg)return '戦闘・配信・会話を終えてから挑戦してください。';return '';}
+function battleEntryReason(st){if(!st||st!==G.st||G.readOnly)return 'このタブでは戦闘を開始できません。';if(st.careerSession)return '活動準備を終えてから移動・戦闘へ進んでください。';if(st.party.every(c=>st.vitals?.[c]&&st.vitals[c].hp<=0))return '同行者が全員戦闘不能です。道具や宿屋で復活させてから挑みましょう。';if(G.screen!=='explore'||st.run||st.stream||G.dlg)return '戦闘・配信・会話を終えてから挑戦してください。';return '';}
 function startRegionalBoss(id){const st=G.st;if(battleEntryReason(st))return false;if(mainPropGate(st,id))return false;if(id==='NB607'&&nationalFinalReason(st)){openSheet('careerTour');return false;}const b=BOSSES[id],qid=Object.keys(QUESTS).find(k=>QUESTS[k].boss===id);if(battleEntryReason(st)||!b||b.specialStage!=null||st.mapId!==b.hub||st.bossDefeated[id]||!qid||st.quests[qid]!=='bossReady'){toast('この地域の本編依頼とボスの挑戦条件を確認してください。');return false;}startBattle(createBossRun(st,id));return true;}
 
 function gearRematch(st,id){const b=BOSSES[id],fee=b?30+5*b.q:0;if(battleEntryReason(st)||!b||!isSafe()||streamPending()||!gearRematchList(st,curHub()).some(([bid])=>bid===id)||st.gold<fee)return false;const run=createBossRun(st,id);run.rematch=true;st.gold-=fee;startBattle(run);return true;}
@@ -2472,7 +2472,7 @@ function characterProfileHtml(st,cid){const a=CHARACTER_ARCS[cid],r=characterRec
 function renderCharacterStories(){const st=G.st,cid=st.roster.includes(G.sheetData.cid)?G.sheetData.cid:st.roster[0],a=CHARACTER_ARCS[cid],r=characterRecord(st,cid),locked=characterStoryActionReason(st),relation=relationshipReason(st);return `<p>仲間一人ひとりの物語。固有特性は加入時から、必殺技は第1話で解放。恋愛と相棒の選択による戦闘能力の差はありません。</p><div class="opts">${st.roster.map(c=>`<button class="btn ${c===cid?'on':''}" data-a="characterStoryOpen" data-c="${c}">${esc(charName(st,c))} ${characterRecord(st,c).seen}/4</button>`).join('')}</div><h3 class="label">${esc(charName(st,cid))}の背景</h3><p>${esc(characterText(st,a.background))}</p><dl class="kv"><dt>${cid==='hero'?'自身の課題':'主人公との関係'}</dt><dd>${esc(characterText(st,a.hero))}</dd><dt>${cid==='moe'?'自身の願い':'ヒロインとの関係'}</dt><dd>${esc(characterText(st,a.heroine))}</dd><dt>固有特性</dt><dd>${esc(a.trait)}：${esc(a.effect)}</dd><dt>必殺技</dt><dd>${esc(a.ultimate)}：${esc(a.desc)}</dd><dt>同行勝利</dt><dd>${r.wins}回／物語 ${r.seen}/4話${r.seen===4?'／称号「'+esc(a.title)+'」':''}</dd></dl><p class="small">通常戦・地域ボスへの勝利と、特別チャレンジの初回課題達成で加算。戦闘の適正Lvが本人Lv−20以上の時のみ。控え・敗北・撤退・報酬なしの練習は加算されません。第2話3勝／第3話8勝／第4話15勝＋各話の本編条件。続きは安全地帯で読めます。</p>${locked?'<p class="warn">'+esc(locked)+'</p>':''}<div class="stack">${CHARACTER_EPISODES[cid].map(([title],i)=>{const reason=characterStoryReason(st,cid,i+1);return `<section class="setcard"><b>第${i+1}話 ${esc(title)}</b><p class="small">${i<r.seen?'✓ 読了':esc(reason||'読むことができます')}</p><button class="btn primary" data-a="characterEpisode" data-c="${cid}" data-v="${i+1}" ${reason||locked?'disabled':''}>${i<r.seen?'読み返す':'この話を読む'}</button></section>`;}).join('')}</div><section class="setcard"><h3 class="label">主人公とヒロインの約束</h3><p>${st.relationshipChoice==='romance'?'恋人として、互いの夢を尊重する約束を交わしています。':st.relationshipChoice==='partner'?'かけがえのない旅の相棒として歩いています。':'旅の中で、少しずつ気持ちを確かめ合っています。'}</p><p class="small">${esc(relation||'物語の節目とエンディングの会話に反映します。選び直すこともできます。')}</p><div class="stack"><button class="btn" data-a="relationshipChoose" data-v="romance" ${relation?'disabled':''}>恋人として隣にいたいと伝える</button><button class="btn" data-a="relationshipChoose" data-v="partner" ${relation?'disabled':''}>大切な相棒として歩きたいと伝える</button></div></section>`;}
 function planCharacterUltimate(run,a,sk,p,h){if(sk.character!==a.cid){p.ok=false;p.reason='この人物専用の必殺技です。';return;}if(a.ultimateUsed){p.ok=false;p.reason='必殺技は1人につき1戦1回です。';return;}if(run.turn<3){p.ok=false;p.reason='必殺技は3ターン目から使えます。';return;}if(run.A<35){p.ok=false;p.reason='必殺技にはエール35が必要です。';return;}if(!h.payC(ultimateMp(a)))return;p.cost.a=35;const {L,V}=h;
  const hit=(n,pierce=false)=>{if(h.attackSingle(n,{ignoreDef:pierce}))return true;p.ok=false;p.reason='対象の敵を選んでください。';return false;};
- const groupHit=(power)=>{for(const e of h.en){const raw=Math.max(1,Math.floor(a.str*power+V*(a.wAtk+a.accAtk+20+L*.7))-e.def);p.dmg.push({slot:e.slot,raw,amt:Math.min(raw,e.hp)});}p.valid=true;p.all=true;};
+ const groupHit=(power)=>{for(const e of h.en){const raw=Math.max(1,Math.floor(a.str*power+V*(a.wAtk+a.accAtk+20+L*.7))-effectiveEnemyDefense(a,e));p.dmg.push({slot:e.slot,raw,amt:Math.min(raw,e.hp)});}p.valid=true;p.all=true;};
  const recover=(percent,ward=0)=>{for(const t of h.al){h.heal(t,Math.ceil(t.maxHP*percent));if(ward)h.addWard(t,ward);}};
  switch(a.cid){case 'hero':recover(.18,2);if(run.B!==4)p.valid=true;p.setB=4;break;
  case 'moe':groupHit(1.8);for(const t of h.al)if(t!==a)h.addWard(t,1);break;
@@ -2763,7 +2763,7 @@ function buildParty(st, L, supportStartA){
 }
 function trialOf(id){return POCO_TRIALS.find(t=>t.id===id);}
 function trialMetrics(run){return run.trialMetrics||(run.trialMetrics={comments:0,people:[],skills:0,masters:0,family:0,guards:0,guardPeople:[]});}
-function recordTrialAction(run,a,act){if(!run.challengeId)return;const m=trialMetrics(run);if(act.type==='comment'){m.comments++;if(!m.people.includes(a.cid))m.people.push(a.cid);}if(act.type==='skill'&&!EXTRA_SKILLS[act.skillId]?.ultimate){m.skills++;if(act.skillId&&EXTRA_SKILLS[act.skillId]&&EXTRA_SKILLS[act.skillId].rank)m.masters++;}if(act.type==='family')m.family++;if(act.type==='guard'){m.guards++;if(!m.guardPeople.includes(a.cid))m.guardPeople.push(a.cid);}}
+function recordTrialAction(run,a,act){if(!run.challengeId)return;const m=trialMetrics(run);if(act.type==='comment'){m.comments++;if(!m.people.includes(a.cid))m.people.push(a.cid);}if(act.type==='skill'&&(!act.skillId||EXTRA_SKILLS[act.skillId]?.job||EXTRA_SKILLS[act.skillId]?.baseJob)){m.skills++;if(act.skillId&&EXTRA_SKILLS[act.skillId]&&EXTRA_SKILLS[act.skillId].rank)m.masters++;}if(act.type==='family')m.family++;if(act.type==='guard'){m.guards++;if(!m.guardPeople.includes(a.cid))m.guardPeople.push(a.cid);}}
 function trialConditions(run){const d=trialOf(run.challengeId);if(!d)return [];const m=trialMetrics(run),out=[{label:`${d.turns}ターン以内`,ok:run.turn<=d.turns,value:run.turn}];
  const add=(key,label,val)=>{if(d[key])out.push({label:label+d[key],ok:val>=d[key],value:val});};
  add('comments','応援コメント ',m.comments);add('people','コメントした人数 ',m.people.length);add('skills','職業技の使用 ',m.skills);add('masters','熟練技・奥義の使用 ',m.masters);add('family','ファミリー応援 ',m.family);add('guards','ガードした人数 ',m.guardPeople.length);add('jobs','編成した職業数 ',new Set(run.party.map(p=>p.job)).size);add('party','編成人数 ',run.party.length);if(d.kira)out.push({label:'キラコメ連携を完成',ok:run.kiraDone,value:run.kiraDone?1:0});return out;
@@ -2819,11 +2819,11 @@ function traitsBattleStart(run){
   for(const m of run.party){ if(m.hp<=0) continue;
     if(m.cid==='moe'){const old=run.A;run.A=Math.min(100,run.A+6);run.log.push(m.name+'の固有特性「帰る声」：エール＋'+(run.A-old));}
     if(m.cid==='kayo'){for(const t of alive(run)){const g=Math.min(2,t.maxC-t.c);if(g>0){t.c+=g;run.log.push(m.name+'の「食卓のぬくもり」：'+t.name+' MP＋'+g);}}}
-    if(hasTrait(m,"J02")) run.B=4;
-    if(hasTrait(m,"J08")) run.A=Math.min(100,run.A+10);
-    if(hasTrait(m,"J20")){ run.A=Math.min(100,run.A+6); for(const t of alive(run)) t.ward=Math.min(8,t.ward+2); }
+    if(hasTrait(m,"J02")){run.B=4;run.log.push(m.name+"の自動化スクリプト：コメント連携4。");}
+    if(hasTrait(m,"J08")){const g=battleAleGain(run,10);run.log.push(m.name+"の配信慣れ：エール＋"+g+"（上限100）。");}
+    if(hasTrait(m,"J20")){const g=battleAleGain(run,6);for(const t of alive(run))t.ward=Math.min(8,t.ward+2);run.log.push(m.name+"の道案内：生存者に防護＋2（上限8）、エール＋"+g+"（上限100）。");}
   }
-  traitsTurnStart(run, []);
+  traitsTurnStart(run, run.log);
 }
 function traitsTurnStart(run, log){
   const al=alive(run);
@@ -2902,10 +2902,16 @@ function startTurnCue(run){
 }
 
 /* ---- 行動の検証と適用（第09・10・10F節） ---- */
+function effectiveEnemyDefense(actor,enemy,ignore=false){return ignore?0:hasTrait(actor,"J16")?Math.floor(enemy.def/2):enemy.def;}
+function battleQuake(run){return run.party.some(m=>m.hp>0&&hasTrait(m,"J17"))?2*run.V:0;}
+function incomingDamage(run,target,act,critical=false,quake=battleQuake(run)){
+ let n=critical?Math.ceil(act.power*1.5):Math.max(0,act.power-(target.defBase||0)-(target.V||run.V)*(target.armorD+target.ward)-(act.type==='a'?quake:0));
+ return target.guard?Math.ceil(n/2):n;
+}
+function battleAleGain(run,amount){const old=run.A;run.A=Math.min(100,run.A+amount);return run.A-old;}
 function singleDamage(run, actor, extra, enemy, opts={}){
   const L=actor.L||run.L, V=actor.V||run.V;
-  let def = opts.ignoreDef ? 0 : enemy.def;
-  if(!opts.ignoreDef && hasTrait(actor,"J16")) def=Math.floor(def/2);
+  const def=effectiveEnemyDefense(actor,enemy,opts.ignoreDef);
   const atk = opts.noGear ? 0 : actor.wAtk + actor.accAtk;
   let ex = extra, B = run.B;
   if(opts.kind==="attack" && hasTrait(actor,"J05")) ex+=3;
@@ -2941,9 +2947,9 @@ function planAction(run, idx, act){
     const g=Math.min(amt, t.maxHP-t.hp); p.heal.push({pos:t.pos, amt:g}); if(g>0) p.valid=true;
     if(g>0 && hasTrait(a,"J18")) addWard(t,2);
     return g; };
-  const addC = (t,amt,afterPay)=>{ const base = t===a? a.c - p.cost.c : t.c; const g=Math.min(amt, (t.maxC||10)-base); p.cgain.push({pos:t.pos, amt:Math.max(0,g)}); if(g>0) p.valid=true; return g; };
+  const addC = (t,amt,afterPay)=>{ const base = t===a? a.c - p.cost.c : t.c; const g=Math.min(amt, (t.maxC||10)-base); p.cgain.push({pos:t.pos, amt:Math.max(0,g)}); if(g>(t===a?p.cost.c:0)) p.valid=true; return g; };
   const addWard=(t,amt)=>{ const g=Math.min(amt, 8-t.ward-p.ward.filter(w=>w.pos===t.pos).reduce((s,w)=>s+w.amt,0)); p.ward.push({pos:t.pos, amt:Math.max(0,g)}); if(g>0) p.valid=true;
-    if(g>0 && hasTrait(a,"J03") && t!==a && !p.j03c){ p.j03c=true; addC(t,1); } };
+    if(g>0 && hasTrait(a,"J03") && t!==a && !(p.j03c||[]).includes(t.pos)){ (p.j03c||(p.j03c=[])).push(t.pos); addC(t,1); } };
   const gainA=(amt)=>{ const g=Math.min(amt, 100-run.A-p.aGain+p.cost.a); p.aGain+=amt; if(g>0) p.valid=true; };
   const attackSingle=(extra,opts={})=>{
     const e=needEnemy(); if(!e) return false;
@@ -2989,12 +2995,13 @@ function planAction(run, idx, act){
       if(run.A<80){ p.ok=false; p.reason="エールが80必要です。"; break; }
       p.cost.a=80;
       // 一点集中：残る敵が1体なら威力1.5倍（v5.32 ボス戦向け）
-      for(const e of en){ let d=Math.max(1, 24+6*L + V*a.meter + Math.floor((a.chaStat||0)/3) - e.def); /* 使う人の魅力÷3を上乗せ */ if(en.length===1) d=Math.ceil(d*1.5); p.dmg.push({slot:e.slot, amt:Math.min(d,e.hp), raw:d}); }
+      for(const e of en){ let d=Math.max(1, 24+6*L + V*a.meter + Math.floor((a.chaStat||0)/3) - effectiveEnemyDefense(a,e)); /* 使う人の魅力÷3を上乗せ */ if(en.length===1) d=Math.ceil(d*1.5); p.dmg.push({slot:e.slot, amt:Math.min(d,e.hp), raw:d}); }
       p.valid=true; p.all=true; break; }
     case "item": planItem(run,a,act,p,{needEnemy,needAlly,heal,addC,V}); break;
     case "skill": planSkill(run,a,act,p,{needEnemy,needAlly,heal,addC,addWard,attackSingle,payC,commentLike,gainA,S,V,L,al,en}); break;
     default: p.ok=false; p.reason="不明な行動です。";
   }
+  if(p.ok&&act.type==='skill'&&!p.valid){p.ok=false;p.reason='今は効果がありません。';}
   if(p.ok&&a.cid==='gaku'&&!p.item)for(const d of p.dmg){const e=run.enemies.find(e=>e.slot===d.slot);if(e?.boss){d.raw=Math.ceil(d.raw*1.08);d.amt=Math.min(e.hp,d.raw);if(d.critRaw!=null)d.critRaw=Math.ceil(d.critRaw*1.08);}}
   // エールの倍率（拡散力・魅力補正）は計画の段階で掛け、確定前の表示と実際を一致させる（v5.34）
   if(p.ok && p.aGain>0 && !p.item){ if(hasTrait(a,"J11")) p.aGain=Math.ceil(p.aGain*1.3); if(a.cha) p.aGain=Math.ceil(p.aGain*(1+a.cha/100)); }
@@ -3027,7 +3034,7 @@ function planSkill(run,a,act,p,h){
     case "J07": if(!h.payC(1))return; h.addC(a,5); h.addWard(a,3+Math.floor(S/2)); h.gainA(20); if(!p.valid){need("MP・防護・エールが最大のため効果がありません。");} break;
     case "J08": { if(!h.payC(2))return; const t=h.needAlly(); if(!t){need("回復する対象を選んでください。");return;} h.gainA(30+S); h.heal(t,(10+S)*V); if(!p.valid){need("効果がありません。");} break; }
     case "J09": if(!h.payC(3))return; if(!h.attackSingle(6+2*S)){need("対象の敵を選んでください。");return;} h.al.forEach(t=>h.addWard(t,1)); break;
-    case "J10": { if(!h.payC(3))return; for(const e of h.en){ let df=e.def; if(hasTrait(a,"J16")) df=Math.floor(df/2); const d=Math.max(1,Math.floor((a.str!=null?a.str:10+2*L)*0.6)+(6+S)*V-df); p.dmg.push({slot:e.slot,amt:Math.min(d,e.hp),raw:d}); } p.aGain+=6; p.valid=true; p.all=true; break; }
+    case "J10": { if(!h.payC(3))return; for(const e of h.en){ const df=effectiveEnemyDefense(a,e); const d=Math.max(1,Math.floor((a.str!=null?a.str:10+2*L)*0.6)+(6+S)*V-df); p.dmg.push({slot:e.slot,amt:Math.min(d,e.hp),raw:d}); } p.aGain+=6; p.valid=true; p.all=true; break; }
     case "J11": if(!h.payC(3))return; h.gainA(34+2*S); h.al.forEach(t=>h.addWard(t,2)); if(!p.valid){need("効果がありません。");} break;
     case "J12": if(!h.payC(3))return; h.al.forEach(t=>{h.heal(t,(12+S)*V); h.addC(t,1);}); h.gainA(8); if(!p.valid){need("効果がありません。");} break;
     case "J13": { if(!h.payC(3))return; const t=h.needAlly(); if(!t){need("対象を選んでください。");return;} h.heal(t,(18+3*S)*V+2*L); h.addWard(t,2); h.gainA(6); if(!p.valid){need("効果がありません。");} break; }
@@ -3063,7 +3070,7 @@ function applyAction(run, idx, act){
     if(e.hp<=0){ killedNow++; log.push(`${e.display}を鎮めた。`); }
   }
   if(killedNow>0 && !p.item){
-    if(hasTrait(a,"J10")){ run.A=Math.min(100,run.A+8*killedNow); log.push(`バズった！ エール＋${8*killedNow}`); }
+    if(hasTrait(a,"J10")){ const g=battleAleGain(run,8*killedNow);log.push(`バズった！ エール＋${g}（上限100）`); }
     if(hasTrait(a,"J15") && !p.all && a.c<(a.maxC||10)){ const g=Math.min(2,(a.maxC||10)-a.c); a.c+=g; log.push(`${nm}のMP＋${g}（通電チェック）`); }
   }
   if(p.consumeB){ run.B=0; }
@@ -3090,21 +3097,21 @@ function applyAction(run, idx, act){
       log.push(`キラコメ連携成功！ エール＋${run.A-oldA}（上限100）、防護＋2（上限8・${protectedCount}人に効果）。`);
     } else { run.chain={stage:0,members:[]}; }
   } else if(p.chainReset){ run.chain={stage:0,members:[]}; }
-  if(chainProg && hasTrait(a,"J02")){ run.A=Math.min(100,run.A+4); }
+  if(chainProg && hasTrait(a,"J02")){const g=battleAleGain(run,4);log.push(`自動化スクリプト：エール＋${g}（上限100）`);}
   // ボス対処
   if(p.cue && run.cue && !run.cue.bits.includes(a.cid)){
     run.cue.bits.push(a.cid);
-    if(run.cue.bits.length>=2){ run.cue.ready=true; run.A=Math.min(100,run.A+12); log.push("対処成功！ 次の強攻撃が20%軽くなり、エール＋12。"); }
+    if(run.cue.bits.length>=2){ run.cue.ready=true;const g=battleAleGain(run,12);log.push(`対処成功！ 次の強攻撃が20%軽くなり、エール＋${g}（上限100）。`); }
   }
   // 初撃破のパチパチ
-  if(killedNow>0 && !run.firstKill && !p.item){ run.firstKill=true; run.A=Math.min(100,run.A+10); log.push("パチパチ！ 拍手でエール＋10。"); }
+  if(killedNow>0 && !run.firstKill && !p.item){ run.firstKill=true;const g=battleAleGain(run,10);log.push(`パチパチ！ 拍手でエール＋${g}（上限100）。`); }
   a.acted=true;
   if(p.valid || chainProg) a.valid++;
   run.supportNotice={actor:a.name,action:label,beforeA,afterA:run.A,costA:p.cost.a,kira:kiraEvent};
   // 勝敗
   if(run.enemies.every(e=>e.hp<=0)){ run.state="won"; log.push("ノイズ体をすべて鎮めた！"); }
   else if(alive(run).every(m=>m.acted)){ log.push(...enemyPhase(run)); }
-  run.log = [...(run.log||[]), ...log].slice(-12);
+  run.log = [...(run.log||[]), ...log].slice(-80);
   return {ok:true, log};
 }
 function actLabel(run,a,act){
@@ -3124,14 +3131,13 @@ function enemyPhase(run){
     const act = enemyAction(run,e);
     if(act.type==="c"){ log.push(`${e.display}は力をためている。`); continue; }
     const targets = act.type==="a" ? alive(run) : [run.party[pickTarget(run, (run.turn-1+e.slot)%run.party.length)]].filter(Boolean);
+    const quake=battleQuake(run);
     for(const t of targets){
       // すばやさによる回避
       if(!run.noRand && t.eva && randInt(1000) < Math.round(t.eva*10)){ log.push(`${e.display}の${act.type==="a"?"全体攻撃":"攻撃"}。${t.name}はひらりと身をかわした！`); continue; }
-      const quake = act.type==="a" && run.party.some(m=>m.hp>0&&hasTrait(m,"J17")) ? 2*run.V : 0;
       // 痛恨の一撃（単体攻撃のみ）：防御・防護を無視して1.5倍。ガードなら半分
       const tsukon = act.type==="s" && !run.noRand && randInt(1000) < (e.boss?50:31);
-      let inc = tsukon ? Math.ceil(act.power*1.5) : Math.max(0, act.power - (t.defBase||0) - (t.V||run.V)*(t.armorD + t.ward) - quake);
-      if(t.guard) inc = Math.ceil(inc/2);
+      const inc=incomingDamage(run,t,act,tsukon,quake);
       t.hp = Math.max(0, t.hp-inc);
       if(e.boss&&act.type==="a"&&run.turn%4===0&&inc>0){const loss=Math.min(t.c,Math.max(1,Math.min(6,Math.ceil((t.maxC||10)*0.08))));t.c-=loss;if(loss)log.push(`${t.name}はMPを${loss}失った。`);}
       if(tsukon){ log.push(`${e.display}の痛恨の一撃！`); run.fx=(run.fx||[]).concat("tsukon"); }
@@ -3154,7 +3160,7 @@ function enemyPhase(run){
 /* ---- 戦闘報酬（第17B・17H節）。一度だけ適用 ---- */
 function applyVictory(st, run){
   const res = { xp:0, gold:0, tickets:0, jp:[], levelBefore:partyLevel(st), levelAfter:0, gifts:[], quest:null, kills:0, notes:[] };
-  if(run.rewardsApplied||run.kind==="challenge"&&run.state!=="won") return res;
+  if(run.rewardsApplied||run.state!=="won") return res;
   storeVitals(st, run); st.bag = clone(run.bag||st.bag||[]); res.items=[]; res.itemsKept=[]; res.itemsLost=[];
   ensureMemberXp(st);const beforeMembers=captureCompanionStats(st,run.party.map(m=>m.cid));
   const n = run.enemies.length;
@@ -3403,7 +3409,7 @@ function aiIncoming(run, m){
   for(const t of telegraph(run)){
     if(t.type==="c") continue;
     if(t.type==="s" && t.target!==m.pos) continue;
-    let inc=Math.max(0, t.power - (m.defBase||0) - (m.V||run.V)*(m.armorD+m.ward)); if(m.guard) inc=Math.ceil(inc/2); sum+=inc;
+    sum+=incomingDamage(run,m,t);
   }
   return sum;
 }
@@ -3503,7 +3509,7 @@ function planItem(run,a,act,p,h){
     const list = need==="downAll" ? downs : downs.filter(m=>m.pos===act.ally);
     if(!downs.length){ p.ok=false; p.reason="戦闘不能の仲間がいません。"; return; }
     if(!list.length){ p.ok=false; p.reason="復活させる仲間を選んでください。"; return; }
-    for(const t of list) p.heal.push({pos:t.pos, amt:mk(itemAmount(it,"rev",t.maxHP,V,boost)), revive:true});
+    for(const t of list) p.heal.push({pos:t.pos, amt:Math.min(t.maxHP,mk(itemAmount(it,"rev",t.maxHP,V,boost))), revive:true});
   }
   const effect = p.dmg.length || p.heal.some(x=>x.amt>0||x.revive) || p.cgain.some(x=>x.amt>0);
   if(!effect){ p.ok=false; p.reason="今は効果がありません。"; return; }
@@ -4260,9 +4266,9 @@ function mobileBattleActor(run){const c=G.cmd,a=run.party[c.actor];if(!a||a.hp<=
 function mobileBattleHeader(run,plan){const d=trialOf(run.challengeId),label=run.cue?.active?({guard:'2人ガード',comment:'2人コメント',damage:'2人攻撃'}[run.cue.kind]+' '+run.cue.bits.length+'/2'):d?'特別挑戦':autoAllowed(run)?'通常戦闘':'ボス戦・手動',chain=run.kiraDone?'キラコメ済':'キラ'+run.chain.stage+'/3';return '<header class="mobile-bhead"><div><b>T'+run.turn+' '+esc(DIFFICULTY[run.difficulty].name)+'</b> <span>'+label+'</span><div class="mobile-gauge"><span>エール <b>'+run.A+'</b></span><span class="bar ale"><i style="width:'+run.A+'%"></i></span><span>連携'+run.B+'・'+chain+'</span></div></div>'+(plan.focus?'<button class="btn" data-a="battlePanel">'+(G.battlePanel==='party'?'味方':'敵')+' ⇄</button>':'')+'<button class="btn" data-a="openSheet" data-k="mobileBattleMenu">メニュー</button></header>';}
 function mobileEnemyCard(run,e){const t=enemyAction(run,e),target=t.target!=null?run.party[t.target]:null,next=e.hp<=0?'撃破':t.type==='c'?'ため・攻撃なし':t.type==='a'?'全員に'+t.power:(target?mobileName(target.name,4):'1人')+'に'+t.power;return '<button class="mobile-enemy '+(e.hp<=0?'down':'')+'" id="ec'+e.slot+'" data-a="mobileEnemyInfo" data-v="'+e.slot+'" aria-label="'+esc(e.display)+' HP'+e.hp+'/'+e.maxHP+' '+esc(next)+'。詳しく見る"><canvas data-enemy="'+e.slot+'" width="'+(e.boss?64:32)+'" height="'+(e.boss?64:32)+'" class="esprite '+(e.boss?'boss':'')+'" aria-hidden="true"></canvas><b class="enemy-name">'+esc(e.display)+'</b><span class="enemy-hp">HP '+e.hp+'<small>／'+e.maxHP+(e.rarity>1?' ★'+e.rarity:'')+'</small></span><span class="bar enemy"><i style="width:'+Math.round(e.hp/e.maxHP*100)+'%"></i></span><span class="enemy-next">'+esc(next)+(t.heavy?' !':'')+'</span></button>';}
 function mobileMemberCard(run,m){const status=m.hp<=0?'戦闘不能':m.acted?'行動済':'選択可';return '<button class="pcard mobile-member '+(m.hp<=0?'ko':m.acted?'done':'ready')+' '+(G.cmd.actor===m.pos?'on':'')+'" data-a="mobileMember" data-i="'+m.pos+'" aria-label="'+esc(m.name)+' '+status+' HP'+m.hp+'/'+m.maxHP+' MP'+m.c+'/'+m.maxC+'"><span class="member-name"><b>'+esc(m.name)+'</b><small>'+status+'</small></span><span class="mobile-vital">HP <b>'+m.hp+'</b>/'+m.maxHP+'</span><span class="mobile-vital mp">MP <b>'+m.c+'</b>/'+m.maxC+(m.ward?'・護'+m.ward:'')+'</span></button>';}
-function mobileBattleLogEntries(run,plan=mobilePlan(run)){const limit=Math.max(10,Math.floor((Math.min(plan.width,520)-118)/14))*(plan.tiny?1:2),parts=[],logs=(run.log||[]).slice(-16);for(const [logIndex,line]of logs.entries()){const g=graphemes(line);for(let i=0;i<g.length;i+=limit)parts.push({text:g.slice(i,i+limit).join(''),logIndex});}return parts.length?parts:[{text:'行動を選んでください。',logIndex:0}];}
+function mobileBattleLogEntries(run,plan=mobilePlan(run)){const limit=Math.max(10,Math.floor((Math.min(plan.width,520)-118)/14))*(plan.tiny?1:2),parts=[],logs=(run.log||[]).slice(-80);for(const [logIndex,line]of logs.entries()){const g=graphemes(line);for(let i=0;i<g.length;i+=limit)parts.push({text:g.slice(i,i+limit).join(''),logIndex});}return parts.length?parts:[{text:'行動を選んでください。',logIndex:0}];}
 function mobileBattleLogPages(run,plan=mobilePlan(run)){return mobileBattleLogEntries(run,plan).map(e=>e.text);}
-function renderMobileLiveLog(run,plan){const entries=mobileBattleLogEntries(run,plan),logs=(run.log||[]).slice(-16),key=run.seq+':'+JSON.stringify(logs)+':'+plan.width+':'+plan.tiny,prior=G.mobileLogSeen;if(G.liveLogKey!==key){if(!prior||prior.seq!==run.seq)G.liveLogPage=0;else if(JSON.stringify(prior.logs)!==JSON.stringify(logs)){let overlap=0;for(let k=1;k<=Math.min(prior.logs.length,logs.length);k++)if(JSON.stringify(prior.logs.slice(-k))===JSON.stringify(logs.slice(0,k)))overlap=k;const start=entries.findIndex(e=>e.logIndex>=overlap);G.liveLogPage=Math.max(0,start);}G.liveLogKey=key;G.mobileLogSeen={seq:run.seq,logs:logs.slice()};}G.liveLogPage=Math.max(0,Math.min(entries.length-1,G.liveLogPage||0));G.liveLogPages=entries.length;return '<section class="mobile-log" aria-label="進行コメント"><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage-1)+'" '+(!G.liveLogPage?'disabled':'')+' aria-label="前の進行コメント">◀</button><button class="log-copy" data-a="battleInspect" data-v="log"><small>進行 '+(G.liveLogPage+1)+'/'+entries.length+'・全文を読む</small><span role="log" aria-live="polite">'+esc(entries[G.liveLogPage].text)+'</span></button><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage+1)+'" '+(G.liveLogPage>=entries.length-1?'disabled':'')+' aria-label="次の進行コメント">▶</button></section>';}
+function renderMobileLiveLog(run,plan){const entries=mobileBattleLogEntries(run,plan),logs=(run.log||[]).slice(-80),key=run.seq+':'+JSON.stringify(logs)+':'+plan.width+':'+plan.tiny,prior=G.mobileLogSeen;if(G.liveLogKey!==key){if(!prior||prior.seq!==run.seq)G.liveLogPage=0;else if(JSON.stringify(prior.logs)!==JSON.stringify(logs)){let overlap=0;for(let k=1;k<=Math.min(prior.logs.length,logs.length);k++)if(JSON.stringify(prior.logs.slice(-k))===JSON.stringify(logs.slice(0,k)))overlap=k;const start=entries.findIndex(e=>e.logIndex>=overlap);G.liveLogPage=Math.max(0,start);}G.liveLogKey=key;G.mobileLogSeen={seq:run.seq,logs:logs.slice()};}G.liveLogPage=Math.max(0,Math.min(entries.length-1,G.liveLogPage||0));G.liveLogPages=entries.length;return '<section class="mobile-log" aria-label="進行コメント"><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage-1)+'" '+(!G.liveLogPage?'disabled':'')+' aria-label="前の進行コメント">◀</button><button class="log-copy" data-a="battleInspect" data-v="log"><small>進行 '+(G.liveLogPage+1)+'/'+entries.length+'・全文を読む</small><span role="log" aria-live="polite">'+esc(entries[G.liveLogPage].text)+'</span></button><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage+1)+'" '+(G.liveLogPage>=entries.length-1?'disabled':'')+' aria-label="次の進行コメント">▶</button></section>';}
 
 function mobileBattleRule(run){const d=trialOf(run.challengeId),cue=run.cue;if(cue?.active)return 'ため！ '+({guard:'2人でガード',comment:'2人でコメント',damage:'2人で攻撃'}[cue.kind])+' '+cue.bits.length+'/2 → 強攻撃20％減';if(d)return '手動・課題 '+trialConditions(run).filter(c=>c.ok).length+'/'+trialConditions(run).length+'／'+run.turn+'/'+run.turnLimit+'ターン';return '手動・オート不可／シールド'+(run.A<40&&!run.kiraDone?'有効':'解除')+'・技は軽減なし';}
 function renderMobileBattle(run){const plan=mobilePlan(run);mobileBattleActor(run);if(G.battlePicker)return renderMobilePicker(run,plan);if(G.battleCommand&&!G.auto)return renderMobileCommand(run,plan);const focus=plan.focus,panel=G.battlePanel==='party'?'party':'enemies',members=run.party;let shown=members;if(focus&&panel==='party'){const pages=Math.ceil(members.length/plan.memberPage);G.battleMemberPage=Math.max(0,Math.min(pages-1,G.battleMemberPage||0));shown=members.slice(G.battleMemberPage*plan.memberPage,(G.battleMemberPage+1)*plan.memberPage);}
@@ -4790,12 +4796,13 @@ function travelHub(to,tx,ty){
 /* ---- 戦闘 ---- */
 function startBattle(run){
   const reason=battleEntryReason(G.st);if(reason){toast(reason);return false;}
+  if(!alive(run).length){toast("同行者を復活させてから挑みましょう。");return false;}
   if(run.kind==='boss'&&mainPropGate(G.st,run.bossId))return false;
   G.battleInspect=false;G.battleChoiceKey=null;G.battlePreview="";
   G.auto=false;G.autoWait=false;G.autoAct=null; clearTimeout(G.autoT); G.autoLast=null;
   const st=G.st; st.run=run; st.runSeq=run.seq;
   for(const e of run.enemies) if(!e.boss) st.seen[e.id]=true;
-  run.log=[`${run.enemies.map(e=>e.display).join("と")}が現れた！`];
+  run.log=[`${run.enemies.map(e=>e.display).join("と")}が現れた！`,...(run.log||[])];
   G.cmd={};G.battleCommand=false;G.battlePicker=null;G.battlePanel="enemies";G.mobileForceFocus=false;G.battleFoePage=0;G.sheet=null;
   commit(); SND.sfx("enc");
   if(st.settings.reduceMotion){ G.screen="battle"; render(); }
@@ -4838,7 +4845,7 @@ function renderBattleInspect(run){const pages=[];const add=(group,title,html)=>p
  return renderEndFrame('battle-info:'+run.seq+':'+run.turn,pages,'戦闘の詳細','', 'battleInspectClose','戦闘に戻る');}
 function fitBattleView(){const view=document.querySelector('.mobile-battle');if(!view||!view.clientHeight)return;if(view.scrollHeight>view.clientHeight+2&&!view.classList.contains('focus')&&!G.mobileForceFocus){G.mobileForceFocus=true;render();}}
 
-function renderBattleSupportHelp(){return `<p class="small">ここで説明する効果・数値・連携順序は、このゲーム独自のルールです。</p><h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活・生存者へ防護1）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
+function renderBattleSupportHelp(){return `<p class="small">ここで説明する効果・数値・連携順序は、このゲーム独自のルールです。</p><h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活・生存者へ防護1）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。ガードのMP回復や復活HPも、実際に増える量を確認しましょう。撃破・連携・対処の固定ボーナスも上限100までで、ログには実際の増加量を出します。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
 
 function skillNeeds(job){ return ({J01:"enemy",J02:"line",J03:"ally",J04:"mode",J05:"enemy",J06:"mode",J07:"none",J08:"ally",J09:"enemy",J10:"none",J11:"none",J12:"none",J13:"ally",J14:"none",J15:"enemy",J16:"enemy",J17:"none",J18:"ally",J19:"enemy",J20:"none",J21:"enemy",J22:"allyOther"})[job]; }
 function renderCommand(run){return renderMobileCommand(run);}
@@ -4867,14 +4874,14 @@ function buildAct(a){
 function previewText(run,a,p){
   const out=[];
   if(p.cost.c) out.push(`MP−${p.cost.c}`); if(p.cost.a) out.push(`エール−${p.cost.a}`); if(p.cost.hp) out.push(`HP−${p.cost.hp}`);
-  for(const d of p.dmg){ const e=run.enemies.find(x=>x.slot===d.slot); out.push(`${e.display}に${d.raw}ダメージ${d.raw>=e.hp?"（鎮まる）":""}${d.critRaw!=null&&a.crit?`（会心${a.crit}%：${d.critRaw}）`:""}`); }
-  for(const h of p.heal){ const t=run.party[h.pos]; if(h.revive) out.push(`${t.name}が復帰`); else if(h.amt>0) out.push(`${t.name} HP＋${h.amt}`); }
+  for(const d of p.dmg){ const e=run.enemies.find(x=>x.slot===d.slot); out.push(`${e.display}に${d.amt}ダメージ${d.raw>=e.hp?"（鎮まる）":""}${d.critRaw!=null&&a.crit?`（会心${a.crit}%：${Math.min(d.critRaw,e.hp)}）`:""}`); }
+  for(const h of p.heal){ const t=run.party[h.pos]; if(h.revive) out.push(`${t.name}がHP${h.amt}で復帰`); else if(h.amt>0) out.push(`${t.name} HP＋${h.amt}`); }
   for(const g of p.cgain){ if(g.amt>0) out.push(`${run.party[g.pos].name} MP＋${g.amt}`); }
   for(const w of p.ward){ if(w.amt>0) out.push(`${run.party[w.pos].name} 防護＋${w.amt}`); }
   if(p.aGain) out.push(`エール＋${Math.min(p.aGain,100-run.A+p.cost.a)}`);
   if(p.consumeB&&run.B) out.push(`コメント連携${run.B}を使用`);
   if(p.setB!=null) out.push("コメント連携を4に");
-  if(p.guard) out.push("受けるダメージ半分・MP＋1");
+  if(p.guard) out.push("受けるダメージ半分");
   if(p.chain){ out.push(p.chain.adv? (run.chain.stage===2?"キラコメ連携が発動！":`連携が進む（${run.chain.stage+1}/3）`) : "連携は進まない"); }
   if(p.chainReset) out.push("この行動で連携は途切れます");
   if(p.cue) out.push("ボス対処に参加");
@@ -5093,12 +5100,12 @@ function systemGuideEntries(){
  add('limits','growth','章ごとの上限とボス攻略の目安',p('レベルと職業熟練度は、章が解放されるたびに100ずつ上限が上がり、最後は999です。本編ボスは、強い装備と複数の職業技を使えば、その章の上限の半分くらいでも挑める目安にしました。人数・職業・操作・難易度で結果は変わります。超レア装備は必須ではありません。')+'<div class="guide-table"><table><thead><tr><th>章</th><th>上限</th><th>本編終盤の目安</th><th>地域特別の目安</th></tr></thead><tbody>'+SYSTEM_CHAPTERS.map(c=>'<tr><td>'+esc(c.name)+'</td><td>'+c.cap+'</td><td>Lv'+c.target+'＋強い装備・技</td><td>'+(c.special?'Lv'+c.cap+'＋強い装備':'高レベルの特設エリアで育成')+'</td></tr>').join('')+'</tbody></table></div>'+p('ここでいう地域特別の上限は、その地域の章の上限です。たとえば九州の特別エリアはLv100が目安です。次の章が開いて上限200になっていても、九州特別の目安は100です。上限に達すると経験値・熟練度の加算は止まり、次の上限が開いてから再び育ちます。'),'MAX レベル50 レベル100 レベル999 難易度');
  add('training','growth','レベルと熟練度は別のもの',p('レベルはキャラの育ち方、熟練度はその職業での練習量です。戦闘に参加して勝つと増えます。高くなるほど次の段階までに必要な量が増えます。弱い敵ばかりより、準備をして適正レベルの敵に挑む方が育成に向いています。')+p('技能強化が上がる熟練度：'+MASTERY_STEPS.join('・')+'。現在職の武器を使うと技能強化がさらに1増えます。')+p('職業の基礎能力補正は熟練度999で47％。熟練度による最大MPは「熟練度÷2」の小数点以下を切り捨てた分が加わります。'),'JP XP 育成 必要経験値');
  add('changeJob','growth','転職すると、何が残る？',p('安全な場所で「編成」→人物→「ジョブを変える」。覚えた技と職業ごとの熟練度は残ります。前の職業の専用装備・専用道具は、違う職業では使えません。共有装備には本人のレベル条件があります。')+p('普段の能力と職業特性は、今の職業のものになります。前の職業から能力として持ち越せるのは「永続ボーナス」です。複数の職業の分を足し、各能力＋45％まで。熟練度'+JOB_BONUS_STEPS.join('・')+'で新しい段階に進みます。')+p('引き継いだ技の条件と強さには、その技の元の職業の熟練度を使います。レベルや上限の条件に届かない間は使えません。'),'ジョブチェンジ 引継ぎ 永続ボーナス 専用装備');
- add('turn','battle','ターン制バトル：予告を見てから行動',p('生きている仲間が1回ずつ行動すると敵の番です。敵の「次」の表示で、単体・全体・ためを見分けましょう。防御や回復も大切な1回の行動です。')+p('ボス戦と特別チャレンジは手動操作のみ。オートは使えません。普通の敵との戦闘ではオートを使えます。解説を開いている間、オートの次の行動は待ちます。')+p('ガードは受けるダメージを減らし、MPも1戻します。休息はMPを4＋装備などの休息ボーナス分戻します。防護は敵の攻撃を軽くしますが、敵の行動後に消えます。'),'オート不可 手動 進行コメント 戦闘結果');
+ add('turn','battle','ターン制バトル：予告を見てから行動',p('同行者が全員戦闘不能の時は戦闘を始められません。道具や宿屋で復活させましょう。途中の戦闘を再開して全員戦闘不能なら、敗北画面から安全な場所へ戻れます。戦闘中・敗北・撤退では報酬をもらえず、勝利した戦闘の報酬は1回だけです。')+p('生きている仲間が1回ずつ行動すると敵の番です。敵の「次」の表示で、単体・全体・ためを見分けましょう。防御や回復も大切な1回の行動です。')+p('ボス戦と特別チャレンジは手動操作のみ。オートは使えません。普通の敵との戦闘ではオートを使えます。解説を開いている間、オートの次の行動は待ちます。')+p('ガードは受けるダメージを減らし、MPも1戻します。休息はMPを4＋装備などの休息ボーナス分戻します。防護は敵の攻撃を軽くしますが、敵の行動後に消えます。'),'オート不可 手動 進行コメント 戦闘結果');
  add('links','battle','エール・コメント連携・キラコメの使い分け',renderBattleSupportHelp(),'連携技 挨拶 作戦 感謝 エール40 エール80 ファミリー応援 メーター突破');
  add('twoPeople','battle','2人編成でも戦える？ キラコメは？',p('主人公とヒロインの2人だけでも戦えます。地域ボスは、戦闘を始めた人数に合わせてHPや攻撃を調整します。')+p('キラコメは別の3人が必要なので2人では完成できません。2人でもエール、コメント連携、ファミリー応援、メーター突破は使えます。人数が少ない時は、回復と攻撃の役割を二人で分け、引き継いだ技も活用しましょう。'),'2人 3人 少人数');
- add('boss','battle','ボスの盾・ため攻撃・長期戦',p('ボスのノイズシールドは通常攻撃を35％減らします。エール40以上かキラコメ完成で解除でき、職業技は最初からこの軽減を受けません。')+p('ための予告で求められた行動を、別の2人で行うと、直後の強攻撃を20％軽減しエール＋12。求められるのはガード・応援コメント・攻撃などで、戦闘画面に表示されます。')+p('6ターン目以降は3ターンごとにボスの攻撃＋10％、最大＋50％。ボスのHPが40％以下になると怒りで攻撃がさらに25％増えます。回復だけを続けず、強い技で攻める時間も作りましょう。'),'対処 シールド 怒り');
+ add('boss','battle','ボスの盾・ため攻撃・長期戦',p('身の守り・防具・防護でダメージを減らします。建築士の耐震設計は、一つの全体攻撃が始まった時に働いていれば、その攻撃の全員に効きます。建築士が倒れた後の、別の敵の攻撃には効きません。痛恨は防御と防護を無視しますが、ガードによる半減は残ります。')+p('ボスのノイズシールドは通常攻撃を35％減らします。エール40以上かキラコメ完成で解除でき、職業技は最初からこの軽減を受けません。')+p('ための予告で求められた行動を、別の2人で行うと、直後の強攻撃を20％軽減しエール＋12。求められるのはガード・応援コメント・攻撃などで、戦闘画面に表示されます。')+p('6ターン目以降は3ターンごとにボスの攻撃＋10％、最大＋50％。ボスのHPが40％以下になると怒りで攻撃がさらに25％増えます。回復だけを続けず、強い技で攻める時間も作りましょう。'),'対処 シールド 怒り');
  add('combo','battle','技の組み合わせ例：準備してから強く攻める',p('例1：システムエンジニアの「コメント整理」などでエールと連携を用意→トラック運転手の「巡回ストライク」などの単体攻撃で連携を使う。')+p('例2：建築士の全体防護→看護師の回復で立て直す→攻撃役が防御無視の技で攻める。例3：調理師のMP補給→ライバーや専業主婦の回復を続ける。')+p('転職で覚えた技を持ち寄ると、同じキャラでも役割を増やせます。再使用待ちのある技は連発できません。技の条件・消費MPを調べて、異なる技を順番に使いましょう。'),'連携技 コンボ 回復役 攻撃役');
- add('skillRules','skills','技の読み方：習得条件・MP・再使用待ち',p('「Lv」は本人のレベル、「熟練度」はその技の職業の熟練度です。両方の条件があれば、両方を満たします。「再使用待ち3ターン」は、使った後の3ターンは同じ技を使えず、その次のターンから使えます。')+p('装備から覚える超レア技は、条件を満たして装備すると本人が永久に覚えます。外しても転職しても残ります。同じ品を別の仲間に渡して、その仲間も覚えられます。')+p('「単体」は1人または1体、「全体」は生きている対象全員。「防御無視」は敵の防御力を引かずに攻撃することです。小数点の切り捨ては端数を捨て、切り上げは次の整数にします。'),'用語 小学生 クールダウン');
+ add('skillRules','skills','技の読み方：習得条件・MP・再使用待ち',p('職業技の課題は、現在職の基本技・追加の職業技・前職から覚えた職業技で進みます。超レア装備から覚える技とキャラ固有の必殺技は、その回数に入りません。回復や防護などが何も増えず、減らした自分のMPを戻すだけの技は使いません。無効な行動ではMPも道具も減りません。')+p('「Lv」は本人のレベル、「熟練度」はその技の職業の熟練度です。両方の条件があれば、両方を満たします。「再使用待ち3ターン」は、使った後の3ターンは同じ技を使えず、その次のターンから使えます。')+p('装備から覚える超レア技は、条件を満たして装備すると本人が永久に覚えます。外しても転職しても残ります。同じ品を別の仲間に渡して、その仲間も覚えられます。')+p('「単体」は1人または1体、「全体」は生きている対象全員。「防御無視」は敵の防御力を引かずに攻撃することです。小数点の切り捨ては端数を捨て、切り上げは次の整数にします。'),'用語 小学生 クールダウン');
  add('rareRules','rare','章限定の超レア：どこで、何％で落ちる？',p('各章に武器・防具・アクセサリーの3品があります。'+SYSTEM_CHAPTERS.length+'章で'+SYSTEM_CHAPTERS.reduce((n,c)=>n+c.ultra.length,0)+'品。どれも、その章と地域特別エリアの店売り最上位品を上回る性能です。全職業で装備できますが、本人のレベル条件は必要です。')+p('通常戦闘は勝利1回ごとに1/'+CHAPTER_DROP_RULES.field+'（0.5％）、ボスは1/'+CHAPTER_DROP_RULES.boss+'（2.5％）で超レアに当たり、その章の3品から同じ確率で1品を選びます。敵1体ごとの抽選ではありません。特別チャレンジは対象外です。')+p('何回戦っても必ず出る保証はありません。ボス再戦でも抽選されます。次の章の品が前の章で落ちることはありません。章限定超レアは、ふつうの共通装備より強い特別な例外です。'),'隠し要素 ドロップ 確率 0.5 2.5');
  add('rareOther','gear','レアドロップの決まり（超レアとは別）',p('通常敵は1体ごとにレア抽選があります。敵の星が5以上は1/5、星4は1/12、星3は1/40、ほかは1/150。抽選に当たると30％でレア装備、70％でレア道具を選びます。敵の強度で第1～3段階が決まります。')+p('ボスの初回撃破ではレア装備を1品、再戦では1/3でレア装備を抽選。レア道具も別に1/2で抽選します。追加装備1000品の抽選や章限定超レアとは別です。')+p('追加装備はショップ・通常敵・ボス・街の装備依頼に分かれています。図鑑や下の装備記事で入手先を確認しましょう。ふつうの共通装備は、職業専用品より性能を控えめにしています。'),'レアドロップ品 隠し要素 星 装備1000種類');
  add('bags','gear','持ち物がいっぱいになったら？',p('道具袋は'+BAG_KINDS+'種類まで、同じ道具は'+BAG_STACK+'個まで。装備品の持ち物は'+EQ_KINDS+'種類まで、同じ装備は最大8個。入りきらない報酬は預かり所へ送られ、預かり所も満杯だと受け取れない場合があります。空きを作ってから挑みましょう。')+p('特別イベント品は別の袋で'+EVENT_ITEM_LIMIT+'種類まで。同じ品は1個。資料→謎解き→準備品の受け渡しというように、使う場所が「特別イベント品」と「事件・謎解き帳」に表示されます。普段の道具袋は圧迫しません。'),'200種類 持ち物分類 預かり所 特別イベント品');
@@ -5642,11 +5649,11 @@ const ACT = {
   toResult(){ toResult(); },
   resultDone(){ resultDone(); },
   endPage(el){const p=G.endPager;if(!p||el.dataset.k!==p.key)return;const n=Number(el.dataset.v);if(!Number.isInteger(n)||n<0||n>=p.pages.length)return;p.index=n;G.cursorSig=n<p.pages.length-1?["endPage",p.key,String(n+1),"","","",""].join("|"):p.primary+"||||||";render();},
-  defeatReturn(){ const st=G.st; const run=st.run; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
+  defeatReturn(){ const st=G.st; const run=st.run;if(G.readOnly||!run||run.state!=="lost")return; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
     const lost=run.kind==="challenge"?0:Math.floor(st.gold/2); st.gold-=lost; restoreAll(st); commit(); G.screen="explore"; exploreBgm(); render(); say([["",`安全な場所へ運ばれた。${run.kind==="challenge"?"特別挑戦の追加ペナルティはありません。":"所持ゴールドの半分（"+lost+"）を失った。"}`],["","全員のHPとMPが回復した。"]]); },
   retreat(){ openSheet("retreat"); },
-  doRetreat(){ const st=G.st; const run=st.run; storeVitals(st,run); if(run.bag) st.bag=clone(run.bag); st.run=null; st.mapId=run.returnPos.map; st.pos={x:run.returnPos.x,y:run.returnPos.y}; G.sheet=null; commit(); G.screen="explore"; exploreBgm(); render(); toast("撤退した。"); },
-  pauseBattle(){ commit(); openSheet("pause"); },
+  doRetreat(){ const st=G.st; const run=st.run;if(G.readOnly||!run||run.state!=="input")return; storeVitals(st,run); if(run.bag) st.bag=clone(run.bag); st.run=null; st.mapId=run.returnPos.map; st.pos={x:run.returnPos.x,y:run.returnPos.y}; G.sheet=null; commit(); G.screen="explore"; exploreBgm(); render(); toast("撤退した。"); },
+  pauseBattle(){if(G.readOnly||!G.st.run||G.st.run.state!=="input")return; commit(); openSheet("pause"); },
   noop(){},
   shareCopyUrl(){ copyText(shareUrl(),"URLをコピーしました。LINEやDMに貼り付けて送れます。"); },
   shareCopyMsg(){ copyText(shareMessage(),"紹介文とURLをコピーしました。"); },
@@ -5723,6 +5730,15 @@ function drawMiniSprites(){
   document.querySelectorAll("canvas[data-char]").forEach(c=>{ const g=c.getContext("2d"); g.clearRect(0,0,16,24); const id=c.dataset.char; g.drawImage(id==="moe"?heroineSprite(0,0):charSprite(id,0,0),0,0); });
   document.querySelectorAll("canvas[data-dex]").forEach(c=>{ const [a,i]=c.dataset.dex.split("|"); const e=enemyDef(a,+i); const g=c.getContext("2d"); g.imageSmoothingEnabled=false; g.drawImage(ART.enemy(e.profile,e.species,e.attr,a,0),0,0); });
 }
+function validateBattleSnapshot(r,roster){
+ if(!r)return;
+ const obj=v=>v&&typeof v==='object'&&!Array.isArray(v),num=v=>Number.isFinite(v)&&v>=0,int=v=>Number.isSafeInteger(v)&&v>=0;
+ if(!['field','boss','challenge'].includes(r.kind)||!['input','won','lost'].includes(r.state)||!int(r.seq)||!int(r.turn)||r.turn<1||!num(r.A)||r.A>100||!num(r.B)||r.B>4||!Array.isArray(r.party)||r.party.length<1||r.party.length>4||!Array.isArray(r.enemies)||!r.enemies.length||r.enemies.length>3)throw Error('bad battle snapshot');
+ if(new Set(r.party.map(m=>m.cid)).size!==r.party.length||new Set(r.enemies.map(e=>e.slot)).size!==r.enemies.length)throw Error('duplicate battle participant');
+ for(const [i,m]of r.party.entries())if(!obj(m)||!roster.includes(m.cid)||m.pos!==i||!JOBS[m.job]||!num(m.maxHP)||!m.maxHP||!num(m.hp)||m.hp>m.maxHP||!num(m.maxC)||!m.maxC||!num(m.c)||m.c>m.maxC||!num(m.ward)||m.ward>8||!num(m.armorD)||!num(m.defBase)||typeof m.acted!=='boolean'||typeof m.guard!=='boolean'||m.skillReady&&(!obj(m.skillReady)||Object.entries(m.skillReady).some(([id,n])=>!EXTRA_SKILLS[id]||!int(n))))throw Error('bad battle member');
+ for(const e of r.enemies)if(!obj(e)||!int(e.slot)||!num(e.maxHP)||!e.maxHP||!num(e.hp)||e.hp>e.maxHP||!num(e.def)||!Array.isArray(e.cycle)||!e.cycle.length||e.cycle.some(a=>!obj(a)||!['s','a','c'].includes(a.t)||!num(a.p))||e.boss&&(!num(e.atkMult)||!e.atkMult))throw Error('bad battle enemy');
+ if(r.turnLimit!==undefined&&(!int(r.turnLimit)||r.turnLimit<1))throw Error('bad battle turn limit');
+}
 function validateState(s){
   if(!currentSaveState(s))throw Error("reset epoch mismatch");
   validateNarrative(s);
@@ -5752,6 +5768,7 @@ function validateState(s){
   if(s.gearEvent&&(!obj(s.gearEvent)||EQUIP[s.gearEvent.id]?.gearSource!=='event'||!Number.isInteger(s.gearEvent.wins)||s.gearEvent.wins<0))throw Error('bad gear event');
   if(s.run&&s.run.challengeId&&!trialOf(s.run.challengeId))throw Error("bad challenge");
   if(s.run&&(!Array.isArray(s.run.party)||!s.run.party.length||!Array.isArray(s.run.enemies)||!s.run.enemies.length||!obj(s.run.returnPos)||!MAPS[s.run.returnPos.map]))throw Error("bad battle");
+  validateBattleSnapshot(s.run,s.roster);
   if(s.stream&&(!HUBS[s.stream.hub]||!STREAM_THEMES[s.stream.theme]||!CHARS[s.stream.host]||!Array.isArray(s.stream.requestIds)||s.stream.requestIds.length!==4||s.stream.requestIds.some(k=>!STREAM_ACTS[k])||!Array.isArray(s.stream.used)||!Array.isArray(s.stream.picks)||!num(s.stream.score)||!Number.isInteger(s.stream.hand)||s.stream.hand<0||s.stream.hand>4))throw Error("bad stream");
 }
 
@@ -5759,7 +5776,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
+function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}if(s.run?.state==="input"){if(!alive(s.run).length){s.run.state="lost";s.run.log=[...(s.run.log||[]),"同行者が全員戦闘不能です。安全な場所へ戻れます。"]; }else if(s.run.enemies.every(e=>e.hp<=0))s.run.state="won";}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
 
 document.addEventListener("change",e=>{if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!=="")ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
 document.addEventListener("submit",e=>{if(e.target.id==="battleSearchForm"){e.preventDefault();ACT.battlePickerSearch();}});
