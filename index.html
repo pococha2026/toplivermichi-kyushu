@@ -286,6 +286,7 @@ body:not(.reduce-motion) .autonext{animation:blink 1s steps(2) infinite}
 .sdiff.final td{white-space:normal}
 .pop.crit{color:var(--gold);font-size:26px}
 .qfilters{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:0;background:var(--cream);padding:8px 0;z-index:2}.qfilters .btn{min-height:44px}.qsummary{padding:10px;border:2px solid var(--gold);margin-bottom:8px}.quest-title{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;gap:6px;min-height:56px}.qcard progress{width:100%;height:12px}.qdetails{padding:8px;border-top:1px solid var(--slate);margin:8px 0}
+.battle{overflow-y:auto}.battle-support{color:var(--ink);flex-shrink:0;max-height:160px;overflow-y:auto;border:1px solid var(--slate);padding:6px;background:var(--cream)}.battle-support p{margin:4px 0}.support-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.support-actions .btn{min-height:40px;font-size:12px;padding:5px}.support-notice{border-left:3px solid var(--gold);padding-left:6px}.battle-support>button{min-height:32px;font-size:12px;padding:4px 8px}
 /* v5.36 グラフィック強化 */
 .esprite{filter:drop-shadow(0 3px 0 rgba(16,24,32,.5))}
 body:not(.reduce-motion) .esprite{animation:ebob 1.1s steps(2) infinite}
@@ -433,7 +434,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.06";
+const GAME_VERSION = "6.07";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1553,7 +1554,7 @@ function shopWhoHtml(st,id,L){ const it=EQUIP[id];
 function levelUpDetail(st, L0, L1){
   if(L1<=L0) return null; const out={};
   for(const cid of st.roster){ const a=charStats(st,cid,L0), b=charStats(st,cid,L1); const sig=JOB_SIG[a.job];
-    const rows=[["最大HP",a.maxHP,b.maxHP,"main"],["攻撃力",attackPower(a,L0),attackPower(b,L1),"main"],["防御力",defensePower(a,L0),defensePower(b,L1),"main"],
+    const rows=[["最大HP",a.maxHP,b.maxHP,"main"],["最大MP",a.startC,b.startC,"main"],["攻撃力",attackPower(a,L0),attackPower(b,L1),"main"],["防御力",defensePower(a,L0),defensePower(b,L1),"main"],
       ...STAT_KEYS.map(k=>[STAT_NAMES[k]+(k===sig?"★":""),a.base[k],b.base[k],k===sig?"sig":""])];
     out[cid]={job:a.job, rows}; }
   return out; }
@@ -1829,7 +1830,7 @@ function buildParty(st, L, supportStartA){
   return st.party.map((cid,pos)=>{
     const s = charStats(st,cid,L);
     const v = (st.vitals&&st.vitals[cid]) || {hp:s.maxHP, c:s.startC};
-    return { cid, pos, name:charName(st,cid), job:s.job, R:s.R, S:s.S, maxHP:s.maxHP, hp:Math.max(0,Math.min(s.maxHP,v.hp)), c:Math.max(0,Math.min(s.startC,v.c)), maxC:s.startC, extraSkills:s.extraSkills, skillReady:{},
+    return { cid, pos, name:charName(st,cid), job:s.job, R:s.R, S:s.S, maxHP:s.maxHP, hp:Math.max(0,Math.min(s.maxHP,v.hp)), c:Math.max(0,Math.min(s.startC,v.c)), maxC:s.startC, maxMP:s.startC, extraSkills:s.extraSkills, skillReady:{},
       ward:0, guard:false, acted:false, pouch:s.pouch, wAtk:s.wAtk, accAtk:s.accAtk, armorD:s.armorD,
       str:s.base.str, defBase:s.defBase, crit:s.crit, eva:s.eva, cha:s.cha, chaStat:s.base.cha,
       commentA:s.commentA, rest:s.rest, meter:s.meter, family:s.family, valid:0 };
@@ -2065,7 +2066,7 @@ function planSkill(run,a,act,p,h){
 function applyAction(run, idx, act){
   const p = planAction(run, idx, act);
   if(!p.ok) return {ok:false, reason:p.reason};
-  const a = run.party[idx]; const log=[]; const nm=a.name;
+  const a = run.party[idx]; const log=[]; const nm=a.name;const beforeA=run.A;let kiraEvent=null;
   if(p.tech){a.skillReady=a.skillReady||{};a.skillReady[p.tech]=run.turn+p.techCooldown+1;}
   const label = actLabel(run,a,act);
   log.push(`${nm}の${label}！`);
@@ -2101,9 +2102,10 @@ function applyAction(run, idx, act){
     else if(adv && line==="plan"){ run.chain.stage=2; run.chain.members.push(a.cid); chainProg=true; }
     else if(adv && line==="thanks"){
       chainProg=true; run.kiraDone=true; run.chain={stage:0,members:[]};
-      const bonus = run.support==="PR06"?15:10; run.A=Math.min(100,run.A+bonus);
-      for(const t of alive(run)) t.ward=Math.min(8,t.ward+2);
-      log.push(`キラコメ連携！ 光の文字が流れ、エール＋${bonus}、全員に防護2。`);
+      const bonus = run.support==="PR06"?15:10,oldA=run.A; run.A=Math.min(100,run.A+bonus);
+      let protectedCount=0;for(const t of alive(run)){const old=t.ward;t.ward=Math.min(8,t.ward+2);if(t.ward>old)protectedCount++;}
+      kiraEvent={gain:run.A-oldA,protected:protectedCount};
+      log.push(`キラコメ連携成功！ エール＋${run.A-oldA}（上限100）、防護＋2（上限8・${protectedCount}人に効果）。`);
     } else { run.chain={stage:0,members:[]}; }
   } else if(p.chainReset){ run.chain={stage:0,members:[]}; }
   if(chainProg && hasTrait(a,"J02")){ run.A=Math.min(100,run.A+4); }
@@ -2116,6 +2118,7 @@ function applyAction(run, idx, act){
   if(killedNow>0 && !run.firstKill && !p.item){ run.firstKill=true; run.A=Math.min(100,run.A+10); log.push("パチパチ！ 拍手でエール＋10。"); }
   a.acted=true;
   if(p.valid || chainProg) a.valid++;
+  run.supportNotice={actor:a.name,action:label,beforeA,afterA:run.A,costA:p.cost.a,kira:kiraEvent};
   // 勝敗
   if(run.enemies.every(e=>e.hp<=0)){ run.state="won"; log.push("ノイズ体をすべて鎮めた！"); }
   else if(alive(run).every(m=>m.acted)){ log.push(...enemyPhase(run)); }
@@ -2224,9 +2227,11 @@ function applyVictory(st, run){
 }
 function levelUpEffects(st, L0, L1){
   if(L1<=L0) return null;
+  st.lastMpGrowth={from:L0,to:L1,members:st.roster.map(cid=>({cid,before:charStats(st,cid,L0).startC,after:charStats(st,cid,L1).startC}))};
   const ups={};
   for(const cid of st.roster){ const a=baseStats(st.jobs[cid],L0), b=baseStats(st.jobs[cid],L1); ups[cid]=STAT_KEYS.map(k=>[k,b[k]-a[k]]).filter(x=>x[1]>0); }
   restoreAll(st);
+  if(st.run)for(const m of st.run.party){const cs=charStats(st,m.cid,L1);m.maxC=m.maxMP=cs.startC;m.c=cs.startC;}
   return ups;
 }
 function giftCheck(st, job, kind, res){
@@ -2264,12 +2269,12 @@ function completeQuest(st, qid, res){
 function ensureVitals(st){
   st.vitals=st.vitals||{}; const L=levelOf(st.xp);
   for(const cid of st.roster){ const s=charStats(st,cid,L); const v=st.vitals[cid];
-    if(!v) st.vitals[cid]={hp:s.maxHP, c:s.startC};
-    else { v.hp=Math.max(0,Math.min(s.maxHP,v.hp)); v.c=Math.max(0,Math.min(s.startC,v.c)); } }
+    if(!v) st.vitals[cid]={hp:s.maxHP, c:s.startC, maxMP:s.startC};
+    else { v.hp=Math.max(0,Math.min(s.maxHP,v.hp)); v.c=Math.max(0,Math.min(s.startC,v.c)); } st.vitals[cid].maxMP=s.startC; }
 }
 function storeVitals(st, run){
   st.vitals=st.vitals||{}; const L=levelOf(st.xp);
-  for(const m of run.party){ const s=charStats(st,m.cid,L); st.vitals[m.cid]={hp:Math.max(0,Math.min(s.maxHP,m.hp)), c:Math.max(0,Math.min(s.startC,m.c))}; }
+  for(const m of run.party){ const s=charStats(st,m.cid,L); st.vitals[m.cid]={hp:Math.max(0,Math.min(s.maxHP,m.hp)), c:Math.max(0,Math.min(s.startC,m.c)), maxMP:s.startC}; }
 }
 function restoreAll(st){ st.vitals={}; ensureVitals(st); }
 function joinMember(st,cid){
@@ -3384,7 +3389,7 @@ function renderStatus(){
   const st=G.st; const L=levelOf(st.xp);
   const head=`<dl class="kv"><dt>共通レベル</dt><dd>${L}</dd><dt>経験値</dt><dd>${st.xp.toLocaleString()}${L<999?`（次のレベルまで ${(xpFor(L+1)-st.xp).toLocaleString()}）`:"（最大）"}</dd>
     <dt>所持ゴールド</dt><dd>${st.gold.toLocaleString()}</dd><dt>もえの到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd></dl>
-    <p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
+    ${st.lastMpGrowth?`<p class="small good">直近のレベルアップ：${st.lastMpGrowth.members.map(m=>`${esc(charName(st,m.cid))} 最大MP ${m.before} → ${m.after}（＋${m.after-m.before}）`).join("／")}</p>`:""}<p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
   const cards=st.roster.map(cid=>{
     const s=charStats(st,cid,L), v=vitalOf(cid), e=st.equip[cid], jp=jpOf(st,cid,s.job), C=CHARS[cid];
     const inParty=st.party.includes(cid);
@@ -3768,6 +3773,7 @@ function renderBattle(){
   return `<section class="battle">
     <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><span>コメント連携${run.B}・${chain}</span></div>
     <div class="gauge" aria-label="エール${run.A}"><span>エール</span><span class="bar ale"><i style="width:${run.A}%"></i></span><b>${run.A}</b></div>
+    ${battleSupportPanel(run)}
     ${cueText(run)}
     <div class="enemies"><canvas class="stagebg" width="160" height="64" aria-hidden="true"></canvas>${enemies}</div>
     <div class="party">${run.party.map((m,i)=>partyCard(m,i,run)).join("")}</div>
@@ -3775,6 +3781,9 @@ function renderBattle(){
     <button class="log" data-a="openSheet" data-k="battleLog" aria-live="polite" aria-label="戦闘ログ（タップで直近6件）">${last.map(l=>`<span>${esc(l)}</span>`).join("")}</button>
   </section>`;
 }
+function battleSupportPanel(run){const stage=run.chain.stage,bonus=run.support==='PR06'?15:10,ready=run.party.filter(m=>m.hp>0).length;const notice=run.supportNotice;return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||run.state!=='input'||G.auto?'disabled':''}>全員回復・復活<br>エール40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||run.state!=='input'||G.auto?'disabled':''}>敵全体を攻撃<br>エール80</button></div><p class="small">${run.A<40?`全員回復まであと${40-run.A}`:run.A<80?`全員回復が使えます／全体攻撃まであと${80-run.A}`:'全員回復・全体攻撃が使えます'}（エール上限100）</p><p class="small">コメント連携：${run.B?`次の通常攻撃・一部の単体技に基本＋${run.B*run.V}ダメージ`:'応援コメントで次の攻撃を強化'}</p><p class="small">キラコメ：${run.kiraDone?'この戦闘で発動済み':`挨拶 → 作戦 → 感謝　${stage}/3・次は${['挨拶','別の人の作戦','さらに別の人の感謝'][stage]}`}${!run.kiraDone&&ready<3?'（完成には生存者3人が必要）':''}</p>${notice?`<div class="support-notice" role="status"><b>${esc(notice.actor)}：${esc(notice.action)}</b><p class="small">エール ${notice.beforeA} → ${notice.afterA}${notice.costA?`（${notice.costA}消費）`:''}${notice.kira?`／キラコメ成功：エール追加${notice.kira.gain}・防護が増えた味方${notice.kira.protected}人`:''}</p></div>`:''}<button class="btn" data-a="openSheet" data-k="battleSupportHelp">応援・連携の効果とやり方</button></div>`;}
+function renderBattleSupportHelp(){return `<h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
+
 function skillNeeds(job){ return ({J01:"enemy",J02:"line",J03:"ally",J04:"mode",J05:"enemy",J06:"mode",J07:"none",J08:"ally",J09:"enemy",J10:"none",J11:"none",J12:"none",J13:"ally",J14:"none",J15:"enemy",J16:"enemy",J17:"none",J18:"ally",J19:"enemy",J20:"none",J21:"enemy",J22:"allyOther"})[job]; }
 function renderCommand(run){
   if(run.state==="won") return `<div class="win cmd"><p>勝利！ ノイズ体をすべて鎮めた。</p><button class="btn primary wide" data-a="toResult">結果を見る</button></div>`;
@@ -4042,7 +4051,7 @@ function streamFinish(){
   const st=G.st; if(!st.stream||!st.stream.done||st.stream.score<80)return; const qid=streamPending(); if(!qid)return; delete (st.streamRetryGate||{})[st.stream.hub]; st.stream=null;
   const L0=levelOf(st.xp); const res={xp:0,tickets:0}; completeQuest(st,qid,res); const up=levelUpEffects(st,L0,levelOf(st.xp));
   commit(); G.screen="explore"; exploreBgm(); render();
-  toast(`${qid}完了：経験値＋${res.xp}・チケット＋${res.tickets}`+(up?`。レベル${levelOf(st.xp)}に上がり、HP・MPが全回復！`:""));
+  toast(`${qid}完了：経験値＋${res.xp}・チケット＋${res.tickets}`+(up?`。レベル${levelOf(st.xp)}に上がり、HP・MPが全回復！ ${st.lastMpGrowth.members.map(m=>`${charName(st,m.cid)} 最大MP ${m.before}→${m.after}`).join("／")}`:""));
   const Qf=QUESTS[qid]; if(Qf && Qf.scene && SCENES[Qf.scene]) playScene(Qf.scene);
 }
 
@@ -4086,6 +4095,7 @@ function renderSheet(){
     case "guide": { const m=MAPS[st.mapId]; return sheetWrap("道しるべ", `<p class="small">選ぶと、その場所まで実際に歩きます（途中の遭遇エリアでは抽選があります）。</p><div class="stack">${m.objects.filter(o=>o.type!=="tower").map(o=>{ const a=o.area?AREAS[o.area]:null; return `<button class="btn" data-a="guideTo" data-v="${o.id}">${facBadge(o)}${esc(o.label)}${a?`（推奨レベル${a.q}）`:""}</button>`; }).join("")}</div>`); }
     case "quests": return sheetWrap("イベント・依頼リスト", renderQuests());
     case "station": return sheetWrap("新幹線の駅", renderStation());
+    case "railConfirm": {const fare=railFare(curHub(),d.to);return sheetWrap("乗車の確認",`<p>${esc(HUBS[curHub()].name)} → ${esc(HUBS[d.to].name)}</p><p>路線距離${railDistance(curHub(),d.to)}／運賃<b>${fare}ゴールド</b>・旅程枠1</p><p>所持金 ${st.gold} → ${st.gold-fare}ゴールド</p><div class="stack"><button class="btn primary" data-a="railBoard" data-v="${d.to}" ${st.gold<fare||st.slots<1?"disabled":""}>運賃を払って移動する</button><button class="btn" data-a="openSheet" data-k="station">駅に戻る</button></div>`);}
     case "questAbandon": return sheetWrap("依頼の放棄を確認",`<p>「${esc(QUESTS[d.id].name)}」を放棄しますか？ 討伐数はリセットされ、受注時の旅程枠は戻りません。</p><div class="stack"><button class="btn" data-a="abandonQuest" data-v="${d.id}">放棄する</button><button class="btn primary" data-a="openSheet" data-k="quests">続ける</button></div>`);
     case "map": return sheetWrap("九州と沖縄の地図", renderWorld());
     case "travel": return sheetWrap("移動", `<p>${esc(HUBS[d.to].name)}へ向かいますか？（旅程枠1を使います。残り${st.slots}枠）</p><div class="stack"><button class="btn primary" data-a="doTravel">向かう</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
@@ -4106,6 +4116,7 @@ function renderSheet(){
     case "moe": return sheetWrap("もえ", renderMoe());
     case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil(x*df.atk*ps.atk); return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${b.q}。現在レベル${levelOf(st.xp)}。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人がガード</b>すると、直後の強攻撃が20%減り、エール＋12（静観型）。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
     case "streamSetup": return sheetWrap("配信の準備", renderStreamSetup());
+    case "battleSupportHelp": return sheetWrap("エール応援・キラコメ連携",renderBattleSupportHelp());
     case "battleLog": return sheetWrap("戦闘ログ", `<div class="stack">${((G.st.run&&G.st.run.log)||[]).slice(-6).map(l=>`<p>${esc(l)}</p>`).join("")||"<p>まだありません。</p>"}</div>`);
     case "pause": return sheetWrap("休止中", `<p>戦闘はターン${st.run.turn}の入力待ちで保存されています。再開しても撤退・回復・報酬は発生しません。</p><div class="stack"><button class="btn primary" data-a="closeSheet">再開する</button></div>`);
     case "retreat": return sheetWrap("撤退", `<p>撤退は必ず成功します。この戦闘の報酬は0、旅程枠も使いません。遭遇した位置へ戻ります。</p><div class="stack"><button class="btn primary" data-a="doRetreat">撤退する</button><button class="btn" data-a="closeSheet">戦闘を続ける</button></div>`);
@@ -4207,9 +4218,11 @@ function migrateExperience(st){if(st.xpCurveVersion===2)return;const old=Math.ma
 function stationNear(st){const m=MAPS[st.mapId];return m&&m.kind==='out'&&m.objects.some(o=>o.type==='station'&&Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1);}
 function railUnlocked(st,id){const i=HUB_ORDER.indexOf(id);return i===0||i>0&&st.quests[mainQuestOf(HUB_ORDER[i-1])]==='complete';}
 function stationDestinations(st){return HUB_ORDER.filter(id=>id!==MAPS[st.mapId].hub&&railUnlocked(st,id));}
-function railTravel(st,to){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||G.dlg||!stationNear(st)||!stationDestinations(st).includes(to))return false;if(st.slots<1){openSheet('rest',{reason:'新幹線の移動には旅程枠1が必要です。'});return false;}const m=MAPS[to],station=m.objects.find(o=>o.type==='station');if(!station)return false;const p=[[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>[station.x+dx,station.y+dy]).find(([x,y])=>walkable(m,x,y)&&!zoneAt(m,x,y));if(!p)return false;travelHub(to,...p);return true;}
-function renderStation(){const st=G.st;return `<p>新幹線で解放済みの街へ直接移動します。移動は旅程枠1・運賃なし。</p><p class="small dim">前の街の本編クリアで次の駅が解放されます。ゲーム内の架空路線です。</p><div class="stack">${stationDestinations(st).map(id=>`<button class="btn" data-a="railGo" data-v="${id}" ${st.slots<1?'disabled':''}><b>${esc(HUBS[id].pref)}・${esc(HUBS[id].name)}</b><span class="small">${st.visitedHubs.includes(id)?'訪問済み':'イベント進行で解放・未訪問'} → 移動する</span></button>`).join('')||'<p>ほかの街はまだ解放されていません。</p>'}</div>${st.slots<1?'<p class="warn">旅程枠が不足しています。宿泊・休息後に利用してください。</p>':''}`;}
-
+const RAIL_LENGTHS=[70,100,45,95,65,180,60,90,35,210,40,160,60,350,70];
+function railDistance(from,to){const a=HUB_ORDER.indexOf(from),b=HUB_ORDER.indexOf(to);if(a<0||b<0)return null;if(a===b)return 0;const main=i=>RAIL_LENGTHS.slice(0,i).reduce((n,v)=>n+v,0);if(a===16)return 100+main(b);if(b===16)return main(a)+100;return Math.abs(main(a)-main(b));}
+function railFare(from,to){const d=railDistance(from,to);return d===null?null:d===0?0:20+d;}
+function railTravel(st,to){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||G.dlg||!stationNear(st)||!stationDestinations(st).includes(to))return false;if(st.slots<1){openSheet('rest',{reason:'新幹線の移動には旅程枠1が必要です。'});return false;}const fare=railFare(curHub(),to);if(fare===null||st.gold<fare){toast('運賃が足りません。必要'+fare+'ゴールド／所持'+st.gold+'ゴールド');return false;}const m=MAPS[to],station=m.objects.find(o=>o.type==='station');if(!station)return false;const p=[[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>[station.x+dx,station.y+dy]).find(([x,y])=>walkable(m,x,y)&&!zoneAt(m,x,y));if(!p)return false;st.gold-=fare;travelHub(to,...p);return true;}
+function renderStation(){const st=G.st;return `<p>所持金：<b>${st.gold.toLocaleString()}ゴールド</b>／残り${st.slots}枠</p><p class="small">運賃は基本20＋路線距離。移動は旅程枠1。距離・路線はゲーム内の架空設定です。前の街の本編クリアで次の駅が解放されます。</p><div class="stack">${stationDestinations(st).map(id=>{const d=railDistance(curHub(),id),fare=railFare(curHub(),id);return `<button class="btn" data-a="railGo" data-v="${id}" ${st.slots<1||st.gold<fare?'disabled':''}><b>${esc(HUBS[id].pref)}・${esc(HUBS[id].name)}</b><span class="small">路線距離${d}／運賃${fare}ゴールド${st.gold<fare?`（あと${fare-st.gold}不足）`:''}</span></button>`;}).join('')||'<p>ほかの街はまだ解放されていません。</p>'}</div>${st.slots<1?'<p class="warn">旅程枠が不足しています。宿泊・休息後に利用してください。</p>':''}`;}
 function renderWorld(){
   const st=G.st; const safe=isSafe();
   let h=`<p class="small">拠点間の移動は旅程枠1。安全地帯から出発できます。</p><div class="stack">`;
@@ -4443,7 +4456,9 @@ function renderStreamSetup(){
 
 /* ===== 操作の受付 ===== */
 const ACT = {
-  railGo(el){railTravel(G.st,el.dataset.v);},
+  railGo(el){const to=el.dataset.v;if(!stationNear(G.st)||!stationDestinations(G.st).includes(to))return;openSheet("railConfirm",{to});},
+  railBoard(el){railTravel(G.st,el.dataset.v);},
+  supportQuick(el){if(G.auto||!G.st.run||G.st.run.state!=="input"||!["meter","family"].includes(el.dataset.v))return;const a=G.st.run.party.find(m=>m.hp>0&&!m.acted);if(!a)return;G.cmd={actor:a.pos,type:"other",o:el.dataset.v};render();},
   questFilter(el){if(!['recommended','active','all','complete'].includes(el.dataset.v))return;G.sheetData.questFilter=el.dataset.v;G.sheetData.questFocus=null;render();},
   questAbandonPrompt(el){const id=el.dataset.v;if(!QUESTS[id]||!["active","bossReady"].includes(G.st.quests[id]))return;openSheet("questAbandon",{id});},
   questDetail(el){G.sheetData.questFocus=G.sheetData.questFocus===el.dataset.v?null:el.dataset.v;render();},
@@ -4591,7 +4606,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){ migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.maxC=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureWorld(s); return s; }
+function migrate(s){ migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureVitals(s);ensureWorld(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
