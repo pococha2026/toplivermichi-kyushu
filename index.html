@@ -415,6 +415,37 @@ body.in-explore,body.in-battle{padding-bottom:calc(var(--dockH) + 6px + var(--vc
 .lvt{width:100%;border-collapse:collapse;font-size:13px;line-height:1.5;font-variant-numeric:tabular-nums}.lvt th{text-align:left;font-weight:400;color:#D9D2C0;white-space:nowrap;padding-right:4px}.lvt td{text-align:right;padding:0 2px;white-space:nowrap}.lvt td.ar{color:var(--mist)}
 .lvt td.up{color:var(--aqua);font-weight:700}.lvt td.dim{color:var(--mist)}.lvt tr.main th{color:var(--cream)}.lvt tr.main{background:rgba(131,185,174,.08)}.lvt tr.sig th{color:var(--gold)}.lvt tr.sig td.up{color:var(--gold)}
 .lvt td.lvbar{width:38%;padding-left:6px}.lvt td.lvbar i{display:block;height:6px;background:var(--aqua)}.lvt tr.sig td.lvbar i{background:var(--gold)}
+/* 戦闘終了後は説明を外し、操作欄を画面内に固定。内容が多ければページを分ける。 */
+body.in-end{padding-top:6px;padding-bottom:calc(var(--dockH) + 6px + var(--vcut) + env(safe-area-inset-bottom,0px));overflow:hidden}
+body.in-end #screen{gap:0}
+.end-view{box-sizing:border-box;height:calc(100dvh - 12px - var(--dockH) - var(--vcut) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;gap:6px;font-size:14px;line-height:1.35;overflow:hidden;min-height:0}
+@supports not (height:100dvh){.end-view{height:calc(100vh - 12px - var(--dockH) - var(--vcut) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))}}
+.end-head{border:2px solid var(--gold);background:var(--navy);padding:6px 8px;text-align:center}
+.end-head h2{font-family:var(--f-dot);font-size:20px;line-height:1.25;color:var(--gold);letter-spacing:.02em}
+.end-head p{font-size:12px;margin-top:2px}
+.end-tabs{display:grid;grid-template-columns:repeat(var(--end-tabs),minmax(0,1fr));gap:4px}
+.end-view .btn{font-size:14px;line-height:1.2;min-height:40px;padding:6px 4px;text-align:center;box-sizing:border-box}
+.end-tabs .btn:disabled{opacity:1;color:var(--gold);border-color:var(--gold);background:#2E2A22;cursor:default}
+.end-content{min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px}
+.end-piece{flex:none;min-width:0;overflow-wrap:anywhere}
+.end-piece h3{font-size:15px;line-height:1.4;color:var(--gold)}
+.end-pages{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;font-size:12px;font-variant-numeric:tabular-nums}
+.end-primary{width:100%;font-weight:700;min-height:44px!important}
+.end-status{font-size:13px;line-height:1.4}
+.end-member{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:2px 8px;padding:5px 6px;border:1px solid var(--slate);font-size:12px;font-variant-numeric:tabular-nums;align-items:center}
+.end-member>b{font-size:14px;grid-column:1/-1;overflow-wrap:anywhere;font-weight:700;line-height:1.25}
+.end-member>.end-jp{grid-column:1/-1;color:#D9D2C0;font-size:12px}
+.end-member>span:not(.end-jp){white-space:nowrap}
+.end-rewards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+.end-rewards>span{display:flex;flex-direction:column;align-items:center;border:1px solid var(--slate);padding:4px 2px;font-size:12px;background:var(--navy)}
+.end-rewards b{font-size:16px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.end-stat{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:6px;border-bottom:1px solid var(--slate);padding:4px 2px;font-size:13px;font-variant-numeric:tabular-nums;align-items:center}
+.end-stat>span:first-child{min-width:0}.end-stat strong{font-size:12px}
+.end-loot{display:flex;flex-direction:column;gap:3px;padding:6px;border:1px solid var(--slate);font-size:14px}.end-loot>span{font-size:12px;color:var(--sand)}
+.end-check{display:flex;flex-wrap:wrap;gap:2px 6px;border-bottom:1px solid var(--slate);padding:4px 2px;font-size:14px}.end-check>span{margin-left:auto;font-size:12px;color:var(--cream)}
+.end-view.tight{gap:3px}.end-view.tight .end-content{gap:3px}.end-view.tight .end-member{padding:3px 5px;gap:1px 6px}.end-view.tight .end-member>b{font-size:13px}.end-view.tight .end-stat,.end-view.tight .end-check{padding:2px;font-size:12px}.end-view.tight .end-head{padding:3px 6px}.end-view.tight .end-head h2{font-size:18px}
+@media(max-height:680px){.end-view{gap:4px;font-size:13px}.end-head{padding:3px 6px}.end-head h2{font-size:18px}.end-member{padding:3px 5px;gap:1px 6px}.end-member>b{font-size:13px}.end-rewards b{font-size:14px}.end-content{gap:4px}.end-stat,.end-check{padding:2px;font-size:12px}}
+
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -434,7 +465,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.11";
+const GAME_VERSION = "6.12";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -3390,6 +3421,7 @@ function render(){
   const root=$("#screen"); if(!root) return;
   stopBattleTimer();
   const s=G.screen;
+  if(!(s==="result"||s==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input"))G.endPager=null;
   let html="";
   if(s==="title") html=renderTitle();
   else if(s==="new") html=renderNew();
@@ -3400,7 +3432,8 @@ function render(){
   root.innerHTML = heroSub(html + renderSheet() + renderDialog()) + `<div id="toast" class="toast" role="status" hidden></div>`;
   if(s==="explore") mountCanvas();
   document.body.classList.toggle("in-battle", s==="battle"); document.body.classList.toggle("in-explore", s==="explore");
-  if(s==="battle"){ drawEnemies(); startBattleTimer(); }
+  document.body.classList.toggle("in-end",s==="result"||s==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input");
+  if(s==="battle"&&G.st.run&&G.st.run.state==="input"){ drawEnemies(); startBattleTimer(); }
   if(s==="new") mountNew();
   if(s==="title"){ drawTitleArt(); if(!G.titleRaf) G.titleRaf=requestAnimationFrame(titleLoop); }
   drawMiniSprites();
@@ -3411,7 +3444,9 @@ function render(){
   const dh=document.querySelector("#dock .hint"); if(dh) dh.textContent = (s==="explore"&&!G.sheet&&!G.dlg)?"スティック：移動／決定：調べる":"スティック：カーソル／決定・戻る";
   if(G.dlg){ const b=$("#dlgNext"); if(b) b.focus({preventScroll:true}); }
   syncDockAuto();
+  if(G.endPager&&G.endPager.resetScroll){G.endPager.resetScroll=false;if(typeof window.scrollTo==="function")window.scrollTo(0,0);}
   PAD.restore();
+  fitEndView();
 }
 /* 戦闘中だけ、スティックの隣にオートボタンを出す（オート中は「停止」に切り替わる） */
 function syncDockAuto(){
@@ -3941,6 +3976,7 @@ function cueText(run){
 }
 function renderBattle(){
   const st=G.st, run=st.run; if(!run) return "";
+  if(run.state!=="input")return renderBattleEnd(run);
   const tel=telegraph(run);
   const enemies=run.enemies.map(e=>{
     const t=tel.find(x=>x.slot===e.slot); const pct=Math.round(100*e.hp/e.maxHP);
@@ -4149,7 +4185,7 @@ function autoStep(){
   else { G.auto=false; G.autoWait=false; G.cursorSig=null; render(); }
 }
 function toResult(){
-  const st=G.st, run=st.run; const res=applyVictory(st,run);
+  const st=G.st, run=st.run;if(!run||run.state!=="won")return;const res=applyVictory(st,run);
   if(res.levelAfter>res.levelBefore && Vof(res.levelAfter)>Vof(res.levelBefore)) res.notes.push("技能・装備の効果量が上昇（V"+Vof(res.levelAfter)+"）");
   const L0=res.levelBefore, L1=levelOf(st.xp);
   st.lastResult={seq:run.seq, kind:run.kind, bossId:run.bossId||null, turns:run.turn, ...res,
@@ -4160,51 +4196,64 @@ function toResult(){
   commit(); G.screen="result"; render();
   if(res.levelAfter>res.levelBefore) SND.jingle("levelup","victory"); else if(SND.current!=="victory") SND.play("victory");
 }
-function renderResult(){
-  const st=G.st, r=st.lastResult; if(!r) return "";
-  const L=levelOf(st.xp), up=r.levelAfter>r.levelBefore;
-  const pct=(a,b)=>Math.max(0,Math.min(100,Math.round(a/b*100)));
-  const xpNow=st.xp-xpFor(L), xpSpan=L<999?xpFor(L+1)-xpFor(L):1;
-  const foes=r.enemies||[];
-  const title=r.challenge?(r.challenge.passed?"特別チャレンジ達成！":"討伐成功・課題未達"):r.kind==="boss"?"ボスを鎮めた！":"勝利！";
-  const sub = (r.turns?`${r.turns}ターン`:"")+(foes.length?`・${foes.map(e=>esc(e.name)).join("、")}を鎮めた`:"");
-  const card=(lab,val,cls="")=>`<div class="rstat ${cls}"><span class="rlab">${lab}</span><span class="rval">${val}</span></div>`;
-  const mem=(r.members||[]).map(x=>{
-    const j=(r.jp||[]).find(y=>y.cid===x.cid)||{gain:0}; const s=charStats(st,x.cid,L); const v=vitalOf(x.cid);
-    const jp=jpOf(st,x.cid,s.job), R=rankOf(jp), jpA=jpFor(R), jpB=R<999?jpFor(R+1):jpA+1;
-    const low=isLow(v.hp,s.maxHP), down=v.hp<=0;
-    const hpUp = up&&x.maxAfter>x.maxBefore;
-    return `<div class="rmem ${low||down?"low":""}">
-      <div class="rmh"><b>${esc(charName(st,x.cid))}</b><span class="small rjob">${esc(JOBS[s.job].name)}</span></div>
-      <div class="rtag">${j.R1>j.R0?`<span class="rbadge">熟練度 ${j.R0}→${j.R1}</span>`:`<span class="rbadge none">熟練度${R}</span>`}</div>
-      <div class="gauge"><span>熟練度${R}</span><span class="bar jp"><i style="width:${pct(jp-jpA,jpB-jpA)}%"></i></span><b>＋${j.gain}</b></div>
-      <div class="gauge"><span>HP</span><span class="bar"><i style="width:${pct(v.hp,s.maxHP)}%"></i></span><b>${v.hp}/${s.maxHP}</b></div>
-      <div class="gauge"><span>MP</span><span class="bar cp"><i style="width:${pct(v.c,s.startC)}%"></i></span><b>${v.c}/${s.startC}</b></div>
-      <div class="rmfoot">
-        <p class="small ${hpUp?"good":"dim"}">${hpUp?`最大HP ${x.maxBefore} → ${x.maxAfter}`:`最大HP ${s.maxHP}`}</p>
-        <p class="small">最大MP ${x.mpBefore!=null&&x.mpAfter>x.mpBefore?`${x.mpBefore} → ${x.mpAfter}`:s.startC}</p>
-        <p class="small ${down||low?"warn":"dim"}">${down?"戦闘不能":low?"HPわずか":"HPは十分"}</p>
-      </div>
-    </div>`; }).join("");
-  const items=[...(r.gear||[]).map(x=>`<li class="ritem">${eqBadge(x.id)}${esc(EQUIP[x.id].name)}<span class="small">（${esc(x.why)}${x.kept?"・持ち物がいっぱいのため預かり所へ":""}）</span></li>`),
-    ...(r.items||[]).map(x=>`<li class="ritem">${itemBadge(ITEMS[x.id])}<span class="rst">${"★".repeat(ITEMS[x.id].stars)}</span>${esc(ITEMS[x.id].name)} ×${x.n}<span class="small">（${esc(x.why)}）</span></li>`),
-    ...(r.itemsKept||[]).map(x=>`<li class="warn">${esc(ITEMS[x.id].name)} ×${x.n} は袋がいっぱいのため宿屋の預かり所へ</li>`),
-    ...(r.itemsLost||[]).map(x=>`<li class="warn">${esc(ITEMS[x.id].name)} ×${x.n} は預かり所もいっぱいで受け取れず</li>`)];
-  const gifts=r.gifts.map(g=>`<li class="ritem">${eqBadge(g)}専用品「${esc(EQUIP[g].name)}」を贈られた</li>`);
-  const anyLow=st.roster.some(c=>{const v=vitalOf(c),s=charStats(st,c,L); return v.hp<=0||isLow(v.hp,s.maxHP);});
-  return `<section class="result" aria-labelledby="rtitle">
-    <div class="rbanner ${r.kind==="boss"||r.challenge?"boss":""}"><h2 id="rtitle">${title}</h2><p>${sub}</p></div>
-    ${up?`<div class="rlevel"><b>レベルアップ！</b><span>レベル${r.levelBefore} → <b class="big">${r.levelAfter}</b></span>${Vof(r.levelAfter)>Vof(r.levelBefore)?`<span class="small">技能・装備・道具の効果量が上昇</span>`:""}<span class="small good">全員のHP・MPが全回復した！</span></div>
-      ${r.statDetail?levelUpHtml(st,r.statDetail):r.statUps?`<div class="rbox rups"><h3 class="label">能力が上がった</h3><ul class="rlist">${Object.entries(r.statUps).filter(([c])=>st.roster.includes(c)).map(([c,list])=>`<li><b>${esc(charName(st,c))}</b>　${list.length?list.map(([k,v])=>`${STAT_NAMES[k]}＋${v}`).join("・"):"変化なし"}</li>`).join("")}</ul></div>`:""}`:""}
-    <div class="rgrid">${card("経験値",`＋${r.xp.toLocaleString()}`)}${card("ゴールド",`＋${r.gold.toLocaleString()}`,"gold")}${r.tickets?card("チケット",`＋${r.tickets.toLocaleString()}`):card("所持金",`${st.gold.toLocaleString()}G`)}</div>
-    <div class="gauge rxp"><span>レベル${L}</span><span class="bar xp"><i style="width:${pct(xpNow,xpSpan)}%"></i></span><b>${L<999?`次まで${(xpSpan-xpNow).toLocaleString()}`:"最大"}</b></div>
-    ${r.challenge?`<div class="rbox"><h3 class="label">${esc(r.challenge.name)}</h3><ul class="list">${r.challenge.conditions.map(c=>`<li>${c.ok?"✓":"未"} ${esc(c.label)}（${c.value}）</li>`).join("")}</ul></div>`:""}${r.quest?`<div class="rquest done">依頼「${r.quest} ${esc(QUESTS[r.quest].name)}」完了！</div>`:r.kills&&r.killQuest?`<div class="rquest"><span>依頼 ${r.killQuest} 討伐</span><span class="bar"><i style="width:${pct(r.killNow,r.killNeed)}%"></i></span><b>${r.killNow}/${r.killNeed}</b></div>`:""}
-    ${items.length||gifts.length?`<div class="rbox"><h3 class="label">手に入れたもの</h3><ul class="rlist">${[...items,...gifts].join("")}</ul></div>`:""}
-    ${r.notes.filter(n=>!/効果量が上昇/.test(n)).map(n=>`<p class="good rnote">${esc(n)}</p>`).join("")}
-    <h3 class="label">仲間</h3><div class="rmems ${(r.members||[]).some(x=>graphemes(charName(st,x.cid)).length>7)?"longname":""}">${mem}</div>
-    ${anyLow?`<p class="small warn">HPが減っている仲間がいます。次の戦闘へ持ち越すので、道具や宿屋で回復しておこう（戦闘不能は宿屋か蘇生の道具で）。</p>`:""}
-    <div class="rfoot"><button class="btn primary wide" data-a="resultDone">探索へ</button></div></section>`;
+/* 戦闘終了・結果：画面内のページ切替で全項目を確認する。 */
+const END_GROUPS={summary:'概要',growth:'成長',loot:'入手',challenge:'課題',notes:'通知',foes:'敵',log:'ログ'};
+function endTextBlocks(text,limit=84){const gs=graphemes(String(text||'')),out=[];for(let i=0;i<gs.length;i+=limit)out.push(`<p>${esc(gs.slice(i,i+limit).join(''))}</p>`);return out.length?out:['<p>記録なし</p>'];}
+function endMemberBlock(st,cid,hp,maxHP,c,maxMP,rank,jpLabel=''){return `<div class="end-member"><b>${esc(charName(st,cid))}</b><span>HP ${hp}/${maxHP}</span><span>MP ${c}/${maxMP}</span>${rank!=null?`<span class="end-jp">熟練${rank}${jpLabel}</span>`:''}</div>`;}
+function endSizeKey(){return `${window.innerWidth||390}:${window.innerHeight||844}:${typeof VFIT!=='undefined'?VFIT.value:0}`;}
+function renderEndFrame(key,pages,title,subtitle,primary,button){
+ const fullKey=key+':'+endSizeKey();
+ if(!G.endPager||G.endPager.key!==fullKey){G.endPager={key:fullKey,pages,index:0,primary,resetScroll:true};G.cursorSig=primary+'||||||';}
+ const ui=G.endPager;ui.index=Math.max(0,Math.min(ui.pages.length-1,ui.index||0));const page=ui.pages[ui.index],groups=[...new Set(ui.pages.map(p=>p.group))];
+ return `<section class="end-view" aria-labelledby="endTitle"><header class="end-head"><h2 id="endTitle">${esc(title)}</h2><p>${esc(page.title||subtitle)}</p></header><nav class="end-tabs" aria-label="結果の表示切替" style="--end-tabs:${groups.length}">${groups.map(g=>`<button class="btn ${page.group===g?'on':''}" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.pages.findIndex(p=>p.group===g)}" ${page.group===g?'disabled aria-current="page"':''}>${END_GROUPS[g]||g}</button>`).join('')}</nav><div class="end-content" aria-label="${esc(page.title||END_GROUPS[page.group])}">${page.blocks.map(b=>`<div class="end-piece">${b}</div>`).join('')}</div><nav class="end-pages" aria-label="確認ページ"><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index-1}" ${ui.index<=0?'disabled':''}>◀ 前へ</button><span aria-live="polite">${esc(END_GROUPS[page.group])} ${ui.index+1}/${ui.pages.length}</span><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index+1}" ${ui.index>=ui.pages.length-1?'disabled':''}>次へ ▶</button></nav><button class="btn primary end-primary" data-end-primary data-a="${primary}">${esc(button)}</button></section>`;
 }
+function fitEndView(){
+ const view=document.querySelector('.end-view'),body=view&&view.querySelector('.end-content');if(!body||!body.clientHeight||!G.endPager)return;
+ if(body.scrollHeight<=body.clientHeight+1)return;view.classList.add('tight');if(body.scrollHeight<=body.clientHeight+1)return;
+ const ui=G.endPager,page=ui.pages[ui.index],moved=[];
+ while(body.scrollHeight>body.clientHeight+1&&page.blocks.length>1){const last=body.lastElementChild;if(!last)break;last.remove();moved.unshift(page.blocks.pop());}
+ if(moved.length){ui.pages.splice(ui.index+1,0,{group:page.group,title:page.title,blocks:moved});render();return;}
+ // 極端に低い表示枠でも、一つの文章を次の確認ページへ分割する。
+ const last=body.firstElementChild;if(!last)return;const text=last.textContent||'',gs=graphemes(text);
+ if(gs.length>36){const mid=Math.ceil(gs.length/2);page.blocks=[`<p>${esc(gs.slice(0,mid).join(''))}</p>`];ui.pages.splice(ui.index+1,0,{group:page.group,title:page.title,blocks:[`<p>${esc(gs.slice(mid).join(''))}</p>`]});render();}
+}
+function endChallengeBlocks(conditions){return (conditions||[]).map(c=>`<p class="end-check ${c.ok?'good':'warn'}"><b>${c.ok?'✓':'未'}</b> ${esc(c.label)}<span>現在 ${esc(c.value)}</span></p>`);}
+function renderBattleEnd(run){
+ const st=G.st,won=run.state==='won',conditions=run.challengeId?trialConditions(run):[],passed=conditions.every(c=>c.ok),limit=run.turnLimit&&run.turn>run.turnLimit;
+ const title=won?(run.challengeId?(passed?'チャレンジ課題達成！':'討伐成功・課題未達'):'勝利！'):(limit?'制限ターン終了':'戦闘終了・敗北');
+ const summary=[`<p class="end-status">${won?'敵をすべて鎮めました。':run.challengeId?'追加のゴールド損失はありません。':`所持金の半分（${Math.floor(st.gold/2)}G）を失い、安全地点へ戻ります。`}</p>`];
+ summary.push(...run.party.map(m=>endMemberBlock(st,m.cid,m.hp,m.maxHP,m.c,m.maxC,m.R)));
+ if(conditions.length)summary.push(`<p class="end-status ${passed?'good':'warn'}">課題 ${conditions.filter(c=>c.ok).length}/${conditions.length} 達成${!passed?'・課題ページで確認':''}</p>`);
+ if(!won)summary.push('<p class="end-status">HP・MPは帰還時に全回復。受注・育成・所持品は保持します。</p>');
+ const pages=[{group:'summary',blocks:summary}];
+ if(conditions.length)pages.push({group:'challenge',blocks:endChallengeBlocks(conditions)});
+ pages.push({group:'foes',blocks:run.enemies.flatMap(e=>endTextBlocks(`${e.hp<=0?'撃破':'残存'}：${e.display||e.name}　HP ${e.hp}/${e.maxHP}`))});
+ if(run.log&&run.log.length)pages.push({group:'log',blocks:run.log.flatMap(t=>endTextBlocks(t))});
+ return renderEndFrame('battle-end:'+run.seq+':'+run.state,pages,title,`${run.turn}ターン・${run.kind==='challenge'?'特別チャレンジ':run.kind==='boss'?'地域ボス':'通常戦闘'}`,won?'toResult':'defeatReturn',won?'結果・報酬を確認する':'安全な場所へ戻る');
+}
+function resultEndPages(st,r){
+ const L=levelOf(st.xp),up=r.levelAfter>r.levelBefore,summary=[];
+ summary.push(`<div class="end-rewards"><span>経験値<b>＋${(r.xp||0).toLocaleString()}</b></span><span>ゴールド<b>＋${(r.gold||0).toLocaleString()}</b></span><span>チケット<b>＋${(r.tickets||0).toLocaleString()}</b></span></div>`);
+ summary.push(`<p class="end-status ${up?'good':''}">総合Lv ${up?`${r.levelBefore} → ${r.levelAfter}`:L}／${L<999?'次まで '+(xpFor(L+1)-st.xp).toLocaleString()+' EXP':'最大レベル'}${up?'・全回復':''}</p>`);
+ for(const x of r.members||[]){const s=charStats(st,x.cid,L),v=vitalOf(x.cid),j=(r.jp||[]).find(j=>j.cid===x.cid)||{gain:0};summary.push(endMemberBlock(st,x.cid,v.hp,s.maxHP,v.c,s.startC,j.R1>j.R0?`${j.R0}→${j.R1}`:s.R,`（＋${j.gain} JP${s.R<999?'／次まで'+(jpFor(s.R+1)-jpOf(st,x.cid,s.job)):''}）`));}
+ if(r.challenge)summary.push(`<p class="end-status ${r.challenge.passed?'good':'warn'}">特別課題 ${r.challenge.conditions.filter(c=>c.ok).length}/${r.challenge.conditions.length}${r.challenge.first?'・初回報酬獲得':r.challenge.passed?'・練習クリア':'・未達成'}</p>`);
+ if(r.quest&&QUESTS[r.quest])summary.push(`<p class="end-status good">依頼 ${esc(r.quest)} 完了</p>`);else if(r.killQuest)summary.push(`<p class="end-status">討伐 ${esc(r.killQuest)}：${r.killNow}/${r.killNeed}</p>`);
+ const loot=[...(r.gear||[]).map(x=>({name:EQUIP[x.id].name,quantity:1,why:x.why||'',status:x.kept?'預かり所へ':'装備品に追加'})),...(r.items||[]).map(x=>({name:ITEMS[x.id].name,quantity:x.n,why:x.why||'',status:'道具袋へ'})),...(r.itemsKept||[]).map(x=>({name:ITEMS[x.id].name,quantity:x.n,why:x.why||'',status:'預かり所へ'})),...(r.itemsLost||[]).map(x=>({name:ITEMS[x.id].name,quantity:x.n,why:x.why||'',status:'空き不足・受取不可',lost:true})),...(r.gifts||[]).map(id=>({name:EQUIP[id].name,quantity:1,status:(st.keep||[]).includes(id)?'贈り物・預かり所へ':'贈り物・装備品に追加'}))];
+ summary.push(`<p class="end-status">入手 ${loot.filter(x=>!x.lost).length}件${loot.some(x=>x.lost)?'／受取不可あり':''}・通知 ${(r.notes||[]).length}件${up?'／成長ページあり':''}</p>`);
+ const pages=[{group:'summary',blocks:summary}];
+ if(up&&r.statDetail)for(const [cid,d]of Object.entries(r.statDetail)){if(!st.roster.includes(cid))continue;pages.push({group:'growth',title:charName(st,cid)+'の成長',blocks:[`<h3>${esc(charName(st,cid))}・能力上昇</h3>`,...d.rows.map(([label,a,b])=>`<div class="end-stat"><span>${esc(label)}</span><span>${a} → <b>${b}</b></span><strong class="good">${b-a>=0?'＋':''}${b-a}</strong></div>`)]});}
+ else if(up&&r.statUps)for(const [cid,rows]of Object.entries(r.statUps))pages.push({group:'growth',blocks:[`<h3>${esc(charName(st,cid))}・能力上昇</h3>`,...rows.map(([k,n])=>`<p>${esc(STAT_NAMES[k]||k)} ＋${n}</p>`)]});
+ if(loot.length)pages.push({group:'loot',blocks:loot.map(x=>`<div class="end-loot ${x.lost?'warn':''}"><b>${esc(x.name)} ×${x.quantity}</b><span>${esc(x.status)}${x.why?"／"+esc(x.why):""}</span></div>`)});
+ if(r.challenge)pages.push({group:'challenge',blocks:endChallengeBlocks(r.challenge.conditions)});
+ const notes=(r.notes||[]).slice();if(up)notes.unshift(`レベル${r.levelBefore}から${r.levelAfter}へ上昇。全員のHP・MPが全回復しました。`);
+ if(r.quest&&QUESTS[r.quest])notes.push(`依頼「${r.quest} ${QUESTS[r.quest].name}」完了。`);
+ if(st.roster.some(c=>{const v=vitalOf(c),s=charStats(st,c,L);return v.hp<=0||isLow(v.hp,s.maxHP);}))notes.push('HPが減っている仲間がいます。残りHP・MPを次の戦闘へ持ち越すため、道具や宿屋で回復しましょう。');
+ if(notes.length)pages.push({group:'notes',blocks:notes.flatMap(t=>endTextBlocks(t))});
+ if(r.enemies&&r.enemies.length)pages.push({group:'foes',blocks:r.enemies.flatMap(e=>endTextBlocks('撃破：'+e.name+(e.boss?'（ボス）':e.rarity?'（★'+e.rarity+'）':'')))});
+ return pages;
+}
+function renderResult(){const st=G.st,r=st.lastResult;if(!r)return '';const title=r.challenge?(r.challenge.passed?'特別チャレンジ達成！':'討伐成功・課題未達'):r.kind==='boss'?'ボスを鎮めた！':'勝利！';return renderEndFrame('result:'+r.seq,resultEndPages(st,r),title,`${r.turns||0}ターン・戦闘結果`,'resultDone','確認して探索へ');}
+
 function resultDone(){
   const r=G.st.lastResult; G.screen="explore"; keepFlush(); render(); exploreBgm();
   const Qd = r && r.quest && QUESTS[r.quest];
@@ -4719,6 +4768,7 @@ const ACT = {
   autoOff(){ G.auto=false; G.autoWait=false; clearTimeout(G.autoT); G.autoLast=null; G.cmd={}; G.cursorSig=null; render(); SND.sfx("cancel"); toast("オートを中断しました。手動で操作できます。"); },
   toResult(){ toResult(); },
   resultDone(){ resultDone(); },
+  endPage(el){const p=G.endPager;if(!p||el.dataset.k!==p.key)return;const n=Number(el.dataset.v);if(!Number.isInteger(n)||n<0||n>=p.pages.length)return;p.index=n;G.cursorSig=n<p.pages.length-1?["endPage",p.key,String(n+1),"","","",""].join("|"):p.primary+"||||||";render();},
   defeatReturn(){ const st=G.st; const run=st.run; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
     const lost=run.kind==="challenge"?0:Math.floor(st.gold/2); st.gold-=lost; restoreAll(st); commit(); G.screen="explore"; exploreBgm(); render(); say([["",`安全な場所へ運ばれた。${run.kind==="challenge"?"特別挑戦の追加ペナルティはありません。":"所持ゴールドの半分（"+lost+"）を失った。"}`],["","全員のHPとMPが回復した。"]]); },
   retreat(){ openSheet("retreat"); },
@@ -4816,7 +4866,7 @@ document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
-  if(G.readOnly && !["openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
+  if(G.readOnly && !["openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
@@ -4839,7 +4889,7 @@ const VFIT=(()=>{
   function cur(){ if(preview!=null) return preview; const m=manual(); return m!=null?m:autoCut(); }
   function apply(){ let cut=cur();
     cut=Math.max(0,Math.min(Math.round(cut),Math.round(window.innerHeight*0.4)));
-    if(Math.abs(cut-last)<2) return; last=cut; document.documentElement.style.setProperty("--vcut",cut+"px");
+    if(Math.abs(cut-last)<2) return; last=cut; document.documentElement.style.setProperty("--vcut",cut+"px");requestAnimationFrame(()=>fitEndView());
     window.dispatchEvent(new Event("resize")); }
   function calibrate(first){
     if(document.getElementById("vfitCal")) return;
@@ -4874,7 +4924,9 @@ const VFIT=(()=>{
   return { apply, calibrate, get mode(){ const m=manual(); return m==null?"auto":String(m); }, get value(){ return Math.round(cur()); } };
 })();
 document.addEventListener("visibilitychange",()=>{ if(document.hidden){ G.walk.path=G.walk.path.slice(0,1); if(G.st&&G.screen==="explore") commit(); SND.suspend(); } else { SND.resume(); if(G.screen==="explore") startLoop(); } });
-window.addEventListener("resize",()=>{ if(G.screen==="explore"){ G.walk.path=[]; clearTimeout(G.rsz); G.rsz=setTimeout(()=>{ if(G.screen==="explore") mountCanvas(); },120); } });
+window.addEventListener("resize",()=>{if(G.screen==="result"||G.screen==="battle"&&G.st&&G.st.run&&G.st.run.state!=="input"){clearTimeout(G.endResize);G.endResize=setTimeout(()=>render(),100);} if(G.screen==="explore"){ G.walk.path=[]; clearTimeout(G.rsz); G.rsz=setTimeout(()=>{ if(G.screen==="explore") mountCanvas(); },120); } });
+
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>fitEndView()).catch(()=>{});
 
 async function boot(){
   acquireLock(); PAD.mount(); SND.play("title");
