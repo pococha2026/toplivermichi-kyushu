@@ -493,13 +493,54 @@ body.in-battle{overflow:hidden}
 
 /* v7.20: searchable help remains available during play, including manual battles. */
 .guide-search{padding:8px;background:var(--navy);color:var(--cream);border:1px solid var(--gold)}.guide-search label{display:block;margin-bottom:4px}.guide-search input{box-sizing:border-box;width:100%;min-width:0;min-height:44px;font:inherit;color:#101820;background:#fff;padding:8px}.guide-categories{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}.guide-categories .btn{min-height:44px;font-size:14px;padding:6px}.guide-article p{line-height:1.75;overflow-wrap:anywhere}.guide-article h3{line-height:1.5}.guide-article summary{cursor:pointer;min-height:44px;padding:6px}.guide-table{overflow-x:auto}.guide-table table{border-collapse:collapse;font-size:14px;min-width:330px}.guide-table th,.guide-table td{border:1px solid var(--slate);padding:6px;text-align:left}.guide-table th{background:var(--navy);color:var(--cream)}.dock .hint{display:flex;flex-direction:column;align-items:center;gap:4px}.dock .dock-guide{box-sizing:border-box;font-size:11px;line-height:1.3;padding:4px 2px;min-width:0;max-width:100%;min-height:40px;visibility:visible}.dock [data-dock-hint]{font-size:10px}.no-dock-guide{display:none}body.no-dock .no-dock-guide{display:block;position:fixed;right:4px;bottom:4px;z-index:31;min-height:40px;font-size:12px}body.in-battle .dock [data-dock-hint]{display:none}
+/* v7.21: one measured play area, 44px controls and readable paged commands. */
+:root{padding:0;--app-height:100dvh;--mobile-top:max(4px,env(safe-area-inset-top,0px));--play-height:calc(var(--app-height) - var(--mobile-top) - var(--dockH) - var(--vcut) - env(safe-area-inset-bottom,0px) - 8px)}
+body.in-explore,body.in-battle,body.in-end{box-sizing:border-box;padding:var(--mobile-top) max(8px,env(safe-area-inset-right,0px)) 0 max(8px,env(safe-area-inset-left,0px));overflow:hidden}
+body.in-explore #screen,body.in-battle #screen,body.in-end #screen{max-width:520px;height:var(--play-height);min-height:0;gap:0}
+.mobile-explore,.mobile-battle,.mobile-command,.mobile-explore *,.mobile-battle *,.mobile-command *,.dock,.dock *{box-sizing:border-box}
+.mobile-explore{height:var(--play-height);min-height:0;display:flex;gap:4px;overflow:hidden}.mobile-explore .xhead{padding:0;border:1px solid var(--mist)}.map-heading{font:inherit;color:var(--cream);background:var(--ink);border:0;padding:4px 8px;width:100%;text-align:left;cursor:pointer;min-height:60px;display:flex;flex-direction:column;line-height:1.3;min-width:0}.map-heading>b{font-size:16px;color:var(--gold);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.map-heading .goal{font-size:14px;display:block;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;width:100%}.map-heading .xsave{font-size:12px;color:#D9D2C0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;width:100%}
+.mobile-explore .mapwrap{position:relative;min-height:0;flex:1 1 auto;padding:3px;border-width:2px;touch-action:none}.mobile-explore #map{display:block;max-width:100%;max-height:100%;touch-action:none;user-select:none;-webkit-user-select:none}.map-tools{position:absolute;top:3px;right:3px;display:flex;gap:3px;z-index:2}.map-tools .btn{width:44px;min-height:44px;padding:0;text-align:center;background:#101820ed;font-size:20px;border-color:var(--cream)}.map-tools .special-alert{width:auto;min-width:66px;font-size:13px;color:var(--gold);padding:0 6px}.mobile-explore .here{font-size:13px;line-height:18px;min-height:18px;color:var(--cream)}.mobile-explore .menu-grid.mobile-quick{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}.mobile-quick .btn{min-height:44px;font-family:var(--f-body);font-size:14px;line-height:1.25;white-space:normal;letter-spacing:0;padding:3px}.mobile-menu-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mobile-menu-grid .btn{min-height:48px;font-size:16px;line-height:1.35}
+.mobile-explore .mobile-pstrip{display:block;padding:3px 5px;min-height:0}.mobile-pstrip .pstop{font-size:12px;line-height:16px;margin-bottom:2px}.mobile-mini-grid{display:grid;grid-template-columns:repeat(var(--members),minmax(0,1fr));gap:6px}.mobile-mini{min-width:0;display:flex;flex-direction:column;gap:1px;font-size:12px;line-height:15px}.mobile-mini>b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:18px}.mobile-mini .bar{height:3px}.bar.mp i{background:#91BADB}.mobile-mini.ko{color:#FFB4AC}.mobile-mini.low{color:#FFCC80}
+.dock{height:calc(var(--dockH) + env(safe-area-inset-bottom,0px));padding:4px max(10px,env(safe-area-inset-right,0px)) calc(4px + env(safe-area-inset-bottom,0px)) max(10px,env(safe-area-inset-left,0px));display:grid!important;grid-template-columns:124px minmax(88px,1fr) 88px;grid-template-areas:'ab tools stick';gap:6px;align-items:center;border-top:2px solid var(--mist);bottom:var(--vcut)}.dock .abtns{grid-area:ab;gap:6px;margin:0;justify-content:flex-start}.dock .stick{grid-area:stick;width:84px;height:84px;justify-self:end}.dock .pbtn{width:54px;height:54px;min-width:44px;min-height:44px;padding:0}.dock .pbtn.a{width:64px;height:64px}.dock .pbtn.b{margin:0}.dock-tools{grid-area:tools;display:flex;align-items:center;justify-content:center;gap:4px;min-width:0}.dock-tools .btn,.dock-tools .pbtn.auto{width:44px;min-width:44px;height:44px;min-height:44px;padding:2px;font-size:12px;line-height:1.25;visibility:visible}.dock-tools .pbtn.auto{border-radius:6px}.dock-tools .pbtn.auto b{font-size:12px}.dock-tools .pbtn.auto small{font-size:10px;display:block}.dock-tools .pbtn.auto[hidden]{display:none!important}.dock .hint{display:none}.dock .stick .knob{width:42px;height:42px;margin:-21px 0 0 -21px}.dock .stick .knob::after{font-size:12px}.dock .stick .ring{inset:8px}.dock .pbtn b{font-size:20px}.dock .pbtn small{font-size:12px}body.stick-left .dock{grid-template-columns:88px minmax(88px,1fr) 124px;grid-template-areas:'stick tools ab'}body.stick-left .dock .stick{justify-self:start}body.stick-left .dock .abtns{justify-content:flex-end}body.mobile-dock-hidden .dock,body.no-dock .dock{display:none!important}
+@media(max-width:359px),(max-height:600px){.dock{grid-template-columns:106px minmax(88px,1fr) 70px;padding-left:8px;padding-right:8px;gap:4px}.dock .stick{width:70px;height:70px}.dock .pbtn{width:46px;height:46px}.dock .pbtn.a{width:54px;height:54px}.dock .abtns{gap:6px}.dock .stick .knob{width:36px;height:36px;margin:-18px 0 0 -18px}body.stick-left .dock{grid-template-columns:70px minmax(88px,1fr) 106px}.dock .pbtn b{font-size:18px}.dock .pbtn small{font-size:11px}}
+.mobile-battle{height:var(--play-height);display:grid;grid-template-rows:var(--battle-header) auto var(--enemy-height) var(--party-height) 44px var(--battle-log);gap:4px;min-height:0;overflow:hidden;font-size:14px;line-height:1.3}.mobile-battle:not(.has-tactic){grid-template-rows:var(--battle-header) var(--enemy-height) var(--party-height) 44px var(--battle-log)}.mobile-battle.focus{grid-template-rows:var(--battle-header) minmax(0,1fr) 44px var(--battle-log)}
+.mobile-bhead{display:flex;align-items:center;gap:4px;border:1px solid var(--mist);padding:2px 4px;background:#101820;min-width:0}.mobile-bhead>div{flex:1;min-width:0;line-height:18px;font-size:13px;white-space:nowrap;overflow:hidden}.mobile-bhead>div>b{font-size:15px;color:var(--gold)}.mobile-bhead>.btn{font-size:12px;width:56px;min-width:44px;min-height:44px;padding:2px;text-align:center}.mobile-bhead>.btn[data-a=battlePanel]{width:64px}.mobile-gauge{display:flex;gap:4px;align-items:center;font-size:12px}.mobile-gauge .bar{flex:1;min-width:18px;height:6px}.mobile-gauge .bar i{background:var(--gold)}.mobile-gauge>span{flex:none}.mobile-gauge>span.bar{flex:1}.mobile-tactic{min-height:44px;padding:3px 6px;color:#FFE4A3;border-color:var(--gold);font-size:13px;line-height:17px;background:#28384A;overflow-wrap:anywhere}
+.mobile-enemies{display:grid;grid-template-columns:repeat(var(--foes),minmax(0,1fr));gap:4px;min-height:0}.mobile-enemy{position:relative;min-width:0;min-height:44px;border:2px solid #8194A0;padding:4px;background:#162635;color:var(--cream);font:inherit;text-align:left;line-height:1.15;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;justify-content:center;gap:2px}.mobile-enemy .esprite{position:absolute;width:34px;height:34px;right:3px;top:3px;opacity:.3;pointer-events:none;z-index:0}.mobile-enemy>b,.mobile-enemy>span{position:relative;z-index:1}.mobile-enemy .enemy-name{font-size:14px;line-height:17px;max-height:34px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}.enemy-hp{font-size:14px;font-variant-numeric:tabular-nums;white-space:nowrap}.enemy-hp small{font-size:12px;display:block;color:#D9E4E9}.mobile-enemy .bar{height:4px;flex:none}.enemy-next{color:#FFB4A3;font-size:13px;line-height:15px;overflow-wrap:anywhere}.mobile-enemy.down{border-color:#526471;color:#C3CDD1}.mobile-enemy.down .esprite{display:none}
+.mobile-members{display:grid;grid-template-columns:repeat(var(--party-cols),minmax(0,1fr));gap:4px;min-height:0}.mobile-member.pcard{padding:3px 5px;gap:1px;min-height:44px;line-height:16px;border-color:#8194A0;overflow:hidden}.mobile-member.ready{border-left:4px solid var(--aqua)}.mobile-member.done{opacity:1;border-color:#526471;background:#1B2932}.mobile-member.ko{opacity:1;border-color:#D78880;background:#35242A}.mobile-member.on{border-color:var(--gold);background:#302D22}.member-name{display:flex;align-items:center;justify-content:space-between;gap:3px;min-width:0}.member-name>b{font-size:15px;line-height:18px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.member-name>small{font-size:11px;line-height:15px;flex:none;color:#DFE7E5}.mobile-vital{font-size:14px;line-height:16px;font-variant-numeric:tabular-nums;white-space:nowrap}.mobile-vital.mp{color:#B9DEFF}.mobile-battle-action{display:flex;gap:4px;min-height:44px}.mobile-battle-action .btn{flex:1;min-height:44px;padding:3px 6px;font-size:15px;text-align:center;white-space:nowrap}.mobile-battle-action.auto .btn{font-size:14px}
+.mobile-log{display:grid;grid-template-columns:44px minmax(0,1fr) 44px;gap:4px;border:1px solid var(--gold);padding:3px;background:#101820;min-height:0}.mobile-log>.btn{min-height:44px;padding:0;text-align:center;font-size:16px}.log-copy{font:inherit;border:0;padding:0;background:#101820;color:var(--cream);text-align:left;min-width:0;display:flex;flex-direction:column;justify-content:center;cursor:pointer}.log-copy>small{font-size:11px;line-height:13px;color:#E2D49C}.log-copy>span{font-size:14px;line-height:18px;overflow-wrap:anywhere;white-space:normal}.compact .enemy-name{-webkit-line-clamp:1;max-height:17px}.compact .mobile-enemy .esprite{width:26px;height:26px}.compact .mobile-enemy{padding:3px;gap:1px}.compact .mobile-enemy .enemy-name{font-size:13px}.compact .enemy-hp{font-size:13px;line-height:14px}.compact .enemy-hp small{font-size:12px;line-height:13px}.compact .enemy-next{font-size:13px;line-height:14px}.compact .member-name>b{font-size:14px}.compact .mobile-member{padding:2px 4px}.compact .member-name>small{font-size:10px}.mobile-focus-panel{min-height:0;display:flex;flex-direction:column;gap:4px;overflow:hidden;justify-content:center}.mobile-focus-panel>.mobile-members,.mobile-focus-panel>.mobile-enemies{min-height:0;max-height:100%;flex:0 1 auto}.mobile-focus-panel .mobile-enemy{min-height:80px}.mobile-focus-panel .mobile-member{min-height:56px}.focus-next{min-height:44px;padding:2px;text-align:center;font-size:14px}
+.mobile-command{height:var(--play-height);min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.4}.mobile-command .btn{min-height:44px;font-size:15px;padding:6px;line-height:1.3;text-align:center}.command-head{display:flex;justify-content:space-between;gap:6px;align-items:center;min-height:44px;flex:none;border-bottom:1px solid var(--mist);padding:0 2px 3px}.command-head>div{min-width:0}.command-head b{display:block;font-size:16px;color:var(--gold);white-space:nowrap;text-overflow:ellipsis;overflow:hidden}.command-head small{display:block;font-size:13px;white-space:nowrap;font-variant-numeric:tabular-nums}.command-head>.btn{flex:none;min-width:64px}.command-body{min-height:0;flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center;overflow:hidden}.command-hint{font-size:14px;color:#D9E4E9}.mobile-types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.mobile-types>.btn{min-height:54px}.mobile-targets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.mobile-targets>.btn{min-height:48px;overflow-wrap:anywhere}.selected-tech{color:#FFE4A3!important;border-color:var(--gold)!important;text-align:left!important}.selected-tech small{font-size:12px;white-space:nowrap}.target-label{font-size:14px;color:#D9E4E9}.mobile-preview{font:inherit;font-size:14px;line-height:19px;min-height:44px;max-height:62px;overflow:hidden;text-align:left;padding:4px 6px;background:#142534;color:var(--cream);border:1px solid var(--aqua);cursor:pointer;flex:none;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.mobile-preview span{font-size:14px!important;color:inherit!important}.mobile-preview .warn{color:#FFBAA9!important}.command-footer{display:grid;grid-template-columns:1fr 1fr;gap:6px;flex:none}.command-footer .btn{min-height:48px}.battle-search{display:flex;gap:6px;flex:none}.battle-search input,.picker-filter select,.native-target{font:inherit;font-size:16px;min-width:0;width:100%;min-height:44px;box-sizing:border-box;background:#101820;color:var(--cream);border:2px solid var(--mist);padding:6px}.battle-search input{flex:1;width:0}.battle-search .btn{min-width:60px}.picker-filter{display:flex;gap:8px;align-items:center;font-size:14px;flex:none}.picker-filter select{flex:1;width:0}.picker-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-auto-rows:minmax(64px,1fr);gap:6px;flex:1;align-content:center;min-height:0;overflow:hidden}.picker-list .btn{min-width:0;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;text-align:left;font-size:14px;overflow:hidden}.picker-list .btn b{font-size:14px;line-height:18px;overflow-wrap:anywhere;max-height:36px;overflow:hidden}.picker-list .btn small{font-size:12px;line-height:16px;color:#B9DEFF}.picker-list .btn.unavailable{border-style:dashed;background:#29333C;color:#E6D6C4}.picker-pages{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;flex:none;font-size:14px}.mobile-command.short .command-body{gap:4px}.mobile-command.short .selected-tech,.mobile-command.short .target-label{display:none}.mobile-command.short .command-head b{font-size:14px}.mobile-command.short .command-head small{font-size:12px}.mobile-command.short .mobile-preview{max-height:44px}.mobile-command.short .command-footer .btn{min-height:44px}.mobile-command.short .mobile-types>.btn{min-height:44px}
+body.in-battle .no-dock-guide,body.in-explore .no-dock-guide,body.in-end .no-dock-guide{display:none!important}.end-view{height:var(--play-height)}.end-view .btn{min-height:44px!important}.sheet-head{top:-14px}.sheet-head .btn{min-height:44px;font-size:14px;padding:5px 8px}.sheet-head h2{font-size:17px;line-height:1.3}.overlay{box-sizing:border-box;padding-bottom:calc(var(--dockH) + var(--vcut) + env(safe-area-inset-bottom,0px) + 8px)!important;height:var(--app-height);bottom:auto}.toast{pointer-events:none;line-height:1.4}
+
+.log-copy>small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.short-map .map-heading{min-height:44px;padding:2px 6px}.short-map .map-heading .xsave{display:none}.short-map .mobile-mini-grid{display:none}.short-map .mobile-pstrip{min-height:44px;display:flex;align-items:center}.short-map .mobile-pstrip .pstop{font-size:14px;width:100%;margin:0}.short-map .mobile-quick>.btn{display:none}.short-map .mobile-quick>.btn[data-k=nearby],.short-map .mobile-quick>.btn[data-k=mobileMenu],.short-map .mobile-quick>.btn[data-a=systemHelp]{display:block}.wide-map{display:grid;grid-template-columns:minmax(0,1fr) 216px;grid-template-rows:44px minmax(0,1fr) 44px;gap:4px}.wide-map .xhead{grid-column:1/-1}.wide-map .mapwrap{grid-column:1;grid-row:2/4}.wide-map .here{display:none}.wide-map .mobile-pstrip{grid-column:2;grid-row:2;overflow:hidden;display:block}.wide-map .mobile-mini-grid{display:grid;grid-template-columns:1fr 1fr}.wide-map .mobile-quick{grid-column:2;grid-row:3}.wide-map .mobile-quick>.btn{display:none}.wide-map .mobile-quick>.btn[data-k=nearby],.wide-map .mobile-quick>.btn[data-k=mobileMenu],.wide-map .mobile-quick>.btn[data-a=systemHelp]{display:block}.wide-map .mobile-pstrip .pstop{font-size:12px;line-height:16px}.wide-map .map-heading{min-height:44px;padding:2px 6px}.wide-map .xsave{display:none}
+@media(max-height:419px){.dock .stick{width:60px;height:60px}.dock .pbtn{width:44px;height:44px}.dock .pbtn.a{width:48px;height:48px}}
+
+
+.battle-search select{font:inherit;font-size:16px;width:100px;min-width:0;min-height:44px;box-sizing:border-box;background:#101820;color:var(--cream);border:2px solid var(--mist);padding:4px}.battle-search .btn{min-width:48px}.mobile-picker.short{gap:4px}.mobile-picker.short .picker-list{grid-auto-rows:minmax(48px,1fr);gap:4px}.mobile-picker.short .picker-list .btn b{max-height:18px;white-space:nowrap;text-overflow:ellipsis;width:100%}.mobile-picker.short .picker-list .btn small{white-space:nowrap;overflow:hidden;max-height:16px}.mobile-command.short .command-hint{display:none}.mobile-command.short .mobile-targets>.btn{min-height:44px}.mobile-command.short .command-body{gap:4px}.mobile-command.short{gap:4px}.tiny .mobile-focus-panel .mobile-member{min-height:52px}.tiny .mobile-member{padding:1px 3px;gap:1px}.tiny .member-name>b{font-size:14px;line-height:16px}.tiny .mobile-vital{font-size:13px;line-height:14px}.tiny .mobile-focus-panel .mobile-enemy{min-height:52px;max-height:52px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:18px 3px 15px;gap:1px 4px;padding:2px 4px}.tiny .mobile-enemy .enemy-name{grid-column:1;grid-row:1;line-height:18px}.tiny .mobile-enemy .enemy-hp{grid-column:2;grid-row:1;line-height:18px}.tiny .mobile-enemy .enemy-hp small{display:inline;font-size:12px}.tiny .mobile-enemy .bar{grid-column:1/-1;grid-row:2;height:3px}.tiny .mobile-enemy .enemy-next{grid-column:1/-1;grid-row:3;line-height:15px;white-space:nowrap}.tiny .mobile-enemy .esprite{display:none}.tiny .log-copy>span{white-space:nowrap}.mobile-battle.focus .mobile-focus-panel{justify-content:center}
+
+
+.mobile-bhead{border:0;box-shadow:inset 0 0 0 1px var(--mist);padding:0 3px}.compact .mobile-member{gap:0}.compact .member-name>b{line-height:16px}.compact .member-name>small{line-height:16px}.mobile-focus-panel .mobile-enemy{min-height:90px}.tiny .mobile-focus-panel .mobile-enemy{min-height:52px}.tiny .mobile-member{gap:1px}.tiny .member-name>small{line-height:14px}
+
+
+.mobile-command .btn:disabled,.mobile-battle .btn:disabled{opacity:1;background:#23313D;color:#C9D4DB;border-color:#566977}.end-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px;align-items:center}.end-head>.btn{min-width:44px;min-height:44px!important;padding:3px;font-size:13px}.end-head>div{min-width:0}.mobile-quick>.btn[data-k=mobileMenu]{border-color:var(--gold)}
+
+
+.mobile-command.short .mobile-preview{min-height:48px;max-height:48px}.mobile-picker.short .picker-list .btn{padding:4px}.mobile-picker.short .picker-list .btn small{line-height:14px}.compact .member-name>small{font-size:12px}.tiny .member-name>small{font-size:11px}
+
+
+.mobile-types>.btn>small{display:block;font-size:12px;line-height:14px}.mobile-command.short .mobile-types>.btn{font-size:14px;line-height:16px;padding:2px 4px}
+
+
+.end-view .end-status,.end-view .end-member,.end-view .end-member>.end-jp,.end-view .end-stat,.end-view .end-check,.end-view .end-loot,.end-view .end-piece>p{font-size:14px;line-height:1.4}.end-view .end-member>b{font-size:15px;line-height:1.3}.end-view .end-stat strong{font-size:14px}
+
+
+.end-view{grid-template-rows:auto auto minmax(0,1fr) auto}.end-footer{display:flex;flex-direction:column;gap:6px;min-height:0}.short-end{gap:4px}.short-end .end-head{padding:0 3px;border:0;box-shadow:inset 0 0 0 1px var(--gold);min-height:44px}.short-end .end-head h2{font-size:17px;line-height:20px}.short-end .end-head p{display:none}.short-end .end-footer{display:grid;grid-template-columns:1fr 1fr;gap:4px;align-items:center;min-height:44px}.short-end .end-pages{grid-template-columns:44px minmax(0,1fr) 44px;gap:3px;font-size:11px;text-align:center}.short-end .end-pages .btn{padding:2px;font-size:12px}.short-end .end-primary{font-size:13px;padding:3px;line-height:16px;height:44px}
+
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
-  <div class="stick" role="application" aria-label="スティック。押したまま動かすと移動・カーソル移動"><div class="ring"></div><div class="knob"></div></div>
-  <button class="pbtn auto" id="dockAuto" data-a="autoOn" aria-label="戦闘オート" hidden><b>AUTO</b><small>オート</small></button>
-  <div class="hint"><button class="btn dock-guide" data-a="systemHelp">システム<br>解説</button><span data-dock-hint>スティック：移動／決定：調べる</span></div>
-  <div class="abtns"><button class="pbtn b" data-pad="b" aria-label="戻る"><b>B</b><small>戻る</small></button><button class="pbtn a" data-pad="a" aria-label="決定"><b>A</b><small>決定</small></button></div>
+ <div class="stick" role="application" aria-label="スティック。短い中央タップで決定、ドラッグで移動"><div class="ring"></div><div class="knob"></div></div>
+ <div class="dock-tools"><button class="pbtn auto" id="dockAuto" data-a="autoOn" aria-label="戦闘オート" hidden><b>AUTO</b><small>オート</small></button><button class="btn" data-a="systemHelp">解説</button></div>
+ <div class="abtns"><button class="pbtn b" data-pad="b" aria-label="戻る"><b>B</b><small>戻る</small></button><button class="pbtn a" data-pad="a" aria-label="決定"><b>A</b><small>決定</small></button></div>
 </div>
 <script>window.TLR_PUBLIC=true;window.TLR_BUILD="2026-10-23";</script>
 <script>
@@ -512,7 +553,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.20";
+const GAME_VERSION = "7.21";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -4188,8 +4229,62 @@ function objective(){
 }
 
 /* ===== 画面の描画 ===== */
+/* v7.21: readable mobile layouts; no proportional zoom on text or tap targets. */
+const MOBILE_UI={safe:null,timer:0,lastKey:'',mapPress:null};
+function mobileInsets(){if(typeof getComputedStyle!=='function')return {top:0,bottom:0};if(!MOBILE_UI.safe){const p=document.createElement('i');p.setAttribute('aria-hidden','true');p.style.cssText='position:fixed;visibility:hidden;pointer-events:none;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)';document.body.appendChild(p);MOBILE_UI.safe=p;}const s=getComputedStyle(MOBILE_UI.safe);return {top:parseFloat(s.paddingTop)||0,bottom:parseFloat(s.paddingBottom)||0};}
+function mobileLayoutPlan(m,run=null){const width=Math.max(240,m.width||390),height=Math.max(160,m.height||844),top=Math.max(4,m.safeTop||0),bottom=Math.max(0,m.safeBottom||0),cut=Math.max(0,Math.min(height*.4,m.cut||0));let dock=m.dock===false||m.keyboard?0:width<360||height<700?88:104;if(height<420&&dock)dock=72;let available=Math.floor(height-top-bottom-cut-dock-8);if(available<240&&dock){available+=dock;dock=0;}const tiny=available<248,focus=available<420,compact=available<580,wide=width>=560,header=focus||compact?44:52,log=tiny?44:compact?58:76,action=44,rule=run&&!focus&&run.enemies.some(e=>e.boss)?44:0,cols=2,memberRows=Math.ceil((run?.party.length||4)/cols),memberHeight=tiny?52:compact?56:62,party=memberRows*memberHeight+Math.max(0,memberRows-1)*4,enemy=tiny?52:compact?90:120,focusSpace=available-header-log-action-12,memberPage=tiny?1:focusSpace>=116?4:2,foePage=tiny?1:3,panelMin=Math.max(enemy,Math.ceil(Math.min(memberPage,run?.party.length||4)/cols)*memberHeight);
+ return {width,height,top,bottom,cut,dock,available,tiny,focus,compact,wide,header,log,action,rule,party,enemy,memberPage,foePage,panelMin,pickerSize:available<370?2:4,overviewHeight:header+log+action+(focus?panelMin:rule+party+enemy)+(focus?12:20),mapMin:120};}
+
+function mobilePlan(run=null){const vv=window.visualViewport,zoomed=vv&&vv.scale>1.05,height=vv&&!zoomed?Math.min(window.innerHeight||844,vv.height):window.innerHeight||844,insets=mobileInsets();const result=mobileLayoutPlan({width:window.innerWidth||390,height,safeTop:insets.top,safeBottom:insets.bottom,cut:typeof VFIT!=='undefined'?VFIT.value:0,dock:(G.st?.settings||G.tmpSettings)?.dock!==false,keyboard:!zoomed&&vv&&window.innerHeight-vv.height>140},run);if(G.mobileForceFocus)result.focus=true;return result;}
+function syncMobileLayout(){const p=mobilePlan(G.st?.run);G.mobilePlan=p;const root=document.documentElement;for(const [k,v]of Object.entries({'--app-height':p.height+'px','--play-height':p.available+'px','--mobile-top':p.top+'px','--dockH':p.dock+'px'}))root.style.setProperty(k,v);document.body.classList.toggle('mobile-dock-hidden',!p.dock);document.body.classList.toggle('mobile-short',p.compact);return p;}
+function queueMobileLayout(){clearTimeout(MOBILE_UI.timer);MOBILE_UI.timer=setTimeout(()=>{const el=document.activeElement,typing=el&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName),saved=typing?{id:el.id,value:el.value,start:el.selectionStart,end:el.selectionEnd}:null;PAD.reset?.();MOBILE_UI.mapPress=null;if(G.screen==='explore'){G.walk.path=[];G.walk.pending=null;G.walk.prog=0;}if(saved?.id==='battleSearch')G.battlePickerQuery=saved.value;render();if(saved?.id){const now=document.getElementById(saved.id);if(now){now.value=saved.value;try{now.focus({preventScroll:true});if(saved.start!=null)now.setSelectionRange(saved.start,saved.end);}catch(e){}}}},90);}
+function mobileName(text,n=12){const g=graphemes(String(text));return g.length>n?g.slice(0,n).join('')+'…':String(text);}
+function compactNumber(n){return n>=10000?(Math.floor(n/1000)/10)+'万':String(n);}
+const EXPLORATION_MENU=[['quests','依頼帳'],['guide','道しるべ'],['nearby','近くを調べる'],['map','全国・地図'],['items','道具'],['equip','装備'],['status','ステータス'],['party','編成'],['townStudio','街・活動'],['challenges','特別挑戦'],['specialTracker','特別エリア'],['record','記録'],['dex','図鑑'],['settings','設定・保存']];
+function renderMobileMenu(){return '<p>行きたい項目を選んでください。街を歩かずに開ける項目だけをまとめています。</p><div class="mobile-menu-grid">'+EXPLORATION_MENU.map(([k,n])=>'<button class="btn" data-a="openSheet" data-k="'+k+'">'+n+'</button>').join('')+'<button class="btn" data-a="systemHelp">システム解説</button></div>';}
+function renderMobileMapInfo(){const st=G.st,m=MAPS[st.mapId],a=zoneAt(m,st.pos.x,st.pos.y);return '<h3>'+esc(m.name)+'</h3><p>'+esc(objective())+'</p><p>'+st.day+'日目／残り'+st.slots+'枠／保存：'+esc(G.saveStatus)+'</p><p>'+esc(a?AREAS[a].name+'：適正Lv'+recommendedAreaLevel(AREAS[a]):'安全地帯')+'</p><p>地面を短くタップすると移動。建物や住民を選ぶと近づいて調べます。指をずらして離した時は移動しません。地図の＋／−で大きさを変えられます。</p>'+specialReminder(st,false);}
+function mobileMapGeometry(width,height,zoom=2){const A=Math.max(16,width-8),H=Math.max(16,height-8),scale=Math.min([1,2,3].includes(zoom)?zoom:2,Math.max(1,Math.floor(Math.min(A,H)/16)));return {scale,cols:Math.max(1,Math.min(28,Math.floor(A/(16*scale)))),rows:Math.max(1,Math.min(20,Math.floor(H/(16*scale))))};}
+function mobileMapTile(e,r,cam,vw,vh){if(!r.width||!r.height||e.clientX<r.left||e.clientX>=r.left+r.width||e.clientY<r.top||e.clientY>=r.top+r.height)return null;return {x:Math.floor(((e.clientX-r.left)*vw*16/r.width+cam.x)/16),y:Math.floor(((e.clientY-r.top)*vh*16/r.height+cam.y)/16)};}
+function mobileMapPointerDown(e){if(e.isPrimary===false){MOBILE_UI.mapPress=null;return;}if(e.button>0)return;MOBILE_UI.mapPress={id:e.pointerId,x:e.clientX,y:e.clientY,at:Date.now(),camera:camera(),moving:!!G.walk.path.length,moved:false};}
+function mobileMapPointerMove(e){const p=MOBILE_UI.mapPress;if(p&&p.id===e.pointerId&&Math.hypot(e.clientX-p.x,e.clientY-p.y)>12)p.moved=true;}
+function mobileMapPointerEnd(e){const p=MOBILE_UI.mapPress;MOBILE_UI.mapPress=null;if(!p||p.id!==e.pointerId||e.type!=='pointerup'||p.moved||Date.now()-p.at>650||G.sheet||G.dlg)return;if(p.moving){G.walk.path=[];G.walk.pending=null;G.walk.prog=0;drawMap();return;}onMapTap(e);}
+function renderMobilePartyStrip(){const st=G.st;return '<button class="pstrip mobile-pstrip" data-a="openSheet" data-k="status" aria-label="全員のHP・MPとステータスを詳しく見る"><span class="pstop"><span>Lv'+partyLevel(st)+'／'+progressionCap(st)+'　'+compactNumber(st.gold)+'G</span><span>状態を詳しく ▶</span></span><span class="mobile-mini-grid" style="--members:'+st.party.length+'">'+st.party.map(cid=>{const s=charStats(st,cid,partyLevel(st)),v=vitalOf(cid);return '<span class="mobile-mini '+(v.hp<=0?'ko':isLow(v.hp,s.maxHP)?'low':'')+'" aria-label="'+esc(charName(st,cid))+' HP'+v.hp+'/'+s.maxHP+' MP'+v.c+'/'+s.startC+'"><b>'+esc(charName(st,cid))+'</b><span>HP '+compactNumber(v.hp)+'</span><span class="bar"><i style="width:'+Math.round(v.hp/s.maxHP*100)+'%"></i></span><span>MP '+compactNumber(v.c)+'</span><span class="bar mp"><i style="width:'+Math.round(v.c/s.startC*100)+'%"></i></span></span>';}).join('')+'</span></button>';}
+function renderMobileExplore(){const st=G.st,m=MAPS[st.mapId],pending=specialProgress(st).total,plan=mobilePlan();return '<section class="explore mobile-explore '+(plan.available<380?'short-map ':'')+(plan.wide&&plan.available<420?'wide-map ':'')+'"><header class="xhead"><button class="map-heading" data-a="openSheet" data-k="mobileMapInfo" aria-label="場所・目的・保存状況を詳しく見る"><b>'+esc(m.name)+'</b><span class="goal">'+esc(objective())+'</span><span class="xsave">'+st.day+'日目・残り'+st.slots+'枠／保存：'+esc(G.saveStatus)+'</span></button></header><div class="mapwrap"><canvas id="map" aria-label="'+esc(m.name)+'の地図。短いタップで移動、ドラッグでは移動しません。"></canvas><nav class="map-tools" aria-label="地図の拡大縮小"><button class="btn" data-a="mapZoom" data-v="-1" aria-label="地図を縮小" '+((st.settings.mapZoom||2)<=1?'disabled':'')+'>−</button><button class="btn" data-a="mapZoom" data-v="1" aria-label="地図を拡大" '+((st.settings.mapZoom||2)>=3?'disabled':'')+'>＋</button>'+(pending?'<button class="btn special-alert" data-a="openSheet" data-k="specialTracker">特別 '+pending+'</button>':'')+'</nav></div><div class="here">'+hereHtml()+'</div>'+renderMobilePartyStrip()+'<nav class="menu-grid mobile-quick" aria-label="メニュー"><button class="btn" data-a="openSheet" data-k="quests">依頼帳</button><button class="btn" data-a="openSheet" data-k="guide">道しるべ</button><button class="btn" data-a="openSheet" data-k="nearby">近くを調べる</button><button class="btn" data-a="openSheet" data-k="items">道具</button><button class="btn" data-a="openSheet" data-k="mobileMenu">メニュー</button><button class="btn" data-a="systemHelp">システム解説</button></nav></section>';}
+function mobileBattleActor(run){const c=G.cmd,a=run.party[c.actor];if(!a||a.hp<=0||a.acted){const next=run.party.find(m=>m.hp>0&&!m.acted);G.cmd={actor:next?.pos??null};return next;}return a;}
+function mobileBattleHeader(run,plan){const d=trialOf(run.challengeId),label=run.cue?.active?({guard:'2人ガード',comment:'2人コメント',damage:'2人攻撃'}[run.cue.kind]+' '+run.cue.bits.length+'/2'):d?'特別挑戦':autoAllowed(run)?'通常戦闘':'ボス戦・手動',chain=run.kiraDone?'キラコメ済':'キラ'+run.chain.stage+'/3';return '<header class="mobile-bhead"><div><b>T'+run.turn+' '+esc(DIFFICULTY[run.difficulty].name)+'</b> <span>'+label+'</span><div class="mobile-gauge"><span>エール <b>'+run.A+'</b></span><span class="bar ale"><i style="width:'+run.A+'%"></i></span><span>連携'+run.B+'・'+chain+'</span></div></div>'+(plan.focus?'<button class="btn" data-a="battlePanel">'+(G.battlePanel==='party'?'味方':'敵')+' ⇄</button>':'')+'<button class="btn" data-a="openSheet" data-k="mobileBattleMenu">メニュー</button></header>';}
+function mobileEnemyCard(run,e){const t=enemyAction(run,e),target=t.target!=null?run.party[t.target]:null,next=e.hp<=0?'撃破':t.type==='c'?'ため・攻撃なし':t.type==='a'?'全員に'+t.power:(target?mobileName(target.name,4):'1人')+'に'+t.power;return '<button class="mobile-enemy '+(e.hp<=0?'down':'')+'" id="ec'+e.slot+'" data-a="mobileEnemyInfo" data-v="'+e.slot+'" aria-label="'+esc(e.display)+' HP'+e.hp+'/'+e.maxHP+' '+esc(next)+'。詳しく見る"><canvas data-enemy="'+e.slot+'" width="'+(e.boss?64:32)+'" height="'+(e.boss?64:32)+'" class="esprite '+(e.boss?'boss':'')+'" aria-hidden="true"></canvas><b class="enemy-name">'+esc(e.display)+'</b><span class="enemy-hp">HP '+e.hp+'<small>／'+e.maxHP+(e.rarity>1?' ★'+e.rarity:'')+'</small></span><span class="bar enemy"><i style="width:'+Math.round(e.hp/e.maxHP*100)+'%"></i></span><span class="enemy-next">'+esc(next)+(t.heavy?' !':'')+'</span></button>';}
+function mobileMemberCard(run,m){const status=m.hp<=0?'戦闘不能':m.acted?'行動済':'選択可';return '<button class="pcard mobile-member '+(m.hp<=0?'ko':m.acted?'done':'ready')+' '+(G.cmd.actor===m.pos?'on':'')+'" data-a="mobileMember" data-i="'+m.pos+'" aria-label="'+esc(m.name)+' '+status+' HP'+m.hp+'/'+m.maxHP+' MP'+m.c+'/'+m.maxC+'"><span class="member-name"><b>'+esc(m.name)+'</b><small>'+status+'</small></span><span class="mobile-vital">HP <b>'+m.hp+'</b>/'+m.maxHP+'</span><span class="mobile-vital mp">MP <b>'+m.c+'</b>/'+m.maxC+(m.ward?'・護'+m.ward:'')+'</span></button>';}
+function mobileBattleLogEntries(run,plan=mobilePlan(run)){const limit=Math.max(10,Math.floor((Math.min(plan.width,520)-118)/14))*(plan.tiny?1:2),parts=[],logs=(run.log||[]).slice(-16);for(const [logIndex,line]of logs.entries()){const g=graphemes(line);for(let i=0;i<g.length;i+=limit)parts.push({text:g.slice(i,i+limit).join(''),logIndex});}return parts.length?parts:[{text:'行動を選んでください。',logIndex:0}];}
+function mobileBattleLogPages(run,plan=mobilePlan(run)){return mobileBattleLogEntries(run,plan).map(e=>e.text);}
+function renderMobileLiveLog(run,plan){const entries=mobileBattleLogEntries(run,plan),logs=(run.log||[]).slice(-16),key=run.seq+':'+JSON.stringify(logs)+':'+plan.width+':'+plan.tiny,prior=G.mobileLogSeen;if(G.liveLogKey!==key){if(!prior||prior.seq!==run.seq)G.liveLogPage=0;else if(JSON.stringify(prior.logs)!==JSON.stringify(logs)){let overlap=0;for(let k=1;k<=Math.min(prior.logs.length,logs.length);k++)if(JSON.stringify(prior.logs.slice(-k))===JSON.stringify(logs.slice(0,k)))overlap=k;const start=entries.findIndex(e=>e.logIndex>=overlap);G.liveLogPage=Math.max(0,start);}G.liveLogKey=key;G.mobileLogSeen={seq:run.seq,logs:logs.slice()};}G.liveLogPage=Math.max(0,Math.min(entries.length-1,G.liveLogPage||0));G.liveLogPages=entries.length;return '<section class="mobile-log" aria-label="進行コメント"><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage-1)+'" '+(!G.liveLogPage?'disabled':'')+' aria-label="前の進行コメント">◀</button><button class="log-copy" data-a="battleInspect" data-v="log"><small>進行 '+(G.liveLogPage+1)+'/'+entries.length+'・全文を読む</small><span role="log" aria-live="polite">'+esc(entries[G.liveLogPage].text)+'</span></button><button class="btn" data-a="liveLogPage" data-v="'+(G.liveLogPage+1)+'" '+(G.liveLogPage>=entries.length-1?'disabled':'')+' aria-label="次の進行コメント">▶</button></section>';}
+
+function mobileBattleRule(run){const d=trialOf(run.challengeId),cue=run.cue;if(cue?.active)return 'ため！ '+({guard:'2人でガード',comment:'2人でコメント',damage:'2人で攻撃'}[cue.kind])+' '+cue.bits.length+'/2 → 強攻撃20％減';if(d)return '手動・課題 '+trialConditions(run).filter(c=>c.ok).length+'/'+trialConditions(run).length+'／'+run.turn+'/'+run.turnLimit+'ターン';return '手動・オート不可／シールド'+(run.A<40&&!run.kiraDone?'有効':'解除')+'・技は軽減なし';}
+function renderMobileBattle(run){const plan=mobilePlan(run);mobileBattleActor(run);if(G.battlePicker)return renderMobilePicker(run,plan);if(G.battleCommand&&!G.auto)return renderMobileCommand(run,plan);const focus=plan.focus,panel=G.battlePanel==='party'?'party':'enemies',members=run.party;let shown=members;if(focus&&panel==='party'){const pages=Math.ceil(members.length/plan.memberPage);G.battleMemberPage=Math.max(0,Math.min(pages-1,G.battleMemberPage||0));shown=members.slice(G.battleMemberPage*plan.memberPage,(G.battleMemberPage+1)*plan.memberPage);}
+ const foePages=Math.ceil(run.enemies.length/plan.foePage);G.battleFoePage=Math.max(0,Math.min(foePages-1,G.battleFoePage||0));const shownFoes=focus?run.enemies.slice(G.battleFoePage*plan.foePage,(G.battleFoePage+1)*plan.foePage):run.enemies;const foes='<div class="mobile-enemies" style="--foes:'+shownFoes.length+'">'+shownFoes.map(e=>mobileEnemyCard(run,e)).join('')+'</div>',party='<div class="mobile-members" style="--party-cols:'+2+'">'+shown.map(m=>mobileMemberCard(run,m)).join('')+'</div>',a=mobileBattleActor(run),auto=G.auto&&autoAllowed(run),action=auto?'<button class="btn" data-a="autoMode">'+(autoMode()==='tap'?'タップ進行':'自動進行')+'</button>'+(G.autoWait?'<button class="btn primary" data-a="autoNext">次の行動</button>':'')+'<button class="btn danger" data-a="autoOff">オート停止</button>':'<button class="btn primary" data-a="battleCommandOpen" data-default-focus>'+esc(a?mobileName(a.name,9):'仲間')+'：行動を選ぶ</button>';
+ return '<section class="mobile-battle '+(plan.tiny?'tiny ':'')+(!plan.focus&&run.enemies.some(e=>e.boss)?'has-tactic ':'')+(plan.compact?'compact ':'')+(focus?'focus ':'')+'" style="--battle-header:'+plan.header+'px;--battle-log:'+plan.log+'px;--enemy-height:'+plan.enemy+'px;--party-height:'+plan.party+'px">'+mobileBattleHeader(run,plan)+(!focus&&run.enemies.some(e=>e.boss)?'<button class="btn mobile-tactic" data-a="battleInspect" data-v="rules">'+esc(mobileBattleRule(run))+'</button>':'')+(focus?'<div class="mobile-focus-panel">'+(panel==='party'?party:foes)+'</div>':foes+party)+'<div class="mobile-battle-action '+(auto?'auto':'')+'">'+action+'</div>'+renderMobileLiveLog(run,plan)+'</section>';}
+const MOBILE_COMMANDS=[['attack','攻撃'],['skill','技・必殺技'],['comment','応援コメント'],['item','道具'],['guard','ガード'],['rest','ひと息'],['meter','全体攻撃'],['family','回復・復活'],['other','撤退・休止']];
+function mobileSkillCandidates(run,a){const base={id:'',name:JOBS[a.job].skill,need:skillNeeds(a.job),cost:JOBS[a.job].cost,base:true,desc:JOBS[a.job].desc(a.S)};return [base,...(a.extraSkills||[]).map(id=>EXTRA_SKILLS[id]).filter(Boolean)];}
+function mobileSkillCategory(sk){if(sk.ultimate)return 'ultimate';if(sk.ultra)return 'ultra';if(['heal','healAll','mp'].includes(sk.effect))return 'heal';if(['ward','wardAll','rally'].includes(sk.effect))return 'support';if(['strike','pierce','all'].includes(sk.effect))return 'attack';return 'base';}
+function mobilePickerResults(run,a,plan=mobilePlan(run)){const mode=G.battlePicker,query=guideSearchText(G.battlePickerQuery||''),cat=G.battlePickerFilter||'all';let list=mode==='item'?(run.bag||[]).filter(x=>x.n>0&&ITEMS[x.id]&&canUseJobItem(a.job,a.R,ITEMS[x.id])).map(x=>({...ITEMS[x.id],id:x.id,n:x.n})):mobileSkillCandidates(run,a);list=list.filter(it=>(!query||guideSearchText(it.name+' '+(it.desc||it.text||'')).includes(query))&&(cat==='all'||mode==='item'&&it.cat===cat||mode==='skill'&&mobileSkillCategory(it)===cat));const pages=Math.max(1,Math.ceil(list.length/plan.pickerSize)),page=Math.max(0,Math.min(pages-1,G.battlePickerPage||0));return {list,pages,page,visible:list.slice(page*plan.pickerSize,(page+1)*plan.pickerSize)};}
+function renderMobilePicker(run,plan){const a=mobileBattleActor(run),mode=G.battlePicker,r=mobilePickerResults(run,a,plan),cats=mode==='skill'?[['all','すべて'],['base','基本・引継'],['attack','攻撃'],['heal','回復・MP'],['support','防護・応援'],['ultimate','必殺技'],['ultra','超レア技']]:[['all','すべて'],...new Set((run.bag||[]).map(x=>ITEMS[x.id]?.cat).filter(Boolean))].map(x=>Array.isArray(x)?x:[x,x]);G.battlePickerPages=r.pages;G.battlePickerPage=r.page;return '<section class="mobile-command cmd mobile-picker '+(plan.available<350?'short':'')+'"><header class="command-head"><div><b>'+esc(a.name)+'：'+(mode==='skill'?'技・必殺技':'道具')+'</b><small>MP '+a.c+'/'+a.maxC+'／'+r.list.length+'件</small></div><button class="btn" data-a="battlePickerClose">戻る</button></header><form id="battleSearchForm" class="battle-search"><select id="battlePickerFilter" aria-label="技や道具の分類">'+cats.map(([k,n])=>'<option value="'+esc(k)+'" '+((G.battlePickerFilter||'all')===k?'selected':'')+'>'+esc(n)+'</option>').join('')+'</select><input id="battleSearch" type="search" maxlength="60" value="'+esc(G.battlePickerQuery||'')+'" placeholder="名前・効果" aria-label="技や道具を検索"><button type="button" class="btn" data-a="battlePickerSearch">検索</button></form><div class="picker-list">'+r.visible.map(it=>{const wait=mode==='skill'&&!it.base?Math.max(0,(a.skillReady?.[it.id]||0)-run.turn):0,mp=mode==='skill'?it.base?it.cost:skillMpCost(a,it):0,locked=mode==='skill'&&(mp>a.c||wait>0||it.ultimate&&(run.turn<3||a.ultimateUsed||run.A<35));return '<button class="btn '+(locked?'unavailable':'')+'" data-a="battlePickerSelect" data-v="'+esc(it.id)+'"><b>'+esc(it.name)+'</b><small>'+(mode==='item'?'所持 '+it.n+'個':(mp>a.c?'MP不足 ':'')+'MP'+mp+(wait?'・待ち'+wait+'T':'')+(it.ultimate?'・エール35／3Tから・1戦1回':''))+'</small></button>';}).join('')+(!r.list.length?'<p>見つかりません。検索を消すか、種類を「すべて」にしてください。</p>':'')+'</div><nav class="picker-pages"><button class="btn" data-a="battlePickerPage" data-v="'+(r.page-1)+'" '+(!r.page?'disabled':'')+'>◀ 前</button><span>'+(r.page+1)+'/'+r.pages+'</span><button class="btn" data-a="battlePickerPage" data-v="'+(r.page+1)+'" '+(r.page>=r.pages-1?'disabled':'')+'>次 ▶</button></nav></section>';}
+function renderMobileCommand(run,plan=mobilePlan(run)){const a=mobileBattleActor(run);if(!a)return '';const c=G.cmd;let body='',preview='',ok=false,act=null,need='none';const pick=(key,id,label,on,disabled=false)=>'<button class="btn '+(on?'on':'')+'" data-a="cmdSet" data-k="'+key+'" data-v="'+esc(id)+'" aria-pressed="'+!!on+'" '+(disabled?'disabled':'')+'>'+esc(label)+'</button>';
+ if(!c.type)body='<p class="command-hint">行動を選ぶ → 対象を選ぶ → 「確定」</p><div class="mobile-types">'+MOBILE_COMMANDS.map(([k,n])=>'<button class="btn" data-a="mobileCmdType" data-v="'+k+'" '+((k==='meter'&&run.A<80||k==='family'&&run.A<40)?'disabled':'')+'>'+n+(k==='meter'?'<small>エール80</small>':k==='family'?'<small>エール40</small>':'')+'</button>').join('')+'</div>';
+ else{const sk=c.skill&&EXTRA_SKILLS[c.skill],it=c.item&&ITEMS[c.item];need=c.type==='attack'?'enemy':c.type==='comment'?'line':c.type==='skill'?(sk?.need||skillNeeds(a.job)):c.type==='item'?(it?itemNeeds(it):'none'):'none';if(c.type==='skill'||c.type==='item')body+='<button class="btn selected-tech" data-a="battlePickerOpen" data-v="'+c.type+'">'+esc(c.type==='skill'?(sk?.name||JOBS[a.job].skill):(it?.name||'道具を選ぶ'))+' <small>変更・検索 ▶</small></button>';
+ const live=run.enemies.filter(e=>e.hp>0);if(need==='enemy'&&live.length===1)c.target=live[0].slot;
+ if(need==='mode'){if(!(plan.available<300&&c.mode))body+='<div class="mobile-targets">'+((sk?.baseJob||a.job)==='J04'?[['hp','HP補給'],['c','MP補給']]:[['safe','堅実'],['bold','強気']]).map(([k,n])=>pick('mode',k,n,c.mode===k)).join('')+'</div>';need=c.mode==='hp'?'ally':c.mode==='c'?'allyOther':c.mode?'enemy':'none';}
+ if(need==='enemy'&&plan.available<350)body+='<select class="native-target" id="nativeBattleTarget" data-k="target" aria-label="攻撃する敵"><option value="">敵を選ぶ</option>'+live.map(e=>'<option value="'+e.slot+'" '+(c.target===e.slot?'selected':'')+'>'+esc(e.display)+'</option>').join('')+'</select>';else if(need==='enemy')body+='<p class="target-label">攻撃する敵</p><div class="mobile-targets">'+live.map(e=>pick('target',e.slot,mobileName(e.display,12),c.target===e.slot)).join('')+'</div>';
+ if(['ally','allyOther','down'].includes(need)){const list=run.party.filter(m=>need==='down'?m.hp<=0:m.hp>0&&(need!=='allyOther'||m!==a));if(list.length===1)c.ally=list[0].pos;if(plan.available<350)body+='<select class="native-target" id="nativeBattleTarget" data-k="ally" aria-label="使う相手"><option value="">味方を選ぶ</option>'+list.map(m=>'<option value="'+m.pos+'" '+(c.ally===m.pos?'selected':'')+'>'+esc(m.name)+' HP'+m.hp+'</option>').join('')+'</select>';else body+='<p class="target-label">使う相手</p><div class="mobile-targets">'+list.map(m=>pick('ally',m.pos,mobileName(m.name,10)+' HP'+m.hp,c.ally===m.pos)).join('')+'</div>'+(list.length?'':'<p>対象になる仲間がいません。</p>');}
+ if(need==='line'&&plan.available<350)body+='<select class="native-target" id="nativeBattleTarget" data-k="line" aria-label="コメントを選ぶ"><option value="">コメントを選ぶ</option>'+['greet','plan','thanks'].map(k=>'<option value="'+k+'" '+(c.line===k?'selected':'')+'>'+LINE_NAMES[k]+'</option>').join('')+'</select>';else if(need==='line')body+='<p class="target-label">コメントを選ぶ</p><div class="mobile-targets">'+['greet','plan','thanks'].map(k=>pick('line',k,LINE_NAMES[k],c.line===k)).join('')+'</div>';
+ if(c.type==='other'&&!c.o)body+='<div class="mobile-targets"><button class="btn" data-a="retreat">撤退</button><button class="btn" data-a="pauseBattle">休止</button></div>';
+ act=buildAct(a);if(act){const p=planAction(run,a.pos,act);ok=p.ok;preview=p.ok?previewText(run,a,p):'<span class="warn">'+esc(p.reason)+'</span>';}else preview='<span>技・道具と対象を選んでください。</span>';
+ }
+ G.battlePreview=preview;return '<section class="mobile-command cmd '+(plan.available<350?'short':'')+'"><header class="command-head"><div><b>'+esc(a.name)+' '+(MOBILE_COMMANDS.find(([k])=>k===(c.type==='other'&&c.o?c.o:c.type))?.[1]||'行動選択')+'</b><small>HP '+a.hp+'/'+a.maxHP+'　MP '+a.c+'/'+a.maxC+'</small></div><button class="btn" data-a="battleCommandClose">戦況へ</button></header><div class="command-body">'+body+'</div>'+(c.type?'<button class="mobile-preview" data-a="battleInspect" data-v="preview" aria-label="効果予測を詳しく読む">'+preview+'</button><footer class="command-footer"><button class="btn" data-a="mobileCmdType" data-v="">行動を変更</button><button class="btn primary" data-a="mobileConfirm" '+(!act||!ok||G.readOnly?'disabled':'')+'>確定</button></footer>':'')+'</section>';}
+function openMobileBattleDetail(group,name){ACT.battleInspect({dataset:{v:group}});if(G.endPager&&name){const i=G.endPager.pages.findIndex(p=>p.group===group&&p.blocks.some(b=>b.includes(esc(name))));if(i>=0){G.endPager.index=i;render();}}}
+function renderMobileBattleMenu(){const run=G.st.run;return '<p>'+esc(mobileBattleRule(run))+'</p><div class="mobile-menu-grid"><button class="btn" data-a="mobileInspect" data-v="rules">ルール・課題</button><button class="btn" data-a="mobileInspect" data-v="foes">敵の詳細</button><button class="btn" data-a="mobileInspect" data-v="growth">味方の詳細</button><button class="btn" data-a="mobileInspect" data-v="support">応援・連携</button><button class="btn" data-a="mobileInspect" data-v="log">進行コメント全文</button><button class="btn" data-a="systemHelp">システム解説</button>'+(autoAllowed(run)?'<button class="btn" data-a="mobileAuto">'+(G.auto?'オート停止':'オート開始')+'</button>':'<p class="warn">ボス・特別挑戦はオート不可</p>')+'<button class="btn" data-a="pauseBattle">休止・保存</button></div>';}
+
 function render(){
   if(G.st){normalizeChapterLocation(G.st);ensureWorld(G.st);rememberSpecialUnlocks(G.st);}
+  syncMobileLayout();
   const root=$("#screen"); if(!root) return;
   stopBattleTimer();
   const s=G.screen;
@@ -4201,18 +4296,18 @@ function render(){
   else if(s==="battle") html=renderBattle();
   else if(s==="result") html=renderResult();
   else if(s==="stream") html=renderStream();
-  root.innerHTML = heroSub(html + `<button class="btn no-dock-guide" data-a="systemHelp">システム解説</button>` + renderSheet() + renderDialog()) + `<div id="toast" class="toast" role="status" hidden></div>`;
-  if(s==="explore") mountCanvas();
   document.body.classList.toggle("in-battle", s==="battle"); document.body.classList.toggle("in-explore", s==="explore");
   document.body.classList.toggle("in-end",s==="result"||s==="battle"&&G.st&&G.st.run&&(G.st.run.state!=="input"||G.battleInspect));
-  if(s==="battle"&&G.st.run&&G.st.run.state==="input"){ drawEnemies(); startBattleTimer(); }
-  if(s==="new") mountNew();
-  if(s==="title"){ drawTitleArt(); if(!G.titleRaf) G.titleRaf=requestAnimationFrame(titleLoop); }
-  drawMiniSprites();
   const dockOff = s==="new" || (G.st? G.st.settings.dock===false : (G.tmpSettings&&G.tmpSettings.dock===false));
   document.body.classList.toggle("no-dock", !!dockOff);
   document.body.classList.toggle("stick-left", padSide()==="left");
   document.body.classList.toggle("reduce-motion", !!(G.st&&G.st.settings.reduceMotion));
+  root.innerHTML = heroSub(html + `<button class="btn no-dock-guide" data-a="systemHelp">システム解説</button>` + renderSheet() + renderDialog()) + `<div id="toast" class="toast" role="status" hidden></div>`;
+  if(s==="explore") mountCanvas();
+  if(s==="battle"&&G.st.run&&G.st.run.state==="input"){ drawEnemies(); startBattleTimer(); }
+  if(s==="new") mountNew();
+  if(s==="title"){ drawTitleArt(); if(!G.titleRaf) G.titleRaf=requestAnimationFrame(titleLoop); }
+  drawMiniSprites();
   const dh=document.querySelector("#dock [data-dock-hint]"); if(dh) dh.textContent = (s==="explore"&&!G.sheet&&!G.dlg)?"スティック：移動／決定：調べる":"スティック：カーソル／決定・戻る";
   if(G.dlg){ const b=$("#dlgNext"); if(b) b.focus({preventScroll:true}); }
   syncDockAuto();
@@ -4223,7 +4318,7 @@ function render(){
 /* 戦闘中だけ、スティックの隣にオートボタンを出す（オート中は「停止」に切り替わる） */
 function syncDockAuto(){
   const da=document.getElementById("dockAuto"); if(!da) return;
-  const run=G.st&&G.st.run; const show = G.screen==="battle" && run && run.state==="input" && !G.sheet && !G.dlg && !G.battleInspect;
+  const run=G.st&&G.st.run; const show = G.screen==="battle" && run && run.state==="input" && !G.sheet && !G.dlg && !G.battleInspect && !G.battleCommand && !G.battlePicker;
   da.hidden=!show; if(!show) return;
   if(!autoAllowed(run)){da.disabled=true;da.classList.remove("on");da.dataset.a="noop";da.innerHTML="<b>手動</b><small>オート不可</small>";da.setAttribute("aria-label","ボス戦・特別チャレンジはオート使用不可");return;}
   const on=!!G.auto; da.dataset.a=on?"autoOff":"autoOn"; da.classList.toggle("on",on); da.disabled=!!G.readOnly;
@@ -4406,54 +4501,18 @@ function heroineSprite(dir,frame,gender){ const g=gender||heroineOf(G.st).gender
 function charSprite(cid,dir,frame){ if(cid==="hero") return heroSprite(dir,frame); if(cid==="moe") return heroineSprite(dir,frame); const c=CHARS[cid]; return ART.person(cid,c.hair,c.coat,dir,frame,{long:["mio","kayo","tsumugi"].includes(cid)}); }
 
 /* ---- 探索 ---- */
-function renderExplore(){
-  const st=G.st; const m=MAPS[st.mapId];
-  const near=nearbyObjects();
-  const zone=zoneAt(m,st.pos.x,st.pos.y);
-  const ar=zone?AREAS[zone]:null;
-  return `<section class="explore">
-    <header class="xhead">
-      <div class="srow"><span class="place">${esc(m.name)}</span><span>${st.day}日目・残り${st.slots}枠</span></div>
-      <div class="goal">${esc(objective())}</div>
-      ${specialReminder(st,true)}
-      <div class="xsave small" aria-live="polite">保存：<span id="saveStat">${esc(G.saveStatus)}</span>${G.readOnly?"（閲覧のみ）":""}</div>
-    </header>
-    <div class="mapwrap"><canvas id="map" aria-label="${esc(m.name)}の地図。地面をタップすると移動します。"></canvas></div>
-    <div class="here">${hereHtml()}</div>
-    ${partyStrip()}
-    <nav class="menu-grid" aria-label="メニュー">
-      <button class="btn" data-a="systemHelp">システム解説</button>
-      <button class="btn" data-a="openSheet" data-k="quests">依頼帳</button><button class="btn" data-a="openSheet" data-k="challenges">特別挑戦</button><button class="btn" data-a="openSheet" data-k="townStudio">街・活動</button>
-      <button class="btn" data-a="openSheet" data-k="guide">道しるべ</button>
-      <button class="btn" data-a="openSheet" data-k="map">全国・地図</button>
-      <button class="btn" data-a="openSheet" data-k="items">道具</button>
-      <button class="btn" data-a="openSheet" data-k="equip">装備</button>
-      <button class="btn" data-a="openSheet" data-k="status" aria-label="ステータス"><span class="lw">ステータス</span><span class="sw">状態</span></button>
-      <button class="btn" data-a="openSheet" data-k="party">編成</button>
-      <button class="btn" data-a="openSheet" data-k="record">記録</button>
-      <button class="btn" data-a="openSheet" data-k="dex">図鑑</button>
-      <button class="btn" data-a="openSheet" data-k="settings">設定</button>
-    </nav>
-  </section>`;
-}
+function renderExplore(){return renderMobileExplore();}
 function hereHtml(){
   const st=G.st, m=MAPS[st.mapId], near=nearbyObjects(), zone=zoneAt(m,st.pos.x,st.pos.y), ar=zone?AREAS[zone]:null;
   return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（挑戦目安Lv${requiredAreaLevel(ar)}・適正Lv${recommendedAreaLevel(ar)}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
 }
 function nearbyObjects(){ const st=G.st, m=MAPS[st.mapId]; return m.objects.filter(o=>Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1 && o.type!=="tower"); }
 function mountCanvas(){
-  const wrap=$(".mapwrap"); const cv=$("#map"); G.cv=cv;
-  // 地図以外の部品を置いた残りの高さに合わせてタイル数を決める（画面スクロールなし）
-  cv.width=16; cv.height=16; cv.style.width="16px"; cv.style.height="16px";
-  const A = Math.min((wrap.clientWidth||358)-8, 448), H=(wrap.clientHeight||300)-8;
-  G.scale = (Math.floor(A/32)>=7 && Math.floor(H/32)>=4) ? 2 : 1;
-  G.vw=Math.max(5,Math.min(14,Math.floor(A/(16*G.scale))));
-  G.vh=Math.max(3,Math.min(14,Math.floor(H/(16*G.scale))));
-  G.hereLast=null;
-  // 内部解像度を表示倍率に合わせ、半ドット単位で動かせるようにする（2倍表示で移動がなめらかになる）
-  cv.width=G.vw*16*G.scale; cv.height=G.vh*16*G.scale; cv.style.width=(G.vw*16*G.scale)+"px"; cv.style.height=(G.vh*16*G.scale)+"px";
-  cv.addEventListener("pointerup", onMapTap);
-  drawMap(); startLoop();
+ const wrap=$(".mapwrap"),cv=$("#map");if(!wrap||!cv)return;G.cv=cv;
+ const geo=mobileMapGeometry(wrap.clientWidth||358,wrap.clientHeight||240,G.st.settings.mapZoom||2);G.scale=geo.scale;G.vw=geo.cols;G.vh=geo.rows;G.hereLast=null;
+ cv.width=G.vw*16*G.scale;cv.height=G.vh*16*G.scale;cv.style.width=cv.width+"px";cv.style.height=cv.height+"px";
+ cv.addEventListener('pointerdown',mobileMapPointerDown);cv.addEventListener('pointermove',mobileMapPointerMove);cv.addEventListener('pointerup',mobileMapPointerEnd);cv.addEventListener('pointercancel',()=>{MOBILE_UI.mapPress=null;});cv.addEventListener('contextmenu',e=>e.preventDefault());
+ drawMap();startLoop();
 }
 function camera(){
   const st=G.st, m=MAPS[st.mapId]; const p=playerPixel();
@@ -4580,11 +4639,8 @@ function walkTo(x,y,pending){
   if(!path) return toast("そこへは行けません。");
   G.walk.path=path; G.walk.prog=0; G.walk.pending=pending||(obj&&obj.walk?obj:null);
 }
-function onMapTap(e){
-  if(G.sheet||G.dlg) return; const r=G.cv.getBoundingClientRect(); const cam=camera();
-  const lx=(e.clientX-r.left)*(G.vw*16/r.width)+cam.x, ly=(e.clientY-r.top)*(G.vh*16/r.height)+cam.y;
-  walkTo(Math.floor(lx/16), Math.floor((ly+4)/16));
-}
+function onMapTap(e){if(G.sheet||G.dlg||G.screen!=='explore'||G.readOnly)return;const cv=G.cv;if(!cv)return;const p=mobileMapTile(e,cv.getBoundingClientRect(),camera(),G.vw,G.vh),m=MAPS[G.st.mapId];if(p&&p.x>=0&&p.y>=0&&p.x<m.w&&p.y<m.h)walkTo(p.x,p.y);}
+
 function arrive(){
   const st=G.st, m=MAPS[st.mapId]; const zone=zoneAt(m,st.pos.x,st.pos.y);
   if(SND.current!==exploreSong()) exploreBgm();
@@ -4726,7 +4782,7 @@ function startBattle(run){
   const st=G.st; st.run=run; st.runSeq=run.seq;
   for(const e of run.enemies) if(!e.boss) st.seen[e.id]=true;
   run.log=[`${run.enemies.map(e=>e.display).join("と")}が現れた！`];
-  G.cmd={}; G.sheet=null;
+  G.cmd={};G.battleCommand=false;G.battlePicker=null;G.battlePanel="enemies";G.mobileForceFocus=false;G.battleFoePage=0;G.sheet=null;
   commit(); SND.sfx("enc");
   if(st.settings.reduceMotion){ G.screen="battle"; render(); }
   else { const f=document.createElement("div"); f.className="flash"; document.body.appendChild(f); setTimeout(()=>{ f.remove(); G.screen="battle"; render(); },380); }
@@ -4756,35 +4812,7 @@ function cueText(run){
   if(run.turn%4===0) return `<div class="cue on">${run.cue.ready?"対処成功：強攻撃20%軽減":"対処未達：強攻撃そのまま"}</div>`;
   return `<div class="cue">対処：${kindName}（3・7・11…ターン）</div>`;
 }
-function renderBattle(){
-  const st=G.st, run=st.run; if(!run) return "";
-  if(run.state!=="input")return renderBattleEnd(run);
-  enforceManualBattle(run);
-  if(G.battleInspect)return renderBattleInspect(run);
-  const tel=telegraph(run);
-  const enemies=run.enemies.map(e=>{
-    const t=tel.find(x=>x.slot===e.slot); const pct=Math.round(100*e.hp/e.maxHP);
-    return `<div class="ecard ${e.hp<=0?"down":""} ${e.boss?"isboss":""}" id="ec${e.slot}">
-      <canvas data-enemy="${e.slot}" width="${e.boss?64:32}" height="${e.boss?64:32}" class="esprite ${e.boss?"boss":""}" aria-hidden="true"></canvas>
-      <div class="einfo"><div class="ename">${esc(e.display)}${e.rarity>1?` <span class="rar">★${e.rarity}</span>`:""}</div>
-      <span class="bar enemy"><i style="width:${pct}%"></i></span>
-      <div class="estat">HP ${e.hp}/${e.maxHP}・防御力${e.def}</div>
-      <div class="tele">${e.hp<=0?"鎮まった":t?teleText(run,t):""}</div></div></div>`; }).join("");
-  const chain = run.kiraDone?"キラコメ済":`キラコメ${run.chain.stage}/3 次:${["挨拶","作戦","感謝"][run.chain.stage]}`;
-  return `<section class="battle battle-live"><div class="battle-inner">
-    <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="challenge"?"特別チャレンジ":run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><button class="battle-detail" data-a="battleInspect" data-v="rules">詳細・ルール ▶</button><span class="chain-status">連携${run.B}・${chain}</span></div>
-    <div class="gauge" aria-label="エール${run.A}"><span>エール</span><span class="bar ale"><i style="width:${run.A}%"></i></span><b>${run.A}</b></div>
-    ${pocoBattleStatus(run)}${battleSupportPanel(run)}
-    ${cueText(run)}
-    <div class="enemies"><canvas class="stagebg" width="160" height="64" aria-hidden="true"></canvas>${enemies}</div>
-    <div class="party">${run.party.map((m,i)=>partyCard(m,i,run)).join("")}</div>
-    ${renderCommand(run)}
-  </div>${renderLiveLog(run)}</section>`;
-}
-function liveLogPages(run){const width=Math.min(window.innerWidth||390,480),line=Math.max(10,Math.floor((width-64)/14)),blocks=[];for(const text of (run.log||[]).slice(-12)){const chars=graphemes(text);for(let i=0;i<chars.length;i+=line*2)blocks.push(chars.slice(i,i+line*2).join(''));}if(!blocks.length)blocks.push('行動を選んでください。');const pages=[];for(let i=0;i<blocks.length;i+=2)pages.push(blocks.slice(i,i+2));return pages;}
-function renderLiveLog(run){const pages=liveLogPages(run),key=run.seq+':'+JSON.stringify((run.log||[]).slice(-12))+':'+endSizeKey();if(G.liveLogKey!==key){G.liveLogKey=key;G.liveLogPage=pages.length-1;}G.liveLogPage=Math.max(0,Math.min(pages.length-1,G.liveLogPage||0));G.liveLogPages=pages.length;return `<section class="battle-progress" aria-label="戦闘の進行コメント"><div class="progress-pages"><button class="btn" data-a="liveLogPage" data-v="${G.liveLogPage-1}" ${G.liveLogPage===0?'disabled':''}>◀</button><b>進行コメント ${G.liveLogPage+1}/${pages.length}</b><button class="btn" data-a="liveLogPage" data-v="${G.liveLogPage+1}" ${G.liveLogPage>=pages.length-1?'disabled':''}>▶</button><button class="btn" data-a="battleInspect" data-v="log">ログ</button></div><div class="progress-text" role="log" aria-live="polite">${pages[G.liveLogPage].map(t=>`<p>${esc(t)}</p>`).join('')}</div></section>`;}
-function battleSupportPanel(run){return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||G.auto?'disabled':''}>回復・復活・防護 40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||G.auto?'disabled':''}>全体攻撃 80</button><button class="btn" data-a="battleInspect" data-v="support">効果 ▶</button></div><p class="support-summary">${run.B?`次の攻撃に基本＋${run.B*(run.party[G.cmd.actor]?.V||run.V)}`:'コメントで連携強化'}／${run.A<40?`回復まで${40-run.A}`:'回復使用可'}${run.supportNotice?`／エール${run.supportNotice.beforeA}→${run.supportNotice.afterA}`:''}${run.supportNotice&&run.supportNotice.kira?`／キラコメ成功：＋${run.supportNotice.kira.gain}・防護${run.supportNotice.kira.protected}人`:''}</p></div>`;}
-function battleChoices(html){const choices=html.match(/<button\b[\s\S]*?<\/button>/g);if(!choices)return html;const sig=[G.cmd.actor,G.cmd.type].join(':');if(G.battleChoiceKey!==sig){G.battleChoiceKey=sig;G.battleChoicePage=0;}const pages=Math.ceil(choices.length/4);G.battleChoicePages=pages;const page=Math.max(0,Math.min(pages-1,G.battleChoicePage||0));G.battleChoicePage=page;return `<div class="choice-grid">${choices.slice(page*4,page*4+4).join('')}</div>${pages>1?`<div class="choice-pages"><button class="chip" data-a="battleChoicePage" data-v="${page-1}" ${page===0?'disabled':''}>◀</button><span>選択 ${page+1}/${pages}</span><button class="chip" data-a="battleChoicePage" data-v="${page+1}" ${page===pages-1?'disabled':''}>▶</button></div>`:''}`;}
+function renderBattle(){const run=G.st.run;if(!run)return '';if(run.state!=='input')return renderBattleEnd(run);enforceManualBattle(run);if(G.battleInspect)return renderBattleInspect(run);return renderMobileBattle(run);}
 function renderBattleInspect(run){const pages=[];const add=(group,title,html)=>pages.push({group,title,blocks:endTextBlocks(html.replace(/<[^>]*>/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,'&'),90)});
  add('rules','戦闘ルール',autoAllowed(run)?'通常戦闘ではオートを使用できます。':'ボス戦・特別チャレンジは手動操作のみ。オート機能は使用できません。');
  if(pocoBattleStatusFull(run))add('rules','戦闘ルール',pocoBattleStatusFull(run));if(run.cue)add('rules','ボス対処',cueText(run));
@@ -4794,79 +4822,12 @@ function renderBattleInspect(run){const pages=[];const add=(group,title,html)=>p
  for(const m of run.party)add('growth','味方の状態',`${m.name} ${JOBS[m.job].name} 熟練度${m.R} HP ${m.hp}/${m.maxHP} MP ${m.c}/${m.maxC} ${m.acted?'行動済み':'未行動'} 防護${m.ward||0} ${m.guard?'ガード中':''}`);
  add('log','直近の戦闘ログ',(run.log||[]).slice(-12).join('／'));
  return renderEndFrame('battle-info:'+run.seq+':'+run.turn,pages,'戦闘の詳細','', 'battleInspectClose','戦闘に戻る');}
-function fitBattleView(){const view=document.querySelector('.battle-live'),inner=view&&view.querySelector('.battle-inner');if(!inner||!view.clientHeight)return;const log=view.querySelector('.battle-progress'),available=Math.max(1,view.clientHeight-(log?(Number(log.offsetHeight)||0):0)-4);inner.style.zoom='1';for(let i=0;i<5;i++){const zoom=Number(inner.style.zoom)||1,total=inner.scrollHeight*zoom;if(total<=available+1)break;inner.style.zoom=String(zoom*available/total*0.99);}}
+function fitBattleView(){const view=document.querySelector('.mobile-battle');if(!view||!view.clientHeight)return;if(view.scrollHeight>view.clientHeight+2&&!view.classList.contains('focus')&&!G.mobileForceFocus){G.mobileForceFocus=true;render();}}
+
 function renderBattleSupportHelp(){return `<p class="small">ここで説明する効果・数値・連携順序は、このゲーム独自のルールです。</p><h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活・生存者へ防護1）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
 
 function skillNeeds(job){ return ({J01:"enemy",J02:"line",J03:"ally",J04:"mode",J05:"enemy",J06:"mode",J07:"none",J08:"ally",J09:"enemy",J10:"none",J11:"none",J12:"none",J13:"ally",J14:"none",J15:"enemy",J16:"enemy",J17:"none",J18:"ally",J19:"enemy",J20:"none",J21:"enemy",J22:"allyOther"})[job]; }
-function renderCommand(run){
-  if(run.state==="won") return `<div class="win cmd"><p>勝利！ ノイズ体をすべて鎮めた。</p><button class="btn primary wide" data-a="toResult">結果を見る</button></div>`;
-  if(run.state==="lost") return `<div class="win cmd"><p class="small">${run.turnLimit&&run.turn>run.turnLimit?"制限ターンを超えました。":"全員が戦闘不能。"}この戦闘の報酬は0。${run.kind==="challenge"?"特別挑戦の参加料は戻りませんが、追加のゴールド損失はありません。":"所持ゴールドの半分を失い、"}全員のHPとMPを回復して安全な場所へ戻ります。受注・討伐数・経験値・熟練度・所持品は保持。</p><button class="btn primary wide" data-a="defeatReturn">安全な場所へ戻る</button></div>`;
-  if(G.auto&&autoAllowed(run)){
-    const al2=run.party.filter(m=>m.hp>0&&!m.acted);
-    const tap=autoMode()==="tap", wait=tap&&G.autoWait;
-    const msg=`<span class="autolast">${G.autoLast?esc(G.autoLast):"考え中…"}</span>${wait?`<span class="autonext">▼ タップで次へ</span>`:""}`;
-    return `<div class="win cmd autopanel" aria-live="polite">
-      <div class="autohead"><p class="autotitle">オート戦闘中</p><button class="chip automode" data-a="autoMode" aria-label="オートの進め方を切り替える（今：${tap?"タップで次へ":"自動で次へ"}）">進め方：<b>${tap?"タップで次へ":"自動で次へ"}</b> ⇄</button></div>
-      ${wait?`<button class="automsg tap" data-a="autoNext" aria-label="次の行動へ進む">${msg}</button>`:`<div class="automsg">${msg}</div>`}
-      <p class="small">このターンの未行動：${al2.map(m=>esc(m.name)).join("・")||"なし"}</p>
-      <div class="confirmrow">${wait?`<button class="btn primary" data-a="autoNext">次へ</button>`:`<span class="small dim">${tap?"":"一定時間で自動的に進みます"}</span>`}<button class="btn ${wait?"":"primary"} stopauto" data-a="autoOff">中断</button></div></div>`;
-  }
-  const c=G.cmd; const al=run.party.filter(m=>m.hp>0&&!m.acted);
-  if(c.actor==null || !run.party[c.actor] || run.party[c.actor].acted || run.party[c.actor].hp<=0){ c.actor = al.length? al[0].pos : null; c.type=null; }
-  const a=run.party[c.actor]; if(!a) return "";
-  const S=a.S;
-  const entries=[["attack","アタック"],["comment","応援コメント"],["skill","技・必殺技"],["item","道具"],["guard","ガード"],["rest","ひと息つく"],["other","その他"]];
-  const chip=(k,v,on,label)=>`<button class="chip ${on?"on":""}" data-a="cmdSet" data-k="${k}" data-v="${v}" aria-pressed="${on}">${on?"▶":""}${k==="target"?"敵：":k==="ally"?"味方：":""}${label}</button>`;
-  const enemyPick=()=>`<span class="chiplabel">対象</span>`+run.enemies.filter(e=>e.hp>0).map(e=>chip("target",e.slot,c.target===e.slot,esc(e.display))).join("");
-  const allyPick=(other)=>`<span class="chiplabel">対象</span>`+run.party.filter(m=>m.hp>0&&(!other||m!==a)).map(m=>chip("ally",m.pos,c.ally===m.pos,esc(m.name))).join("");
-  const linePick=()=>["greet","plan","thanks"].map(l=>chip("line",l,c.line===l,LINE_NAMES[l])).join("");
-  const liveE=run.enemies.filter(e=>e.hp>0); if(liveE.length===1) c.target=liveE[0].slot;
-  let sub="", info="";
-  if(c.type==="attack") sub=enemyPick();
-  if(c.type==="comment"){ sub=linePick(); info=`MP1・エール＋${18+a.commentA+(hasTrait(a,"J22")?6:0)}・コメント連携4`+(c.line?`「${COMMENT_LINES[c.line][run.turn%3]}」`:""); }
-  if(c.type==="skill"){
-    const ex=c.skill&&EXTRA_SKILLS[c.skill],need=ex?ex.need:skillNeeds(a.job);
-    sub=[chip("skill","",!c.skill,esc(JOBS[a.job].skill)),...(a.extraSkills||[]).map(id=>{const sk=EXTRA_SKILLS[id],wait=Math.max(0,((a.skillReady||{})[id]||0)-run.turn);return chip("skill",id,c.skill===id,esc(sk.name)+` MP${skillMpCost(a,sk)}`+(sk.ultimate?`・エール35${a.ultimateUsed?"（使用済み）":run.turn<3?"（3Tから）":"（1戦1回）"}`:wait?`（あと${wait}T）`:""));})].join("");
-    info=ex?(ex.ultimate?`MP${skillMpCost(a,ex)}・エール35・${ex.desc}`:`MP${ex.cost}・${ex.desc}・再使用待ち${ex.cooldown}ターン`):`MP${JOBS[a.job].cost}・${JOBS[a.job].desc(S)}（特性「${JOB_TRAITS[a.job].name}」）`;
-    if(need==="enemy") sub+= enemyPick();
-    if(need==="ally") sub+= allyPick(false);
-    if(need==="allyOther") sub+= allyPick(true);
-    if(need==="line") sub+= linePick();
-    if(need==="mode"){
-      const modes = (ex?.baseJob||a.job)==="J04"?[["hp","HP補給"],["c","MP補給"]]:[["safe","堅実"],["bold","強気"]];
-      sub+=modes.map(([k,n])=>chip("mode",k,c.mode===k,n)).join("");
-      if(c.mode==="hp") sub+=allyPick(false); if(c.mode==="c") sub+=allyPick(true);
-      if(c.mode==="safe"||c.mode==="bold") sub+=enemyPick();
-    }
-  }
-  if(c.type==="item"){
-    const usable=(run.bag||[]).filter(e=>e.n>0&&ITEMS[e.id]&&canUseJobItem(a.job,a.R,ITEMS[e.id]));
-    if(!usable.length) sub=`<span class="hint">使える道具を持っていません。ショップで買えます。</span>`;
-    else { sub=usable.map(e=>chip("item",e.id,c.item===e.id,`${esc(ITEMS[e.id].name)}×${e.n}`)).join("");
-      const it=c.item&&ITEMS[c.item];
-      if(it){ const nd=itemNeeds(it); info=`${itemText(it,(a.V||run.V))}（${ITEM_RARITY[it.stars].slice(0,2)}）${a.pouch&&it.cat!=="攻撃"?"・ポーチで2倍":""}`;
-        if(nd==="enemy") sub+=`<span class="chipbreak"></span>`+enemyPick(); if(nd==="ally") sub+=`<span class="chipbreak"></span>`+allyPick(false);
-        if(nd==="down") sub+=`<span class="chipbreak"></span><span class="chiplabel">対象</span>`+(run.party.filter(m=>m.hp<=0).map(m=>chip("ally",m.pos,c.ally===m.pos,esc(m.name))).join("")||`<span class="hint">戦闘不能の仲間はいません</span>`); } }
-  }
-  if(c.type==="guard") info="受けるダメージ半分・MP＋1";
-  if(c.type==="rest") info=`自分のMP＋${4+a.rest}`;
-  if(c.type==="other"){
-    sub=chip("o","meter",c.o==="meter",`メーター突破`)+chip("o","family",c.o==="family",`ファミリー応援`)
-      +`<button class="chip" data-a="retreat">撤退</button><button class="chip" data-a="pauseBattle">休止</button>`;
-    info = c.o==="meter"?`エール80・敵全体に${24+6*(a.L||run.L)+(a.V||run.V)*a.meter+Math.floor((a.chaStat||0)/3)}−防御力（魅力込み。残り1体なら1.5倍）`: c.o==="family"?`エール40・全員のHP＋${Math.ceil((12+a.family)*(a.V||run.V)*(1+(a.cha||0)/100))}・戦闘不能から復帰`:"";
-  }
-  const act=buildAct(a);
-  let prev = info?`<span class="pinfo">${esc(info)}</span>`:"";
-  let ok=false;
-  if(act){ const p=planAction(run,c.actor,act); ok=p.ok; prev = (info?`<span class="pinfo">${esc(info)}</span>`:"") + (p.ok? previewText(run,a,p) : `<span class="warn">${esc(p.reason)}</span>`); }
-  else if(c.type) prev += `<span class="hint">対象・台詞を選んでください</span>`;
-  else prev = `<span class="hint">${esc(a.name)}の行動を選んでください（未行動${al.length}人）</span>`;
-  G.battlePreview=prev;
-  return `<div class="win cmd">
-    <div class="cmdgrid">${entries.map(([k,n])=>`<button class="btn ${c.type===k?"on":""}" data-a="cmdType" data-v="${k}">${c.type===k?"▶":""}${esc(n)}</button>`).join("")}</div>
-    ${sub?`<div class="chips">${battleChoices(sub)}</div>`:""}
-    <div class="confirmrow"><button class="preview" data-a="battleInspect" data-v="preview" aria-label="行動予測の詳細">${prev}</button>${G.st.settings.dock===false&&autoAllowed(run)?`<button class="btn auto" data-a="autoOn" ${G.readOnly?"disabled":""}>オート</button>`:""}<button class="btn primary" data-a="confirmAct" ${act&&ok&&!G.readOnly?"":"disabled"}>確定</button></div></div>`;
-}
+function renderCommand(run){return renderMobileCommand(run);}
 function buildAct(a){
   const c=G.cmd; if(!c.type) return null;
   if(c.type==="attack") return c.target!=null?{type:"attack",target:c.target}:null;
@@ -4970,7 +4931,7 @@ function autoStep(){
   if(run&&!autoAllowed(run)){enforceManualBattle(run);render();return;}
   if(!G.auto || G.screen!=="battle" || !run) { G.auto=false; return; }
   if(run.state!=="input"){ G.auto=false; G.autoLast=null; render(); return; }
-  if(G.sheet||G.dlg||G.battleInspect||document.hidden){ G.autoT=setTimeout(autoStep,400); return; }
+  if(G.sheet||G.dlg||G.battleInspect||G.battleCommand||G.battlePicker||document.hidden){ G.autoT=setTimeout(autoStep,400); return; }
   const pick=aiChoose(run);
   if(!pick){ G.auto=false; render(); return toast("オートで選べる行動がありません。"); }
   G.autoLast=`${pick.name}：${pick.label}`;
@@ -5001,7 +4962,7 @@ function renderEndFrame(key,pages,title,subtitle,primary,button){
  const fullKey=key+':'+endSizeKey();
  if(!G.endPager||G.endPager.key!==fullKey){G.endPager={key:fullKey,pages,index:0,primary,resetScroll:true};G.cursorSig=primary+'||||||';}
  const ui=G.endPager;ui.index=Math.max(0,Math.min(ui.pages.length-1,ui.index||0));const page=ui.pages[ui.index],groups=[...new Set(ui.pages.map(p=>p.group))];
- return `<section class="end-view" aria-labelledby="endTitle"><header class="end-head"><h2 id="endTitle">${esc(title)}</h2><p>${esc(page.title||subtitle)}</p></header><nav class="end-tabs" aria-label="結果の表示切替" style="--end-tabs:${groups.length}">${groups.map(g=>`<button class="btn ${page.group===g?'on':''}" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.pages.findIndex(p=>p.group===g)}" ${page.group===g?'disabled aria-current="page"':''}>${END_GROUPS[g]||g}</button>`).join('')}</nav><div class="end-content" aria-label="${esc(page.title||END_GROUPS[page.group])}">${page.blocks.map(b=>`<div class="end-piece">${b}</div>`).join('')}</div><nav class="end-pages" aria-label="確認ページ"><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index-1}" ${ui.index<=0?'disabled':''}>◀ 前へ</button><span aria-live="polite">${esc(END_GROUPS[page.group])} ${ui.index+1}/${ui.pages.length}</span><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index+1}" ${ui.index>=ui.pages.length-1?'disabled':''}>次へ ▶</button></nav><button class="btn primary end-primary" data-end-primary data-a="${primary}">${esc(button)}</button></section>`;
+ return `<section class="end-view ${mobilePlan().available<360?"short-end":""}" aria-labelledby="endTitle"><header class="end-head"><div><h2 id="endTitle">${esc(title)}</h2><p>${esc(page.title||subtitle)}</p></div><button class="btn" data-a="systemHelp">解説</button></header><nav class="end-tabs" aria-label="結果の表示切替" style="--end-tabs:${groups.length}">${groups.map(g=>`<button class="btn ${page.group===g?'on':''}" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.pages.findIndex(p=>p.group===g)}" ${page.group===g?'disabled aria-current="page"':''}>${END_GROUPS[g]||g}</button>`).join('')}</nav><div class="end-content" aria-label="${esc(page.title||END_GROUPS[page.group])}">${page.blocks.map(b=>`<div class="end-piece">${b}</div>`).join('')}</div><footer class="end-footer"><nav class="end-pages" aria-label="確認ページ"><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index-1}" ${ui.index<=0?'disabled':''}>◀ 前へ</button><span aria-live="polite">${esc(END_GROUPS[page.group])} ${ui.index+1}/${ui.pages.length}</span><button class="btn" data-a="endPage" data-k="${esc(ui.key)}" data-v="${ui.index+1}" ${ui.index>=ui.pages.length-1?'disabled':''}>次へ ▶</button></nav><button class="btn primary end-primary" data-end-primary data-a="${primary}">${esc(button)}</button></footer></section>`;
 }
 function fitEndView(){
  const view=document.querySelector('.end-view'),body=view&&view.querySelector('.end-content');if(!body||!body.clientHeight||!G.endPager)return;
@@ -5136,6 +5097,10 @@ function systemGuideEntries(){
  add('stream','start','ライブ配信に不合格だったら？',p('依頼で必要な敵の討伐やボス戦などを終えた後、配信へ進みます。配信中の採点の数字は表示しません。')+p('不合格になると、そのまま連続してやり直せません。表示された再挑戦の条件を確認して、街での会話・戦闘など必要な準備をやり直してから挑みます。選択肢の答えや点数の一覧は、この解説には載せません。'),'不合格 再挑戦 配点 配信失敗');
  add('save','save','セーブとバックアップ：記録を守ろう',p('操作や戦闘の区切りで自動保存します。設定の「保存」の表示を確認してください。公開版の記録は遊んだ人のブラウザに残ります。別のスマホや別のブラウザには自動では移りません。')+p('設定の「バックアップを表示」で文字列を控え、別の端末の「記録の復元」に貼り付けると移せます。ブラウザの閲覧データを消す前に控えましょう。二つのタブで同時に遊ぶと、一方は閲覧だけになります。')+p('2026年10月23日の全ユーザー初期化より前の記録は復元できません。初期化後に始めた現在の記録は、今回の更新でも引き継ぎます。主人公やヒロインを控えにしていた旧編成は、二人が同行する編成へ直します。'),'保存できない セーブできない 復元 リセット');
  add('helpUpdates','save','この解説もゲームと一緒に更新します',p('説明の版は公開版v'+GAME_VERSION+'です。職業・技・装備・章ごとの目安は、実際のゲームデータから記事を作っています。技や装備が増えたら一覧にも反映されます。')+p('新しい仕組みを追加・変更するときは、その使い方、解放条件、数の決まり、注意点をこの解説に追記してから公開します。物語のあらすじ・人物の秘密・結末・クイズの正解は扱いません。'),'アップデート 新機能 更新');
+ add('mobileMap','start','スマホの地図：大きく見る・止まる・メニュー',p('地図の＋は拡大、−は縮小です。ふつうは1マス32pxで表示します。画面がとても狭い時は、入る大きさへ調整します。地面を短くタップすると、その場所へ歩きます。指をずらした時や長く押した時は移動しません。歩いている時に地図をタップすると止まります。')+p('上の街の名前と目的をタップすると、長い目的・保存の状況を全部読めます。「メニュー」から装備・編成・全国地図などを開けます。特別エリアの未クリア件数は、地図の右上から確認できます。'),'スマホ MAP 拡大 縮小 誤操作');
+ add('mobileBattle','battle','スマホの戦闘画面：戦況と行動選択',p('戦況とは、敵や仲間の今の状態です。いつもの画面でHP・MP・敵の次の攻撃・エール・進行コメントを確認します。行動できる仲間か「行動を選ぶ」を押すと、行動選択へ進みます。選ぶだけではMPや行動回数は減りません。最後に「確定」を押すと実行します。')+p('小さい画面でも、文字やボタンをまとめて縮小しません。とても低い画面では「敵⇄味方」で表示を切り替えます。必要なら同じボタンで次の敵・仲間へ進み、全員を確認できます。敵や行動済みの仲間を押すと、その人の詳細が開きます。'),'スマホ レイアウト 戦況 スクロール');
+ add('mobileChoices','skills','技がたくさんある時の選び方',p('「技・必殺技」を選ぶと、技の一覧が開きます。名前や効果の検索と、攻撃・回復・防護・必殺などの種類で探せます。前後のページで、覚えた技を全部見られます。MP不足や再使用待ちは表示されます。')+p('技を選ぶと一覧が閉じ、使う相手を選ぶ画面へ戻ります。技のページ送りと相手選びは別です。とても狭い画面では、相手やコメントは選択欄を押して選びます。予測を押すと効果を詳しく読めます。戻るボタンで一覧→行動選択→戦況の順に戻れます。'),'検索 技 道具 対象選択 ページ送り');
+ add('mobileControls','save','スマホの操作・進行コメント・画面回転',p('Aボタンとスティック中心の短いタップは、同じ決定です。中心を長く押す・ドラッグする・途中で指の入力が取り消される時は、決定しません。アプリを切り替えた後に移動入力が残らないよう停止します。')+p('進行コメントは矢印で前後を読めます。本文を押すと全文の確認画面へ進みます。画面の向きを変えた時は、選択中の技や入力中の検索文字を保ちながら組み直します。画面がとても低い時やキーボードを開いた時は、操作パネルを一時的に隠して本文を優先します。'),'画面回転 横画面 ジョイスティック キーボード');
  for(const job of JOB_IDS){const j=JOBS[job],mp=JOB_MP[job];add('job-'+job,'jobs',j.name+'：職業の使い方',p(esc(j.field)+'。基本技「'+esc(j.skill)+'」／MP'+j.cost+'。')+p(esc(j.desc(Kof(1)))+'（熟練度1の例）')+p('職業特性「'+esc(JOB_TRAITS[job].name)+'」：'+esc(JOB_TRAITS[job].desc))+p('最大MPの土台：初期'+mp[0]+'＋切り捨て((本人Lv－1)×'+mp[1]+')。さらに熟練度・装備を加算。永続ボーナス：熟練度999なら'+esc(jobBonusDescription(job))+'。')+p('技を覚える目安：'+Object.values(EXTRA_SKILLS).filter(sk=>sk.job===job&&!sk.baseJob).map(sk=>esc(sk.name)+'＝Lv'+sk.level+(sk.rank?'・熟練度'+sk.rank:'')).join('／')),job+' 固有技 職業専用 '+j.skill);}
  for(const sk of Object.values(EXTRA_SKILLS)){const job=sk.job&&JOBS[sk.job],source=sk.ultra?Object.values(ULTRA_GEAR).find(it=>it.skill===sk.id):null;add('skill-'+sk.id,'skills',sk.name, p((job?esc(job.name)+'の技。':'')+(sk.character?'人物固有の必殺技。職業は問いません。':'')+'習得・使用条件：本人Lv'+sk.level+(sk.rank?'以上、元職の熟練度'+sk.rank+'以上':'以上')+(sk.character?'、その人物の絆エピソード第1話':'')+(source?'、'+esc(source.name)+'を装備して習得':'')+'。')+p('消費MP：'+(sk.ultimate?'最大MPの25％（最低8）＋エール35':sk.cost)+'。再使用待ち：'+(sk.ultimate?'1人1戦1回・3ターン目以降':sk.cooldown+'ターン')+'。')+guideTechDetail(sk),sk.id+' '+(job?.name||'')+' 熟練度'+(sk.rank||1)+' Lv'+sk.level+' '+(sk.ultra?'超レア装備':'職業固有技'));}
  for(const [id,it]of Object.entries(EQUIP)){const source=guideGearSource(id,it);add('gear-'+id,it.chapterUltra?'rare':'gear',it.name,p(EQ_SLOT_NAME[it.slot]+'／'+(it.job?esc(JOBS[it.job].name)+'専用・熟練度'+it.needR+'以上':'全職業共通')+'／本人Lv'+(it.needL||1)+'以上。')+p(esc(gearStatsText(it))||'追加能力なし。')+p(esc(source))+(it.ultra?p('装備で永久習得：'+esc(it.tech)+'（MP'+it.cost+'／再使用待ち3ターン）。技の名前でも検索できます。'):''),id+' '+(it.job?JOBS[it.job].name:'共有装備 共通装備')+' '+(it.ultra?'超レア':'')+' '+source);}
@@ -5153,6 +5118,9 @@ function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
   switch(k){
     case "systemGuide": return sheetWrap("ゲームシステム解説",renderSystemGuide());
+    case "mobileMenu":return sheetWrap("メニュー",renderMobileMenu());
+    case "mobileMapInfo":return sheetWrap("場所・目的・操作",renderMobileMapInfo());
+    case "mobileBattleMenu":return sheetWrap("戦闘メニュー",renderMobileBattleMenu());
     case "about": return sheetWrap("この作品について",`<p>最大4人で戦う、ターン制バトルの昭和風ドットRPGです。</p>`);
     case "townEvent": {const t=townChange(st,curHub());return sheetWrap(t.title,`<p>${esc(t.text)}</p><p>住民の声を、どんな形で街に残しますか？ 選択は保存され、街の様子が変わります。</p><div class="stack"><button class="btn" data-a="townResolve" data-v="quiet">声を録って展示を作る</button><button class="btn" data-a="townResolve" data-v="live">住民の交流会を開く</button></div>`);}
     case "settings": return sheetWrap("設定と保存", renderSettings());
@@ -5599,6 +5567,21 @@ const ACT = {
   renameOpen(el){if(G.st.run||G.st.stream)return toast("名前は戦闘・配信の終了後に変更できます。");if(!G.st.roster.includes(el.dataset.c))return;openSheet("rename",{cid:el.dataset.c,back:"status"});},
   renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
   renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
+  mapZoom(el){const st=G.st;if(G.screen!=="explore"||G.sheet||G.dlg)return;st.settings.mapZoom=Math.max(1,Math.min(3,(st.settings.mapZoom||2)+Number(el.dataset.v)));G.walk.path=[];G.walk.pending=null;G.walk.prog=0;commit();render();},
+  battleCommandOpen(el){const run=G.st?.run;if(!run||run.state!=="input"||G.auto)return;mobileBattleActor(run);G.battleCommand=true;G.battlePicker=null;G.cursorSig=null;render();},
+  battleCommandClose(){G.battleCommand=false;G.battlePicker=null;G.cursorSig="battleCommandOpen||||||";render();},
+  mobileMember(el){const run=G.st?.run,m=run?.party[Number(el.dataset.i)];if(!m)return;if(m.hp<=0||m.acted||G.auto)return openMobileBattleDetail("growth",m.name);G.cmd={actor:m.pos};G.battleCommand=true;G.cursorSig=null;render();},
+  battlePanel(){const p=mobilePlan(G.st.run),pages=Math.ceil(G.st.run.party.length/p.memberPage);if(G.battlePanel!=="party"){if((G.battleFoePage||0)+1<Math.ceil(G.st.run.enemies.length/p.foePage))G.battleFoePage=(G.battleFoePage||0)+1;else{G.battlePanel="party";G.battleMemberPage=0;}}else if((G.battleMemberPage||0)+1<pages)G.battleMemberPage++;else{G.battlePanel="enemies";G.battleMemberPage=0;G.battleFoePage=0;}render();},
+  mobileCmdType(el){const t=el.dataset.v;if(t&&!MOBILE_COMMANDS.some(([k])=>k===t))return;G.cmd={actor:G.cmd.actor,type:t};G.battleCommand=true;G.battlePicker=null;if(t==="meter"||t==="family")G.cmd={actor:G.cmd.actor,type:"other",o:t};if(t==="skill"||t==="item"){G.battlePicker=t;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;}G.cursorSig=null;render();},
+  battlePickerOpen(el){G.battlePicker=el.dataset.v;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;render();},
+  battlePickerClose(){G.battlePicker=null;render();},
+  battlePickerSelect(el){const run=G.st.run,a=mobileBattleActor(run),id=el.dataset.v;if(G.battlePicker==="skill"){if(!mobileSkillCandidates(run,a).some(s=>s.id===id))return;G.cmd.skill=id;}else{if(!(run.bag||[]).some(it=>it.id===id&&it.n>0&&ITEMS[id]&&canUseJobItem(a.job,a.R,ITEMS[id])))return;G.cmd.item=id;}delete G.cmd.ally;delete G.cmd.target;delete G.cmd.mode;G.battlePicker=null;G.cursorSig=null;render();},
+  battlePickerSearch(){G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();},
+  battlePickerPage(el){const n=Number(el.dataset.v);if(!Number.isInteger(n)||n<0||n>=G.battlePickerPages)return;G.battlePickerPage=n;render();},
+  mobileInspect(el){G.sheet=null;ACT.battleInspect(el);},
+  mobileEnemyInfo(el){const e=G.st.run.enemies.find(e=>e.slot===Number(el.dataset.v));openMobileBattleDetail("foes",e&&(e.fullName||e.name));},
+  mobileAuto(){G.sheet=null;G.battleCommand=false;G.battlePicker=null;if(G.auto)ACT.autoOff();else ACT.autoOn();},
+  mobileConfirm(el){if(G.readOnly||G.mobileConfirmUntil>Date.now()||G.st?.run?.state!=="input")return;const a=mobileBattleActor(G.st.run),act=buildAct(a);if(!act)return;const valid=planAction(G.st.run,a.pos,act);if(!valid.ok){toast(valid.reason);render();return;}G.mobileConfirmUntil=Date.now()+280;if(el)el.disabled=true;G.battleCommand=false;G.battlePicker=null;confirmAct();G.cursorSig="battleCommandOpen||||||";},
   systemHelp(){openSystemGuide();},
   guideSearch(){G.sheetData={...G.sheetData,q:($("#systemQuery")?.value||"").slice(0,100),cat:"all",page:0};render();},
   guideCategory(el){if(!SYSTEM_GUIDE_CATEGORIES[el.dataset.v])return;G.sheetData={...G.sheetData,cat:el.dataset.v,page:0};render();},
@@ -5634,7 +5617,7 @@ const ACT = {
   cmdType(el){ const t=el.dataset.v; G.cmd={actor:G.cmd.actor, type:t}; render(); },
   cmdSet(el){ const k=el.dataset.k; let v=el.dataset.v; if(k==="target"||k==="ally") v=+v; G.cmd[k]=v; if(k==="mode"||k==="item"||k==="skill"){ delete G.cmd.ally; delete G.cmd.target; } render(); },
   confirmAct(el){ el.disabled=true; confirmAct(); },
-  autoOn(){ const run=G.st.run; if(!run||run.state!=="input") return; if(!autoAllowed(run)){enforceManualBattle(run);render();return toast("ボス戦・特別チャレンジは手動操作のみです。");} G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); G.autoT=setTimeout(autoStep,300); },
+  autoOn(){ const run=G.st.run; if(!run||run.state!=="input") return; if(!autoAllowed(run)){enforceManualBattle(run);render();return toast("ボス戦・特別チャレンジは手動操作のみです。");} G.battleCommand=false;G.battlePicker=null;G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); G.autoT=setTimeout(autoStep,300); },
   autoNext(){ if(!G.auto||!G.autoWait) return; G.autoWait=false; G.cursorSig="autoOff||||||"; SND.sfx("ok"); autoStep(); },
   autoMode(){ const st=G.st; const nv=autoMode()==="tap"?"timer":"tap"; if(st){ st.settings.autoAdvance=nv; commit(); } else { G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}; G.tmpSettings.autoAdvance=nv; }
     try{ localStorage.setItem("tlr-kyushu-autoadv",nv); }catch(e){}
@@ -5764,13 +5747,15 @@ function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.se
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
 function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
 
+document.addEventListener("change",e=>{if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!=="")ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
+document.addEventListener("submit",e=>{if(e.target.id==="battleSearchForm"){e.preventDefault();ACT.battlePickerSearch();}});
 document.addEventListener("submit",e=>{if(e.target.id==="systemGuideSearch"){e.preventDefault();ACT.guideSearch();}});
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
-  if(G.readOnly && !["systemHelp","guideSearch","guideCategory","guidePage","specialGuide","openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","liveLogPage","gearPage","gearFilter","partyReplaceSlot","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
+  if(G.readOnly && !["mobileEnemyInfo","mobileMember","battlePanel","mobileInspect","battlePickerSearch","battlePickerPage","battlePickerClose","systemHelp","guideSearch","guideCategory","guidePage","specialGuide","openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","liveLogPage","gearPage","gearFilter","partyReplaceSlot","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
@@ -5828,7 +5813,9 @@ const VFIT=(()=>{
   return { apply, calibrate, get mode(){ const m=manual(); return m==null?"auto":String(m); }, get value(){ return Math.round(cur()); } };
 })();
 document.addEventListener("visibilitychange",()=>{ if(document.hidden){ G.walk.path=G.walk.path.slice(0,1); if(G.st&&G.screen==="explore") commit(); SND.suspend(); } else { SND.resume(); if(G.screen==="explore") startLoop(); } });
-window.addEventListener("resize",()=>{if(G.screen==="result"||G.screen==="battle"&&G.st&&G.st.run){clearTimeout(G.endResize);G.endResize=setTimeout(()=>render(),100);} if(G.screen==="explore"){ G.walk.path=[]; clearTimeout(G.rsz); G.rsz=setTimeout(()=>{ if(G.screen==="explore") mountCanvas(); },120); } });
+window.addEventListener("resize",()=>{G.mobileForceFocus=false;queueMobileLayout();});
+window.visualViewport?.addEventListener("resize",queueMobileLayout);
+window.addEventListener("orientationchange",()=>{G.mobileForceFocus=false;queueMobileLayout();});
 
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitEndView();fitBattleView();}).catch(()=>{});
 
@@ -5856,9 +5843,9 @@ const PAD = (()=>{
   function mount(){
     const dock=document.getElementById("dock"); if(!dock || dock.dataset.ready) return; dock.dataset.ready="1";
     const base=dock.querySelector(".stick"), knob=dock.querySelector(".knob");
-    let pid=null,centerTap=false,tapX=0,tapY=0;
+    let pid=null,centerTap=false,tapX=0,tapY=0,tapAt=0;
     const feedback=()=>{base.classList.add("confirmed");setTimeout(()=>base.classList.remove("confirmed"),180);};
-    const isCenter=(e,release=false)=>{const r=base.getBoundingClientRect();return Math.hypot(e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2)<=r.width*(release?0.34:0.28);};
+    const isCenter=(e,release=false)=>{const r=base.getBoundingClientRect();return Math.hypot(e.clientX-r.left-r.width/2,e.clientY-r.top-r.height/2)<=Math.max(release?26:22,r.width*(release?0.40:0.32));};
     const isTap=e=>isCenter(e,true)&&Math.hypot(e.clientX-tapX,e.clientY-tapY)<=Math.max(10,base.getBoundingClientRect().width*0.16);
     const upd=e=>{
       const r=base.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2, R=r.width*0.34;
@@ -5875,10 +5862,11 @@ const PAD = (()=>{
       stickAlt = nd===hd ? (ay>R*0.3?vd:null) : (ax>R*0.3?hd:null);
       setDir(nd, "stick");
     };
-    base.addEventListener("pointerdown",e=>{ if(pid!==null||e.button>0)return;centerTap=isCenter(e);tapX=e.clientX;tapY=e.clientY;pid=e.pointerId; base.setPointerCapture(pid); base.classList.add("on"); SND.sfx("step"); if(centerTap){stickAlt=null;setDir(null,"stick");}else upd(e); e.preventDefault(); });
+    base.addEventListener("pointerdown",e=>{ if(pid!==null||e.button>0)return;tapAt=Date.now();centerTap=isCenter(e);tapX=e.clientX;tapY=e.clientY;pid=e.pointerId; base.setPointerCapture(pid); base.classList.add("on"); SND.sfx("step"); if(centerTap){stickAlt=null;setDir(null,"stick");}else upd(e); e.preventDefault(); });
     base.addEventListener("pointermove",e=>{ if(e.pointerId===pid){if(centerTap&&!isTap(e))centerTap=false;if(!centerTap)upd(e);e.preventDefault();} });
-    const end=e=>{ if(e.pointerId!==pid) return;const confirm=e.type==="pointerup"&&centerTap&&isTap(e);pid=null;centerTap=false;base.classList.remove("on");knob.style.transform="";stickAlt=null;setDir(null,"stick");if(confirm){e.preventDefault();feedback();pressA();} };
+    const end=e=>{ if(e.pointerId!==pid) return;const confirm=e.type==="pointerup"&&centerTap&&isTap(e)&&Date.now()-tapAt<=650;pid=null;centerTap=false;base.classList.remove("on");knob.style.transform="";stickAlt=null;setDir(null,"stick");if(confirm){e.preventDefault();feedback();pressA();} };
     base.tabIndex=0;base.setAttribute("aria-label","スティック。中央タップで決定、ドラッグで移動");base.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();e.stopPropagation();if(!e.repeat){feedback();pressA();}}});
+    MOBILE_UI.releaseStick=()=>{const old=pid;pid=null;centerTap=false;base.classList.remove("on");knob.style.transform="";stickAlt=null;setDir(null,"stick");try{if(old!=null)base.releasePointerCapture(old);}catch(e){}};
     base.addEventListener("pointerup",end); base.addEventListener("pointercancel",end); base.addEventListener("lostpointercapture",end);
     dock.querySelector("[data-pad=a]").addEventListener("click",()=>pressA());
     dock.querySelector("[data-pad=b]").addEventListener("click",()=>pressB());
@@ -5924,7 +5912,7 @@ const PAD = (()=>{
   /* ---- カーソル（▶）の移動：今見えている一番手前の画面の中だけで動く ---- */
   function scope(){ const d=document.querySelector(".dlg-ov"); if(d) return d; const s=document.querySelector(".overlay"); if(s) return s; return document.getElementById("screen"); }
   function focusables(sc){
-    return [...sc.querySelectorAll("button,input,textarea,[data-a]")].filter(el=>{
+    return [...sc.querySelectorAll("button,input,textarea,select,[data-a]")].filter(el=>{
       if(el.disabled||el.getAttribute("aria-disabled")==="true") return false;
       if(el.closest("[hidden]")) return false; const r=el.getBoundingClientRect(); return r.width>0&&r.height>0;
     });
@@ -5941,8 +5929,10 @@ const PAD = (()=>{
   function moveCursor(d){
     const sc=scope(); if(!sc) return; const list=focusables(sc); if(!list.length) return;
     const cur=current(sc);
+    if(cur&&cur.tagName==="SELECT"&&(d===0||d===1)){const next=Math.max(0,Math.min(cur.options.length-1,cur.selectedIndex+(d===0?1:-1)));if(next!==cur.selectedIndex){G.cursorSig=sig(cur);cur.selectedIndex=next;cur.dispatchEvent(new Event("change",{bubbles:true}));}return;}
     if(!cur || !list.includes(cur)){
-      const pref = sc.querySelector(".cmd") ? list.find(el=>el.closest(".cmd")) : sc.querySelector(".sheet") ? list.find(el=>el.closest(".sheet")&&el.dataset.a!=="closeSheet") : null;
+      const primary=list.find(el=>el.hasAttribute("data-default-focus"));
+      const pref = primary || (sc.querySelector(".cmd") ? list.find(el=>el.closest(".cmd")) : sc.querySelector(".sheet") ? list.find(el=>el.closest(".sheet")&&el.dataset.a!=="closeSheet") : null);
       setCursor(pref||list[0]); SND.sfx("ok"); return; }
     const r=cur.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
     let best=null, bs=Infinity;
@@ -5962,18 +5952,20 @@ const PAD = (()=>{
   /* ---- 決定（A）と戻る（B） ---- */
   function pressA(){
     const sc=scope();
-    if(isMoveMode()){ const near=nearbyObjects(); if(!near.length) return toast("近くに調べられるものはありません。"); if(near.length===1) return interact(near[0]); return openSheet("nearby"); }
+    if(isMoveMode()){G.walk.path=[];G.walk.pending=null;G.walk.prog=0; const near=nearbyObjects(); if(!near.length) return toast("近くに調べられるものはありません。"); if(near.length===1) return interact(near[0]); return openSheet("nearby"); }
     if(G.dlg){ const b=document.getElementById("dlgNext"); if(b) b.click(); return; }
     const cur=sc&&current(sc);
-    if(cur && focusables(sc).includes(cur)){ cur.click(); return; }
+    if(cur && focusables(sc).includes(cur)){if(cur.tagName==="SELECT"&&typeof cur.showPicker==="function"){try{cur.showPicker();return;}catch(e){}}cur.click(); return; }
     moveCursor(0);
   }
   function pressB(){
     if(G.dlg){ ACT.dlgSkip(); return; }
+    if(G.sheet){ const back=document.querySelector(".overlay [data-a=closeSheet]"); if(back) back.click(); return; }
     if(G.battleInspect&&G.screen==="battle"){ACT.battleInspectClose();return;}
     if(G.auto && !G.sheet && G.screen==="battle"){ ACT.autoOff(); return; }
-    if(G.sheet){ const back=document.querySelector(".overlay [data-a=closeSheet]"); if(back) back.click(); return; }
     if(G.screen==="battle"&&G.auto){ ACT.autoOff(); return; }
+    if(G.screen==="battle"&&G.battlePicker){G.battlePicker=null;render();return;}
+    if(G.screen==="battle"&&G.battleCommand){G.battleCommand=false;G.cursorSig="battleCommandOpen||||||";render();return;}
     if(G.screen==="battle"&&G.st&&G.st.run&&G.st.run.state==="input"){ G.cmd={actor:G.cmd.actor}; G.cursorSig=null; render(); SND.sfx("cancel"); return; }
     if(isMoveMode()){ G.walk.path=G.walk.path.slice(0,1); G.walk.pending=null; return; }
     SND.sfx("cancel");
@@ -6002,7 +5994,7 @@ const PAD = (()=>{
   /* ---- キーボード（パソコンでの確認用） ---- */
   const KEYS={ArrowDown:0,ArrowUp:1,ArrowLeft:2,ArrowRight:3,s:0,w:1,a:2,d:3};
   document.addEventListener("keydown",e=>{
-    const t=e.target; if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA")) return;
+    const t=e.target; if(t&&(t.tagName==="INPUT"||t.tagName==="TEXTAREA"||t.tagName==="SELECT")) return;
     if(KEYS[e.key]!=null){ e.preventDefault(); if(!e.repeat){ const d=KEYS[e.key]; keyStack=keyStack.filter(x=>x!==d); keyStack.push(d); updKey(); } return; }
     if(e.key==="Enter"||e.key===" "||e.key==="z"){ e.preventDefault(); if(!e.repeat) pressA(); }
     if(e.key==="Escape"||e.key==="x"||e.key==="Backspace"){ e.preventDefault(); if(!e.repeat) pressB(); }
@@ -6011,14 +6003,16 @@ const PAD = (()=>{
   function updKey(){ const d=keyStack.length?keyStack[keyStack.length-1]:null; const p=keyStack.length>1?keyStack[keyStack.length-2]:null;
     keyAlt = (d!=null&&p!=null&&((d<2)!==(p<2)))?p:null; setDir(d,"key"); }
   document.addEventListener("keyup",e=>{ if(KEYS[e.key]!=null){ const d=KEYS[e.key]; keyStack=keyStack.filter(x=>x!==d); updKey(); } });
-  window.addEventListener("blur",()=>{ keyStack=[]; updKey(); });
+  window.addEventListener("blur",()=>{keyStack=[];sources.gamepad=null;sources.stick=null;MOBILE_UI.releaseStick?.();updKey();});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden){keyStack=[];sources.gamepad=null;sources.stick=null;MOBILE_UI.releaseStick?.();updKey();}});
   document.addEventListener("pointerdown",e=>{ if(!e.target.closest("#dock")){ document.querySelectorAll(".kfocus").forEach(x=>x.classList.remove("kfocus")); G.cursorSig=null; } },true);
 
   /* BGMは初期ON：ブラウザの制限で、最初に画面へ触れた時に鳴らし始める */
   function wantSound(){ if(G.soundWant!=null) return G.soundWant; if(G.st && G.st.settings && G.st.settings.sound===false) return false; return soundPref(); }
   const unlock=()=>{ if(SND.on) return; if(wantSound()){ SND.setOn(true); } };
   ["pointerdown","keydown","touchend"].forEach(ev=>document.addEventListener(ev,unlock,{capture:true,passive:true}));
-  return { mount, restore, pressA, pressB, held };
+  function reset(){keyStack=[];sources.key=null;sources.gamepad=null;sources.stick=null;MOBILE_UI.releaseStick?.();updKey();}
+  return { mount, restore, pressA, pressB, held, reset };
 })();
 
 if(window.claude&&window.claude.hot&&window.claude.hot.ready) window.claude.hot.ready(()=>boot()); else boot();
