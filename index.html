@@ -509,7 +509,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.21";
+const GAME_VERSION = "6.22";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1622,11 +1622,12 @@ function jobItemRequirement(it){return it.job?`${JOBS[it.job].name}専用・熟�
 function inheritanceHtml(st,cid){const bonus=permanentJobBonus(st,cid),job=st.jobs[cid],i=JOB_IDS.indexOf(job),primary=JOB_SIG[job],secondary=STAT_KEYS[(i+1)%5],r=jobRank(st,cid,job),points=jobBonusPoints(r),next=JOB_BONUS_STEPS.find(n=>n>r);return `<section class="setcard"><h3 class="label">職業固有の永続ボーナス</h3><p>${esc(JOBS[job].name)}：${STAT_NAMES[primary]}＋${points}％${secondary!==primary?`・${STAT_NAMES[secondary]}＋${Math.floor(points/2)}％`:''}${next?`／次は熟練度${next}`:'／最終段階'}</p><p class="small">解放熟練度：10・30・60・100・200・400・700・999。職業ごとの達成分を転職後も加算します。複数職の合計は各能力＋45％まで。</p><p>引継合計：${STAT_KEYS.map(k=>STAT_NAMES[k]+'＋'+bonus[k]+'％').join('／')}</p><p class="small">習得技と職業別熟練度は保持。基礎能力・通常の熟練度補正・職業特性は現在職のものになり、前職からは永続ボーナスのみ能力に加算。前職の専用装備・専用道具は使用できません。</p></section>`;}
 function masteryHtml(st,cid,L){const s=charStats(st,cid,L),skills=Object.values(EXTRA_SKILLS).filter(sk=>sk.job===s.job&&sk.rank),next=MASTERY_STEPS.find(n=>n>s.R),item=ITEMS['JI'+s.job.slice(1)];return inheritanceHtml(st,cid)+`<div class="setcard"><h3 class="label">熟練度の効果</h3><p class="small">5つの基礎能力＋${s.mastery}％・熟練度による最大MP＋${Math.floor(s.R/2)}・技能強化${Kof(s.R)}${next?`（次の強化は熟練度${next}）`:'（最終段階）'}。能力補正は熟練度999で47％。現在の職業でのみ有効。</p><ul class="list">${skills.map(sk=>`<li>${skillAvailable(st,cid,sk)?'使用可能':'条件未達'}：${esc(sk.name)}（Lv${sk.level}・熟練度${sk.rank}・MP${sk.cost}・再使用待ち${sk.cooldown}ターン）<br><span class="small">${esc(sk.desc)}</span></li>`).join('')}<li>${s.R>=10?'使用可能':'未解禁'}：${esc(item.name)}（熟練度10・ショップの道具売場で購入）<br><span class="small">${esc(itemText(item,Vof(L)))}</span></li></ul></div>`;}
 
-function extraSkillsFor(st,cid,L,job){const known=rememberSkills(st,cid,characterLevel(st,cid));return Object.values(EXTRA_SKILLS).filter(sk=>skillAvailable(st,cid,sk)&&((!sk.baseJob||sk.baseJob!==job)&&(known.includes(sk.id)||sk.job===job)||sk.ultra&&((st.learnedGearSkills||{})[cid]||[]).includes(sk.id))).map(sk=>sk.id);}
+function extraSkillsFor(st,cid,L,job){const known=rememberSkills(st,cid,characterLevel(st,cid));return Object.values(EXTRA_SKILLS).filter(sk=>skillAvailable(st,cid,sk)&&((!sk.baseJob||sk.baseJob!==job)&&(known.includes(sk.id)||sk.job===job)||sk.ultra&&((st.learnedGearSkills||{})[cid]||[]).includes(sk.id)||sk.character===cid)).map(sk=>sk.id);}
 
 function ultraDrop(st,run,res){if(run.q<10)return;const den=run.kind==='boss'?40:200;if(randInt(den)!==0)return;const pool=Object.keys(ULTRA_GEAR);giveGear(st,pool[randInt(pool.length)],res,'超レアドロップ');}
 function planExtraSkill(run,a,act,p,h){
  const sk=EXTRA_SKILLS[act.skillId];if(!sk||!(a.extraSkills||[]).includes(sk.id)){p.ok=false;p.reason='この技は未習得です。';return;}
+ if(sk.ultimate)return planCharacterUltimate(run,a,sk,p,h);
  if(sk.baseJob){planSkill(run,a,{...act,skillId:null,castJob:sk.baseJob},p,{...h,S:Kof(Math.min(run.levelCap||100,rankOf((a.jobRanks||{})[sk.baseJob]||0)))});if(p.ok){p.tech=sk.id;p.techCooldown=0;}return;}
  if(((a.skillReady||{})[sk.id]||0)>run.turn){p.ok=false;p.reason='再使用まで'+(a.skillReady[sk.id]-run.turn)+'ターンです。';return;}
  if(!h.payC(sk.cost))return;const{S,V,L}=h,k=sk.power;
@@ -1946,7 +1947,7 @@ function progressionCap(st){let n=0;for(const c of PROGRESSION_CHAPTERS){if(!cha
 function partyExperience(st){const cap=xpFor(progressionCap(st));return st.memberXp?Math.floor(st.party.reduce((n,c)=>n+Math.min(cap,st.memberXp[c]??st.xp),0)/st.party.length):Math.min(cap,st.xp);}
 function partyLevel(st){return levelOf(partyExperience(st));}
 function jobRank(st,cid,job){return Math.min(progressionCap(st),rankOf(jpOf(st,cid,job)));}
-function skillAvailable(st,cid,sk){return characterLevel(st,cid)>=(sk.level||1)&&(!sk.job||jobRank(st,cid,sk.job)>=(sk.rank||1));}
+function skillAvailable(st,cid,sk){return (!sk.character||sk.character===cid&&characterRecord(st,cid).seen>=1)&&characterLevel(st,cid)>=(sk.level||1)&&(!sk.job||jobRank(st,cid,sk.job)>=(sk.rank||1));}
 
 function normalizeChapterLocation(st){if(!st||st.run)return;const a=SPECIAL_STAGES.find(a=>a.id===st.mapId);if(!a||a.level<=progressionCap(st))return;const old=st.specialReturn,m=old&&MAPS[old.map],target=m&&!SPECIAL_STAGES.some(a=>a.id===old.map)?old.map:'KY16',map=MAPS[target];st.mapId=target;st.pos={x:map.safeAnchor[0],y:map.safeAnchor[1]};st.progressionMigrationNote='地域編の上限調整で未解放となった特設エリアから、安全地帯へ移動しました。経験値・所持品・クリア記録は保持しています。';}
 
@@ -1963,6 +1964,95 @@ function regionBossProfile(b,df,ps){const L=b.regionalLevel||b.chapterLevel||SPE
  for(const [id,it]of Object.entries(EQUIP)){if(it.job)continue;let level=it.needL||1;if(it.needL!=null)level=it.needL;else if(it.expansion===614)level=1+it.gearTier*12;else if(/^R[WAX]\d{2}$/.test(id)){const n=+id.slice(2);level=n<=8?[8,18,30,42,54,66,78,90][n-1]:NEXT_CHAPTER[n-9].level-10;}else if(/^S[WAX][1-4]$/.test(id))level=[20,40,65,85][+id.slice(2)-1];else if(id.startsWith('OM'))level=95;else if(/^RR[WAX]/.test(id))level=[30,60,90][+id.slice(-1)-1]||30;else if(it.ultra)level=80;else if(/^NXR/.test(id))level=NEXT_CHAPTER[+id.slice(3)-1].level;else if(/^S(TG|G)\d/.test(id)){const n=+id.replace(/\D/g,'')-1;level=SPECIAL_STAGES[n].level-10;}else if(/^CE/.test(id)){level=POCO_TRIALS.find(d=>d.reward===id)?.level||1;}else if(!it.nonSale&&!['CW01','CA01'].includes(id))level=Math.min(85,Math.max(1,Math.floor(Math.max(it.atk||0,(it.d||0)*2,(it.c||0)*3)*1.2)));it.needL=Math.max(1,Math.min(999,Math.round(level)));if(it.ultra)EXTRA_SKILLS[it.skill].level=it.needL;it.text=(it.text||'')+' 装備条件：個人Lv'+it.needL+'以上。';}
  for(const job of JOB_IDS){const a=EXTRA_SKILLS[job+'M1'],b=EXTRA_SKILLS[job+'M2'];a.rank=a.level=30;b.rank=80;b.level=75;const i=JOB_IDS.indexOf(job);for(let n=0;n<2;n++){const effect=JOB_TECHS[i][2+n],[need,cost,desc]=TECH_INFO[effect],id=job+'C'+(n+1),rank=n?180:130;EXTRA_SKILLS[id]={id,job,name:(n?'広域奥義・':'合同枠技・')+JOB_TECHS[i][n],effect,need,cost:cost+(n?18:12),level:rank,rank,cooldown:n?5:4,power:n?2.15:1.85,desc:desc+'。攻撃・回復・支援を強化、MPと再使用待ちが必要。'};}}
 })();
+
+/* v6.22: character identity is independent of jobs; all dialogue is fictional. */
+const CHARACTER_ARCS={
+ hero:{trait:'希望の伴走',effect:'職業に関係なく、応援コメントで得るエール＋3。',comment:3,title:'同じ明日を選ぶ人',background:'頼られるたびに自分の望みを後回しにしてきた。福岡の交流会で{h}に出会い、応援するだけでなく、自分も誰かと未来を選びたいと気づく。',hero:'誰かの役に立てない日にも、自分には価値があると知っていく。',heroine:'夢を代わりに決める人ではなく、迷う夜にも隣で話を聞く対等な旅の相棒。',quests:[null,'M01','M10','M16'],ultimate:'隣に灯す約束',need:'none',desc:'生存者全員のHPを最大値の18％回復（魅力補正あり）、防護2、コメント連携4。',epilogue:'人を支えるだけだった旅人は、自分の行きたい明日を、自分の言葉で選べるようになった。'},
+ moe:{trait:'帰る声',effect:'戦闘開始時、エール＋6。職業を変えても発動。',title:'舞台の外でも笑う人',background:'グループを脱退してから、拍手が止んだ後の静けさが怖かった。S6を目指すのは、失った席を取り戻すためだけではない。画面の向こうの一人と、自分の声で出会い直したいから。',hero:'{p}が無理を隠すことにも気づく。支えられるだけでなく、相手の夢も聞ける人になりたい。',heroine:'舞台で輝く自分と、疲れて言葉が出ない自分。その両方を大切にする物語。',quests:[null,'M02','M10','M16'],ultimate:'ゼロからのアンコール',need:'none',desc:'敵全体へ強攻撃。自分以外の生存者に防護1。',epilogue:'数字のない朝にも、返したい挨拶がある。舞台の外で笑う自分を、もう隠さなくなった。'},
+ kohei:{trait:'約束の帰り道',effect:'ガードすると、自分に防護2を追加。職業不問。',title:'帰り道を伝える人',background:'長距離の仕事を言い訳に、恋人との約束を何度も延期した。別れ際の「無事でいて」だけが耳に残り、届けられなかった手紙を今も荷物に入れている。',hero:'黙って背負い込む{p}に昔の自分を見る。予定だけでなく、今の気持ちも伝えろと背中を押す。',heroine:'配信を「声の荷物」と呼ぶ。{h}には、待つ人へ帰る時間も守ってほしいと思っている。',quests:[null,'M03','M06','M16'],ultimate:'必ず帰るキャラバン',need:'enemy',desc:'敵1体へ強攻撃し、生存者全員に防護3。',epilogue:'手紙の返事を急かさず、会える日に会おうと伝えた。帰り道は、一人で決めるものではなくなった。'},
+ kayo:{trait:'食卓のぬくもり',effect:'戦闘開始時、生存者全員のMP＋2（最大値まで）。',title:'おかえりを残す人',background:'亡き伴侶と営んだ小さな食堂を、長く一人で守ってきた。新しい献立を作ることを、思い出への裏切りのように感じていた。旅のために炊く一鍋が、止まっていた時間を動かす。',hero:'{p}には、頑張りを説明できない日にもご飯を食べていいと教える。',heroine:'{h}を娘の代わりにせず、一人の夢を持つ人として見守る。恋を応援しながら、自分の明日も作る。',quests:[null,'M05','M08','M16'],ultimate:'ただいまの温かな食卓',need:'none',desc:'生存者全員のHPを最大値の10％回復（魅力補正あり）、MPを最大値の15％回復。',epilogue:'食堂の献立には、懐かしい料理と旅で覚えた新しい一皿が並ぶ。大切な人を忘れずに、生きる喜びを増やしていく。'},
+ tsumugi:{trait:'言葉を結ぶ糸',effect:'キラコメ連携が進む応援コメントで、エール＋3。職業不問。',title:'送信を押せた人',background:'かつて好きだった人への気持ちを、下書きにしたまま送れなかった。安全な正解ばかり探す癖がつき、誰かの配信を分析することで、自分の言葉から逃げていた。',hero:'分析が行き詰まった時、「どうしたい？」と尋ねる{p}に助けられる。答えを預けない友情を育てる。',heroine:'{h}の声が震える日も記録から消さない。不完全な声が誰かに届くことを、二人で確かめる。',quests:[null,'M07','M10','M16'],ultimate:'届かなかった言葉の架け橋',need:'none',desc:'敵全体へ攻撃し、コメント連携を4にする。キラコメの完成条件は省略しない。',epilogue:'昔の恋を美化した下書きではなく、今の自分の言葉を送った。返事がどんな形でも、伝えた気持ちまで失敗にはならない。'},
+ mio:{trait:'小さな脈拍',effect:'自分が技能で与えるHP回復量＋10％。職業不問。',title:'弱さを預けられる人',background:'大切な人との別れを、もっと気づけていれば防げたはずだと思い続けた。誰かの疲れには敏感なのに、自分が助けてと言うことは苦手。旅の中で、救うことと一緒に悲しむことの違いを知る。',hero:'{p}とは互いの無理を見抜く友人。助ける側と助けられる側を固定しない約束をする。',heroine:'{h}が人前で泣けない夜に、答えを求めず隣に座る。恋心も不安も、本人の言葉になるまで待つ。',quests:[null,'M09','M12','M16'],ultimate:'明日へつなぐ鼓動',need:'none',desc:'生存者全員のHPを最大値の30％回復（魅力・固有特性補正あり）。戦闘不能者は最大HPの25％で復帰。',epilogue:'「今日は私が話を聞いてほしい」。その短い言葉を言えるようになった。過去の別れを抱えたまま、新しい優しさを受け取る。'},
+ makoto:{trait:'居場所の設計図',effect:'職業に関係なく、自分の身の守り＋10％。防御力に反映。',defPercent:10,title:'余白を分け合う人',background:'遠くで暮らす恋人に贈る家の図面を、何年も一人で描き直している。完璧になってから迎えようとするほど、二人の会話は減った。未完成の控室を仲間と直す中で、余白を分ける意味を学ぶ。',hero:'支える場所を一人で用意しようとする{p}に、自分の失敗を重ねる。相談は相手を信じることだと伝える。',heroine:'{h}にはステージだけでなく、失敗して帰れる居場所を作りたい。どの夢を選ぶかは本人に任せる。',quests:[null,'M11','M14','M16'],ultimate:'帰る場所のステージ',need:'none',desc:'生存者全員のHPを最大値の20％回復（魅力補正あり）、防護6（上限8）。',epilogue:'図面の空白に恋人が窓を一つ描いた。完成した家ではなく、一緒に直していける家を、二人で選び始める。'},
+ gaku:{trait:'遠回りの底力',effect:'道具以外でボスへ与えるダメージ＋8％。職業不問。',title:'もう一度戸をたたく人',background:'家の事情が苦しかった頃、婚約していた相手に何も説明せず町を出た。「巻き込みたくない」という言葉で、自分が傷つくことからも逃げていた。修理を頼まれた古い蛇口が、置いてきた暮らしを思い出させる。',hero:'{p}に、黙って去ることは優しさと同じではないと打ち明ける。大切な人の選ぶ権利を奪わないよう願う。',heroine:'{h}が脱退した後も歌を続ける姿に、去った場所と向き合う勇気をもらう。',quests:[null,'M13','M16','M16'],ultimate:'遠回りの流星',need:'enemy',desc:'自分の最大HPの10％も払い、敵1体へ防御無視の強攻撃。支払い後HP1以上が必要。',epilogue:'復縁の約束を求める前に、あの日のことを謝った。相手の今を聞くところから、途切れた会話をつなぎ直していく。'},
+ naoki:{trait:'灯をつなぐ手',effect:'職業に関係なく、ひと息つくのMP回復＋3。',rest:3,title:'消えない灯を見つけた人',background:'仕事場の明かりを直して回るうち、自宅の食卓を暗くしてしまった。別居中の妻から届く短い連絡に、まだ返せていない言葉がある。北九州で見送った一行を追いかけたのは、誰かの挑戦を最後まで見届けたかったから。',hero:'{p}に支えることの誇りを認めつつ、好きな人へ帰る勇気も忘れるなと伝える。',heroine:'北九州から声を聞いていた応援者。{h}が弱音を言える舞台なら、誰も置き去りにならないと思っている。',quests:[null,'M15','M16','M16'],ultimate:'消えない灯の回路',need:'enemy',desc:'敵1体へ防御無視の強攻撃。自分以外の生存者に防護2。',epilogue:'妻に、直せた配線ではなく直せなかった会話の話をした。返ってきた「まず一緒にご飯を」に、ゆっくりうなずいた。'}
+};
+const CHARACTER_EPISODES={
+ hero:[['応援席の空白', [['','配信の終わった広場で、空の椅子を片づけていた。'],['{h}','今日は、あなた自身は何が楽しかった？'],['{p}','考えたことがなかった。役に立てたか、そればかりで。'],['{h}','私は、あなたが笑ってくれた時が嬉しかった。'],['','応援する人にも、帰りを待つ声がある。二人は一脚だけ残し、並んで夜風に当たった。']]],
+ ['差し出された傘',[['','帰り道、一本の傘を相手に押しつけようとして、二人とも濡れた。'],['{p}','自分だけ我慢すれば済むと思ってた。'],['{h}','それだと、一緒に帰れないよ。'],['','傘を真ん中に持ち直す。近づいた肩の温度に、言葉が少し遅れた。']]],
+ ['役に立てない夜',[['{p}','今日は、何も上手くできなかった。'],['{h}','じゃあ今日は、私があなたの話を聞く番。'],['{p}','困らせたくなくて、平気なふりをしてた。'],['{h}','好きな人たちに、平気なふりをされる方が寂しいな。'],['','「ありがとう」が、慰めを受け取る言葉になった夜だった。']]],
+ ['自分の明日',[['','灯台の光の下で、旅の始まりの写真を開いた。'],['{p}','これからも支えたい。でもそれだけじゃなく、一緒にまだ見ていない景色へ行きたい。'],['{h}','うん。私も、あなたの行きたい場所を知りたい。'],['','誰かの夢についていくだけだった道に、自分の足跡が重なった。']]]],
+ moe:[['拍手のあとの名前',[['{h}','舞台を降りた後、自分の名前が薄くなった気がしたの。'],['{p}','今ここで話している人の名前は、ちゃんと聞こえてる。'],['{h}','上手に歌えない日も？'],['{p}','その日も。話したくない日は、隣で黙っててもいい。'],['','彼方の拍手ではなく、目の前の返事を信じてみようと思った。']]],
+ ['数字のない朝',[['','朝の港。配信画面を閉じたまま、温かい飲み物を分けた。'],['{h}','昨日より数字が低かったら、嫌いになる？'],['{p}','頑張るあなたも、休むあなたも、同じ人だよ。'],['{h}','……その言葉、私からもあなたに返したい。'],['','二人は初めて、次の目標を決めずに朝日を眺めた。']]],
+ ['言わなかった一曲',[['{h}','前の舞台に、歌い残した曲がある。でも戻るためだけに歌いたくない。'],['{p}','今のあなたなら、誰に届けたい？'],['{h}','一人で眠れない人。それから、すぐそばで眠るのを忘れる人。'],['','差し出された小さな歌は、励ましよりも静かだった。'],['{h}','あなたがここにいてくれること、当たり前にしたくない。']]],
+ ['締めの先の約束',[['','S6の夜が明けても、岬には同じ波が寄せていた。'],['{h}','一番になれたら、何も怖くなくなると思ってた。'],['{h}','でも大切な人を失う怖さは、消えないんだね。'],['{p}','怖い時も、話そう。勝った日だけじゃなく。'],['','次の挨拶を交わす約束は、順位の付かない宝物になった。']]]],
+ kohei:[['荷台の手紙',[['','荷物の隙間から、宛名だけ書かれた封筒が落ちた。'],['{n}','昔、待っててくれた人がいてな。無事ならいいって、最後まで言ってくれた。'],['{p}','何て返したの？'],['{n}','……それを、まだ考えてる。'],['{h}','返事の締め切りを、相手の沈黙に決めさせなくてもいいんじゃないかな。']]],
+ ['帰宅予定',[['{n}','この道は早い。でも今日は遠回りする。途中で電話したいんだ。'],['{p}','急ぐ旅だからこそ、必要な寄り道もあるね。'],['{n}','「着いたら連絡する」だけじゃなかった。会いたいと、先に言えばよかった。'],['','電話は留守番だった。それでも自分の声で、一言を残した。']]],
+ ['受取人の時間',[['','封筒の裏に、何度も書き直した跡があった。'],['{n}','返事がなかったら、届かなかったことにしたくなる。'],['{h}','届いてから考える時間も、相手のものだよね。'],['{n}','そうだな。俺の荷物を、勝手に受取済みにしちゃいけない。']]],
+ ['別々の道の待ち合わせ',[['','短い返事には、「今は忙しい。でも読んだよ」とあった。'],['{n}','これだけで、今夜は帰れる気がする。'],['{p}','結論を急がなくてもいいね。'],['{n}','ああ。次は約束を取りつける前に、相手の今を聞くよ。']]]],
+ kayo:[['二人分の味',[['','鍋の塩を確かめた後、佳代は空いた隣を見た。'],['{n}','昔はね、ここで必ず「もう少し薄く」って言う人がいたの。'],['{h}','今も、その人の分を作る？'],['{n}','ええ。忘れなくていいって、思えるから。'],['','誰も急いで慰めず、湯気が消えるまで一緒に座った。']]],
+ ['新しい一皿',[['{n}','旅で覚えた料理、店で出していいかしら。あの人は食べたことがないのに。'],['{p}','一緒に好きだったものが、新しく増えるのかもしれない。'],['{n}','……そうね。思い出を守るのと、自分を止めるのは違うわね。'],['','献立帳の空白に、久しぶりに新しい料理名が書かれた。']]],
+ ['泣く日の食卓',[['{h}','今日は元気な顔を作れないの。'],['{n}','じゃあ今日は、元気を出さずに食べましょう。'],['{p}','話さなくても、ここにいていい？'],['{n}','もちろん。食卓は、上手に笑える人だけの場所じゃないわ。']]],
+ ['おかえりの献立',[['','食堂の看板を書き直す日、佳代は伴侶の古い字を一文字残した。'],['{n}','過去と未来、両方を同じ鍋に入れてもいいのね。'],['{h}','いつか、私たちもここに帰ってくるね。'],['{n}','約束よ。でも予定が変わったら、ちゃんと連絡して。温め直して待つから。']]]],
+ tsumugi:[['送信前の言葉',[['','紬の端末には、何年も前の下書きが残っていた。'],['{n}','「好きでした」の次が決まらないまま、季節だけ増えました。'],['{p}','今、伝えたいのは同じ言葉？'],['{n}','……昔の自分を、失敗じゃなかったことにしたいのかもしれません。']]],
+ ['正解のない返信',[['{h}','返事が来たら、何て返すの？'],['{n}','全パターンを用意してます。でも、どれも自分の言葉に見えなくて。'],['{p}','その時に聞いて、その時に考えてもいいと思う。'],['','完璧な返信例のファイルを閉じて、紬は少し笑った。']]],
+ ['震えた声の記録',[['{n}','今日の配信、声が震えたところも残しましょう。'],['{h}','そこ、消したかったんだけど。'],['{n}','私、あそこで初めて、自分も伝えてみたいと思えたんです。'],['','不完全な記録が、誰かの勇気になった。紬は下書きに今日の日付を入れた。']]],
+ ['送信',[['','「あの時好きだったことと、今元気でいてほしいことを伝えたかった」。送信済みの印が灯った。'],['{n}','恋が叶うかどうかと、私が言えたかどうかは別なんですね。'],['{h}','うん。言えた紬に、おめでとう。'],['','返事を待つ画面を伏せ、紬は仲間のいる方へ歩いた。']]]],
+ mio:[['気づけなかった日',[['{n}','大切な人が離れていった時、もっと早く疲れに気づけたはずだって、ずっと思ってた。'],['{p}','気づけなかったことを、今も一人で背負ってる？'],['{n}','そうしないと、優しくできなくなりそうで。'],['{h}','その優しさで、澪自身を傷つけないでほしい。']]],
+ ['助ける人の椅子',[['','澪がいつものように立ち上がる前に、仲間が椅子を引いた。'],['{n}','私まで休んだら、誰がみんなを見るの。'],['{p}','今日は、みんなで見るよ。'],['','頼られなくなったのではなく、頼っていいのだと気づくまで、少し時間がかかった。']]],
+ ['沈黙の五分',[['{h}','好きな人にまで、泣くところを見せたくない時があるの。'],['{n}','答えを用意しなくていいよ。五分だけ、何も言わないでいよう。'],['','五分が過ぎても、誰も時計を見なかった。'],['{n}','……私も、寂しかった。今それを、やっと言えた。']]],
+ ['私の話を聞いて',[['{n}','今日は私の話、聞いてくれる？'],['{p}','もちろん。'],['{n}','昔の別れを、なくせるとは思ってない。でも、全部私のせいだったことにするのは、やめたい。'],['{h}','話してくれてありがとう。澪の明日にも、ちゃんと私たちを入れてね。']]]],
+ makoto:[['一人で描いた窓',[['','図面には二人分の部屋があるのに、相談した跡がなかった。'],['{n}','完璧になったら、恋人を呼ぼうと思っていたんです。'],['{p}','その人は、どんな窓が好き？'],['{n}','……ずいぶん長く、聞いていませんでした。']]],
+ ['未完成を見せる',[['{n}','途中の図面を送りました。手が、こんなに震えるとは。'],['{h}','一緒に考えたい人には、途中を見せてもらえる方が嬉しいかも。'],['','返ってきたのは、「ここに鉢植えを置きたい」という短い言葉だった。'],['{n}','ずっと欲しかった答えより、ずっと生活の匂いがしますね。']]],
+ ['余白のある控室',[['','片づけ切れていない控室で、仲間が思い思いに笑っていた。'],['{n}','整っていないのに、居心地がいい。'],['{p}','誰かが使える余白があるからかな。'],['{n}','相手の場所まで、私が描き切らなくてよかったんですね。']]],
+ ['二人の設計図',[['','恋人から届いた図面には、見覚えのない窓が増えていた。'],['{n}','私なら描かなかった窓です。でも、ここからの朝を見たい。'],['{h}','完成のお祝いより、最初のお茶会に呼んでね。'],['{n}','ええ。片づいていないところも、笑って見てください。']]]],
+ gaku:[['閉めたままの栓',[['','古い蛇口を直す岳の手が、途中で止まった。'],['{n}','昔、こんな台所で、一緒に暮らす約束をした。'],['{p}','その人には、町を出る理由を話せた？'],['{n}','話せなかった。「巻き込みたくない」で全部塞いだ。']]],
+ ['優しさのふり',[['{n}','心配をかけないつもりだった。でも、待つかどうかも相手には選べなかった。'],['{h}','私も去った舞台に、言えなかったことがある。'],['{p}','謝るために、戻ってもいいと思う。許してもらう約束はなくても。'],['','岳は、覚えている住所をゆっくり書いた。']]],
+ ['返事を求めない手紙',[['','手紙の最後から、「また一緒に」を消した。'],['{n}','先に言うべきことがあった。寂しくさせたこと、何も言わなかったこと。'],['{p}','今度は、相手が選べる言葉になるね。'],['','封をした手は震えた。それでも、今度は黙って去らなかった。']]],
+ ['もう一度の戸口',[['','「話なら聞く」。届いた返事を、岳は何度も読み返した。'],['{n}','元に戻れるとは思ってない。今、どんな暮らしをしてるか、聞いてくる。'],['{h}','私たちにも、帰ったら話してね。'],['','遠回りした道は消えない。その先の一歩を、今度は二人の言葉で確かめる。']]]],
+ naoki:[['家の明かり',[['{n}','よその灯りは直せるのに、自分ちの食卓は暗いままだ。'],['{p}','奥さんとは、話してる？'],['{n}','連絡は来る。返事を「今忙しい」で止めて、そのままだ。'],['{h}','追いかけて来てくれた勇気、帰る方にも使ってほしいな。']]],
+ ['見届けたい理由',[['{n}','北九州でお前たちを見送った時、まだ間に合うことを見た気がした。'],['{p}','何に？'],['{n}','大事な人の挑戦を、最後まで見届けることにさ。家でも、そうすりゃよかった。'],['','遠い町の灯りを見ながら、直樹は妻の連絡を開いた。']]],
+ ['直せない話',[['{n}','「どこが悪かったか教えてくれ」って、修理の聞き方をしてた。'],['{h}','答えを直すより、気持ちを聞いてほしい時もあるよね。'],['{n}','ああ。今日は言い訳せず、寂しくさせたことを話してみる。'],['','工具を置いた手で、直樹は電話をかけた。']]],
+ ['まず一緒にご飯',[['','妻からの返事は、短かった。「帰ったら、まず一緒にご飯を」。'],['{n}','まだ許してもらえたわけじゃない。でも、椅子は一つ残してくれた。'],['{p}','座って、ちゃんと話してきて。'],['{n}','ああ。灯りをつけるだけじゃなく、その下にいるよ。']]]]
+};
+function characterText(st,text){return text.replaceAll('{p}',charName(st,'hero')).replaceAll('{h}',charName(st,'moe'));}
+function characterRecord(st,cid){return st.characterStories?.[cid]||{seen:0,wins:0};}
+function ensureCharacterStories(st){st.characterStories=st.characterStories||{};for(const cid of st.roster)st.characterStories[cid]=st.characterStories[cid]||{seen:0,wins:0};}
+function ultimateId(cid){return 'CHAR_'+cid;}
+function ultimateMp(a){return Math.max(8,Math.ceil((a.maxC||a.maxMP||8)*.25));}
+function skillMpCost(a,sk){return sk.ultimate?ultimateMp(a):sk.cost;}
+function characterStoryReason(st,cid,episode){if(!st.roster.includes(cid)||!CHARACTER_ARCS[cid]||!Number.isInteger(episode)||episode<1||episode>4)return '仲間と話数を確認してください。';const r=characterRecord(st,cid);if(episode<=r.seen)return '';if(episode!==r.seen+1)return '前のエピソードを読んでください。';const q=CHARACTER_ARCS[cid].quests[episode-1],need=[0,3,8,15][episode-1];if(q&&st.quests[q]!=='complete')return '本編'+q+'クリアで解放';if(r.wins<need)return 'この仲間を同行させ、対象戦闘であと'+(need-r.wins)+'勝（累計'+need+'勝）';return '';}
+function characterStoryActionReason(st){return battleEntryReason(st)||(!isSafe()?'街の安全地帯で話しましょう。':streamPending()?'配信待ちのイベントを先に終えてください。':'');}
+function characterEpisodeLines(st,cid,episode){const [title,lines]=CHARACTER_EPISODES[cid][episode-1],names={'{p}':charName(st,'hero'),'{h}':charName(st,'moe'),'{n}':charName(st,cid)};return [['','― '+charName(st,cid)+'・'+title+' ―'],...lines.map(([who,text])=>[names[who]||who,characterText(st,text)]),...(episode===1?[['','固有必殺技「'+CHARACTER_ARCS[cid].ultimate+'」を習得。転職しても、この人物だけが使えます。']]:[])];}
+function playCharacterEpisode(cid,episode){const st=G.st,reason=characterStoryActionReason(st)||characterStoryReason(st,cid,episode);if(reason){toast(reason);return false;}ensureCharacterStories(st);const rec=st.characterStories[cid];rec.seen=Math.max(rec.seen,episode);commit();G.sheet=null;say(characterEpisodeLines(st,cid,episode),()=>openSheet('characterStories',{cid}));return true;}
+function relationshipReason(st){return characterStoryActionReason(st)||(st.quests.M10!=='complete'?'本編M10クリア後に気持ちを伝えられます。':'');}
+function chooseRelationship(choice){const st=G.st;if(!['romance','partner'].includes(choice)||relationshipReason(st))return false;st.relationshipChoice=choice;commit();G.sheet=null;say(choice==='romance'?[[charName(st,'hero'),'夢を応援するだけじゃなく、一人の大切な人として、これからも隣にいたい。'],[charName(st,'moe'),'私も。あなたを支える側にもなりたい。ゆっくり、二人の時間を作っていこう。'],['','二人は、互いの夢を尊重しながら恋人として歩くことを選んだ。']]:[[charName(st,'hero'),'誰よりも大切な旅の相棒として、これからも一緒に景色を見たい。'],[charName(st,'moe'),'うん。言葉にしてくれてありがとう。私たちなりの約束を大切にしよう。'],['','二人は、互いの夢を尊重するかけがえのない相棒として歩くことを選んだ。']],()=>openSheet('characterStories',{cid:'moe'}));return true;}
+function recordCharacterVictory(st,run,res){if(run.kind==='challenge'&&!res.challenge?.first)return;ensureCharacterStories(st);for(const a of run.party){if(!st.roster.includes(a.cid)||battleTrainingLevel(run)<Math.max(1,(a.L||run.L)-20))continue;const r=st.characterStories[a.cid],before=r.wins;r.wins++;for(const goal of [3,8,15])if(before<goal&&r.wins>=goal)res.notes.push(a.name+'：同行勝利'+goal+'回。ファミリー施設の「仲間の物語」で続きを確認できます。');}}
+for(const [cid,a]of Object.entries(CHARACTER_ARCS)){const id=ultimateId(cid);EXTRA_SKILLS[id]={id,character:cid,ultimate:true,name:'必殺・'+a.ultimate,need:a.need,cost:8,cooldown:0,level:1,desc:a.desc+' 3ターン目以降・1人1戦1回・最大MPの25％（最低8）とエール35を消費。'};}
+function characterProfileHtml(st,cid){const a=CHARACTER_ARCS[cid],r=characterRecord(st,cid);return `<section class="setcard"><h3 class="label">固有特性「${esc(a.trait)}」</h3><p>${esc(a.effect)}</p><p><b>固有必殺技：${esc(a.ultimate)}</b><br>${esc(a.desc)}</p><p class="small">最大MPの25％（最低8）＋エール35／3ターン目以降／1人1戦1回。${r.seen?'習得済み・転職しても使用可能':'絆エピソード第1話で習得'}</p><p class="small">${esc(characterText(st,a.background))}</p><button class="btn" data-a="characterStoryOpen" data-c="${cid}">背景・関係性・絆の物語（${r.seen}/4話）</button></section>`;}
+function renderCharacterStories(){const st=G.st,cid=st.roster.includes(G.sheetData.cid)?G.sheetData.cid:st.roster[0],a=CHARACTER_ARCS[cid],r=characterRecord(st,cid),locked=characterStoryActionReason(st),relation=relationshipReason(st);return `<p>仲間一人ひとりの物語。固有特性は加入時から、必殺技は第1話で解放。恋愛と相棒の選択による戦闘能力の差はありません。</p><div class="opts">${st.roster.map(c=>`<button class="btn ${c===cid?'on':''}" data-a="characterStoryOpen" data-c="${c}">${esc(charName(st,c))} ${characterRecord(st,c).seen}/4</button>`).join('')}</div><h3 class="label">${esc(charName(st,cid))}の背景</h3><p>${esc(characterText(st,a.background))}</p><dl class="kv"><dt>${cid==='hero'?'自身の課題':'主人公との関係'}</dt><dd>${esc(characterText(st,a.hero))}</dd><dt>${cid==='moe'?'自身の願い':'ヒロインとの関係'}</dt><dd>${esc(characterText(st,a.heroine))}</dd><dt>固有特性</dt><dd>${esc(a.trait)}：${esc(a.effect)}</dd><dt>必殺技</dt><dd>${esc(a.ultimate)}：${esc(a.desc)}</dd><dt>同行勝利</dt><dd>${r.wins}回／物語 ${r.seen}/4話${r.seen===4?'／称号「'+esc(a.title)+'」':''}</dd></dl><p class="small">通常戦・地域ボスへの勝利と、特別チャレンジの初回課題達成で加算。戦闘の適正Lvが本人Lv−20以上の時のみ。控え・敗北・撤退・報酬なしの練習は加算されません。第2話3勝／第3話8勝／第4話15勝＋各話の本編条件。続きは安全地帯で読めます。</p>${locked?'<p class="warn">'+esc(locked)+'</p>':''}<div class="stack">${CHARACTER_EPISODES[cid].map(([title],i)=>{const reason=characterStoryReason(st,cid,i+1);return `<section class="setcard"><b>第${i+1}話 ${esc(title)}</b><p class="small">${i<r.seen?'✓ 読了':esc(reason||'読むことができます')}</p><button class="btn primary" data-a="characterEpisode" data-c="${cid}" data-v="${i+1}" ${reason||locked?'disabled':''}>${i<r.seen?'読み返す':'この話を読む'}</button></section>`;}).join('')}</div><section class="setcard"><h3 class="label">主人公とヒロインの約束</h3><p>${st.relationshipChoice==='romance'?'恋人として、互いの夢を尊重する約束を交わしています。':st.relationshipChoice==='partner'?'かけがえのない旅の相棒として歩いています。':'旅の中で、少しずつ気持ちを確かめ合っています。'}</p><p class="small">${esc(relation||'物語の節目とエンディングの会話に反映します。選び直すこともできます。')}</p><div class="stack"><button class="btn" data-a="relationshipChoose" data-v="romance" ${relation?'disabled':''}>恋人として隣にいたいと伝える</button><button class="btn" data-a="relationshipChoose" data-v="partner" ${relation?'disabled':''}>大切な相棒として歩きたいと伝える</button></div></section>`;}
+function planCharacterUltimate(run,a,sk,p,h){if(sk.character!==a.cid){p.ok=false;p.reason='この人物専用の必殺技です。';return;}if(a.ultimateUsed){p.ok=false;p.reason='必殺技は1人につき1戦1回です。';return;}if(run.turn<3){p.ok=false;p.reason='必殺技は3ターン目から使えます。';return;}if(run.A<35){p.ok=false;p.reason='必殺技にはエール35が必要です。';return;}if(!h.payC(ultimateMp(a)))return;p.cost.a=35;const {L,V}=h;
+ const hit=(n,pierce=false)=>{if(h.attackSingle(n,{ignoreDef:pierce}))return true;p.ok=false;p.reason='対象の敵を選んでください。';return false;};
+ const groupHit=(power)=>{for(const e of h.en){const raw=Math.max(1,Math.floor(a.str*power+V*(a.wAtk+a.accAtk+20+L*.7))-e.def);p.dmg.push({slot:e.slot,raw,amt:Math.min(raw,e.hp)});}p.valid=true;p.all=true;};
+ const recover=(percent,ward=0)=>{for(const t of h.al){h.heal(t,Math.ceil(t.maxHP*percent));if(ward)h.addWard(t,ward);}};
+ switch(a.cid){case 'hero':recover(.18,2);if(run.B!==4)p.valid=true;p.setB=4;break;
+ case 'moe':groupHit(1.8);for(const t of h.al)if(t!==a)h.addWard(t,1);break;
+ case 'kohei':if(!hit(20+Math.floor(L*.45)))return;h.al.forEach(t=>h.addWard(t,3));break;
+ case 'mio':recover(.3);for(const t of run.party.filter(t=>t.hp<=0)){p.heal.push({pos:t.pos,amt:Math.max(1,Math.ceil(t.maxHP*.25)),revive:true});p.valid=true;}break;
+ case 'kayo':recover(.1);h.al.forEach(t=>h.addC(t,Math.max(1,Math.ceil(t.maxC*.15))));break;
+ case 'tsumugi':groupHit(.85);p.setB=4;break;
+ case 'makoto':recover(.2,6);break;
+ case 'gaku':p.cost.hp=Math.max(1,Math.ceil(a.maxHP*.1));if(a.hp<=p.cost.hp){p.ok=false;p.reason='最大HPの10％を払った後、HP1以上が必要です。';return;}if(!hit(45+Math.floor(L*.8),true))return;break;
+ case 'naoki':if(!hit(28+Math.floor(L*.65),true))return;h.al.filter(t=>t!==a).forEach(t=>h.addWard(t,2));break;
+ default:p.ok=false;p.reason='必殺技が見つかりません。';return;}
+ p.aGain=0;if(!p.valid){p.ok=false;p.reason='今は必殺技の効果がありません。';return;}p.ultimate=a.cid;}
+function mainEmotionLines(st,id){if(!st)return [];const p=charName(st,'hero'),h=charName(st,'moe'),romance=st.relationshipChoice==='romance',partner=st.relationshipChoice==='partner';
+ if(id===QUESTS.M02.scene)return [['','配信の後の港で、二人は同じ歩幅になっていることに気づいた。'],[h,'今度は配信のためじゃなく、あなたの好きな景色を見たいな。'],[p,'じゃあ少しだけ、遠回りして帰ろう。']];
+ if(id===QUESTS.M08.scene)return [[h,'明るく話せない日まで、旅に連れてきてよかったのかな。'],[p,'置いていかなくていいよ。元気な日だけのあなたと旅をしたいわけじゃない。'],['','言葉の代わりに、小さく肩が触れた。離れるまでの時間を、どちらも急がなかった。']];
+ if(id===QUESTS.M12.scene)return [[h,'好きな人を応援するって、自分の寂しさを隠すことだと思ってた。'],[p,'会いたい日は、会いたいと言おう。二人で決められるように。'],['','締めの時計を止めた控室で、二人は初めて、旅が終わった後の朝を話した。']];
+ if(id===QUESTS.M16.scene)return [['','誰かの勝利を支える手も、拍手の後には少し震えていた。'],[h,romance?'S6になれた私だけじゃなく、その先の私も、あなたと生きていきたい。好きです。':partner?'一番近くで歩いてくれた相棒へ。これからは、あなたの夢にも私を連れていって。':'夢が叶った後も、あなたに最初のおはようを言いたい。この気持ちを、いつかちゃんと言葉にするね。'],[p,romance?'私も好きです。嬉しい日も、怖い日も、二人で話して決めていこう。':'うん。次の一歩は、二人とも行きたい場所へ。'],['','指先を'+(romance?'そっと重ねた。':'軽く合わせた。')+'灯台の光が遠ざかっても、すぐ隣のぬくもりは消えなかった。']];
+ if(id===QUESTS.C04.scene)return [[h,'旅が続くと、当たり前になることが増えるね。だから今日は、手紙を書いてみた。'],['','「今日も隣にいてくれてありがとう」。二枚の手紙は、よく似た一行から始まっていた。']];
+ if(id===QUESTS.C09.scene||id==='OMUTA_END'){const lines=[['','旅のアルバムには、勝った日の写真だけでなく、黙って寄り添った夜も残った。'],[h,romance?'次の街でも、恋人として、夢を持つ仲間として、一緒に歩こう。':'次の街でも、一緒に朝ごはんを食べてから出発しよう。'],[p,'うん。帰る場所も、これから向かう場所も、みんなで増やしていこう。']];for(const c of st.roster)if(characterRecord(st,c).seen===4)lines.push(['',charName(st,c)+'：'+CHARACTER_ARCS[c].epilogue]);return lines;}return [];}
 
 function recommendedAreaLevel(ar){return ar.regionalLevel||ar.chapterLevel|| (ar.specialStage!=null?SPECIAL_STAGES[ar.specialStage].level:areaRecommendedLevel(ar.q));}
 function requiredAreaLevel(ar){return ar.regionalLevel?Math.max(1,ar.regionalLevel-12):ar.chapterLevel?Math.max(1,ar.chapterLevel-12):ar.specialStage!=null?Math.max(100,SPECIAL_STAGES[ar.specialStage].level-40):areaRequiredLevel(ar.q);}
@@ -2050,6 +2140,7 @@ function newGame(name, gender, heroine, career){
   for(const c of st.roster){ st.equip[c].w="CW01"; st.equip[c].a="CA01"; }
   // 主人公は職歴に合わせた初期装備（非売品・各1個）を装備して始める
   const cg=CAREER_GEAR_ID[st.profile.career]; if(cg){ st.owned[cg[0]]=1; st.owned[cg[1]]=1; st.equip.hero.w=cg[0]; st.equip.hero.a=cg[1]; }
+  ensureCharacterStories(st);
   fixQuestChain(st);
   ensureWorld(st);
   return st;
@@ -2171,6 +2262,7 @@ function charStats(st, cid, L, jobOverride, equipOverride, exactLevel=false){
   const rawBase = baseStats(job, L), mastery=masteryPercent(R);
   const permanent=permanentJobBonus(st,cid);
   const base=Object.fromEntries(STAT_KEYS.map(k=>[k,Math.floor(rawBase[k]*(100+mastery+permanent[k])/100)]));
+  if(CHARACTER_ARCS[cid]?.defPercent)base.def=Math.floor(base.def*(100+CHARACTER_ARCS[cid].defPercent)/100);
   const gearCrit = ((W&&W.crit)||0)+((A&&A.crit)||0)+((X&&X.crit)||0);
   const maxHP = 2*base.vit + 2*Math.floor(R/2) + V*(((A&&A.hp)||0)+((X&&X.hp)||0)+supportHP);
   const mp=JOB_MP[job]||[16,1.4];
@@ -2185,8 +2277,8 @@ function charStats(st, cid, L, jobOverride, equipOverride, exactLevel=false){
     cha: Math.floor(base.cha/4),                    // 魅力補正％＝魅力÷4（エール・技能の回復量）
     gearCrit,
     wAtk:(W&&W.atk)||0, accAtk:(X&&X.atk)||0, armorD:(A&&A.d)||0,
-    commentA:((W&&W.commentA)||0)+((X&&X.commentA)||0),
-    rest:((A&&A.rest)||0)+((X&&X.rest)||0),
+    commentA:((W&&W.commentA)||0)+((X&&X.commentA)||0)+(CHARACTER_ARCS[cid]?.comment||0),
+    rest:((A&&A.rest)||0)+((X&&X.rest)||0)+(CHARACTER_ARCS[cid]?.rest||0),
     meter:((W&&W.meter)||0)+((X&&X.meter)||0),
     family:((W&&W.family)||0)+((X&&X.family)||0),
     pouch:!!(X&&X.pouch), jobWeapon: !!(W && W.job===job) };
@@ -2230,7 +2322,7 @@ function buildParty(st, L, supportStartA){
 }
 function trialOf(id){return POCO_TRIALS.find(t=>t.id===id);}
 function trialMetrics(run){return run.trialMetrics||(run.trialMetrics={comments:0,people:[],skills:0,masters:0,family:0,guards:0,guardPeople:[]});}
-function recordTrialAction(run,a,act){if(!run.challengeId)return;const m=trialMetrics(run);if(act.type==='comment'){m.comments++;if(!m.people.includes(a.cid))m.people.push(a.cid);}if(act.type==='skill'){m.skills++;if(act.skillId&&EXTRA_SKILLS[act.skillId]&&EXTRA_SKILLS[act.skillId].rank)m.masters++;}if(act.type==='family')m.family++;if(act.type==='guard'){m.guards++;if(!m.guardPeople.includes(a.cid))m.guardPeople.push(a.cid);}}
+function recordTrialAction(run,a,act){if(!run.challengeId)return;const m=trialMetrics(run);if(act.type==='comment'){m.comments++;if(!m.people.includes(a.cid))m.people.push(a.cid);}if(act.type==='skill'&&!EXTRA_SKILLS[act.skillId]?.ultimate){m.skills++;if(act.skillId&&EXTRA_SKILLS[act.skillId]&&EXTRA_SKILLS[act.skillId].rank)m.masters++;}if(act.type==='family')m.family++;if(act.type==='guard'){m.guards++;if(!m.guardPeople.includes(a.cid))m.guardPeople.push(a.cid);}}
 function trialConditions(run){const d=trialOf(run.challengeId);if(!d)return [];const m=trialMetrics(run),out=[{label:`${d.turns}ターン以内`,ok:run.turn<=d.turns,value:run.turn}];
  const add=(key,label,val)=>{if(d[key])out.push({label:label+d[key],ok:val>=d[key],value:val});};
  add('comments','応援コメント ',m.comments);add('people','コメントした人数 ',m.people.length);add('skills','職業技の使用 ',m.skills);add('masters','熟練技・奥義の使用 ',m.masters);add('family','ファミリー応援 ',m.family);add('guards','ガードした人数 ',m.guardPeople.length);add('jobs','編成した職業数 ',new Set(run.party.map(p=>p.job)).size);add('party','編成人数 ',run.party.length);if(d.kira)out.push({label:'キラコメ連携を完成',ok:run.kiraDone,value:run.kiraDone?1:0});return out;
@@ -2267,7 +2359,7 @@ function challengeReward(st,run,res){
 }
 function renderChallenges(){const st=G.st;return `<p>Pocochaを題材にした特別実技チャレンジ。本編とは別の達成記録です。</p><p class="small">ボス戦・特別チャレンジは手動操作のみ（オート使用不可）。街の安全地帯から挑戦。参加料は毎回必要です。HP・MP・道具は持ち越し、制限ターン超過は失敗。全滅時の追加ゴールド損失はありません。報酬・経験値・熟練度は初回達成のみ。</p><div class="stack">${[...POCO_TRIALS].sort((a,b)=>Number(b.id===G.sheetData.specialFocus)-Number(a.id===G.sheetData.specialFocus)).map(d=>{const r=(st.challenges||{})[d.id]||{},reason=trialEntryReason(st,d);return `<section class="setcard"><h3 class="label">${esc(d.name)} ${r.cleared?'✓ 達成済み':''}</h3><p>${esc(d.desc)}</p><p class="small">推奨レベル${d.level}／参加料${d.fee}G／挑戦${r.attempts||0}回</p><p>${esc(trialRequirements(d))}</p><p class="small good">初回報酬：${esc(EQUIP[d.reward].name)}・経験値${d.specialStage!=null?specialXP(SPECIAL_STAGES[d.specialStage])*5:60+d.q*6}・${150+d.q*20}G・チケット100</p>${reason?`<p class="small warn">${esc(reason)}</p>`:''}<button class="btn primary" data-a="trialStart" data-v="${d.id}" ${reason?'disabled':''}>${r.cleared?'練習に挑戦（報酬なし）':'参加料を払って挑戦'}</button></section>`;}).join('')}</div>`;}
 function localFestivalStatus(st,hub){return {talks:Object.entries(NPCS).filter(([id,n])=>n.hub===hub&&id!=='moe'&&st.talked[id]).length,wins:(st.townBattles||{})[hub]||0,rank:Math.max(...st.roster.map(c=>jobRank(st,c,st.jobs[c])))};}
-function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `${specialReminder(st)}<button class="btn" data-a="openSheet" data-k="specialTracker">特別エリア・クリア状況</button><button class="btn primary" data-a="familyParty">同行者の編成・入れ替え（最大4人）</button><button class="btn primary" data-a="openSheet" data-k="nextChapter">四国・中国エリア編（九州M16クリアで解放）</button><button class="btn" data-a="openSheet" data-k="specialWorld">特設エリア・Lv999への道</button><h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><button class="btn" data-a="openSheet" data-k="gearEvents">街の装備依頼（報酬250種）</button><button class="btn" data-a="openSheet" data-k="gearRematches">ボス再戦受付</button><button class="btn" data-a="openSheet" data-k="gearCatalog">追加装備図鑑（1,000種）</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
+function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `${specialReminder(st)}<button class="btn" data-a="openSheet" data-k="specialTracker">特別エリア・クリア状況</button><button class="btn primary" data-a="familyParty">同行者の編成・入れ替え（最大4人）</button><button class="btn primary" data-a="openSheet" data-k="characterStories">仲間の物語・固有必殺技・恋愛</button><button class="btn primary" data-a="openSheet" data-k="nextChapter">四国・中国エリア編（九州M16クリアで解放）</button><button class="btn" data-a="openSheet" data-k="specialWorld">特設エリア・Lv999への道</button><h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><button class="btn" data-a="openSheet" data-k="gearEvents">街の装備依頼（報酬250種）</button><button class="btn" data-a="openSheet" data-k="gearRematches">ボス再戦受付</button><button class="btn" data-a="openSheet" data-k="gearCatalog">追加装備図鑑（1,000種）</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
 function claimFestival(){const st=G.st,hub=curHub(),s=localFestivalStatus(st,hub);if(G.readOnly||st.run||st.stream||!isSafe()||s.talks<2||s.wins<2||s.rank<3||(st.festivals||{})[hub])return false;st.festivals=st.festivals||{};st.festivals[hub]=true;st.gold+=60+HUB_ORDER.indexOf(hub)*20;st.tickets+=40;giveItem(st,'PC02',2,null,'街イベント');commit();render();say([['',POCO_TOWNS[HUB_ORDER.indexOf(hub)][3]],['もえ','私たちの枠にも、この街でできた家族みたいな絆を持って帰ろう。']]);return true;}
 function pocoBattleStatusFull(run){if(!run.pocoRules)return '';const d=trialOf(run.challengeId);return `<div class="poco-battle"><b>${d?'特別チャレンジ：'+esc(d.name):run.enemies.some(e=>e.boss)?'ライバル枠との決戦':'枠を乱すノイズ戦'}</b>${run.enemies.some(e=>e.boss)?`<p class="small">ノイズシールド：${run.A<40&&!run.kiraDone?'通常攻撃を35％軽減。エール40以上・キラコメ完成で解除。職業技は軽減されません。':'解除中'}／6ターン目以降は3ターンごとに敵攻撃＋10％（最大50％）</p>`:''}${run.aleLeak?'<p class="small">毎ターン、エール−'+run.aleLeak+'</p>':''}${run.mpLeak?'<p class="small">毎ターン、生存者全員のMP−'+run.mpLeak+'</p>':''}${d?`<ul class="list">${trialConditions(run).map(c=>`<li>${c.ok?'✓':'未'} ${esc(c.label)}（現在${c.value}）</li>`).join('')}</ul>`:''}</div>`;}
 
@@ -2284,6 +2376,8 @@ function baseRun(st, kind){
 /* 戦闘開始時とターン開始時の職業特性 */
 function traitsBattleStart(run){
   for(const m of run.party){ if(m.hp<=0) continue;
+    if(m.cid==='moe'){const old=run.A;run.A=Math.min(100,run.A+6);run.log.push(m.name+'の固有特性「帰る声」：エール＋'+(run.A-old));}
+    if(m.cid==='kayo'){for(const t of alive(run)){const g=Math.min(2,t.maxC-t.c);if(g>0){t.c+=g;run.log.push(m.name+'の「食卓のぬくもり」：'+t.name+' MP＋'+g);}}}
     if(hasTrait(m,"J02")) run.B=4;
     if(hasTrait(m,"J08")) run.A=Math.min(100,run.A+10);
     if(hasTrait(m,"J20")){ run.A=Math.min(100,run.A+6); for(const t of alive(run)) t.ward=Math.min(8,t.ward+2); }
@@ -2401,6 +2495,7 @@ function planAction(run, idx, act){
   const needEnemy = () => { const e = run.enemies.find(x=>x.slot===act.target && x.hp>0); return e; };
   const needAlly = (other) => { const t = run.party[act.ally]; if(!t||t.hp<=0) return null; if(other && t===a) return null; return t; };
   const heal = (t,amt)=>{ if(act.type==="skill" && a.cha) amt=Math.ceil(amt*(1+a.cha/100)); // 魅力補正：技能の回復量
+    if(a.cid==="mio"&&act.type==="skill")amt=Math.ceil(amt*1.1);
     if(hasTrait(a,"J13") && t.hp<=t.maxHP*0.3) amt=Math.ceil(amt*1.5);
     const g=Math.min(amt, t.maxHP-t.hp); p.heal.push({pos:t.pos, amt:g}); if(g>0) p.valid=true;
     if(g>0 && hasTrait(a,"J18")) addWard(t,2);
@@ -2422,7 +2517,7 @@ function planAction(run, idx, act){
     const aAmt = baseA + a.commentA + (hasTrait(a,"J22")?6:0);
     const aRoom = 100-run.A; const bChange = run.B!==4;
     const adv = chainAdvance(run,a,line); const cue = cueProgress(run,a,"comment");
-    p.aGain += aAmt; p.setB=4; p.chain={line, adv}; p.cue = cue?"comment":null;
+    p.aGain += aAmt+(a.cid==='tsumugi'&&adv?3:0); p.setB=4; p.chain={line, adv}; p.cue = cue?"comment":null;
     p.valid = aRoom>0 || bChange || adv || cue;
     if(!p.valid){ p.ok=false; p.reason="エール100・コメント連携4で、連携も進まないため効果がありません。"; }
   };
@@ -2435,7 +2530,7 @@ function planAction(run, idx, act){
       commentLike(18);
       break;
     case "guard":
-      p.guard=true; p.cgain.push({pos:a.pos, amt:Math.min(1,(a.maxC||10)-a.c)}); p.cue = cueProgress(run,a,"guard")?"guard":null;
+      p.guard=true; if(a.cid==='kohei')addWard(a,2); p.cgain.push({pos:a.pos, amt:Math.min(1,(a.maxC||10)-a.c)}); p.cue = cueProgress(run,a,"guard")?"guard":null;
       { const pv=p.valid; p.valid=false; if(hasTrait(a,"J09")) al.forEach(t=>addWard(t,1)); p.valid = pv || !!p.cue || p.valid || (hasTrait(a,"J03") && run.enemies.some(e=>e.hp>0 && enemyAction(run,e).type==="s")); }
       break;
     case "rest": {
@@ -2459,6 +2554,7 @@ function planAction(run, idx, act){
     case "skill": planSkill(run,a,act,p,{needEnemy,needAlly,heal,addC,addWard,attackSingle,payC,commentLike,gainA,S,V,L,al,en}); break;
     default: p.ok=false; p.reason="不明な行動です。";
   }
+  if(p.ok&&a.cid==='gaku'&&!p.item)for(const d of p.dmg){const e=run.enemies.find(e=>e.slot===d.slot);if(e?.boss){d.raw=Math.ceil(d.raw*1.08);d.amt=Math.min(e.hp,d.raw);if(d.critRaw!=null)d.critRaw=Math.ceil(d.critRaw*1.08);}}
   // エールの倍率（拡散力・魅力補正）は計画の段階で掛け、確定前の表示と実際を一致させる（v5.34）
   if(p.ok && p.aGain>0 && !p.item){ if(hasTrait(a,"J11")) p.aGain=Math.ceil(p.aGain*1.3); if(a.cha) p.aGain=Math.ceil(p.aGain*(1+a.cha/100)); }
   // コメント以外の確定行動は連携を0へ
@@ -2510,6 +2606,7 @@ function applyAction(run, idx, act){
   const p = planAction(run, idx, act);
   if(!p.ok) return {ok:false, reason:p.reason};
   const a = run.party[idx]; const log=[]; const nm=a.name;const beforeA=run.A;let kiraEvent=null;
+  if(p.ultimate){a.ultimateUsed=true;log.push('固有必殺技！ この戦闘では再使用できません。');}
   if(p.tech){a.skillReady=a.skillReady||{};a.skillReady[p.tech]=run.turn+p.techCooldown+1;}
   recordTrialAction(run,a,act);
   const label = actLabel(run,a,act);
@@ -2669,6 +2766,7 @@ function applyVictory(st, run){
   }
   res.levelAfter = partyLevel(st);
   // v5.33 レベルアップしたら、全員のHP・MPを全回復（戦闘不能も復帰）。能力値の上がり幅を記録
+  recordCharacterVictory(st,run,res);
   finishCompanionGrowth(st,run,res,beforeMembers);
   ensureVitals(st);
   run.rewardsApplied = true;
@@ -2732,7 +2830,7 @@ function storeVitals(st, run){
 function restoreAll(st){ st.vitals={}; ensureVitals(st); }
 function joinMember(st,cid){
   if(st.roster.includes(cid)) return false;
-  ensureMemberXp(st);st.memberXp[cid]=partyExperience(st);st.roster.push(cid); st.pendingNames=st.pendingNames||[];st.pendingNames.push(cid); if(st.party.length<4) st.party.push(cid); syncPartyExperience(st); joinEquip(st,cid); if(st.vitals) delete st.vitals[cid]; ensureVitals(st); return true;
+  ensureMemberXp(st);st.memberXp[cid]=partyExperience(st);st.roster.push(cid); st.pendingNames=st.pendingNames||[];st.pendingNames.push(cid); if(st.party.length<4) st.party.push(cid); syncPartyExperience(st); ensureCharacterStories(st); joinEquip(st,cid); if(st.vitals) delete st.vitals[cid]; ensureVitals(st); return true;
 }
 function joinEquip(st,cid){
   for(const [slot,id] of [["w","CW01"],["a","CA01"]]){ if(availableCount(st,id)>0) st.equip[cid][slot]=id; }
@@ -3893,13 +3991,13 @@ function renderStatus(){
         <dt>HP</dt><dd><span class="bar wide"><i style="width:${Math.round(100*v.hp/s.maxHP)}%"></i></span>${v.hp}／最大${s.maxHP}</dd>
         <dt>MP</dt><dd>${v.c}／最大${s.startC}</dd>
       </dl>
-      ${masteryHtml(st,cid,L)}<div class="statsec"><h3 class="label">能力値（レベル${s.L}・${esc(JOBS[s.job].name)}）</h3>${statBlockHtml(s)}<p class="small dim">伸び方：${gradeText(s.job)}</p></div>
+      ${characterProfileHtml(st,cid)}${masteryHtml(st,cid,L)}<div class="statsec"><h3 class="label">能力値（レベル${s.L}・${esc(JOBS[s.job].name)}）</h3>${statBlockHtml(s)}<p class="small dim">伸び方：${gradeText(s.job)}</p></div>
       <dl class="kv">
         <dt>技能</dt><dd>${esc(JOBS[s.job].skill)}（MP${JOBS[s.job].cost}・技能強化${s.S}）<br><span class="small">${esc(JOBS[s.job].desc(s.S))}</span></dd>
         <dt>配信での役割</dt><dd>${esc(CHARS[cid].pocoRole||"")}</dd><dt>職業特性</dt><dd>${esc(JOB_TRAITS[s.job].name)}<br><span class="small">${esc(JOB_TRAITS[s.job].desc)}</span></dd>
         <dt>武器</dt><dd>${eqName(e.w)}</dd><dt>防具</dt><dd>${eqName(e.a)}</dd><dt>アクセサリー</dt><dd>${eqName(e.acc)}</dd>
       </dl></section>`; }).join("");
-  return head+`<div class="stack">${cards}</div><p class="small">体力×2が最大HPの土台。攻撃力＝ちから＋武器・アクセサリー（敵の防御力を引く前の基本ダメージ）。防御力＝身の守り＋防具（敵の攻撃1回ごとに減らせるダメージ）。会心率＝すばやさ÷6＋1％＋装備（会心の一撃は防御を無視して1.5倍）。回避率＝すばやさ÷12％。魅力補正＝魅力÷4％（自分の行動で得るエール、技能・ファミリー応援で回復する量が増える）。メーター突破は使う人の魅力÷3が威力に加わる。能力値はレベル・職業・熟練度で決まり、職業を変えると伸び方も変わります。敵の単体攻撃にはまれに痛恨の一撃（防御・防護を無視して1.5倍。ガードで半分）があります。</p>`;
+  return head+`<div class="stack">${cards}</div><p class="small">体力×2が最大HPの土台。攻撃力＝ちから＋武器・アクセサリー（敵の防御力を引く前の基本ダメージ）。防御力＝身の守り＋防具（敵の攻撃1回ごとに減らせるダメージ）。会心率＝すばやさ÷6＋1％＋装備（会心の一撃は防御を無視して1.5倍）。回避率＝すばやさ÷12％。魅力補正＝魅力÷4％（自分の行動で得るエール、技能・ファミリー応援で回復する量が増える）。メーター突破は使う人の魅力÷3が威力に加わる。能力値にはレベル・職業・熟練度と人物固有の特性が反映され、職業を変えると伸び方も変わります。敵の単体攻撃にはまれに痛恨の一撃（防御・防護を無視して1.5倍。ガードで半分）があります。</p>`;
 }
 function heroSprite(dir,frame,gender){ const f=(gender||G.st.profile.gender)==="女性"; return ART.person("hero",f?PAL.brown:PAL.ink,PAL.red,dir,frame,{long:f}); }
 function heroineSprite(dir,frame,gender){ const g=gender||heroineOf(G.st).gender; return g==="男性"? ART.person("moe",PAL.violet,PAL.cream,dir,frame,{}) : ART.person("moe",PAL.violet,PAL.cream,dir,frame,{long:true,ribbon:PAL.coral}); }
@@ -4192,7 +4290,7 @@ function renderDialog(){
     <button class="btn primary" id="dlgNext" data-a="dlgNext">${d.i<d.lines.length-1?"次へ ▼":"閉じる"}</button></div>
     <div class="small">${d.i+1}／${d.lines.length}</div></div></div>`;
 }
-function playScene(id, after){ const sc=SCENES[id]; if(id.startsWith("RANK_")) SND.sfx("rank"); if(id==="RANK_S6"||id==="OMUTA_END"){ SND.play("ending"); const a0=after; after=()=>{ exploreBgm(); if(a0) a0(); }; } G.st.scenes[id]=true; commit(); say([["",`― ${sc.title} ―`],...sc.lines(G.st.profile.name)], after); }
+function playScene(id, after){ const sc=SCENES[id]; if(id.startsWith("RANK_")) SND.sfx("rank"); if(id==="RANK_S6"||id==="OMUTA_END"){ SND.play("ending"); const a0=after; after=()=>{ exploreBgm(); if(a0) a0(); }; } G.st.scenes[id]=true; commit(); say([["",`― ${sc.title} ―`],...sc.lines(G.st.profile.name),...mainEmotionLines(G.st,id)], after); }
 
 /* ---- 移動 ---- */
 function travelMap(to,tx,ty){
@@ -4208,7 +4306,7 @@ function travelHub(to,tx,ty){
   travelMap(to,tx,ty);
   const j=JOIN_PLAN.find(x=>x.hub===to);
   const arrive = first && SCENES["ARRIVE_"+to];
-  if(j && joinMember(st,j.cid)){ commit(); const L=[...(arrive?SCENES["ARRIVE_"+to].lines(st.profile.name):[]),["",`${HUBS[to]?HUBS[to].name:j.pref}で${CHARS[j.cid].full}と出会った。`],...(JOIN_TALK[j.cid]||[]),["",`${CHARS[j.cid].full}が仲間に加わった。控室の編成ボードで戦闘メンバーを入れ替えられます。`]]; if(arrive) st.scenes["ARRIVE_"+to]=true; say(L,()=>openPendingName()); return; }
+  if(j && joinMember(st,j.cid)){ commit(); const L=[...(arrive?SCENES["ARRIVE_"+to].lines(st.profile.name):[]),["",`${HUBS[to]?HUBS[to].name:j.pref}で${CHARS[j.cid].full}と出会った。`],...(JOIN_TALK[j.cid]||[]),["",characterText(st,CHARACTER_ARCS[j.cid].background)],["",`固有特性「${CHARACTER_ARCS[j.cid].trait}」が有効です。ファミリー施設の「仲間の物語」で必殺技を習得できます。`],["",`${CHARS[j.cid].full}が仲間に加わった。街のファミリー施設で同行者を入れ替えられます。`]]; if(arrive) st.scenes["ARRIVE_"+to]=true; say(L,()=>openPendingName()); return; }
   if(arrive){ playScene("ARRIVE_"+to); return; }
   if(first && to==="KY02") say([["",`${HUBS[to].name}に着いた。港の風と倉庫の匂いがする。`],["もえ","ここが北九州……。港の音、配信に入れたら素敵だね。"]]);
 }
@@ -4310,7 +4408,7 @@ function renderCommand(run){
   if(c.actor==null || !run.party[c.actor] || run.party[c.actor].acted || run.party[c.actor].hp<=0){ c.actor = al.length? al[0].pos : null; c.type=null; }
   const a=run.party[c.actor]; if(!a) return "";
   const S=a.S;
-  const entries=[["attack","アタック"],["comment","応援コメント"],["skill",JOBS[a.job].skill],["item","道具"],["guard","ガード"],["rest","ひと息つく"],["other","その他"]];
+  const entries=[["attack","アタック"],["comment","応援コメント"],["skill","技・必殺技"],["item","道具"],["guard","ガード"],["rest","ひと息つく"],["other","その他"]];
   const chip=(k,v,on,label)=>`<button class="chip ${on?"on":""}" data-a="cmdSet" data-k="${k}" data-v="${v}" aria-pressed="${on}">${on?"▶":""}${k==="target"?"敵：":k==="ally"?"味方：":""}${label}</button>`;
   const enemyPick=()=>`<span class="chiplabel">対象</span>`+run.enemies.filter(e=>e.hp>0).map(e=>chip("target",e.slot,c.target===e.slot,esc(e.display))).join("");
   const allyPick=(other)=>`<span class="chiplabel">対象</span>`+run.party.filter(m=>m.hp>0&&(!other||m!==a)).map(m=>chip("ally",m.pos,c.ally===m.pos,esc(m.name))).join("");
@@ -4321,8 +4419,8 @@ function renderCommand(run){
   if(c.type==="comment"){ sub=linePick(); info=`MP1・エール＋${18+a.commentA+(hasTrait(a,"J22")?6:0)}・コメント連携4`+(c.line?`「${COMMENT_LINES[c.line][run.turn%3]}」`:""); }
   if(c.type==="skill"){
     const ex=c.skill&&EXTRA_SKILLS[c.skill],need=ex?ex.need:skillNeeds(a.job);
-    sub=[chip("skill","",!c.skill,esc(JOBS[a.job].skill)),...(a.extraSkills||[]).map(id=>{const sk=EXTRA_SKILLS[id],wait=Math.max(0,((a.skillReady||{})[id]||0)-run.turn);return chip("skill",id,c.skill===id,esc(sk.name)+` MP${sk.cost}`+(wait?`（あと${wait}T）`:""));})].join("");
-    info=ex?`MP${ex.cost}・${ex.desc}・再使用待ち${ex.cooldown}ターン`:`MP${JOBS[a.job].cost}・${JOBS[a.job].desc(S)}（特性「${JOB_TRAITS[a.job].name}」）`;
+    sub=[chip("skill","",!c.skill,esc(JOBS[a.job].skill)),...(a.extraSkills||[]).map(id=>{const sk=EXTRA_SKILLS[id],wait=Math.max(0,((a.skillReady||{})[id]||0)-run.turn);return chip("skill",id,c.skill===id,esc(sk.name)+` MP${skillMpCost(a,sk)}`+(sk.ultimate?`・エール35${a.ultimateUsed?"（使用済み）":run.turn<3?"（3Tから）":"（1戦1回）"}`:wait?`（あと${wait}T）`:""));})].join("");
+    info=ex?(ex.ultimate?`MP${skillMpCost(a,ex)}・エール35・${ex.desc}`:`MP${ex.cost}・${ex.desc}・再使用待ち${ex.cooldown}ターン`):`MP${JOBS[a.job].cost}・${JOBS[a.job].desc(S)}（特性「${JOB_TRAITS[a.job].name}」）`;
     if(need==="enemy") sub+= enemyPick();
     if(need==="ally") sub+= allyPick(false);
     if(need==="allyOther") sub+= allyPick(true);
@@ -4624,6 +4722,7 @@ function renderSheet(){
     case "travel": return sheetWrap("移動", `<p>${esc(HUBS[d.to].name)}へ向かいますか？（旅程枠1を使います。残り${st.slots}枠）</p><div class="stack"><button class="btn primary" data-a="doTravel">向かう</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "rest": return sheetWrap("休息", `${d.reason?`<p class="warn">${esc(d.reason)}</p>`:""}<p>日付を進めると翌日になり、旅程枠が6に戻ります（費用なし）。HPとMPは回復しません。回復は宿屋で。今は${st.day}日目・残り${st.slots}枠。</p><div class="stack"><button class="btn primary" data-a="doRest">日付を進める</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "party": return sheetWrap("編成", renderParty());
+    case "characterStories": return sheetWrap("仲間の物語・絆と約束",renderCharacterStories());
     case "rename": return sheetWrap("名前の変更",renderRename());
     case "challenges": return sheetWrap("特別チャレンジ",renderChallenges());
     case "nextChapter": return sheetWrap("四国・中国エリア編",renderNextChapter());
@@ -4811,16 +4910,16 @@ function renderParty(){
     return `<div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><b>${esc(charName(st,cid))}</b>　${[C.age?C.age+"歳":"",C.from?esc(C.from):""].filter(Boolean).join("・")}<br><span class="small">${cid==="moe"?"経歴":"職歴"}：${esc((cid==="hero"?(st.profile.career||C.career):C.career))}（ジョブとは別）</span><p class="small">${esc(C.pocoRole||"")}</p></div></div>
       <dl class="kv"><dt>ジョブ</dt><dd>${esc(JOBS[cur.job].name)}　熟練度${cur.R}・技能強化${cur.S}</dd><dt>HP</dt><dd>${vitalOf(cid).hp}／${cur.maxHP}</dd><dt>MP</dt><dd>${vitalOf(cid).c}／${cur.startC}</dd>
       <dt>武器</dt><dd>${e.w?esc(EQUIP[e.w].name):"なし"}</dd><dt>防具</dt><dd>${e.a?esc(EQUIP[e.a].name):"なし"}</dd><dt>アクセサリー</dt><dd>${e.acc?esc(EQUIP[e.acc].name):"なし"}</dd></dl>
-      <h3 class="label">使用できる技</h3><p>${esc(JOBS[cur.job].skill)}（MP${JOBS[cur.job].cost}）</p><ul class="list">${Object.values(EXTRA_SKILLS).filter(sk=>cur.extraSkills.includes(sk.id)||sk.job===cur.job&&!sk.baseJob).map(sk=>`<li>${esc(sk.name)}：MP${sk.cost}・${esc(sk.desc)}${sk.job&&!cur.extraSkills.includes(sk.id)?`（Lv${sk.level}${sk.rank?`・熟練度${sk.rank}`:""}で習得）`:"（習得済み）"}</li>`).join("")}</ul>
+      ${characterProfileHtml(st,cid)}<h3 class="label">使用できる技</h3><p>${esc(JOBS[cur.job].skill)}（MP${JOBS[cur.job].cost}）</p><ul class="list">${Object.values(EXTRA_SKILLS).filter(sk=>cur.extraSkills.includes(sk.id)||sk.job===cur.job&&!sk.baseJob).map(sk=>`<li>${esc(sk.name)}：MP${sk.ultimate?"最大値の25％（最低8）":sk.cost}・${esc(sk.desc)}${sk.job&&!cur.extraSkills.includes(sk.id)?`（Lv${sk.level}${sk.rank?`・熟練度${sk.rank}`:""}で習得）`:"（習得済み）"}</li>`).join("")}</ul>
       <div class="stack"><button class="btn" data-a="partyView" data-c="${cid}" data-v="job">ジョブを変える</button>
       <button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:w">武器</button><button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:a">防具</button><button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:acc">アクセサリー</button>
       <button class="btn" data-a="partyView" data-c="" data-v="">一覧へ</button></div>`;
   }
   const bond = npc => !st.talked[npc]?0: 1 + (npc==="akari"? (st.quests.M01==="complete"?1:0)+(st.quests.S01==="complete"?1:0) : (st.quests.M02==="complete"?1:0)+(st.quests.S02==="complete"?1:0));
   const supOk = st.talked.akari && st.quests.M01==="complete" && st.quests.S01==="complete";
-  return `${lockMsg?`<p class="warn">${lockMsg}</p>`:""}<p class="small">パーティレベルは同行者それぞれの現在の上限内の経験値を平均して算出します。旧セーブの上限超過分は保留し、次の上限解放後に有効になります。先頭から順に隊列0～3。タップで人物の詳細、↑で並びを前へ。同行は最大4人。経験値・熟練度は戦闘に同行したキャラのみ入手します。待機者は成長しません。入れ替え・隊列変更は街のファミリー施設で行います。仲間は旅の各地で加わります。</p>
-    ${st.party.length===4?`<p class="small">交代させる枠を選択：</p><div class="row4">${st.party.map((c,i)=>`<button class="btn ${Number(G.sheetData.replaceSlot||0)===i?"on":""}" data-a="partyReplaceSlot" data-v="${i}">${i+1} ${esc(charName(st,c))}</button>`).join("")}</div>`:""}<h3 class="label">同行メンバー</h3><div class="stack">${st.party.map((c,i)=>`<div class="prow"><button class="btn grow" data-a="partyView" data-c="${c}" data-v="">${i+1}. ${esc(charName(st,c))}・${esc(JOBS[st.jobs[c]].name)}<br><span class="small">${partyStatLine(st,c,L)}</span></button>${i?`<button class="btn sq" data-a="partyUp" data-v="${i}" aria-label="前へ" ${!atFamily(st)?"disabled":""}>↑</button>`:""}${st.party.length>1?`<button class="btn sq" data-a="partyOut" data-v="${i}" aria-label="控えへ" ${!atFamily(st)?"disabled":""}>↓</button>`:""}</div>`).join("")}</div>
-    ${st.roster.length>st.party.length?`<h3 class="label">控え</h3><div class="stack">${st.roster.filter(c=>!st.party.includes(c)).map(c=>`<div class="prow"><button class="btn grow" data-a="partyView" data-c="${c}" data-v="">${esc(charName(st,c))}・${esc(JOBS[st.jobs[c]].name)}<br><span class="small">${partyStatLine(st,c,L)}</span></button><button class="btn" data-a="partyIn" data-v="${c}" ${!atFamily(st)?"disabled":""}>${st.party.length<4?"同行者に入れる":"選択枠と入れ替え"}</button></div>`).join("")}</div>`:""}
+  return `<button class="btn primary" data-a="openSheet" data-k="characterStories">仲間の物語・固有特性・必殺技</button>${lockMsg?`<p class="warn">${lockMsg}</p>`:""}<p class="small">パーティレベルは同行者それぞれの現在の上限内の経験値を平均して算出します。旧セーブの上限超過分は保留し、次の上限解放後に有効になります。先頭から順に隊列0～3。タップで人物の詳細、↑で並びを前へ。同行は最大4人。経験値・熟練度は戦闘に同行したキャラのみ入手します。待機者は成長しません。入れ替え・隊列変更は街のファミリー施設で行います。仲間は旅の各地で加わります。</p>
+    ${st.party.length===4?`<p class="small">交代させる枠を選択：</p><div class="row4">${st.party.map((c,i)=>`<button class="btn ${Number(G.sheetData.replaceSlot||0)===i?"on":""}" data-a="partyReplaceSlot" data-v="${i}">${i+1} ${esc(charName(st,c))}</button>`).join("")}</div>`:""}<h3 class="label">同行メンバー</h3><div class="stack">${st.party.map((c,i)=>`<div class="prow"><button class="btn grow" data-a="partyView" data-c="${c}" data-v="">${i+1}. ${esc(charName(st,c))}・${esc(JOBS[st.jobs[c]].name)}<br><span class="small">${partyStatLine(st,c,L)}<br>固有：${esc(CHARACTER_ARCS[c].trait)}／物語${characterRecord(st,c).seen}/4話</span></button>${i?`<button class="btn sq" data-a="partyUp" data-v="${i}" aria-label="前へ" ${!atFamily(st)?"disabled":""}>↑</button>`:""}${st.party.length>1?`<button class="btn sq" data-a="partyOut" data-v="${i}" aria-label="控えへ" ${!atFamily(st)?"disabled":""}>↓</button>`:""}</div>`).join("")}</div>
+    ${st.roster.length>st.party.length?`<h3 class="label">控え</h3><div class="stack">${st.roster.filter(c=>!st.party.includes(c)).map(c=>`<div class="prow"><button class="btn grow" data-a="partyView" data-c="${c}" data-v="">${esc(charName(st,c))}・${esc(JOBS[st.jobs[c]].name)}<br><span class="small">${partyStatLine(st,c,L)}<br>固有：${esc(CHARACTER_ARCS[c].trait)}／物語${characterRecord(st,c).seen}/4話</span></button><button class="btn" data-a="partyIn" data-v="${c}" ${!atFamily(st)?"disabled":""}>${st.party.length<4?"同行者に入れる":"選択枠と入れ替え"}</button></div>`).join("")}</div>`:""}
     <h3 class="label">地域支援</h3><p class="small">コア応援者がいる県の効果を1つ選べます（戦闘開始時に固定）。</p>
     <div class="stack"><button class="btn ${!st.support?"on":""}" data-a="setSupport" data-v="">${!st.support?"▶ ":""}なし</button>
     <button class="btn ${st.support==="PR01"?"on":""}" data-a="setSupport" data-v="PR01" ${supOk?"":"disabled"}>${st.support==="PR01"?"▶ ":""}福岡：戦闘開始時のエール＋10（灯里 親密度${bond("akari")}/3）</button>
@@ -4980,7 +5079,7 @@ function renderMoe(){
   const read=Object.keys(SCENES).filter(k=>st.scenes[k]);
   return `<div class="who"><canvas class="sprite-md" data-char="moe" width="16" height="24" aria-hidden="true"></canvas><div><b>もえ</b><br><span class="small">メインライバー・シナリオ到達ランク ${r}</span></div></div>
     <p class="dlg-text">「${esc(line)}」</p>
-    <button class="btn" data-a="moeTalk">もっと話す</button>
+    <button class="btn" data-a="moeTalk">もっと話す</button><button class="btn primary" data-a="characterStoryOpen" data-c="moe">絆の物語・二人の約束</button>
     <h3 class="label">物語を読み返す</h3><div class="stack">${read.length?read.map(k=>`<button class="btn" data-a="replay" data-v="${k}">${esc(SCENES[k].title)}</button>`).join(""):`<p class="small">まだありません。</p>`}</div>`;
 }
 function renderStreamSetup(){
@@ -4999,6 +5098,9 @@ function renderStreamSetup(){
 
 /* ===== 操作の受付 ===== */
 const ACT = {
+  characterStoryOpen(el){if(!G.st.roster.includes(el.dataset.c))return;openSheet('characterStories',{cid:el.dataset.c});},
+  characterEpisode(el){playCharacterEpisode(el.dataset.c,Number(el.dataset.v));},
+  relationshipChoose(el){chooseRelationship(el.dataset.v);},
   railGo(el){const to=el.dataset.v;if(!stationNear(G.st)||!stationDestinations(G.st).includes(to))return;openSheet("railConfirm",{to});},
   railBoard(el){railTravel(G.st,el.dataset.v);},
   supportQuick(el){if(G.auto||!G.st.run||G.st.run.state!=="input"||!["meter","family"].includes(el.dataset.v))return;const a=G.st.run.party.find(m=>m.hp>0&&!m.acted);if(!a)return;G.cmd={actor:a.pos,type:"other",o:el.dataset.v};render();},
@@ -5163,6 +5265,8 @@ function validateState(s){
   if(s.memberXp&&(!obj(s.memberXp)||Object.entries(s.memberXp).some(([c,n])=>!s.roster.includes(c)||!Number.isInteger(n)||n<0||n>XP_CAP)))throw Error('bad member experience');
   if(s.learnedSkills&&(!obj(s.learnedSkills)||Object.entries(s.learnedSkills).some(([c,ids])=>!s.roster.includes(c)||!Array.isArray(ids)||ids.some(id=>!EXTRA_SKILLS[id]))))throw Error('bad learned skills');
   if(s.specialReturn&&(!obj(s.specialReturn)||!MAPS[s.specialReturn.map]||!Number.isInteger(s.specialReturn.x)||!Number.isInteger(s.specialReturn.y)))throw Error('bad special return');
+  if(s.characterStories&&(!obj(s.characterStories)||Object.entries(s.characterStories).some(([c,r])=>!s.roster.includes(c)||!obj(r)||!Number.isInteger(r.seen)||r.seen<0||r.seen>4||!Number.isSafeInteger(r.wins)||r.wins<0)))throw Error('bad character story records');
+  if(s.relationshipChoice!==undefined&&!['romance','partner'].includes(s.relationshipChoice))throw Error('bad relationship choice');
   if(s.names&&(!obj(s.names)||Object.entries(s.names).some(([c,n])=>!CHAR_ORDER.includes(c)||!s.roster.includes(c)||typeof n!=="string"||!validateName(n).ok)))throw Error("bad names");
   if(s.pendingNames&&(!Array.isArray(s.pendingNames)||s.pendingNames.some(c=>!s.roster.includes(c))))throw Error("bad pending names");
   if(!Array.isArray(s.party)||!s.party.length||s.party.length>4||new Set(s.party).size!==s.party.length||s.party.some(c=>!s.roster.includes(c)))throw Error("bad party");
@@ -5182,7 +5286,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
+function migrate(s){s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
