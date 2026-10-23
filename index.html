@@ -1,6 +1,6 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 </style></head><body>
-<title>トップライバーへの道 九州編</title>
+<title>トップライバーへの道 九州編・四国中国編</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=BIZ+UDPGothic:wght@400;700&display=swap">
@@ -504,7 +504,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.15";
+const GAME_VERSION = "6.16";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1306,7 +1306,7 @@ const KYUSHU = [
   arrive:[["","名護市に着いた。深い森と青い海、その先に白い灯台が見える。"],["もえ","ここが、最後の街……。"],["{p}","最後まで、一緒に行こう。"]],
   sideDone:[["誠","手紙が書けた。来年ここへ来る誰かも、きっと救われる。"],["","灯台守の手紙ができた。応援箱Bが開けられるようになった。"]],
   bossScene:[["","岬を覆っていた巨大な声の塊が、光の粒になってほどけていく。"],["もえ","福岡からずっと重なっていた声……全部、ちゃんと届いてたんだね。"],["もえ","最後の配信、みんなで作りたい。……お願いできる？"],["","配信サポート担当と番組テーマを選んで、最後の4手番の配信へ進もう。視聴者の声に応え、配信目標を達成しよう。"]],
-  rank:[["","22時、締め。"],["","岬の灯台の光が、海の向こうまで伸びていく。コメント欄が、九州じゅうの応援で埋め尽くされた。"],["もえ","……S6。"],["もえ","福岡の広場で、E1から始めたあの日。誰かに返事ができる配信をしたいって、言ったよね。"],["もえ","一人ひとりの声に返事をしてきたら、こんなに遠くまで来られた。"],["{p}","もえの声が、九州じゅうに届いたんだ。"],["もえ","ううん。届けてくれたのは、みんなだよ。……ありがとう、{p}。"],["","もえのシナリオ到達ランクがS6になった。"],["","― トップライバーへの道 九州編　完 ―"],["","クリア後も、育成・図鑑集め・任意依頼・配信の盛り上がり更新を続けられます。おつかれさまでした！"]],
+  rank:[["","22時、締め。"],["","岬の灯台の光が、海の向こうまで伸びていく。コメント欄が、九州じゅうの応援で埋め尽くされた。"],["もえ","……S6。"],["もえ","福岡の広場で、E1から始めたあの日。誰かに返事ができる配信をしたいって、言ったよね。"],["もえ","一人ひとりの声に返事をしてきたら、こんなに遠くまで来られた。"],["{p}","もえの声が、九州じゅうに届いたんだ。"],["もえ","ううん。届けてくれたのは、みんなだよ。……ありがとう、{p}。"],["","もえのシナリオ到達ランクがS6になった。"],["","― トップライバーへの道 九州編　完 ―"],["","四国・中国エリア編が解放されました！ 街のファミリー施設または広域マップから松山市へ進めます。レベル・仲間・装備を引き継いで新しい合同配信ツアーへ！"]],
   accept:"九州じゅうで重なった声が、ここに集まってる。最後の声を、ちゃんと受け止めよう。",
   moe:["ここまで来たね。","九州のどの街も、忘れられない。","S6になっても、一人ひとりに返事をする配信を続けたいな。"],
   stream:{first:"はいさい！ 今日は名護の岬から、最後の配信だよ。",local:"福岡から沖縄まで、たくさんの街で、たくさんの声に出会えたんだ。",reply:"質問ありがとう！ 好きな場所は……全部！ 選べないよ。",from:"九州じゅうから見てます"},
@@ -1382,6 +1382,45 @@ function shopItemsFor(hub){ const t=Math.min(10, 1+Math.floor(hubIndex(hub)*10/1
 const STAGE_KIND = {};
 const AREA_SKY = {};
 
+
+/* 四国・中国編：九州M16から分岐する合同配信ツアー。大牟田編とは独立。 */
+const NEXT_CHAPTER=[
+ ['松山市','愛媛','道後の歓迎ラジオ','湯けむり商店通り','城下の坂道','道後の合同舞台','湯けむりエコー','湯上がり挨拶便','休息を取る人にも居場所がある、短い歓迎ラジオを作る。','温泉街の掲示板に配信と休息の時間が並び、休んだ人にも「おかえり」が届いた。','柚葉',110,'river','sea','クリア後も休んでいい。もえの一言に、夜勤明けのリスナーが初めてコメントした。'],
+ ['高知市','高知','日曜市の声あわせ','朝市の屋台路','川風の交流道','鳴子の合同広場','ナルトコール','屋台のひと言紹介','元気な呼び込みに埋もれる小さな声を、順番に拾う。','屋台ごとにひと言紹介の番が回り、声量に関係なく名前が聞こえる市になった。','陽介',130,'market','coral','声を張らない人の感想が、今日いちばん面白かった。ファミリーは拍手の速さを揃えず、返事を揃えた。'],
+ ['徳島市','徳島','阿波の交代セッション','藍の工房通り','川辺の練習場','踊りの輪ステージ','レンブレイカー','藍色の役割札','誰か一人に任せきりの進行を、踊りの輪のように交代する。','藍色の役割札が回り、案内・守り・回復の当番が無理なく入れ替わる。','藍乃',155,'town','aqua','交代の合図で演奏は止まらなかった。アシスタントが休める枠を、もえは新しい強さと呼んだ。'],
+ ['高松市','香川','瀬戸のコラボ橋','商店街の回遊路','港の待合広場','瀬戸の中継舞台','シオカゼスプリッター','うどん屋の話題カード','違う枠の挨拶を尊重し、途中参加の人にも合同企画の説明を渡す。','港に話題カードの交換所ができ、初めて会う枠どうしに挨拶が行き交う。','凪',180,'port','gold','四国の四つの声が海辺で重なった。競う前に相手の枠を知ることが、海を越える橋になった。'],
+ ['岡山市','岡山','晴れの国の作戦会議','果樹の小径','城下の相談通り','旭川の合同舞台','ハレマチミラージュ','桃色の予定ノート','大きな目標を小さな準備へ分け、参加できない日も責めない予定を作る。','予定ノートに準備の日と休む日が並び、締め前だけに負担が集まらなくなった。','晴香',210,'castle','sand','中国エリアの最初の会議。無理な約束を一つ減らすと、守れる約束が九つ増えた。'],
+ ['鳥取市','鳥取','砂丘の道しるべ配信','砂の風紋路','駅前の交流通り','砂丘の灯り舞台','サンドログアウト','砂丘の初見しおり','広い景色で迷う初見さんへ、今の話題と戻れる道を短く案内する。','風紋の道にしおり型の案内が立ち、途中参加の人も迷わず会話へ戻れる。','砂羽',240,'sky','cream','迷ったコメントを急かさず待った夜。もえは大きな舞台にも、小さなしおりが必要だと知った。'],
+ ['松江市','島根','水都のお礼灯籠','堀川の水辺路','城下の語り通り','湖畔の夜間舞台','ミズカゲリフレイン','水面の思い出便','応援の大きさより思い出を語り、長く支えた人にも初めての人にも感謝を返す。','水辺の灯籠に短い思い出が灯り、一人ひとり違う応援が街の物語になった。','汐里',275,'river','violet','同じ「ありがとう」でも、名前と出来事を添えれば届き方が変わる。湖面に九州の思い出も揺れた。'],
+ ['山口市','山口','文化の街の最終リハ','文化の散策路','山裾の控室通り','灯りのリハーサル場','リハーサルオーバー','灯りの役割チェック','締め前の焦りを、職業技・MP補給・守りの確認へ置き換える。','控室の確認表が整い、前へ出る仲間と支える仲間が互いの準備を見守る。','灯真',310,'forest','leaf','最後の予行練習で、もえは歌う順番を変えた。誰かの得意技を待つ余白が、全員の出番を作った。'],
+ ['広島市','広島','九つの街の合同フィナーレ','本通りの歓迎路','川沿いの中継路','九都市の合同舞台','ナインリンクノイズ','九色の約束リボン','九つの街の応援を一つの数字にせず、それぞれの名前と約束をつなぐ。','川沿いに九色のリボンが渡り、離れた街どうしにも次の配信の約束ができた。','結衣',350,'town','gold','締めの合図。九つの街から九つの「またね」が届いた。もえはS6の先に、続けたい配信の形を見つけた。']
+].map((r,i)=>{const n=String(i+1).padStart(2,'0');return {id:'NX'+n,qid:'C'+n,sid:'CS'+n,bid:'NCB'+n,shopId:'SN'+n,prefId:'PR'+String(i+9).padStart(2,'0'),name:r[0],pref:r[1],title:r[2],areas:r.slice(3,6),boss:r[6],side:r[7],before:r[8],after:r[9],npc:r[10],level:r[11],kind:r[12],color:r[13],ending:r[14],index:i};});
+for(const c of NEXT_CHAPTER){
+ HUB_ORDER.push(c.id);PREF_NAMES[c.prefId]=c.pref;
+ const n=c.id.slice(2),lines=(speaker,t)=>[[speaker,t]],q=Math.ceil((c.level-5)/1.5);
+ KYUSHU.push({id:c.id,name:c.name,pref:c.pref,prefId:c.prefId,shopId:c.shopId,song:'fukuoka',inn:c.name+'・遠征の宿',innPrice:300+c.index*100,decor:c.index%2?'grove':'pond',noWater:c.index===5,
+ land:{label:c.areas[2],desc:c.before+'（この物語・施設はゲーム独自の設定です。）'},
+ areas:c.areas.map((a,j)=>[a,c.pref+['初見枠','交流枠','締め前枠'][j],c.before,['town',c.kind,c.kind][j],['navy',c.color,'cream']]),qs:[q,q+3,q+6],bossQ:q+8,
+ boss:{id:c.bid,name:c.boss,shape:['cloud','ribbon','lantern'][c.index%3],col:[c.color,'gold'],cue:['guard','comment','damage'][c.index%3]},
+ quest:{id:c.qid,name:c.title,rank:MOE_RANKS.length-1,kills:6+c.index%3,stream:[1,3,5,8].includes(c.index)},
+ side:{id:c.sid,name:c.side,kills:4,goal:c.npc+'と相談し、'+c.name+'の通常敵4体を鎮めて合同企画の準備をする。'},
+ rep:{id:'nxrep'+n,name:c.npc,sprite:[c.color,'cream'],first:lines(c.npc,c.before+' 「'+c.side+'」を手伝ってもらえませんか。'),after:lines(c.npc,c.after),normal:lines(c.npc,'九州での経験を、この街のやり方と組み合わせてみよう。')},
+ npc2:{id:'nxguide'+n,name:c.pref+'の案内係',sprite:['sea','sand'],first:lines(c.pref+'の案内係',c.name+'の適正レベルはおよそ'+c.level+'。職業専用装備とMP補給を整えてから奥へ。'),normal:lines(c.pref+'の案内係','ボス戦は手動操作のみ。予告を読んで、仲間の固有技を使い分けてください。')},
+ pass:{id:'nxlistener'+n,name:c.pref+'のリスナー',role:'合同配信の参加者',sprite:['violet','cream'],first:lines(c.pref+'のリスナー','応援を比べるより、今日の話を聞いてほしいな。'+c.before)},
+ staff:{id:'nxstaff'+n,name:c.pref+'の遠征スタッフ',first:lines(c.pref+'の遠征スタッフ','同行者の入れ替えは街のファミリー施設で。待機中の仲間には経験値が入りません。')},
+ shop:{name:c.name+'・合同配信ギア店',npc:'nxshop'+n,npcName:c.pref+'のギア職人',first:lines(c.pref+'のギア職人','地域の共通装備と、全22職の遠征専用装備を用意したよ。'),normal:lines(c.pref+'のギア職人','専用装備は現在の職業と熟練度を確認して使ってね。')},
+ arrive:[['',c.pref+'・'+c.name+'。四国・中国エリア編 '+(c.index+1)+'/9。'],['もえ',c.index?'次の街のやり方も聞いてみよう。'+c.before:'九州の旅を終えて、初めての合同配信ツアーだね。S6の先で、どんな声に出会えるかな。'],['',c.title+'／適正Lv'+c.level+'。']],
+ sideDone:[[c.npc,c.after],['もえ','本編とは別の小さな準備が、枠の居心地を変えるんだね。']],
+ sceneId:c.qid+'_DONE',sceneTitle:c.title+'・完了',rank:[['',c.ending],['もえ',c.after],['',c.index===8?'― 四国・中国エリア編 完 ―\n九州・新章の任意依頼、街イベント、特設エリアを続けられます。':'次は'+NEXT_CHAPTER[c.index+1].pref+'・'+NEXT_CHAPTER[c.index+1].name+'。依頼帳の「'+NEXT_CHAPTER[c.index+1].qid+'」へ進もう。']],
+ bossScene:[['',c.boss+'のノイズが静まり、合同配信の準備が整った。'],['もえ','ここからは声を届ける番。依頼帳から配信を始めよう。']],
+ accept:c.before,moe:[c.before,c.after],stream:{first:c.pref+'から合同配信へようこそ！ 初めての方もゆっくりどうぞ。',local:c.before,reply:'質問ありがとう。この街で印象に残ったのは、'+c.side+'だよ。',from:c.pref+'のファミリーから見ています'},cards:[c.name+'・出会いのカード',c.name+'・'+c.side],
+ ...(c.index===0?{gates:[{id:'gateBack_NX01',x:1,y:24,type:'gate',label:'九州・北九州港への連絡船',to:'KY02',tx:45,ty:24}]}:{})});
+ const z=c.prefId.slice(2),price=4500+c.index*1200;
+ EQUIP['RW'+z]={slot:'w',name:c.pref+'の合同配信マイク',price,atk:30+c.index*3,commentA:3,text:'地域共通装備。'};
+ EQUIP['RA'+z]={slot:'a',name:c.pref+'の遠征ジャケット',price,d:14+c.index,hp:65+c.index*10,text:'地域共通装備。'};
+ EQUIP['RX'+z]={slot:'acc',name:c.pref+'の交流リボン',price:price-200,c:8+c.index,hp:30+c.index*5,text:'地域共通装備。'};
+}
+
 (function buildKyushu(){
   const RAR = AREAS["KY02-A3"].list.map(x=>x[1]);
   const C = c => PAL[c] || PAL.slate;
@@ -1415,7 +1454,7 @@ const AREA_SKY = {};
     // 店（共通品＋この県と前の県の地域装備）
     const prN = +H.prefId.slice(2); const reg=[];
     for(const n of [prN-1, prN]) if(n>=1){ const s=String(n).padStart(2,"0"); reg.push("RW"+s,"RA"+s,"RX"+s); }
-    const sid="SH"+H.id.slice(2);
+    const sid=H.shopId||"SH"+H.id.slice(2);
     SHOPS[sid] = {name:H.shop.name, items:["CW03","CW05","CW06","CA04","CA05","CA06","AC01","AC02","AC05","AC06","AC07","AC08","AC09",...reg]};
     // 場面
     const SC = (id,title,lines) => { SCENES[id]={title, lines:mk(lines)}; };
@@ -1455,7 +1494,7 @@ const AREA_SKY = {};
       {id:"boss_"+H.id,x:24,y:2,type:"boss",label:`${H.land.label}の前（ボス待機地点）`,boss:H.boss.id,walk:true},
       ...(H.gates||[{id:"gateW_"+H.id,x:1,y:24,type:"gate",label:H.id==="KY15"?"鹿児島行きフェリー乗り場":`${HUB_NAME_OF(prev)}への道`,to:prev,tx:45,ty:24}])
     ];
-    if(next) obj.push({id:"gateE_"+H.id,x:46,y:24,type:"gate",label:H.id==="KY14"?"那覇行きフェリー乗り場":`${HUB_NAME_OF(next)}への道`,to:next,tx:2,ty:24});
+    if(next&&!H.post) obj.push({id:"gateE_"+H.id,x:46,y:24,type:"gate",label:H.id==="KY14"?"那覇行きフェリー乗り場":`${HUB_NAME_OF(next)}への道`,to:next,tx:2,ty:24});
     MAPS[H.id] = {hub:H.id, name:H.name, kind:"out", w:48, h:32, safeAnchor:[24,20], tiles:buildMap(48,32,ops), objects:obj, zones:{"1":H.id+"-A1","2":H.id+"-A2","3":H.id+"-A3"}};
     MAPS[H.id+"-in"] = {hub:H.id, name:H.name+"・エール便の控室", kind:"in", w:24, h:18, safeAnchor:[12,15],
       tiles: buildMap(24,18,[["#",0,0,24,18],["w",1,2,22,15]]),
@@ -1542,7 +1581,7 @@ if(SHOPS.SH17) SHOPS.SH17.items.push("OMW","OMA","OMX");
 })();
 /* 店の強化品：先の街ほど上位品 */
 (function shopTiers(){
-  KYUSHU.forEach(H=>{ const sid="SH"+H.id.slice(2); if(!SHOPS[sid]) return; const i=hubIndex(H.id);
+  KYUSHU.forEach(H=>{ const sid=H.shopId||"SH"+H.id.slice(2); if(!SHOPS[sid]) return; const i=hubIndex(H.id);
     const t=i>=12?4:i>=9?3:i>=6?2:i>=2?1:0; for(let k=Math.max(1,t-1);k<=t;k++) SHOPS[sid].items.push("SW"+k,"SA"+k,"SX"+k); });
 })();
 /* 職業別MP：初期値と1レベルごとの伸び。既存セーブのcは現在MPとして引き継ぐ。 */
@@ -1662,10 +1701,12 @@ function levelUpHtml(st, det){ if(!det) return "";
 function HUB_NAME_OF(id){ return (HUBS[id]&&HUBS[id].name) || ((KYUSHU.find(h=>h.id===id)||{}).name) || id; }
 /* 本編の順番：前の拠点の本編依頼を終えると、次の拠点へ進める */
 function mainQuestOf(hub){ return Object.keys(QUESTS).find(k=>QUESTS[k].main&&QUESTS[k].hub===hub); }
-function hubUnlocked(st, hub){ const i=hubIndex(hub); if(i<=1) return true; const q=mainQuestOf(HUB_ORDER[i-1]); return !!(q && st.quests[q]==="complete"); }
+function hubRequirement(hub){const c=NEXT_CHAPTER.find(c=>c.id===hub);if(c)return c.index?NEXT_CHAPTER[c.index-1].qid:'M16';if(hub==='KY17')return 'M16';const i=HUB_ORDER.indexOf(hub);return i>0?mainQuestOf(HUB_ORDER[i-1]):null;}
+function hubUnlocked(st,hub){if(!HUB_ORDER.includes(hub)||hub.startsWith('NX')&&st.quests.M16!=='complete')return false;const q=hubRequirement(hub);return !q||st.quests[q]==='complete';}
 function fixQuestChain(st){
   for(const id of Object.keys(QUESTS)) if(!st.quests[id]) st.quests[id]="locked";
-  for(let i=1;i<HUB_ORDER.length;i++){ const a=mainQuestOf(HUB_ORDER[i-1]), b=mainQuestOf(HUB_ORDER[i]); if(a&&b&&st.quests[a]==="complete"&&st.quests[b]==="locked") st.quests[b]="available"; }
+  for(const hub of HUB_ORDER){const b=mainQuestOf(hub);if(b&&hubUnlocked(st,hub)&&st.quests[b]==='locked')st.quests[b]='available';}
+  st.shikokuChugokuClear=st.quests.C09==='complete';
   for(const id of Object.keys(QUESTS)){ const Q=QUESTS[id]; if(Q.main&&st.quests[id]==="complete"&&Q.rank!=null) st.moeRank=Math.max(st.moeRank||0,Q.rank); }
 }
 function sideQuestOf(hub){ return Object.keys(QUESTS).find(k=>!QUESTS[k].main&&QUESTS[k].hub===hub); }
@@ -1740,6 +1781,7 @@ const POCO_TOWNS=[
  ['S6ドリーム舞台','九州グランドフィナーレ','S6到達だけをゴールにせず、配信を続けたい理由を仲間と確かめる。','九州の推し色が舞台へ集まり、到達した先にも次の配信の約束が生まれた。','S6プレッシャー'],
  ['炭都アンコール街','大蛇山アンコール祭','全クリア後の炭都で、これまで支えてくれた全員へアンコールを届ける。','炭都の櫓にアンコールの灯りがともり、九州の思い出が新しい挑戦を呼ぶ。','アンコール試練']
 ];
+POCO_TOWNS.push(...NEXT_CHAPTER.map(c=>[c.pref+'の合同配信街',c.title+'・交流祭',c.before,c.after,['休息取り残し','声量競争','当番固定','文化すれ違い','予定過密','初見迷子','感謝忘れ','締め前焦り','絆分断'][c.index]]));
 const POCO_ROLES={hero:'枠の作戦・育成・装備を整えるアシスタント。もえのS6への道を支える。',moe:'元アイドルのメインライバー。応援の数字の向こうにいる一人へ歌と会話を届ける。',kohei:'配信遠征の輸送担当。初見案内と枠の進行を滞らせない。',naoki:'配信照明と電源の担当。ナイト隊の守りと攻撃の切り替えを見守る。',mio:'ライバーとファミリーの体調管理役。回復の順番を読み、無理な連戦を止める。',kayo:'長時間イベントの補給担当。MPと休息の計画でイベラスを支える。',tsumugi:'配信機材とコメント導線の設計役。キラコメ連携の橋渡しが得意。',makoto:'ステージの安全設計と防護担当。締め前の強攻撃から全員を守る。',gaku:'音声・回線のトラブル対応役。敵の守りを見抜き、通る声をつくる。'};
 for(const [c,role]of Object.entries(POCO_ROLES))CHARS[c].pocoRole=role;
 Object.assign(FACILITY,{challenge:{mark:'挑',name:'特別チャレンジ受付',color:'#E8A5BE'},studio:{mark:'絆',name:'ファミリー交流所',color:'#83B9AE'}});
@@ -1832,7 +1874,7 @@ function renderGearCatalog(){const d=G.sheetData,source=d.gearSource||'all',grou
  return `<p>追加装備1,000種：共通296種・職業専用704種。各職業32種。入手先ごとに250種。</p><p class="small">共通装備はつなぎ用。職業専用装備は熟練度2～40が必要です。同じ成長段階・部位では専用品の基礎性能が上回ります。</p>${filter('gearSource',[['all','全入手先'],...Object.entries(GEAR_SOURCES)])}${filter('gearGroup',[['all','全職業'],['common','共通'],['job','職業専用']])}${filter('gearSlot',[['all','全部位'],['w','武器'],['a','防具'],['acc','アクセサリー']])}${p.nav}<div class="stack">${p.list.map(id=>{const it=EQUIP[id];return `<div class="setcard"><b>${eqBadge(id)}${esc(it.name)}</b><p class="small">${esc(it.text)}</p><p class="small">成長段階${it.gearTier+1}/8 ${G.st.owned[id]||G.st.keep?.includes(id)?'・所持／預かり中':''}</p></div>`;}).join('')}</div>${p.nav}`;
 }
 function renderGearEvents(){const st=G.st,hub=curHub(),ev=st.gearEvent,it=ev&&EQUIP[ev.id];const p=gearPager(NEW_GEAR_IDS.filter(id=>EQUIP[id].gearSource==='event'&&EQUIP[id].gearHub===hub));return `<p>本編とは別の装備依頼。1件ずつ受注し、各報酬は1回だけ。受注前の勝利は数えません。</p>${it?`<section class="setcard"><b>受注中：${esc(it.name)}</b><p>${esc(MAPS[it.gearHub].name)}の住民2人と会話＋受注後の通常戦闘${2+Math.floor(it.gearTier/2)}勝（現在${Math.max(0,(st.townBattles?.[it.gearHub]||0)-ev.wins)}勝）。</p><p>${esc(gearEventReason(st,ev.id,true)||'達成！ 報酬を受け取れます。')}</p><button class="btn primary" data-a="gearEventClaim" data-v="${ev.id}" ${gearEventReason(st,ev.id,true)?'disabled':''}>報酬を受け取る</button><button class="btn" data-a="gearEventCancel">取り消す（報酬なし）</button></section>`:''}${p.nav}<div class="stack">${p.list.map(id=>{const e=EQUIP[id];return `<section class="setcard"><b>${eqBadge(id)}${esc(e.name)}</b><p class="small">${esc(e.text)}</p><p>住民2人と会話＋受注後の通常戦闘${2+Math.floor(e.gearTier/2)}勝</p><button class="btn" data-a="gearEventAccept" data-v="${id}" ${gearEventReason(st,id)?'disabled':''}>${st.gearEventDone?.[id]?'受取済み':'この報酬の依頼を受ける'}</button></section>`;}).join('')}</div>${p.nav}`;}
-function renderGearRematches(){const st=G.st;return `<p>撃破済みボスと再戦し、装備を集められます。手動操作のみ・オート不可。初回限定報酬は再支給されません。再戦でも経験値・ゴールド、通常のドロップ抽選があります。</p>${gearRematchList(st,curHub()).map(([id,b])=>`<section class="setcard"><b>${esc(b.name)}</b><p>推奨Lv${bossRecommendedLevel(b.q)}／参加料${30+5*b.q}G／追加決戦装備は再戦勝利時1/3で抽選</p><button class="btn primary" data-a="gearRematch" data-v="${id}" ${st.gold<30+5*b.q||!isSafe()||st.run||streamPending()?'disabled':''}>参加料を払い再戦</button></section>`).join('')||'<p>この街で撃破したボスはまだいません。</p>'}`;}
+function renderGearRematches(){const st=G.st;return `<p>撃破済みボスと再戦し、装備を集められます。手動操作のみ・オート不可。初回限定報酬は再支給されません。再戦でも経験値・ゴールド、通常のドロップ抽選があります。</p>${gearRematchList(st,curHub()).map(([id,b])=>`<section class="setcard"><b>${esc(b.name)}</b><p>推奨Lv${(b.chapterLevel||bossRecommendedLevel(b.q))}／参加料${30+5*b.q}G／追加決戦装備は再戦勝利時1/3で抽選</p><button class="btn primary" data-a="gearRematch" data-v="${id}" ${st.gold<30+5*b.q||!isSafe()||st.run||streamPending()?'disabled':''}>参加料を払い再戦</button></section>`).join('')||'<p>この街で撃破したボスはまだいません。</p>'}`;}
 
 /* v6.15: active companions, personal experience, permanent job learning. */
 function ensureMemberXp(st){if(!st.memberXp){st.memberXp={};for(const c of st.roster)st.memberXp[c]=Math.min(XP_CAP,st.xp||0);}for(const c of st.roster)if(st.memberXp[c]==null)st.memberXp[c]=Math.min(XP_CAP,st.xp||0);return st.memberXp;}
@@ -1856,6 +1898,21 @@ function finishCompanionGrowth(st,run,res,before){const detail={},growth=[];st.l
  res.characterGrowth=growth;res.statDetail=detail;res.statUps=null;if(!st.lastMpGrowth.members.length)delete st.lastMpGrowth;ensureVitals(st);}
 const SPECIAL_LEVELS=[120,200,300,400,500,600,700,800,900,999];
 FACILITY.specialExit={mark:'帰',name:'特設エリア帰還口',color:'#83B9AE'};
+
+/* 新章は特設エリアと並行して育成できる。本編進行を下限レベルで強制制限しない。 */
+for(const c of NEXT_CHAPTER){for(let j=1;j<=3;j++){const a=AREAS[c.id+'-A'+j];a.chapterLevel=c.level+(j-1)*5;a.chapterIndex=c.index;}BOSSES[c.bid].chapterLevel=c.level+10;BOSSES[c.bid].chapterIndex=c.index;QUESTS[c.qid].chapterLevel=c.level;QUESTS[c.sid].chapterLevel=c.level;
+ const shop=SHOPS[c.shopId];
+ JOB_IDS.forEach((job,i)=>{for(const [k,slot]of ['w','a','acc'].entries()){const id='NXG'+c.id.slice(2)+job.slice(1)+k,needR=30+c.index*10;const stats=slot==='w'?{atk:55+c.index*10,commentA:4+c.index}:slot==='a'?{d:25+c.index*5,hp:110+c.index*20}:{c:18+c.index*4,hp:65+c.index*12};EQUIP[id]={slot,job,needR,expansion:616,name:c.pref+'遠征・'+JOBS[job].name+'の'+['指示具','防護服','連携証'][k],...stats,price:7000+c.index*2000,text:JOBS[job].name+'専用・熟練度'+needR+'以上。'+gearStatsText(stats)+'。入手：'+c.name+'のギア店。'};shop.items.push(id);}});
+ const reward='NXR'+c.id.slice(2);EQUIP[reward]={slot:'acc',name:c.pref+'の合同枠の絆',c:20+c.index*4,hp:100+c.index*20,commentA:10+c.index,rare:true,nonSale:true,price:0,text:'地域ボス初回撃破報酬。最大MP＋'+(20+c.index*4)+'／最大HP＋'+(100+c.index*20)+'／コメントのエール＋'+(10+c.index)+'。'};c.reward=reward;
+}
+function chapterXP(L){return Math.max(1000,Math.ceil((xpFor(Math.min(999,L+1))-xpFor(L))*0.18));}
+function chapterBossReward(st,run,res){const c=NEXT_CHAPTER.find(c=>c.bid===run.bossId);if(!c||run.kind!=='boss')return;st.chapterRewards=st.chapterRewards||{};if(!st.chapterRewards[c.id]){if(giveGear(st,c.reward,res,'新章ボス初回報酬'))st.chapterRewards[c.id]=true;else res.notes.push('新章の絆報酬は保管場所が満杯です。空きを作り、ボス再戦で受け取れます。');}}
+
+function chapterBossProfile(b,df,ps){const L=b.chapterLevel,i=b.chapterIndex||0;return {hp:Math.ceil(L*(150+i*22)*df.hp*ps.hp),def:Math.ceil(L*.8),atkMult:df.atk*ps.atk,cycle:[{t:'s',p:Math.ceil(L*(5+i*.25))},{t:'a',p:Math.ceil(L*(3.5+i*.18))},{t:'c',p:0},{t:'a',p:Math.ceil(L*(6+i*.35)),heavy:true}]};}
+function renderChapterBoss(b,bid){const st=G.st,L=b.chapterLevel,ps=bossScale(bid,st.party.length),df=DIFFICULTY[st.settings.difficulty],power=m=>Math.ceil(Math.ceil(L*m)*df.atk*ps.atk),c=NEXT_CHAPTER.find(c=>c.bid===bid),profile=chapterBossProfile(b,df,ps),counter={guard:'ガード',comment:'応援コメント',damage:'攻撃'}[b.cue];return `<p><b>${esc(b.name)}</b>／適正Lv${L}・現在Lv${levelOf(st.xp)}</p><p class="warn">手動操作のみ（オート使用不可）。</p><p>HP ${profile.hp}／防御力 ${Math.ceil(L*.8)}／難易度 ${esc(df.name)}</p><p>行動周期：単体${Math.ceil(profile.cycle[0].p*profile.atkMult)} → 全体${Math.ceil(profile.cycle[1].p*profile.atkMult)} → ため → 全体強攻撃${Math.ceil(profile.cycle[3].p*profile.atkMult)}。</p><p>ため予告中に異なる2人が${counter}すると、直後の強攻撃を20％軽減しエール＋12。攻撃しない回復・防護・エールの技能も対処に数えます。</p><p>通常攻撃を35％軽減するノイズシールドは、エール40以上かキラコメ完成で解除。職業技は軽減されません。6ターン目以降、3ターンごとに敵の攻撃が10％増加（最大50％）。装備・固有技・MP回復を準備しましょう。</p><p>初回の地域限定報酬：${esc(EQUIP[c.reward].name)}。${esc(gearStatsText(EQUIP[c.reward]))}。保管場所が満杯なら、空きを作ってファミリー施設で再戦すると受け取れます。ボスから経験値・ゴールドも獲得。</p><p class="small">敗北・撤退しても受注と討伐数は保持。0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`;}
+
+function renderNextChapter(){const st=G.st,open=st.quests.M16==='complete';return `<p>九州編の本編依頼M16クリア後、四国4県・中国5県を巡る合同配信ツアーに進めます。大牟田のM17は必須ではありません。</p><p>レベル・同行者・装備・職業熟練度・習得技を引き継ぎます。街ごとに本編依頼・任意依頼・交流祭・3つの通常敵エリアと地域ボスがあります。</p><p class="${open?'good':'warn'}">${st.shikokuChugokuClear?'四国・中国エリア編クリア！':open?'新章が解放されました。':'未解放：九州本編M16をクリアしてください。'}</p><p class="small">ボス戦は手動操作のみ（オート不可）。新しい街は前の街の本編依頼クリアで解放。駅の連絡船などの路線・運賃はゲーム内の架空設定です。</p><div class="stack">${NEXT_CHAPTER.map(c=>{const ok=hubUnlocked(st,c.id),here=curHub()===c.id;return `<section class="setcard"><b>${c.pref}・${c.name}</b><p>${c.qid} ${c.title}／適正Lv${c.level}～${c.level+10}</p><p>${esc(c.before)}</p><p>${st.quests[c.qid]==='complete'?'✓ 本編クリア':ok?'挑戦可能':'解放条件：'+hubRequirement(c.id)+'クリア'}</p>${here?'<p>現在地</p>':`<button class="btn" data-a="worldGo" data-v="${c.id}" ${!ok||!isSafe()||st.run||st.stream||streamPending()?'disabled':''}>${ok?'向かう（1枠）':'未解放'}</button>`}</section>`;}).join('')}</div>`;}
+
 const SPECIAL_THEMES=['初見の星路','コアの回廊','コメント万華鏡','キラコメ星雲','ぽこナイト城','締め前時空','ファミリー銀河','イベラス深淵','S6天頂宮','九州アンコール神域'];
 const SPECIAL_STAGES=SPECIAL_LEVELS.map((level,i)=>({id:'SP'+String(i+1).padStart(2,'0'),area:'SP'+String(i+1).padStart(2,'0')+'-A1',boss:'SB'+String(i+1).padStart(2,'0'),challenge:'SC'+String(i+1).padStart(2,'0'),level,name:SPECIAL_THEMES[i],index:i}));
 (function addSpecialWorld(){for(const s of SPECIAL_STAGES){const i=s.index,q=Math.ceil((s.level-5)/1.5),template=AREAS['KY17-A3'];AREAS[s.area]={...template,id:s.area,name:s.name,prefix:s.name,lore:'S6を目指した九州の声が集まった特設訓練域。同行4人の育成・転職技・永続ボーナスを組み合わせる。',q,specialStage:i,list:template.list.map(r=>r.slice())};
@@ -1866,8 +1923,8 @@ const SPECIAL_STAGES=SPECIAL_LEVELS.map((level,i)=>({id:'SP'+String(i+1).padStar
  const tid='STG'+String(i+1).padStart(2,'0');EQUIP[tid]={slot:'acc',name:s.name+'の挑戦証',c:25+i*4,hp:100+i*20,crit:6,price:0,nonSale:true,rare:true,text:'特設チャレンジ初回報酬。最大MP＋'+(25+i*4)+'、最大HP＋'+(100+i*20)+'、会心率＋6％。'};
  const cb='SBC'+String(i+1).padStart(2,'0');BOSSES[cb]={...BOSSES[s.boss],name:s.name+'・極限枠主'};POCO_TRIALS.push({id:s.challenge,name:s.name+'・継承実技',unlock:'M16',boss:cb,reward:tid,q,level:s.level,fee:1000+i*500,turns:26+i*2,party:4,jobs:3,skills:6+i,masters:3+Math.floor(i/2),guards:2,kira:i>=2,desc:'レベル999へ向けた特設チャレンジ。現在職と前職の習得技を使い分け、敵の予告に対処する。',specialStage:i});
  }} )();
-function recommendedAreaLevel(ar){return ar.specialStage!=null?SPECIAL_STAGES[ar.specialStage].level:areaRecommendedLevel(ar.q);}
-function requiredAreaLevel(ar){return ar.specialStage!=null?Math.max(100,SPECIAL_STAGES[ar.specialStage].level-40):areaRequiredLevel(ar.q);}
+function recommendedAreaLevel(ar){return ar.chapterLevel|| (ar.specialStage!=null?SPECIAL_STAGES[ar.specialStage].level:areaRecommendedLevel(ar.q));}
+function requiredAreaLevel(ar){return ar.chapterLevel?Math.max(1,ar.chapterLevel-25):ar.specialStage!=null?Math.max(100,SPECIAL_STAGES[ar.specialStage].level-40):areaRequiredLevel(ar.q);}
 function specialReason(st,s){if(!s)return '特設エリアが見つかりません。';if(st.quests.M16!=='complete')return '本編M16クリア後に解放されます。';if(levelOf(st.xp)<Math.max(100,s.level-40))return 'パーティLv'+Math.max(100,s.level-40)+'以上で解放されます。';if(s.index&&!st.bossDefeated[SPECIAL_STAGES[s.index-1].boss])return '前の特設エリアのボスを撃破してください。';return '';}
 function enterSpecial(id){const st=G.st,s=SPECIAL_STAGES.find(s=>s.id===id);if(G.readOnly||st.run||st.stream||streamPending()||!isSafe()||G.sheet!=='specialWorld'||specialReason(st,s))return false;st.specialReturn={map:st.mapId,x:st.pos.x,y:st.pos.y};travelMap(s.id,3,15);return true;}
 function specialXP(s){return Math.max(1000,Math.ceil((xpFor(Math.min(999,s.level+1))-xpFor(s.level===999?998:s.level))*0.65));}
@@ -1977,7 +2034,7 @@ function generateTown(id,seed){
   if(style===6)for(let y=6;y<29;y+=6)rect(5,y,38,1,'#');
   for(let b=0;b<18;b++){const x=ri(3,41),y=ri(3,26);rect(x,y,ri(2,4),ri(2,3),b%3?'T':'#');if(b%3===0)rect(x,y-1,3,1,'c');}
   rect(cx-3,cy-3,7,7,',');
-  m.objects.push({id:"station_"+id,x:24,y:20,type:"station",label:m.name+"駅（新幹線）"});
+  m.objects.push({id:"station_"+id,x:24,y:20,type:"station",label:m.name+(id.startsWith("NX")?"広域交通駅（連絡船など）":"駅（新幹線）")});
   const pinned=m.objects.filter(o=>['door','gate','boss','tower'].includes(o.type));
   const used=new Set(pinned.map(o=>o.x+','+o.y));
   const anchors=[base.safeAnchor.slice(),[19,19]];
@@ -2169,7 +2226,7 @@ function challengeReward(st,run,res){
 }
 function renderChallenges(){const st=G.st;return `<p>Pocochaを題材にした特別実技チャレンジ。本編とは別の達成記録です。</p><p class="small">ボス戦・特別チャレンジは手動操作のみ（オート使用不可）。街の安全地帯から挑戦。参加料は毎回必要です。HP・MP・道具は持ち越し、制限ターン超過は失敗。全滅時の追加ゴールド損失はありません。報酬・経験値・熟練度は初回達成のみ。</p><div class="stack">${POCO_TRIALS.map(d=>{const r=(st.challenges||{})[d.id]||{},reason=trialEntryReason(st,d);return `<section class="setcard"><h3 class="label">${esc(d.name)} ${r.cleared?'✓ 達成済み':''}</h3><p>${esc(d.desc)}</p><p class="small">推奨レベル${d.level}／参加料${d.fee}G／挑戦${r.attempts||0}回</p><p>${esc(trialRequirements(d))}</p><p class="small good">初回報酬：${esc(EQUIP[d.reward].name)}・経験値${d.specialStage!=null?specialXP(SPECIAL_STAGES[d.specialStage])*5:60+d.q*6}・${150+d.q*20}G・チケット100</p>${reason?`<p class="small warn">${esc(reason)}</p>`:''}<button class="btn primary" data-a="trialStart" data-v="${d.id}" ${reason?'disabled':''}>${r.cleared?'練習に挑戦（報酬なし）':'参加料を払って挑戦'}</button></section>`;}).join('')}</div>`;}
 function localFestivalStatus(st,hub){return {talks:Object.entries(NPCS).filter(([id,n])=>n.hub===hub&&id!=='moe'&&st.talked[id]).length,wins:(st.townBattles||{})[hub]||0,rank:Math.max(...st.roster.map(c=>rankOf(jpOf(st,c,st.jobs[c]))))};}
-function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `<button class="btn primary" data-a="familyParty">同行者の編成・入れ替え（最大4人）</button><button class="btn" data-a="openSheet" data-k="specialWorld">特設エリア・Lv999への道</button><h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><button class="btn" data-a="openSheet" data-k="gearEvents">街の装備依頼（報酬250種）</button><button class="btn" data-a="openSheet" data-k="gearRematches">ボス再戦受付</button><button class="btn" data-a="openSheet" data-k="gearCatalog">追加装備図鑑（1,000種）</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
+function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `<button class="btn primary" data-a="familyParty">同行者の編成・入れ替え（最大4人）</button><button class="btn primary" data-a="openSheet" data-k="nextChapter">四国・中国エリア編（九州M16クリアで解放）</button><button class="btn" data-a="openSheet" data-k="specialWorld">特設エリア・Lv999への道</button><h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><button class="btn" data-a="openSheet" data-k="gearEvents">街の装備依頼（報酬250種）</button><button class="btn" data-a="openSheet" data-k="gearRematches">ボス再戦受付</button><button class="btn" data-a="openSheet" data-k="gearCatalog">追加装備図鑑（1,000種）</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
 function claimFestival(){const st=G.st,hub=curHub(),s=localFestivalStatus(st,hub);if(G.readOnly||st.run||st.stream||!isSafe()||s.talks<2||s.wins<2||s.rank<3||(st.festivals||{})[hub])return false;st.festivals=st.festivals||{};st.festivals[hub]=true;st.gold+=60+HUB_ORDER.indexOf(hub)*20;st.tickets+=40;giveItem(st,'PC02',2,null,'街イベント');commit();render();say([['',POCO_TOWNS[HUB_ORDER.indexOf(hub)][3]],['もえ','私たちの枠にも、この街でできた家族みたいな絆を持って帰ろう。']]);return true;}
 function pocoBattleStatusFull(run){if(!run.pocoRules)return '';const d=trialOf(run.challengeId);return `<div class="poco-battle"><b>${d?'特別チャレンジ：'+esc(d.name):run.enemies.some(e=>e.boss)?'ライバル枠との決戦':'枠を乱すノイズ戦'}</b>${run.enemies.some(e=>e.boss)?`<p class="small">ノイズシールド：${run.A<40&&!run.kiraDone?'通常攻撃を35％軽減。エール40以上・キラコメ完成で解除。職業技は軽減されません。':'解除中'}／6ターン目以降は3ターンごとに敵攻撃＋10％（最大50％）</p>`:''}${run.aleLeak?'<p class="small">毎ターン、エール−'+run.aleLeak+'</p>':''}${run.mpLeak?'<p class="small">毎ターン、生存者全員のMP−'+run.mpLeak+'</p>':''}${d?`<ul class="list">${trialConditions(run).map(c=>`<li>${c.ok?'✓':'未'} ${esc(c.label)}（現在${c.value}）</li>`).join('')}</ul>`:''}</div>`;}
 
@@ -2200,7 +2257,7 @@ function traitsTurnStart(run, log){
     if(hasTrait(m,"J14")){ const o=al.filter(t=>t!==m).sort((x,y)=>x.c-y.c)[0]; if(o&&o.c<(o.maxC||10)){ o.c+=1; log.push(`${m.name}のまかない：${o.name}のMP＋1`); } }
   }
 }
-function fieldEnemyStats(d,q,diff=DIFFICULTY.std){const stage=AREAS[d.areaId]?.specialStage;if(stage!=null){const s=SPECIAL_STAGES[stage],L=s.level,r=(d.rarity||1)-1;return {hp:Math.ceil(L*(42+stage*2)*(1+r*.1)*diff.hp),def:Math.ceil(L*.65),cycle:d.cycle.map(([t])=>({t,p:t==='c'?0:Math.ceil(L*(t==='s'?4+stage*.12:3.4+stage*.1)*(1+r*.04)*diff.atk)}))};}const T=ENEMY_TUNE,rb=(d.rarity||1)-1,x=areaStrength(q);return {
+function fieldEnemyStats(d,q,diff=DIFFICULTY.std){const ar=AREAS[d.areaId];if(ar?.chapterLevel){const L=ar.chapterLevel,r=(d.rarity||1)-1;return {hp:Math.ceil(L*(38+ar.chapterIndex*2)*(1+r*.1)*diff.hp),def:Math.ceil(L*.6),cycle:d.cycle.map(([t])=>({t,p:t==='c'?0:Math.ceil(L*(t==='s'?4.1+ar.chapterIndex*.15:3.1+ar.chapterIndex*.1)*(1+r*.04)*diff.atk)}))};}const stage=AREAS[d.areaId]?.specialStage;if(stage!=null){const s=SPECIAL_STAGES[stage],L=s.level,r=(d.rarity||1)-1;return {hp:Math.ceil(L*(42+stage*2)*(1+r*.1)*diff.hp),def:Math.ceil(L*.65),cycle:d.cycle.map(([t])=>({t,p:t==='c'?0:Math.ceil(L*(t==='s'?4+stage*.12:3.4+stage*.1)*(1+r*.04)*diff.atk)}))};}const T=ENEMY_TUNE,rb=(d.rarity||1)-1,x=areaStrength(q);return {
  hp:Math.ceil((d.baseHP+12*(q-1))*diff.hp*T.hp*(1+T.rarHp*rb)*x.hp),
  def:d.baseDEF+Math.floor((q-1)/3)+T.def+(rb>=2?1:0)+x.def,
  cycle:d.cycle.map(([t,p])=>({t,p:t==='c'?0:Math.ceil((p*T.atkMul+T.atkAdd+Math.floor(4*(q-1)/5))*(1+T.rarAtk*rb)*diff.atk*x.atk)}))};}
@@ -2229,6 +2286,7 @@ function createBossRun(st, bossId){
   run.enemies.push({ slot:0, id:bossId, name:b.name, display:b.name, boss:true, maxHP:hp, hp, def:8+Math.floor(q*0.6),
     cycle:[{t:"s",p:12+q+ENEMY_TUNE.bossAdd},{t:"a",p:6+Math.floor(q/2)+ENEMY_TUNE.bossAdd},{t:"c",p:0},{t:"a",p:10+3*q+ENEMY_TUNE.bossAdd,heavy:true}], atkMult:diff.atk*ps.atk*ENEMY_TUNE.bossAtk });
   if(b.specialStage!=null){const s=SPECIAL_STAGES[b.specialStage],L=s.level,e=run.enemies[0];e.maxHP=e.hp=Math.ceil(L*(145+s.index*8)*diff.hp);e.def=Math.ceil(L*.9);e.atkMult=diff.atk;e.cycle=[{t:'s',p:Math.ceil(L*(4.8+s.index*.16))},{t:'a',p:Math.ceil(L*(3.4+s.index*.1))},{t:'c',p:0},{t:'a',p:Math.ceil(L*(5.6+s.index*.18)),heavy:true}];}
+  if(b.chapterLevel){const x=chapterBossProfile(b,diff,ps),e=run.enemies[0];Object.assign(e,{maxHP:x.hp,hp:x.hp,def:x.def,atkMult:x.atkMult,cycle:x.cycle});}
   run.cue = {kind:b.cue, bits:[], ready:false, active:false};
   traitsBattleStart(run);
   return run;
@@ -2522,10 +2580,10 @@ function applyVictory(st, run){
   ensureMemberXp(st);const beforeMembers=captureCompanionStats(st,run.party.map(m=>m.cid));
   const n = run.enemies.length;
   if(run.kind==="challenge")challengeReward(st,run,res);
-  specialBossReward(st,run,res);newGearDrop(st,run,res);
+  specialBossReward(st,run,res);chapterBossReward(st,run,res);newGearDrop(st,run,res);
   if(run.kind==="field"){st.townBattles=st.townBattles||{};st.townBattles[run.hub]=(st.townBattles[run.hub]||0)+1;}
   if(run.kind==="field"){
-    res.xp = AREAS[run.areaId]?.specialStage!=null?specialXP(SPECIAL_STAGES[AREAS[run.areaId].specialStage]):n*Math.max(1,Math.floor((10+4*run.q)*0.85)); res.gold = n*(24+3*run.q);
+    res.xp = AREAS[run.areaId]?.chapterLevel?n*chapterXP(AREAS[run.areaId].chapterLevel):AREAS[run.areaId]?.specialStage!=null?specialXP(SPECIAL_STAGES[AREAS[run.areaId].specialStage]):n*Math.max(1,Math.floor((10+4*run.q)*0.85)); res.gold = n*(AREAS[run.areaId]?.chapterLevel?Math.ceil(AREAS[run.areaId].chapterLevel*6):24+3*run.q);
     res.xp=Math.max(0,...Object.values(awardExperience(st,res.xp,run.party.map(m=>m.cid)))); st.gold += res.gold;
     for(const e of run.enemies) st.killCount[e.id]=(st.killCount[e.id]||0)+1;
     // 道具のドロップ：倒した敵ごとに1回だけ抽選（1体から最大1個）
@@ -2545,14 +2603,14 @@ function applyVictory(st, run){
     }
   }
   if(run.kind==="boss"){
-    res.xp=BOSSES[run.bossId]?.specialStage!=null?specialXP(SPECIAL_STAGES[BOSSES[run.bossId].specialStage])*3:Math.floor((40+16*run.q)*0.85); res.gold=100+20*run.q;
+    res.xp=BOSSES[run.bossId]?.chapterLevel?chapterXP(BOSSES[run.bossId].chapterLevel)*4:BOSSES[run.bossId]?.specialStage!=null?specialXP(SPECIAL_STAGES[BOSSES[run.bossId].specialStage])*3:Math.floor((40+16*run.q)*0.85); res.gold=BOSSES[run.bossId]?.chapterLevel?BOSSES[run.bossId].chapterLevel*25:100+20*run.q;
     res.xp=Math.max(0,...Object.values(awardExperience(st,res.xp,run.party.map(m=>m.cid)))); st.gold+=res.gold;
   }
   if(run.kind==="field" && st.streamRetryGate && st.streamRetryGate[run.hub]) st.streamRetryGate[run.hub].battle=true;
   if(run.kind!=="challenge")ultraDrop(st,run,res);
   // JP
   for(const m of run.party){
-    const base = (AREAS[run.areaId]?.specialStage!=null||BOSSES[run.bossId]?.specialStage!=null)&&!(run.kind==="challenge"&&(!res.challenge||!res.challenge.first))?100+Math.floor(run.L*3):run.kind==="challenge"&&(!res.challenge||!res.challenge.first)?0:run.turn<=3?12:6+2*Math.min(3,m.valid);
+    const base = (AREAS[run.areaId]?.chapterLevel||BOSSES[run.bossId]?.chapterLevel||AREAS[run.areaId]?.specialStage!=null||BOSSES[run.bossId]?.specialStage!=null)&&!(run.kind==="challenge"&&(!res.challenge||!res.challenge.first))?100+Math.floor(run.L*3):run.kind==="challenge"&&(!res.challenge||!res.challenge.first)?0:run.turn<=3?12:6+2*Math.min(3,m.valid);
     const cur = jpOf(st,m.cid,m.job); const R0=rankOf(cur);
     const gain = Math.min(JP_CAP-cur, base); st.jp[m.cid][m.job]=cur+gain; const R1=rankOf(cur+gain);
     res.jp.push({cid:m.cid, name:m.name, job:m.job, gain, R0, R1});
@@ -2607,7 +2665,7 @@ function eqChangeOk(st, mutate){ // 装備の付け替え・ジョブ変更の�
 function completeQuest(st, qid, res){
   if(st.quests[qid]==="complete") return;
   const Q=QUESTS[qid]; st.quests[qid]="complete"; st.activeQuest=null;
-  const xp = Q.main?40:10, tk = Q.main?200:80;
+  const xp = Q.chapterLevel?chapterXP(Q.chapterLevel)*(Q.main?2:1):Q.main?40:10, tk = Q.main?200:80;
   const ev = ITEM_EVENTS[qid]; if(ev) giveItem(st, ev[0], ev[1], res, `依頼${qid}の達成`);
   const actualXP=Math.max(0,...Object.values(awardExperience(st,xp))); st.tickets+=tk;
   if(res){ res.xp+=actualXP; res.tickets+=tk; res.quest=qid; }
@@ -2615,6 +2673,7 @@ function completeQuest(st, qid, res){
   if(qid==="M02") st.fukuokaClear=true;
   if(qid==="M16") st.kyushuClear=true;
   if(qid==="M17") st.omutaClear=true;
+  if(qid==="C09") st.shikokuChugokuClear=true;
   unlockSide(st);
 }
 /* ---- HP・MPの持ち越し（ユーザー指定：戦闘後も残り、宿屋で全回復） ---- */
@@ -2667,6 +2726,7 @@ const TOWN_FEATURES=[
 ["島唄と返事","歌い手と聞き手が返事の間を合わせている。","広場の輪に旅人も加わり、歌と返事がつながった。"],
 ["海を越えるエール","各地の住民から届いた便りを整理している。","旅した街の便りが並び、九州の仲間の声がつながった。"],
 ["故郷の特別公演","故郷の人たちが特別公演の準備を進めている。","故郷に旅の記録を飾る場所ができた。"]];
+TOWN_FEATURES.push(...NEXT_CHAPTER.map(c=>[c.title,'ノイズは静まり、'+c.side+'の合同配信準備が進んでいる。',c.after]));
 function townChange(st,hub){const i=HUB_ORDER.indexOf(hub),f=TOWN_FEATURES[i];if(!f)return null;const q=mainQuestOf(hub),sq=sideQuestOf(hub);const phase=st.quests[q]==="complete"?2:st.bossDefeated[(QUESTS[q]||{}).boss]?1:0;return {phase,title:f[0],text:phase===2?f[2]:phase===1?f[1]:`${f[0]}の準備中。住民はまだ声を届けるきっかけを探している。`,side:sq&&st.quests[sq]==="complete"?"任意依頼の協力者も加わり、街の案内を手伝っている。":""};}
 
 function newStream(st, hub, host, theme, style){
@@ -3554,7 +3614,8 @@ function objective(){
   const st=G.st; const q=st.activeQuest;
   if(streamPending()) return `${streamPending()}：配信目標を達成する（依頼帳から開始）`;
   if(q){ const Q=QUESTS[q]; if(st.quests[q]==="bossReady") return `${q}：${BOSSES[Q.boss].name}に挑む（${MAPS[Q.hub].name}の奥地）`; return `${q}：通常敵 ${st.qprog[q]||0}/${Q.kills}体（${HUBS[Q.hub].name}のA1～A3）`; }
-  const avail=Object.keys(QUESTS).find(k=>QUESTS[k].main&&st.quests[k]==="available"); if(avail){ const Q=QUESTS[avail]; return curHub()===Q.hub ? `依頼帳で「${avail} ${Q.name}」を受ける（2枠）` : `${HUBS[Q.hub].name}へ向かい、依頼「${avail}」を受ける`; }
+  const avail=[...NEXT_CHAPTER.map(c=>c.qid),...Object.keys(QUESTS)].find(k=>QUESTS[k].main&&st.quests[k]==="available"); if(avail){ const Q=QUESTS[avail]; return curHub()===Q.hub ? `依頼帳で「${avail} ${Q.name}」を受ける（2枠）` : `${HUBS[Q.hub].name}へ向かい、依頼「${avail}」を受ける`; }
+  if(st.shikokuChugokuClear) return "四国・中国エリア編クリア！ 各街の任意依頼・交流祭・特設エリアへ挑戦しよう";
   if(st.omutaClear) return "特別編（大牟田市）もクリア！ 育成・図鑑・配信の盛り上がり更新を続けられます";
   if(st.kyushuClear&&st.quests.M17!=="complete") return "九州編クリア！ 福岡市の西「大牟田市への道」から特別エリアへ行けます";
   if(st.kyushuClear) return "九州編クリア！ 育成・図鑑・任意依頼・配信の盛り上がり更新を続けられます";
@@ -3619,7 +3680,7 @@ function statusBar(){
 function renderTitle(){
   return `<section class="title-screen">
     <canvas id="titleArt" width="160" height="64" aria-hidden="true"></canvas>
-    <h1 class="logo"><span class="main">トップライバーへの道</span><span class="sub">九州編</span></h1>
+    <h1 class="logo"><span class="main">トップライバーへの道</span><span class="sub">九州編 ／ 四国・中国エリア編</span></h1>
     <p class="lead">男女混合アイドルグループを脱退したヒロインと2人で旅立ち、九州・沖縄で仲間を集めてS6トップライバーへ導く、昭和風ドットRPG。</p>
     <p class="note">主人公とヒロイン役の名前・性別を選べます。22ジョブ・装備・道具100種・戦闘オートに対応。</p>
     <div class="menu">
@@ -3630,7 +3691,7 @@ function renderTitle(){
       <button class="btn share-btn" data-a="openSheet" data-k="share">📣 友だちに教える（URLを共有）</button>
     </div>
     <p class="note">配信文化を参考にした非公式の創作ゲームです。実在のサービス・アカウントとは連携しません。BGMと効果音は最初からONです（画面に触れると鳴り始めます。設定で消音にできます）。${IS_PUBLIC?"記録はこの端末のブラウザへ自動保存されます。":"記録は端末とクラウドへ自動保存されます。"}</p>
-    <p class="note">${IS_PUBLIC?`公開版 v${GAME_VERSION}（${window.TLR_BUILD||""}）・`:""}この版（v${GAME_VERSION}）の収録範囲：九州・沖縄の全17拠点、本編M01～M17（大牟田市は本編クリア後）。</p>
+    <p class="note">${IS_PUBLIC?`公開版 v${GAME_VERSION}（${window.TLR_BUILD||""}）・`:""}この版（v${GAME_VERSION}）の収録範囲：九州・沖縄17拠点＋四国・中国9拠点。本編M01～M17・C01～C09。新章はM16クリアで解放。</p>
   </section>`;
 }
 /* タイトル画面：星のまたたき・流れ雲・流れ星・2人の呼吸（v5.36） */
@@ -3997,11 +4058,11 @@ function interact(o){
     case "npc": return talkNpc(o.npc);
     case "shop": return openSheet("shop",{shop:o.shop, npc:o.npc, tab:"buy"});
     case "door": return travelMap(o.to,o.tx,o.ty);
-    case "gate": { if(!hubUnlocked(st,o.to)){ const q=mainQuestOf(HUB_ORDER[hubIndex(o.to)-1]); return say([["",`この先の${HUB_NAME_OF(o.to)}へは、${HUBS[QUESTS[q].hub].name}の本編依頼「${q} ${QUESTS[q].name}」を終えると進めます。`]]); }
+    case "gate": { if(!hubUnlocked(st,o.to)){ const q=hubRequirement(o.to); return say([["",`この先の${HUB_NAME_OF(o.to)}へは、${HUBS[QUESTS[q].hub].name}の本編依頼「${q} ${QUESTS[q].name}」を終えると進めます。`]]); }
       return openSheet("travel",{to:o.to,tx:o.tx,ty:o.ty}); }
     case "box": return openBox(o);
     case "sign": { const a=AREAS[o.area];if(a.specialStage!=null){const s=SPECIAL_STAGES[a.specialStage];return say([["特設案内板",s.name+"・適正Lv"+s.level+"。通常敵50種。守護者との決戦は手動操作のみ。"],["特設案内板",a.lore]]);} const b=Object.values(BOSSES).find(x=>x.areaId===o.area);
-      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・挑戦目安Lv${requiredAreaLevel(a)}・適正Lv${recommendedAreaLevel(a)}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${bossRecommendedLevel(b.q)}）。`:"")],["案内板",a.lore]]); }
+      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・挑戦目安Lv${requiredAreaLevel(a)}・適正Lv${recommendedAreaLevel(a)}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${(b.chapterLevel||bossRecommendedLevel(b.q))}）。`:"")],["案内板",a.lore]]); }
     case "boss": return bossPrompt(o.boss);
     case "rest": return openSheet("rest");
     case "inn": return openSheet("inn",{label:o.label});
@@ -4048,7 +4109,7 @@ function bossPrompt(bid){
   if(BOSSES[bid]?.specialStage!=null)return openSheet("specialBoss",{bid});
   const st=G.st, b=BOSSES[bid]; const qid=Object.keys(QUESTS).find(k=>QUESTS[k].boss===bid);
   if(st.bossDefeated[bid]) return say([["","乱れは静まっている。図鑑から記録を見られます。"]]);
-  if(st.quests[qid]!=="bossReady") return say([["",`奥から大きな重なりを感じる（${b.name}・推奨レベル${bossRecommendedLevel(b.q)}）。依頼「${qid}」を受けて通常敵を倒すと挑戦できます。`]]);
+  if(st.quests[qid]!=="bossReady") return say([["",`奥から大きな重なりを感じる（${b.name}・推奨レベル${(b.chapterLevel||bossRecommendedLevel(b.q))}）。依頼「${qid}」を受けて通常敵を倒すと挑戦できます。`]]);
   openSheet("boss",{bid});
 }
 function say(lines, after){ G.dlg={lines, i:0, after}; render(); }
@@ -4073,7 +4134,7 @@ function travelMap(to,tx,ty){
   commit(); G.sheet=null; render(); if(G.screen==="explore") exploreBgm();
 }
 function travelHub(to,tx,ty){
-  const st=G.st; if(st.slots<1){ return openSheet("rest",{reason:"旅程枠が足りません。休息すると翌日6枠になります。"}); }
+  const st=G.st; if(!hubUnlocked(st,to))return toast("まだ進めません。解放条件："+hubRequirement(to)+"クリア"); if(st.slots<1){ return openSheet("rest",{reason:"旅程枠が足りません。休息すると翌日6枠になります。"}); }
   st.slots-=1; const first=!st.visitedHubs.includes(to);
   travelMap(to,tx,ty);
   const j=JOIN_PLAN.find(x=>x.hub===to);
@@ -4472,7 +4533,7 @@ function renderSheet(){
         <li>スマホ縦画面の片手操作（スティック・A/Bボタン・タップ）。スティックの左右は設定で入れ替え可能</li>
       </ul>
       <h3 class="label">この版の収録範囲</h3>
-      <p>福岡から九州・沖縄へ続く全17拠点、本編M01～M17、各街の任意依頼・地域ボス・配信イベントを実装しています。大牟田市は九州編クリア後に進めます。</p>
+      <p>九州・沖縄17拠点に加え、M16クリア後に四国4県・中国5県の9拠点へ進めます。本編C01～C09・任意依頼CS01～CS09・27エリア・地域ボス9体を追加。レベル・仲間・装備はそのまま引き継ぎます。大牟田編M17は任意です。</p>
       <h3 class="label">記録について</h3>
       ${IS_PUBLIC?`<p>行動を決めるたびに、この端末のブラウザ内へ自動保存します。ブラウザの閲覧データを消すと記録も消えるため、設定の「バックアップを表示」で控えを取っておいてください。別の端末へ移すときも、この控えを「記録の復元」に貼り付けます。</p>`:`<p>行動を決めるたびに自動保存します。端末のブラウザ内に加え、claude.ai上のあなただけが読める保存場所にも送るので、アプリの更新やタブを閉じても続きから遊べます。念のため、設定の「バックアップを表示」で控えておくこともできます。</p>`}
       <h3 class="label">創作と非公式について</h3>
@@ -4486,15 +4547,16 @@ function renderSheet(){
     case "nearby": { const near=nearbyObjects(); return sheetWrap("近くを調べる", near.length? `<div class="stack">${near.map(o=>`<button class="btn" data-a="interactId" data-v="${o.id}">${facBadge(o)}${esc(o.label)}</button>`).join("")}</div>` : `<p>近くに調べられるものはありません。道しるべから目的地を選べます。</p>`); }
     case "guide": { const m=MAPS[st.mapId]; return sheetWrap("道しるべ", `<p class="small">選ぶと、その場所まで実際に歩きます（途中の遭遇エリアでは抽選があります）。挑戦目安は低めの攻略目安、適正は育成・装備・熟練技を含む推奨です。通常エリアに入場レベル制限はありません。特設エリアには専用の解放条件があります。</p><div class="stack">${m.objects.filter(o=>o.type!=="tower").map(o=>{ const a=o.area?AREAS[o.area]:null; return `<button class="btn" data-a="guideTo" data-v="${o.id}">${facBadge(o)}${esc(o.label)}${a?`（挑戦目安Lv${requiredAreaLevel(a)}・適正Lv${recommendedAreaLevel(a)}）`:""}</button>`; }).join("")}</div>`); }
     case "quests": return sheetWrap("イベント・依頼リスト", renderQuests());
-    case "station": return sheetWrap("新幹線の駅", renderStation());
+    case "station": return sheetWrap("駅・広域交通案内", renderStation());
     case "railConfirm": {const fare=railFare(curHub(),d.to);return sheetWrap("乗車の確認",`<p>${esc(HUBS[curHub()].name)} → ${esc(HUBS[d.to].name)}</p><p>路線距離${railDistance(curHub(),d.to)}／運賃<b>${fare}ゴールド</b>・旅程枠1</p><p>所持金 ${st.gold} → ${st.gold-fare}ゴールド</p><div class="stack"><button class="btn primary" data-a="railBoard" data-v="${d.to}" ${st.gold<fare||st.slots<1?"disabled":""}>運賃を払って移動する</button><button class="btn" data-a="openSheet" data-k="station">駅に戻る</button></div>`);}
     case "questAbandon": return sheetWrap("依頼の放棄を確認",`<p>「${esc(QUESTS[d.id].name)}」を放棄しますか？ 討伐数はリセットされ、受注時の旅程枠は戻りません。</p><div class="stack"><button class="btn" data-a="abandonQuest" data-v="${d.id}">放棄する</button><button class="btn primary" data-a="openSheet" data-k="quests">続ける</button></div>`);
-    case "map": return sheetWrap("九州と沖縄の地図", renderWorld());
+    case "map": return sheetWrap("九州・四国・中国の広域マップ", renderWorld());
     case "travel": return sheetWrap("移動", `<p>${esc(HUBS[d.to].name)}へ向かいますか？（旅程枠1を使います。残り${st.slots}枠）</p><div class="stack"><button class="btn primary" data-a="doTravel">向かう</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "rest": return sheetWrap("休息", `${d.reason?`<p class="warn">${esc(d.reason)}</p>`:""}<p>日付を進めると翌日になり、旅程枠が6に戻ります（費用なし）。HPとMPは回復しません。回復は宿屋で。今は${st.day}日目・残り${st.slots}枠。</p><div class="stack"><button class="btn primary" data-a="doRest">日付を進める</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "party": return sheetWrap("編成", renderParty());
     case "rename": return sheetWrap("名前の変更",renderRename());
     case "challenges": return sheetWrap("特別チャレンジ",renderChallenges());
+    case "nextChapter": return sheetWrap("四国・中国エリア編",renderNextChapter());
     case "specialWorld": return sheetWrap("特設エリア・Lv999への道",renderSpecialWorld());
     case "specialBoss": return sheetWrap("特設ボス",renderSpecialBoss());
     case "gearCatalog": return sheetWrap("追加装備図鑑",renderGearCatalog());
@@ -4514,7 +4576,7 @@ function renderSheet(){
     case "dex": return sheetWrap("ノイズ図鑑", renderDex());
     case "shop": return sheetWrap(SHOPS[d.shop].name, renderShop());
     case "moe": return sheetWrap("もえ", renderMoe());
-    case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil((x+ENEMY_TUNE.bossAdd)*df.atk*ps.atk*ENEMY_TUNE.bossAtk),counter={guard:"ガード",comment:"応援コメント",damage:"攻撃"}[b.cue]||"ガード"; return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${bossRecommendedLevel(b.q)}。現在レベル${levelOf(st.xp)}。</p><p class="small warn">ボス戦は手動操作のみ。オートは使用できません。</p><p class="small">追加の決戦装備：初回撃破は1個確定。撃破後はファミリー交流所の再戦受付から挑め、再戦勝利時は1/3で抽選。持ち物と預かり所に空きを用意してください。</p><p class="small">目安は強化した武器・防具、MP回復の道具、攻撃と回復の役割分担を含む推奨です。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人が${counter}</b>すると、直後の強攻撃が20%減り、エール＋12。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。通常攻撃を35％軽減するノイズシールドはエール40以上かキラコメ完成で解除でき、職業技は常に軽減を受けません。6ターン目以降、3ターンごとに攻撃が10％ずつ上がります（最大50％）。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
+    case "boss": { const b=BOSSES[d.bid];if(b.chapterLevel)return sheetWrap("四国・中国編の地域ボス",renderChapterBoss(b,d.bid)); const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil((x+ENEMY_TUNE.bossAdd)*df.atk*ps.atk*ENEMY_TUNE.bossAtk),counter={guard:"ガード",comment:"応援コメント",damage:"攻撃"}[b.cue]||"ガード"; return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${(b.chapterLevel||bossRecommendedLevel(b.q))}。現在レベル${levelOf(st.xp)}。</p><p class="small warn">ボス戦は手動操作のみ。オートは使用できません。</p><p class="small">追加の決戦装備：初回撃破は1個確定。撃破後はファミリー交流所の再戦受付から挑め、再戦勝利時は1/3で抽選。持ち物と預かり所に空きを用意してください。</p><p class="small">目安は強化した武器・防具、MP回復の道具、攻撃と回復の役割分担を含む推奨です。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人が${counter}</b>すると、直後の強攻撃が20%減り、エール＋12。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。通常攻撃を35％軽減するノイズシールドはエール40以上かキラコメ完成で解除でき、職業技は常に軽減を受けません。6ターン目以降、3ターンごとに攻撃が10％ずつ上がります（最大50％）。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
     case "streamSetup": return sheetWrap("配信の準備", renderStreamSetup());
     case "battleSupportHelp": return sheetWrap("エール応援・キラコメ連携",renderBattleSupportHelp());
     case "battleLog": return sheetWrap("戦闘ログ", `<div class="stack">${((G.st.run&&G.st.run.log)||[]).slice(-6).map(l=>`<p>${esc(l)}</p>`).join("")||"<p>まだありません。</p>"}</div>`);
@@ -4565,7 +4627,7 @@ function renderSettings(){
 }
 /* ---- 共有（URLのコピー・LINE・X・端末の共有メニュー） ---- */
 const SHARE_ARTIFACT_URL = "https://claude.ai/artifact/G1jFAs8yyUcJhtvgKragNh";
-const SHARE_TEXT = "スマホで遊べる昭和風ドットRPG『トップライバーへの道 九州編』";
+const SHARE_TEXT = "スマホで遊べる昭和風ドットRPG『トップライバーへの道 九州編・四国中国編』";
 function shareUrl(){
   if(window.TLR_SHARE_URL) return String(window.TLR_SHARE_URL);
   if(IS_PUBLIC){ try{ return location.origin+location.pathname; }catch(e){} } // 公開版：今開いているページのURL
@@ -4625,16 +4687,16 @@ function migrateExperience(st){
  if(st.jpCurveVersion!==2){for(const record of Object.values(st.jp||{}))for(const job of Object.keys(record))record[job]=remapProgress(record[job],previousJpFor,jpFor);st.jpCurveVersion=2;}
 }
 function stationNear(st){const m=MAPS[st.mapId];return m&&m.kind==='out'&&m.objects.some(o=>o.type==='station'&&Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1);}
-function railUnlocked(st,id){const i=HUB_ORDER.indexOf(id);return i===0||i>0&&st.quests[mainQuestOf(HUB_ORDER[i-1])]==='complete';}
+function railUnlocked(st,id){return hubUnlocked(st,id);}
 function stationDestinations(st){return HUB_ORDER.filter(id=>id!==MAPS[st.mapId].hub&&railUnlocked(st,id));}
 const RAIL_LENGTHS=[70,100,45,95,65,180,60,90,35,210,40,160,60,350,70];
-function railDistance(from,to){const a=HUB_ORDER.indexOf(from),b=HUB_ORDER.indexOf(to);if(a<0||b<0)return null;if(a===b)return 0;const main=i=>RAIL_LENGTHS.slice(0,i).reduce((n,v)=>n+v,0);if(a===16)return 100+main(b);if(b===16)return main(a)+100;return Math.abs(main(a)-main(b));}
+function railDistance(from,to){if(!HUB_ORDER.includes(from)||!HUB_ORDER.includes(to))return null;if(from===to)return 0;const edges={};const link=(a,b,d)=>{(edges[a]??=[]).push([b,d]);(edges[b]??=[]).push([a,d]);};for(let i=0;i<15;i++)link(HUB_ORDER[i],HUB_ORDER[i+1],RAIL_LENGTHS[i]);link('KY01','KY17',100);link('KY02','NX01',280);const lengths=[130,150,110,100,180,120,260,170];for(let i=0;i<8;i++)link(NEXT_CHAPTER[i].id,NEXT_CHAPTER[i+1].id,lengths[i]);const queue=[[from,0]],seen=new Set();while(queue.length){const [id,d]=queue.shift();if(id===to)return d;if(seen.has(id))continue;seen.add(id);for(const [n,l]of edges[id]||[])if(!seen.has(n))queue.push([n,d+l]);}return null;}
 function railFare(from,to){const d=railDistance(from,to);return d===null?null:d===0?0:20+d;}
-function railTravel(st,to){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||G.dlg||!stationNear(st)||!stationDestinations(st).includes(to))return false;if(st.slots<1){openSheet('rest',{reason:'新幹線の移動には旅程枠1が必要です。'});return false;}const fare=railFare(curHub(),to);if(fare===null||st.gold<fare){toast('運賃が足りません。必要'+fare+'ゴールド／所持'+st.gold+'ゴールド');return false;}const m=MAPS[to],station=m.objects.find(o=>o.type==='station');if(!station)return false;const p=[[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>[station.x+dx,station.y+dy]).find(([x,y])=>walkable(m,x,y)&&!zoneAt(m,x,y));if(!p)return false;st.gold-=fare;travelHub(to,...p);return true;}
+function railTravel(st,to){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||G.dlg||!stationNear(st)||!stationDestinations(st).includes(to))return false;if(st.slots<1){openSheet('rest',{reason:'駅からの移動には旅程枠1が必要です。'});return false;}const fare=railFare(curHub(),to);if(fare===null||st.gold<fare){toast('運賃が足りません。必要'+fare+'ゴールド／所持'+st.gold+'ゴールド');return false;}const m=MAPS[to],station=m.objects.find(o=>o.type==='station');if(!station)return false;const p=[[0,1],[1,0],[0,-1],[-1,0]].map(([dx,dy])=>[station.x+dx,station.y+dy]).find(([x,y])=>walkable(m,x,y)&&!zoneAt(m,x,y));if(!p)return false;st.gold-=fare;travelHub(to,...p);return true;}
 function renderStation(){const st=G.st;return `<p>所持金：<b>${st.gold.toLocaleString()}ゴールド</b>／残り${st.slots}枠</p><p class="small">運賃は基本20＋路線距離。移動は旅程枠1。距離・路線はゲーム内の架空設定です。前の街の本編クリアで次の駅が解放されます。</p><div class="stack">${stationDestinations(st).map(id=>{const d=railDistance(curHub(),id),fare=railFare(curHub(),id);return `<button class="btn" data-a="railGo" data-v="${id}" ${st.slots<1||st.gold<fare?'disabled':''}><b>${esc(HUBS[id].pref)}・${esc(HUBS[id].name)}</b><span class="small">路線距離${d}／運賃${fare}ゴールド${st.gold<fare?`（あと${fare-st.gold}不足）`:''}</span></button>`;}).join('')||'<p>ほかの街はまだ解放されていません。</p>'}</div>${st.slots<1?'<p class="warn">旅程枠が不足しています。宿泊・休息後に利用してください。</p>':''}`;}
 function renderWorld(){
   const st=G.st; const safe=isSafe();
-  let h=`<p class="small">拠点間の移動は旅程枠1。安全地帯から出発できます。</p><div class="stack">`;
+  let h=`<button class="btn primary" data-a="openSheet" data-k="nextChapter">四国・中国エリア編の進行・出発</button><p class="small">拠点間の移動は旅程枠1。安全地帯から出発できます。四国・中国エリア編は九州本編M16クリアで解放（大牟田編のクリアは不要）。</p><div class="stack">`;
   for(const id of HUB_ORDER){ const H=HUBS[id]; if(!H) continue;
     const here=curHub()===id; const visited=st.visitedHubs.includes(id); const open=hubUnlocked(st,id);
     if(!open){ h+=`<div class="qcard locked"><div class="srow"><b>${id} ${esc(H.pref)}・${esc(H.name)}</b><span class="tag">未解放</span></div></div>`; continue; }
@@ -4695,7 +4757,7 @@ function renderParty(){
 function previewEquipFor(st,cid,job){ const e={...st.equip[cid]}; for(const s of ["w","a","acc"]){ const it=e[s]&&EQUIP[e[s]]; if(it&&it.job&&it.job!==job) e[s]=null; } return e; }
 function renderRecord(){
   const st=G.st; const L=levelOf(st.xp);
-  const milestones=[["E1","新規開始"],...Object.keys(QUESTS).filter(k=>QUESTS[k].main&&!QUESTS[k].post).map(k=>[MOE_RANKS[QUESTS[k].rank],k+"完了"])];
+  const milestones=[["E1","新規開始"],...Object.keys(QUESTS).filter(k=>QUESTS[k].main&&!QUESTS[k].post&&!QUESTS[k].chapterLevel).map(k=>[MOE_RANKS[QUESTS[k].rank],k+"完了"])];
   return `<dl class="kv"><dt>総合レベル</dt><dd>${L}（経験値 ${st.xp.toLocaleString()}${L<999?`・次まで${(xpFor(L+1)-st.xp).toLocaleString()}`:"・最大"}）</dd>
     <dt>もえのシナリオ到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd><dt>旅</dt><dd>${st.day}日目</dd></dl>
     <p class="small">もえのランクは物語上の到達記録です。レベル・熟練度・実際の応援ポイントとは別に表示します。</p>
@@ -4744,7 +4806,7 @@ function renderShop(){
   }
   if(d.item){
     const it=EQUIP[d.item]; const qty=d.qty||1; const own=st.owned[d.item]||0;
-    if(tab==="buy"){ const total=it.price*qty; const can=!locked && !it.nonSale && (it.expansion!==614||S.items.includes(d.item)) && own+qty<=8 && st.gold>=total && eqCanAdd(st,d.item,qty);
+    if(tab==="buy"){ const total=it.price*qty; const can=!locked && !it.nonSale && (![614,616].includes(it.expansion)||S.items.includes(d.item)) && own+qty<=8 && st.gold>=total && eqCanAdd(st,d.item,qty);
       return head+`<p>${eqBadge(d.item)}<b>${esc(it.name)}</b>：${esc(itemText(it,Vof(levelOf(st.xp))))}</p><p>単価${it.price}ゴールド・所持${own}/8</p>${qtyRow(qty,8-own)}<p>合計${total}ゴールド → 取引後${(st.gold-total).toLocaleString()}ゴールド</p>${can?"":`<p class="warn">${own+qty>8?"所持上限8を超えます。":!eqCanAdd(st,d.item,qty)?`装備品の持ち物が${EQ_KINDS}種類でいっぱいです。`:st.gold<total?"ゴールドが足りません。":""}</p>`}
       <div class="stack"><button class="btn primary" data-a="shopDo" ${can?"":"disabled"}>${esc(it.name)}×${qty}を買う</button><button class="btn" data-a="shopItem" data-v="">一覧へ</button></div>${shopWhoHtml(st,d.item,levelOf(st.xp))}`; }
     const sellable=availableCount(st,d.item); const unit=Math.floor(it.price/2); const can=!locked&&qty<=sellable;
@@ -4912,7 +4974,7 @@ const ACT = {
   interactId(el){ const o=MAPS[G.st.mapId].objects.find(x=>x.id===el.dataset.v); G.sheet=null; render(); interact(o); },
   guideTo(el){ const o=MAPS[G.st.mapId].objects.find(x=>x.id===el.dataset.v); G.sheet=null; render(); walkTo(o.x,o.y); },
   doTravel(){ const d=G.sheetData; travelHub(d.to,d.tx,d.ty); },
-  worldGo(el){ const to=el.dataset.v; if(!hubUnlocked(G.st,to)) return toast("まだ進めません。"); const s=MAPS[to].safeAnchor; if(to==="KY01"||to==="KY02"){ const gate=MAPS[to].objects.find(o=>o.type==="gate"); return travelHub(to, gate?gate.x+(to==="KY02"?1:-1):s[0], gate?gate.y:s[1]); } travelHub(to, s[0], s[1]); },
+  worldGo(el){ if(G.readOnly||G.screen!=="explore"||G.st.run||G.st.stream||streamPending()||G.dlg||!isSafe())return toast("街の安全地帯から移動してください。"); const to=el.dataset.v; if(!hubUnlocked(G.st,to)) return toast("まだ進めません。"); const s=MAPS[to].safeAnchor; if(to==="KY01"||to==="KY02"){ const gate=MAPS[to].objects.find(o=>o.type==="gate"); return travelHub(to, gate?gate.x+(to==="KY02"?1:-1):s[0], gate?gate.y:s[1]); } travelHub(to, s[0], s[1]); },
   doInn(el){ el.disabled=true; const st=G.st; const total=(INN_PRICE[curHub()]||10)*st.roster.length; if(st.gold<total) return toast("ゴールドが足りません。"); st.gold-=total; restoreAll(st); st.day++; st.slots=6; keepFlush(); commit(); G.sheet=null; render(); SND.sfx("heal"); say([["",`${total}ゴールドを払って泊まった。`],["",`${st.day}日目の朝。全員のHPとMPが全回復した！`]]); },
   doRest(){ const st=G.st; st.day++; st.slots=6; commit(); G.sheet=null; render(); toast(`${st.day}日目の朝。旅程枠が6に戻った。`); },
   acceptQuest(el){ const st=G.st, id=el.dataset.v,Q=QUESTS[id];if(!Q||st.quests[id]!=="available"||st.activeQuest||Q.hub!==curHub()||!isSafe()||st.run||st.stream)return toast("この依頼は今は受注できません。"); if(st.slots<2) return openSheet("rest",{reason:"受注には旅程枠2が必要です。"});
@@ -4947,7 +5009,7 @@ const ACT = {
   noop(){},
   shareCopyUrl(){ copyText(shareUrl(),"URLをコピーしました。LINEやDMに貼り付けて送れます。"); },
   shareCopyMsg(){ copyText(shareMessage(),"紹介文とURLをコピーしました。"); },
-  shareNative(){ try{ navigator.share({title:"トップライバーへの道 九州編", text:SHARE_TEXT, url:shareUrl()}).catch(e=>{ if(!e||e.name!=="AbortError") copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); }); }catch(e){ copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); } },
+  shareNative(){ try{ navigator.share({title:"トップライバーへの道 九州編・四国中国編", text:SHARE_TEXT, url:shareUrl()}).catch(e=>{ if(!e||e.name!=="AbortError") copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); }); }catch(e){ copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); } },
   moeTalk(){ G.moeLine=chatLine("moe"); commit(); render(); drawMiniSprites(); },
   setOpt(el){ const k=el.dataset.k; let v=el.dataset.v; if(v==="true")v=true; if(v==="false")v=false; const s=G.st?G.st.settings:(G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}); s[k]=v; if(G.st) commit(); render();
     const msg = k==="difficulty"?`難易度を「${DIFFICULTY[v].name}」にしました。`: k==="reduceMotion"?`演出を減らす：${v?"ON":"OFF"}にしました。`: k==="dock"?`ジョイコントローラーを${v?"表示":"非表示に"}しました。`: k==="moveSpeed"?`移動の速さを「${v==="fast"?"速い":"ふつう"}」にしました。`:""; if(msg) toast(msg); SND.sfx("ok"); },
@@ -5005,7 +5067,7 @@ const ACT = {
       SND.sfx("buy"); commit(); toast(`${it.name}×${q}を${d.tab==="sell"?"売った":"買った"}。`); d.item=null; render(); return; }
     const it=EQUIP[d.item];
     if(d.tab==="sell"){ if(availableCount(st,d.item)<q) return toast("売却できる数が足りません。"); st.owned[d.item]-=q; st.gold+=Math.floor(it.price/2)*q; }
-    else { if(it.nonSale||it.expansion===614&&!SHOPS[d.shop]?.items.includes(d.item)||st.gold<it.price*q||(st.owned[d.item]||0)+q>8||!eqCanAdd(st,d.item,q)) return toast("購入できません。"); st.gold-=it.price*q; st.owned[d.item]=(st.owned[d.item]||0)+q; }
+    else { if(it.nonSale||[614,616].includes(it.expansion)&&!SHOPS[d.shop]?.items.includes(d.item)||st.gold<it.price*q||(st.owned[d.item]||0)+q>8||!eqCanAdd(st,d.item,q)) return toast("購入できません。"); st.gold-=it.price*q; st.owned[d.item]=(st.owned[d.item]||0)+q; }
     SND.sfx("buy"); commit(); toast(`${it.name}×${q}を${d.tab==="sell"?"売った":"買った"}。`); d.item=null; render(); },
   replay(el){ G.sheet=null; playScene(el.dataset.v); },
   ssSet(el){ G.sheetData[el.dataset.k]=el.dataset.v; render(); },
@@ -5034,6 +5096,7 @@ function validateState(s){
   for(const c of s.roster)if(!JOBS[s.jobs[c]]||!obj(s.jp[c])||!obj(s.equip[c]))throw Error("bad character");
   for(const key of ["challenges","festivals","townBattles"])if(s[key]&&!obj(s[key]))throw Error("bad "+key);
   if(s.challenges)for(const [id,r]of Object.entries(s.challenges))if(!trialOf(id)||!obj(r)||(r.attempts!==undefined&&(!Number.isInteger(r.attempts)||r.attempts<0))||(r.cleared!==undefined&&typeof r.cleared!=="boolean"))throw Error("bad challenge record");
+  if(s.chapterRewards&&(!obj(s.chapterRewards)||Object.entries(s.chapterRewards).some(([id,v])=>!NEXT_CHAPTER.some(c=>c.id===id)||v!==true)))throw Error('bad chapter reward records');
   if(s.gearEventDone&&(!obj(s.gearEventDone)||Object.entries(s.gearEventDone).some(([id,v])=>EQUIP[id]?.gearSource!=='event'||v!==true)))throw Error('bad gear event records');
   if(s.gearEvent&&(!obj(s.gearEvent)||EQUIP[s.gearEvent.id]?.gearSource!=='event'||!Number.isInteger(s.gearEvent.wins)||s.gearEvent.wins<0))throw Error('bad gear event');
   if(s.run&&s.run.challengeId&&!trialOf(s.run.challengeId))throw Error("bad challenge");
