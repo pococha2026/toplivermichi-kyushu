@@ -79,7 +79,7 @@ body.in-explore{padding-top:6px;padding-bottom:calc(var(--dockH) + 6px + env(saf
 .xact .btn{min-height:44px;text-align:center;font-size:16px}
 .pad{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:4px}
 .pad .btn.sq{min-width:44px;min-height:44px}
-.menu-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;flex:none}
+.menu-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;flex:none}
 .menu-grid .btn{text-align:center;font-family:var(--f-dot);min-height:44px;padding:2px 0;font-size:clamp(12px,3.4vw,14px);letter-spacing:-.06em;white-space:nowrap;overflow:hidden}
 /* 会話・シート */
 .overlay{position:fixed;inset:0;background:rgba(16,24,32,.72);display:flex;align-items:flex-end;justify-content:center;z-index:20;padding:12px max(12px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
@@ -286,7 +286,7 @@ body:not(.reduce-motion) .autonext{animation:blink 1s steps(2) infinite}
 .sdiff.final td{white-space:normal}
 .pop.crit{color:var(--gold);font-size:26px}
 .qfilters{display:grid;grid-template-columns:1fr 1fr;gap:8px;position:sticky;top:0;background:var(--cream);padding:8px 0;z-index:2}.qfilters .btn{min-height:44px}.qsummary{padding:10px;border:2px solid var(--gold);margin-bottom:8px}.quest-title{display:flex;flex-direction:column;align-items:flex-start;width:100%;text-align:left;gap:6px;min-height:56px}.qcard progress{width:100%;height:12px}.qdetails{padding:8px;border-top:1px solid var(--slate);margin:8px 0}
-.battle{overflow-y:auto}.battle-support{color:var(--ink);flex-shrink:0;max-height:160px;overflow-y:auto;border:1px solid var(--slate);padding:6px;background:var(--cream)}.battle-support p{margin:6px 0;line-height:1.5}.battle-support .small{color:#23364D;font-size:15px}.battle-support .btn:disabled{opacity:1;background:#D9D2C0;color:#364650;border-color:#8B9BA0}.battle-support .support-notice{color:var(--ink)}.support-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.support-actions .btn{min-height:44px;font-size:14px;line-height:1.4;padding:6px}.support-notice{border-left:3px solid var(--gold);padding-left:6px}.battle-support>button{min-height:44px;font-size:14px;padding:6px 8px}
+.poco-battle{flex-shrink:0;background:var(--navy);color:var(--cream);border:1px solid var(--gold);padding:6px;font-size:14px;max-height:140px;overflow-y:auto}.poco-battle .small{color:var(--cream);font-size:13px;line-height:1.5}.poco-battle p{margin:4px 0}.poco-battle ul{margin:4px 0}.battle{overflow-y:auto}.battle-support{color:var(--ink);flex-shrink:0;max-height:160px;overflow-y:auto;border:1px solid var(--slate);padding:6px;background:var(--cream)}.battle-support p{margin:6px 0;line-height:1.5}.battle-support .small{color:#23364D;font-size:15px}.battle-support .btn:disabled{opacity:1;background:#D9D2C0;color:#364650;border-color:#8B9BA0}.battle-support .support-notice{color:var(--ink)}.support-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.support-actions .btn{min-height:44px;font-size:14px;line-height:1.4;padding:6px}.support-notice{border-left:3px solid var(--gold);padding-left:6px}.battle-support>button{min-height:44px;font-size:14px;padding:6px 8px}
 /* v5.36 グラフィック強化 */
 .esprite{filter:drop-shadow(0 3px 0 rgba(16,24,32,.5))}
 body:not(.reduce-motion) .esprite{animation:ebob 1.1s steps(2) infinite}
@@ -434,7 +434,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.10";
+const GAME_VERSION = "6.11";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -570,9 +570,10 @@ const BOSS_PARTY_SCALE = { 1:{hp:0.5,atk:0.8}, 2:{hp:0.7,atk:0.85}, 3:{hp:0.85,a
 const BOSS_SCALE_OVERRIDE = { LB01:{ 1:{hp:0.55,atk:0.75}, 2:{hp:0.85,atk:0.95} }, B16:{ 1:{hp:0.75,atk:0.95}, 2:{hp:1.0,atk:1.05}, 3:{hp:1.25,atk:1.12}, 4:{hp:1.5,atk:1.2} } };
 const BOSS_HP_UP = 1.3;
 /* v装備強化対応：装備の効果を上げた分、敵も強化（HP・防御・攻撃・出現数・怒り状態） */
-const ENEMY_TUNE = { hp:1.84, def:1, atkMul:1.46, atkAdd:3, rarHp:0.14, rarAtk:0.08, rageAt:0.4, rage:1.3, bossHp:1.95, bossAtk:1.43, bossAdd:3, bossRage:1.2, bossRageAt:0.35 };
+const ENEMY_TUNE = { hp:2.35, def:3, atkMul:1.85, atkAdd:5, rarHp:0.16, rarAtk:0.1, rageAt:0.45, rage:1.35, bossHp:2.6, bossAtk:1.9, bossAdd:6, bossRage:1.25, bossRageAt:0.4 };
 /* 出現数：r=0..99。前半（強度5未満）1体40%・2体45%・3体15%／後半 1体25%・2体50%・3体25% */
 function encounterSize(q, r){ r=Math.max(0,Math.min(99,r|0)); return q<5 ? (r<40?1:r<85?2:3) : (r<25?1:r<75?2:3); }
+const bossRecommendedLevel=q=>Math.min(999,Math.ceil(q*1.2)+4);
 function bossScale(bid, n){ n=Math.min(4,Math.max(1,n)); const o=BOSS_SCALE_OVERRIDE[bid]; return (o&&o[n]) || BOSS_PARTY_SCALE[n]; }
 
 /* 宿屋：1人あたりの宿泊料（ゴールド）。泊まると翌朝になり、HPとMPが全回復 */
@@ -1640,6 +1641,73 @@ CAREERS.forEach((c,i)=>{ const g=CAREER_GEAR[c]; if(!g) return; const n=String(i
   CAREER_GEAR_ID[c]=[wid,aid]; });
 
 /* ===== core: 計算・条件・報酬（状態はJSONで保持し、純粋関数で更新） ===== */
+/* Pocochaの用語を題材にしたゲーム独自の物語・数値。実サービスの計算式とは別。 */
+const POCO_TOWNS=[
+ ['初見歓迎の商店街','屋台の自己紹介リレー','初見さんがコメントをためらう通りで、まず相手の呼び名を覚えよう。','屋台の提灯に「おかえり」の声が戻り、初見さんの席もできた。','初見ロスト'],
+ ['パチパチ港フェス','港の拍手リレー','届いた応援を流さず拾うため、荷揚げ場で拍手の合図を練習する。','船の汽笛とパチパチが重なり、港から遠い枠にも感謝が届いた。','拍手かくし'],
+ ['キラコメ松原','推し色の灯り祭','声の大きさだけを競う松原で、挨拶・作戦・感謝を別々の仲間へつなぐ。','推し色の灯りが松原を渡り、違う役割の応援が一つの景色になった。','キラコメ崩し'],
+ ['ファミリー水路','水辺のファミリー会議','配信方針がすれ違う水路で、無理なく参加できる応援を相談する。','水路の掲示板に役割が並び、来られない日も安心して帰れる枠になった。','方針すれ違い'],
+ ['ぽこナイト造船所','ナイト隊の出航式','一人の応援へ頼りきった造船所で、守り・回復・攻撃の交代を学ぶ。','ナイトの旗を全員で支え、誰か一人だけが頑張る船を卒業した。','ナイト孤立'],
+ ['アーカイブ坂道','坂道お礼めぐり','いつもの視聴者だけで話が閉じる坂で、途中から来た人へ話題を渡す。','坂の踊り場に話題の案内ができ、途中参加でも笑い声に混ざれる。','話題置き去り'],
+ ['ランクメーター城下','城下の作戦ボード','メーターを気にして笑顔を失う城下で、目標と休む時間を一緒に決める。','城下に作戦ボードが立ち、目標へ進む日も休む日も仲間が見守る。','ボーダー焦り'],
+ ['エール草原','草原のコア交流会','数字だけで応援を比べる草原で、長く一緒に過ごした言葉を探す。','草原の名札には数字より先に思い出が書かれ、枠の絆が育った。','エール空回り'],
+ ['おやすみ温泉街','湯けむり休息ラジオ','連戦で疲れた温泉街で、配信も冒険も休息を予定へ組み込む。','湯けむりの灯りがゆっくり揺れ、休んだ仲間が笑顔で戻ってきた。','連投疲れ'],
+ ['アシスタント府内','府内の進行台本会','指示が飛び交う広場で、案内・回復・声かけの担当を決める。','府内の台本が読みやすくなり、ライバーもリスナーも会話へ集中できる。','進行こんがらがり'],
+ ['バースデー南国通り','南国の記念日ライブ','主役の気持ちより演出が先走る通りで、伝えたいお祝いを聞き取る。','祝福の灯りが南国を照らし、主役の好きな歌が最後まで響いた。','記念日暴走'],
+ ['コラボ運河','運河のコラボ橋渡し','違う枠の文化がぶつかる運河で、相手の挨拶とペースを尊重する。','運河にコラボ橋が架かり、初めての枠どうしにも挨拶が行き交う。','コラボ迷子'],
+ ['プラ１の霧島参道','参道の目標宣言会','霧で目標を見失う参道で、装備・職業・回復の準備を一つずつ確認する。','参道の霧が晴れ、作戦と育成の積み重ねが次の目標を照らした。','準備わすれ'],
+ ['イベラス火山街','火山街の締め前総練習','締め前に焦る街で、固有技とエールを使う順番を最後まで相談する。','火山街に最後の感謝が響き、締めまで役割を果たした仲間が肩を並べた。','イベラス焦燥'],
+ ['S帯の島ステージ','島唄ファミリーフェス','大きくなった枠で一人の声を見失わないよう、島の小さな舞台へ戻る。','島唄とコメントが重なり、人数が増えても呼びかける声は近いままだ。','人気の空洞'],
+ ['S6ドリーム舞台','九州グランドフィナーレ','S6到達だけをゴールにせず、配信を続けたい理由を仲間と確かめる。','九州の推し色が舞台へ集まり、到達した先にも次の配信の約束が生まれた。','S6プレッシャー'],
+ ['炭都アンコール街','大蛇山アンコール祭','全クリア後の炭都で、これまで支えてくれた全員へアンコールを届ける。','炭都の櫓にアンコールの灯りがともり、九州の思い出が新しい挑戦を呼ぶ。','アンコール試練']
+];
+const POCO_ROLES={hero:'枠の作戦・育成・装備を整えるアシスタント。もえのS6への道を支える。',moe:'元アイドルのメインライバー。応援の数字の向こうにいる一人へ歌と会話を届ける。',kohei:'配信遠征の輸送担当。初見案内と枠の進行を滞らせない。',naoki:'配信照明と電源の担当。ナイト隊の守りと攻撃の切り替えを見守る。',mio:'ライバーとファミリーの体調管理役。回復の順番を読み、無理な連戦を止める。',kayo:'長時間イベントの補給担当。MPと休息の計画でイベラスを支える。',tsumugi:'配信機材とコメント導線の設計役。キラコメ連携の橋渡しが得意。',makoto:'ステージの安全設計と防護担当。締め前の強攻撃から全員を守る。',gaku:'音声・回線のトラブル対応役。敵の守りを見抜き、通る声をつくる。'};
+for(const [c,role]of Object.entries(POCO_ROLES))CHARS[c].pocoRole=role;
+Object.assign(FACILITY,{challenge:{mark:'挑',name:'特別チャレンジ受付',color:'#E8A5BE'},studio:{mark:'絆',name:'ファミリー交流所',color:'#83B9AE'}});
+const POCO_COLORS=['#E8A5BE','#83B9AE','#D5B34C','#A6B9DF'];
+HUB_ORDER.forEach((hub,i)=>{
+ const [title,festival,before,after,noise]=POCO_TOWNS[i],m=MAPS[hub];
+ m.pocoTheme=i;m.objects.push({id:'challenge_'+hub,x:23,y:18,type:'challenge',label:title+'・特別チャレンジ受付'},{id:'studio_'+hub,x:25,y:18,type:'studio',label:festival+'・ファミリー交流所'});
+ for(const o of m.objects){if(o.type==='shop')o.label='配信ギア工房・'+o.label;if(o.type==='inn')o.label='おやすみ控室・'+o.label;}
+ const ht=HUB_TEXT[hub]||(HUB_TEXT[hub]={});ht.accept=(ht.accept||'街の声を集めよう。')+' '+before;ht.moe=[...(ht.moe||[]),before];
+ for(const [aid,a]of Object.entries(AREAS))if(aid.startsWith(hub)){a.lore+=' '+before;a.motif=title;}
+ for(const [bid,b]of Object.entries(BOSSES))if(b.hub===hub){const old=b.name;b.name=noise+'・'+old;b.pocoTheme=i;for(const q of Object.values(QUESTS))if(q.boss===bid)q.goal=q.goal.split(old).join(b.name);}
+ const main=Object.values(QUESTS).find(q=>q.hub===hub&&q.main);const scene=main&&SCENES[main.scene];if(scene){const old=scene.lines;scene.lines=p=>[...old(p),['もえ','本編の壁を越えたね。次は住民と「'+festival+'」を完成させよう。'],['',festival+'の準備が進んだ。ファミリー交流所では本編と別の街イベントに参加できる。']];}
+ const arrival=SCENES['ARRIVE_'+hub];if(arrival){const old=arrival.lines;arrival.lines=p=>[...old(p),['',title+'では「'+festival+'」の準備が進んでいる。'],['もえ',before]];}
+ for(const n of Object.values(NPCS))if(n.hub===hub&&n.first){const old=n.first;n.first=p=>[...old(p),[n.name,before]];}
+});
+if(SCENES.HS00){const old=SCENES.HS00.lines;SCENES.HS00.lines=p=>[...old(p),['もえ','元アイドルの私が目指すのはPocochaのS6。でも、数字の向こうの一人へ、歌と返事を届け続けたい。'],['', '旅で戦うのは応援する人ではなく、枠に生まれる迷いやすれ違いのノイズ。育成・装備・職業技で街の声を守ろう。'],['', '街の「絆」はファミリー交流所、「挑」は本編と別の特別チャレンジ受付。配信の用語を題材にしたゲーム独自の物語です。']];}
+for(const [j,job]of Object.entries(JOBS))job.skill='枠技・'+job.skill;
+for(const sk of Object.values(EXTRA_SKILLS))if(!sk.ultra)sk.name=(sk.rank?'ファミリー':'配信')+'・'+sk.name;
+for(const it of Object.values(EQUIP)){
+ const oldAtk=it.atk,oldD=it.d;if(oldAtk)it.atk=Math.ceil(oldAtk*1.3);if(oldD)it.d=Math.ceil(oldD*1.3);
+ if(it.text){if(oldAtk)it.text=it.text.replace(/(攻撃力[＋+]?)(\d+)/g,(m,a,n)=>+n===oldAtk?a+it.atk:m);if(oldD)it.text=it.text.replace(/(防御[力＋+]*)(\d+)/g,(m,a,n)=>+n===oldD?a+it.d:m);}
+}
+const POCO_ITEMS=[
+ ['PC01','初見歓迎ののど飴','HP回復','味方1人',['hp',28],1,30,'初見案内の声を整える。味方1人のHPを28×V回復'],
+ ['PC02','コア交流の差し入れ','HP・MP回復','味方1人',['hpc',42,12],2,110,'ファミリーとの交流で受け取る差し入れ。HP42×V・MP12回復'],
+ ['PC03','おやすみ配信メモ','MP回復','味方1人',['c',24],3,180,'休息の段取りを書いたメモ。味方1人のMP24回復'],
+ ['PC04','キラコメ紙吹雪','攻撃','敵全体',['dmg',58],4,480,'推し色の紙吹雪。敵全体へ58×V−防御のダメージ'],
+ ['PC05','イベラスの花火札','攻撃','敵1体',['dmg',120],7,850,'締め前の一撃。敵1体へ120×V−防御のダメージ'],
+ ['PC06','アンコールのお守り','蘇生','味方1人',['rev',65],8,900,'もう一度ステージへ。戦闘不能の味方1人を最大HPの65％で復活']
+];
+for(const[id,name,cat,target,eff,tier,price,text]of POCO_ITEMS)ITEMS[id]={id,name,cat,target,eff,tier,price,text,stars:Math.min(5,Math.ceil(tier/2)),acq:'S',sell:Math.floor(price/2),battleOnly:cat==='攻撃'};
+const POCO_TRIALS=[
+ {id:'CH01',name:'初見歓迎リレー',unlock:'M01',q:5,level:6,fee:80,turns:16,comments:3,people:2,desc:'初見へ挨拶し、違う人へ話題を渡す。',gear:{slot:'acc',name:'初見案内のインカム',commentA:8,hp:10}},
+ {id:'CH02',name:'松原キラコメ夜祭',unlock:'M03',q:12,level:14,fee:140,turns:18,kira:true,party:3,desc:'3人の挨拶・作戦・感謝で推し色をつなぐ。',gear:{slot:'w',name:'キラコメの光棒',atk:17,commentA:4}},
+ {id:'CH03',name:'コアファン絆の防衛',unlock:'M05',q:21,level:24,fee:240,turns:18,family:1,skills:3,desc:'毎ターンエール6を失う舞台。ファミリー応援と職業固有技で全員を支える。',gear:{slot:'a',name:'ファミリー隊の法被',d:11,hp:24}},
+ {id:'CH04',name:'ぽこナイト交代戦',unlock:'M07',q:29,level:33,fee:340,turns:16,guards:2,masters:1,desc:'防御力1.5倍の敵。守りを交代し、熟練技や防御無視の技で突破する。',gear:{slot:'w',name:'ぽこナイトの旗槍',atk:28,crit:6}},
+ {id:'CH05',name:'22時締め前ラッシュ',unlock:'M09',q:37,level:42,fee:450,turns:12,skills:5,desc:'限られたターンでMPと火力を計画する。',gear:{slot:'acc',name:'締め前の進行時計',c:12,meter:12}},
+ {id:'CH06',name:'アシスタント実技試験',unlock:'M11',q:45,level:51,fee:580,turns:16,masters:2,jobs:3,desc:'毎ターン全員のMPを2消耗。異なる3職業以上の連携と熟練技を示す。',gear:{slot:'a',name:'統括アシスタントコート',d:17,c:8}},
+ {id:'CH07',name:'九州イベラス総力戦',unlock:'M13',q:54,level:62,fee:740,turns:14,masters:3,kira:true,party:4,desc:'ボスと追加ノイズ1体。4人の編成でキラコメと熟練技を両立する。',gear:{slot:'w',name:'イベラス共鳴マイク',atk:42,c:8}},
+ {id:'CH08',name:'S6アンコール・極',unlock:'M16',q:68,level:78,fee:1000,turns:14,masters:4,kira:true,family:1,jobs:4,party:4,desc:'ボスと追加ノイズ2体。4職業、キラコメ、熟練技、ファミリー応援の総決算。',gear:{slot:'a',name:'S6ファミリーの正装',d:24,hp:64,c:12}}
+];
+for(const[t,d]of POCO_TRIALS.entries()){
+ d.boss='CB'+String(t+1).padStart(2,'0');d.reward='CE'+String(t+1).padStart(2,'0');
+ EQUIP[d.reward]={...d.gear,price:0,nonSale:true,text:'特別チャレンジ「'+d.name+'」の初回達成報酬。'+(d.gear.atk?'攻撃力＋'+d.gear.atk+'。':'')+(d.gear.d?'防御'+d.gear.d+'。':'')+(d.gear.hp?'最大HP＋'+d.gear.hp+'。':'')+(d.gear.c?'最大MP＋'+d.gear.c+'。':'')+(d.gear.commentA?'コメントのエール＋'+d.gear.commentA+'。':'')+(d.gear.meter?'メーター突破＋'+d.gear.meter+'。':'')+(d.gear.crit?'会心率＋'+d.gear.crit+'％。':'')};
+ BOSSES[d.boss]={name:d.name+'のノイズマスター',q:d.q,areaId:'KY01-A3',cue:'guard',hub:'KY01',shape:'lantern',col:[PAL.gold,PAL.violet]};
+}
+
 /* レベルごとの必要量を段階的に増加。到達済みのレベルは移行時に保持する。 */
 const previousXpFor=L=>legacyXpFor(L)+Math.floor(0.12*Math.max(0,L-20)**3);
 const previousJpFor=R=>2*R*(R+1)-4;
@@ -1702,7 +1770,7 @@ function newGame(name, gender, heroine, career){
     visitedMaps:["KY01"], visitedHubs:["KY01"], xp:0,
     names:{},pendingNames:[],roster:["hero","moe"], party:["hero","moe"], vitals:null,
     jobs:{}, jp:{}, equip:{}, owned:{CW01:8, CA01:8}, favorite:{},
-    gold:0, tickets:200, gifts:{W:{},A:{}},
+    challenges:{},festivals:{},townBattles:{},gold:0, tickets:200, gifts:{W:{},A:{}},
     bag:INITIAL_ITEMS.map(([id,n])=>({id,n})), keep:[], itemsVersion:1,
     quests:{M01:"available", M02:"locked", S01:"locked", S02:"locked"}, qprog:{}, activeQuest:null,
     talked:{}, boxes:{}, cards:[], bossDefeated:{}, seen:{}, killCount:{},
@@ -1787,15 +1855,16 @@ function generateTown(id,seed){
   // 看板の移設後に入口と全施設の経路を再接続する。
   for(const a of anchors)if(!blocked(...a))route(...a);
   for(const o of m.objects){if(o.walk){route(o.x,o.y);continue;}const adj=signDirs.map(([dx,dy])=>[o.x+dx,o.y+dy]).find(([x,y])=>x>0&&y>0&&x<m.w-1&&y<m.h-1&&!blocked(x,y));if(adj)route(...adj);}
+  const decor=[];for(let y=2;y<m.h-2;y++)for(let x=2;x<m.w-2;x++)if(grid[y][x]===','&&!m.objects.some(o=>Math.max(Math.abs(o.x-x),Math.abs(o.y-y))<=1))decor.push({x,y,key:r()});m.pocoDecor=decor.sort((a,b)=>a.key-b.key).slice(0,10);
   m.tiles=grid;m.layoutKey=seed+':'+id;m.safeAnchor=base.safeAnchor.slice();m.layoutStyle=style;return m;
 }
 function ensureWorld(st){
   if(!st)return;
   if(!Number.isInteger(st.worldSeed))st.worldSeed=(Math.floor(Math.random()*4294967295)>>>0);
-  const changed=activeWorldSeed!==st.worldSeed||st.worldLayoutVersion!==1;
+  const changed=activeWorldSeed!==st.worldSeed||st.worldLayoutVersion!==2;
   if(activeWorldSeed!==st.worldSeed){for(const id of HUB_ORDER)MAPS[id]=generateTown(id,st.worldSeed);activeWorldSeed=st.worldSeed;}
   const repair=(p,id)=>{const m=MAPS[id];if(!m||m.kind!=='out'||!p)return;const same=p.x===m.safeAnchor[0]&&p.y===m.safeAnchor[1];if(!walkable(m,p.x,p.y)||(changed&&!same&&!bfs(m,m.safeAnchor[0],m.safeAnchor[1],(x,y)=>x===p.x&&y===p.y))){p.x=m.safeAnchor[0];p.y=m.safeAnchor[1];}};
-  repair(st.pos,st.mapId);if(st.run&&st.run.returnPos)repair(st.run.returnPos,st.run.returnPos.map);st.worldLayoutVersion=1;
+  repair(st.pos,st.mapId);if(st.run&&st.run.returnPos)repair(st.run.returnPos,st.run.returnPos.map);st.worldLayoutVersion=2;
 }
 
 /* ---- v5.33 能力値（ユーザー指定）：体力・ちから・身の守り・すばやさ・魅力。職業ごとに初期値と伸び方が違う ----
@@ -1865,7 +1934,7 @@ function randInt(n){ // 0..n-1 一様（棄却法）
 /* ---- 敵（第11・11E・11F・11J節） ---- */
 function enemyDef(areaId, idx){ // idx 0..49
   const ar = AREAS[areaId]; const [pn, rr] = ar.list[idx]; const p = PROFILES[pn-1];
-  return { id:`EN-${areaId}-${String(idx+1).padStart(3,"0")}`, areaId, profile:p[0], name:`${ar.prefix}の${p[1]}`,
+  return { id:`EN-${areaId}-${String(idx+1).padStart(3,"0")}`, areaId, profile:p[0], shortName:["コメント渋滞","初見ロスト","枠テンポ乱し","エール空回り","ボーダー焦り"][idx%5]+"・"+p[1], name:`${ar.prefix}の${["コメント渋滞","初見ロスト","枠テンポ乱し","エール空回り","ボーダー焦り"][idx%5]}・${p[1]}`,
     species:p[2], attr:p[3], type:p[4], baseHP:p[5], baseDEF:p[6], cycle:p[7], trait:p[8], counter:p[9],
     rarity:rr, weight:[0,250,200,125,60,20][rr], q:ar.q };
 }
@@ -1892,11 +1961,52 @@ function buildParty(st, L, supportStartA){
       commentA:s.commentA, rest:s.rest, meter:s.meter, family:s.family, valid:0 };
   });
 }
+function trialOf(id){return POCO_TRIALS.find(t=>t.id===id);}
+function trialMetrics(run){return run.trialMetrics||(run.trialMetrics={comments:0,people:[],skills:0,masters:0,family:0,guards:0,guardPeople:[]});}
+function recordTrialAction(run,a,act){if(!run.challengeId)return;const m=trialMetrics(run);if(act.type==='comment'){m.comments++;if(!m.people.includes(a.cid))m.people.push(a.cid);}if(act.type==='skill'){m.skills++;if(act.skillId&&EXTRA_SKILLS[act.skillId]&&EXTRA_SKILLS[act.skillId].rank)m.masters++;}if(act.type==='family')m.family++;if(act.type==='guard'){m.guards++;if(!m.guardPeople.includes(a.cid))m.guardPeople.push(a.cid);}}
+function trialConditions(run){const d=trialOf(run.challengeId);if(!d)return [];const m=trialMetrics(run),out=[{label:`${d.turns}ターン以内`,ok:run.turn<=d.turns,value:run.turn}];
+ const add=(key,label,val)=>{if(d[key])out.push({label:label+d[key],ok:val>=d[key],value:val});};
+ add('comments','応援コメント ',m.comments);add('people','コメントした人数 ',m.people.length);add('skills','職業技の使用 ',m.skills);add('masters','熟練技・奥義の使用 ',m.masters);add('family','ファミリー応援 ',m.family);add('guards','ガードした人数 ',m.guardPeople.length);add('jobs','編成した職業数 ',new Set(run.party.map(p=>p.job)).size);add('party','編成人数 ',run.party.length);if(d.kira)out.push({label:'キラコメ連携を完成',ok:run.kiraDone,value:run.kiraDone?1:0});return out;
+}
+function trialRequirements(d){return [`${d.turns}ターン以内に撃破`,d.comments&&`応援コメント${d.comments}回`,d.people&&`異なる${d.people}人でコメント`,d.skills&&`職業技${d.skills}回`,d.masters&&`熟練技・奥義${d.masters}回`,d.family&&`ファミリー応援${d.family}回`,d.guards&&`異なる${d.guards}人がガード`,d.jobs&&`${d.jobs}職業以上`,d.party&&`${d.party}人編成`,d.kira&&'キラコメ連携完成'].filter(Boolean).join('／');}
+function trialEntryReason(st,d){
+ if(!d||st.quests[d.unlock]!=='complete')return `本編${d?d.unlock:''}のクリアで解放`;
+ if(st.run||st.stream||streamPending()||G.dlg||G.screen!=='explore'||!isSafe())return '街の安全地帯で、戦闘・配信・会話を終えてから挑戦できます。';
+ const min=d.party||2;if(st.party.length<min)return `${min}人以上で編成してください。`;
+ if(st.party.some(c=>vitalOf(c).hp<=0))return '戦闘メンバー全員を復活させてください。';
+ if(d.jobs&&new Set(st.party.map(c=>st.jobs[c])).size<d.jobs)return `${d.jobs}種類の職業を編成してください。`;
+ if(d.masters&&!st.party.some(c=>rankOf(jpOf(st,c,st.jobs[c]))>=5))return '熟練度5以上の職業で、熟練技を使える仲間が必要です。';
+ if(st.gold<d.fee)return `参加料${d.fee}ゴールドが必要です。`;
+ if(!(st.challenges&&st.challenges[d.id]&&st.challenges[d.id].cleared)&&!eqCanAdd(st,d.reward,1)&&(st.keep||[]).length>=KEEP_MAX)return '初回報酬を受け取るため、装備品か預かり所に空きを作ってください。';
+ return '';
+}
+function createChallengeRun(st,d){const run=createBossRun(st,d.boss);run.kind='challenge';run.challengeId=d.id;run.hub=curHub();run.areaId=Object.keys(AREAS).find(a=>a.startsWith(run.hub))||'KY01-A3';run.turnLimit=d.turns;trialMetrics(run);for(const e of run.enemies){e.maxHP=e.hp=Math.ceil(e.maxHP*1.15);e.atkMult*=1.12;}
+ if(d.id==='CH01')run.enemies[0].cycle[1]={t:'c',p:0};
+ if(d.id==='CH03')run.aleLeak=6;
+ if(d.id==='CH04')run.enemies[0].def=Math.ceil(run.enemies[0].def*1.5);
+ if(d.id==='CH06')run.mpLeak=2;
+ if(d.id==='CH07'||d.id==='CH08')for(let k=0;k<(d.id==='CH08'?2:1);k++){const hp=Math.ceil(run.enemies[0].maxHP*0.18),name=k?'コメント詰まりの残響':'ボーダーの残響';run.enemies.push({slot:k+1,id:d.id+'ADD'+k,name,display:name,profile:'P01',species:PROFILES[0][2],attr:PROFILES[0][3],rarity:3,maxHP:hp,hp,def:Math.floor(d.q/3)+5,cycle:[{t:'s',p:Math.ceil(8+d.q*.8)},{t:'c',p:0},{t:'a',p:Math.ceil(5+d.q*.5)}]});}
+ return run;}
+function startChallenge(id){const st=G.st,d=trialOf(id);if(G.readOnly||st.run)return false;const reason=trialEntryReason(st,d);if(reason){toast(reason);return false;}const run=createChallengeRun(st,d);st.gold-=d.fee;st.challenges=st.challenges||{};const r=st.challenges[id]||(st.challenges[id]={});r.attempts=(r.attempts||0)+1;G.sheet=null;startBattle(run);return true;}
+function challengeReward(st,run,res){
+ const d=trialOf(run.challengeId),passed=d&&trialConditions(run).every(c=>c.ok);st.challenges=st.challenges||{};const record=st.challenges[run.challengeId]||(st.challenges[run.challengeId]={attempts:1});const first=!!passed&&!record.cleared;
+ res.challenge={id:run.challengeId,name:d?d.name:'特別チャレンジ',passed:!!passed,first,conditions:trialConditions(run)};
+ if(!passed){res.notes.push('討伐は成功しましたが、課題未達のためチャレンジは未クリアです。報酬・経験値・熟練度は得られません。');return;}
+ if(!first){res.notes.push('クリア済みの練習挑戦です。報酬・経験値・熟練度は初回達成時のみです。');return;}
+ if(!giveGear(st,d.reward,res,'特別チャレンジ初回達成')){res.challenge.first=false;res.challenge.passed=false;res.notes.push('報酬の保管場所がいっぱいです。空きを作って再挑戦してください。');return;}
+ record.cleared=true;record.bestTurns=run.turn;record.day=st.day;res.xp=Math.min(XP_CAP-st.xp,60+d.q*6);res.gold=150+d.q*20;res.tickets=100;st.xp+=res.xp;st.gold+=res.gold;st.tickets+=res.tickets;res.notes.push('特別チャレンジ「'+d.name+'」初回達成！ 限定装備を獲得。');
+}
+function renderChallenges(){const st=G.st;return `<p>Pocochaを題材にした特別実技チャレンジ。本編とは別の達成記録です。</p><p class="small">街の安全地帯から挑戦。参加料は毎回必要です。HP・MP・道具は持ち越し、制限ターン超過は失敗。全滅時の追加ゴールド損失はありません。報酬・経験値・熟練度は初回達成のみ。</p><div class="stack">${POCO_TRIALS.map(d=>{const r=(st.challenges||{})[d.id]||{},reason=trialEntryReason(st,d);return `<section class="setcard"><h3 class="label">${esc(d.name)} ${r.cleared?'✓ 達成済み':''}</h3><p>${esc(d.desc)}</p><p class="small">推奨レベル${d.level}／参加料${d.fee}G／挑戦${r.attempts||0}回</p><p>${esc(trialRequirements(d))}</p><p class="small good">初回報酬：${esc(EQUIP[d.reward].name)}・経験値${60+d.q*6}・${150+d.q*20}G・チケット100</p>${reason?`<p class="small warn">${esc(reason)}</p>`:''}<button class="btn primary" data-a="trialStart" data-v="${d.id}" ${reason?'disabled':''}>${r.cleared?'練習に挑戦（報酬なし）':'参加料を払って挑戦'}</button></section>`;}).join('')}</div>`;}
+function localFestivalStatus(st,hub){return {talks:Object.entries(NPCS).filter(([id,n])=>n.hub===hub&&id!=='moe'&&st.talked[id]).length,wins:(st.townBattles||{})[hub]||0,rank:Math.max(...st.roster.map(c=>rankOf(jpOf(st,c,st.jobs[c]))))};}
+function renderTownStudio(){const st=G.st,hub=curHub(),theme=POCO_TOWNS[HUB_ORDER.indexOf(hub)];if(!theme)return '<p>街の交流所で利用できます。</p>';const s=localFestivalStatus(st,hub),done=(st.festivals||{})[hub];return `<h3 class="label">${esc(theme[1])}</h3><p>${esc(done?theme[3]:theme[2])}</p><p class="small">各街1回の任意イベント。本編の受注枠は使いません。</p><ul class="list"><li>${s.talks>=2?'✓':'未'} 住民2人と会話（${s.talks}人）</li><li>${s.wins>=2?'✓':'未'} この街の通常戦闘に2勝（${s.wins}勝・本更新後の勝利）</li><li>${s.rank>=3?'✓':'未'} 現在の職業で熟練度3以上の仲間（最高${s.rank}）</li></ul><p>報酬：${60+HUB_ORDER.indexOf(hub)*20}G・チケット40・コア交流の差し入れ2個</p><button class="btn primary" data-a="festivalClaim" ${done||s.talks<2||s.wins<2||s.rank<3?'disabled':''}>${done?'祭り開催済み':'街イベントを達成する'}</button><button class="btn" data-a="openSheet" data-k="challenges">特別チャレンジ受付</button><p class="small">戦闘のエール・連携・技・運賃はゲーム独自の設定です。実サービスの応援ポイント計算式やイベント条件を再現するものではありません。</p>`;}
+function claimFestival(){const st=G.st,hub=curHub(),s=localFestivalStatus(st,hub);if(G.readOnly||st.run||st.stream||!isSafe()||s.talks<2||s.wins<2||s.rank<3||(st.festivals||{})[hub])return false;st.festivals=st.festivals||{};st.festivals[hub]=true;st.gold+=60+HUB_ORDER.indexOf(hub)*20;st.tickets+=40;giveItem(st,'PC02',2,null,'街イベント');commit();render();say([['',POCO_TOWNS[HUB_ORDER.indexOf(hub)][3]],['もえ','私たちの枠にも、この街でできた家族みたいな絆を持って帰ろう。']]);return true;}
+function pocoBattleStatus(run){if(!run.pocoRules)return '';const d=trialOf(run.challengeId);return `<div class="poco-battle"><b>${d?'特別チャレンジ：'+esc(d.name):run.enemies.some(e=>e.boss)?'ライバル枠との決戦':'枠を乱すノイズ戦'}</b>${run.enemies.some(e=>e.boss)?`<p class="small">ノイズシールド：${run.A<40&&!run.kiraDone?'通常攻撃を35％軽減。エール40以上・キラコメ完成で解除。職業技は軽減されません。':'解除中'}／6ターン目以降は3ターンごとに敵攻撃＋10％（最大50％）</p>`:''}${run.aleLeak?'<p class="small">毎ターン、エール−'+run.aleLeak+'</p>':''}${run.mpLeak?'<p class="small">毎ターン、生存者全員のMP−'+run.mpLeak+'</p>':''}${d?`<ul class="list">${trialConditions(run).map(c=>`<li>${c.ok?'✓':'未'} ${esc(c.label)}（現在${c.value}）</li>`).join('')}</ul>`:''}</div>`;}
+
 function baseRun(st, kind){
   const L = levelOf(st.xp), diff = DIFFICULTY[st.settings.difficulty];
   let A0 = diff.startA; const sup = st.support && SUPPORTS[st.support];
   if(sup) A0 += sup.startA||0;
-  return { seq: st.runSeq+1, kind, L, V:Vof(L), difficulty:st.settings.difficulty, support:st.support,
+  return { seq: st.runSeq+1, kind, pocoRules:1, L, V:Vof(L), difficulty:st.settings.difficulty, support:st.support,
     party: buildParty(st,L), enemies:[], turn:1, A:Math.min(100,A0), B:0,
     chain:{stage:0, members:[]}, kiraDone:false, firstKill:false,
     cue:null, log:[], state:"input", rewardsApplied:false, bag:clone(st.bag||[]) };
@@ -1926,8 +2036,8 @@ function createFieldRun(st, areaId, rolls){ // rolls: {count:0|1, picks:[r0,r1]}
     const d = enemyDef(areaId, pickEnemyIndex(areaId, rolls.picks[s]));
     const rb=(d.rarity||1)-1;
     const hp = Math.ceil((d.baseHP+12*(q-1))*diff.hp*T.hp*(1+T.rarHp*rb));
-    run.enemies.push({ slot:s, id:d.id, name:PROFILES[d.profile.slice(1)-1][1], fullName:d.name, profile:d.profile, species:d.species, attr:d.attr, rarity:d.rarity,
-      maxHP:hp, hp, def:d.baseDEF+Math.floor((q-1)/12)+T.def+(rb>=2?1:0),
+    run.enemies.push({ slot:s, id:d.id, name:d.shortName, fullName:d.name, profile:d.profile, species:d.species, attr:d.attr, rarity:d.rarity,
+      maxHP:hp, hp, def:d.baseDEF+Math.floor((q-1)/3)+T.def+(rb>=2?1:0),
       cycle:d.cycle.map(([t,p])=>({t, p: t==="c"?0:Math.ceil((p*T.atkMul+T.atkAdd+Math.floor(4*(q-1)/5))*(1+T.rarAtk*rb)*diff.atk)})) });
   }
   assignLabels(run.enemies);
@@ -1941,7 +2051,7 @@ function createBossRun(st, bossId){
   const ps = bossScale(bossId, run.party.length);
   run.partyScale = ps;
   const hp = Math.ceil((100+36*q)*diff.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp); // v5.32：メーター突破の一点集中と支援対処の分、HPを上げて手応えを保つ
-  run.enemies.push({ slot:0, id:bossId, name:b.name, display:b.name, boss:true, maxHP:hp, hp, def:4+Math.floor(q/10),
+  run.enemies.push({ slot:0, id:bossId, name:b.name, display:b.name, boss:true, maxHP:hp, hp, def:8+Math.floor(q*0.6),
     cycle:[{t:"s",p:12+q+ENEMY_TUNE.bossAdd},{t:"a",p:6+Math.floor(q/2)+ENEMY_TUNE.bossAdd},{t:"c",p:0},{t:"a",p:10+3*q+ENEMY_TUNE.bossAdd,heavy:true}], atkMult:diff.atk*ps.atk*ENEMY_TUNE.bossAtk });
   run.cue = {kind:b.cue, bits:[], ready:false, active:false};
   traitsBattleStart(run);
@@ -1966,6 +2076,7 @@ function enemyAction(run, e){
     const cueMult = (step.heavy && run.cue && run.cue.ready) ? 0.8 : 1;
     power = step.t==="c" ? 0 : Math.ceil(step.p * e.atkMult * cueMult);
   }
+  if(e.boss&&run.pocoRules&&run.turn>=6&&power>0)power=Math.ceil(power*(1+Math.min(0.5,0.1*(1+Math.floor((run.turn-6)/3)))));
   if(e.rage && power>0) power = Math.ceil(power*(e.boss?ENEMY_TUNE.bossRage:ENEMY_TUNE.rage));
   const res = { type: step.t, power, heavy: !!step.heavy, rage: !!e.rage };
   if(step.t==="s") res.target = pickTarget(run, (run.turn-1+e.slot)%run.party.length);
@@ -1992,7 +2103,8 @@ function singleDamage(run, actor, extra, enemy, opts={}){
   if(hasTrait(actor,"J19")){ const st=enemy.cycle[(run.turn-1)%enemy.cycle.length]; if(st&&st.t==="c") ex+=6; }
   if(hasTrait(actor,"J21")) B=Math.ceil(B*1.5);
   const power = actor.str!=null ? actor.str : 10+2*L;
-  return Math.max(1, power + V*(ex + atk + B) - def);
+  const damage=Math.max(1,power+V*(ex+atk+B)-def);
+  return opts.kind==="attack"&&enemy.boss&&run.pocoRules&&run.A<40&&!run.kiraDone?Math.max(1,Math.floor(damage*0.65)):damage;
 }
 function chainAdvance(run, actor, line){
   if(run.kiraDone) return false;
@@ -2060,7 +2172,7 @@ function planAction(run, idx, act){
       if(run.A<40){ p.ok=false; p.reason="エールが40必要です。"; break; }
       p.cost.a=40; const amt=Math.ceil((12+a.family)*V*(1+(a.cha||0)/100)); let any=false; /* 魅力補正が効く */
       for(const t of run.party){ if(t.hp<=0){ p.heal.push({pos:t.pos, amt:Math.min(amt,t.maxHP), revive:true}); any=true; } else { const g=Math.min(amt,t.maxHP-t.hp); p.heal.push({pos:t.pos,amt:g}); if(g>0) any=true; } }
-      p.valid=any; if(!any){ p.ok=false; p.reason="全員のHPが満タンです。"; }
+      for(const t of al){const before=p.ward.length;addWard(t,1);if(p.ward.slice(before).some(w=>w.amt>0))any=true;}p.valid=any; if(!any){ p.ok=false; p.reason="全員のHPと防護が最大です。"; }
       break; }
     case "meter": {
       if(run.A<80){ p.ok=false; p.reason="エールが80必要です。"; break; }
@@ -2124,6 +2236,7 @@ function applyAction(run, idx, act){
   if(!p.ok) return {ok:false, reason:p.reason};
   const a = run.party[idx]; const log=[]; const nm=a.name;const beforeA=run.A;let kiraEvent=null;
   if(p.tech){a.skillReady=a.skillReady||{};a.skillReady[p.tech]=run.turn+p.techCooldown+1;}
+  recordTrialAction(run,a,act);
   const label = actLabel(run,a,act);
   log.push(`${nm}の${label}！`);
   a.c -= p.cost.c; run.A -= p.cost.a; if(p.cost.hp){ a.hp -= p.cost.hp; log.push(`${nm}はHPを${p.cost.hp}払った。`); }
@@ -2215,7 +2328,10 @@ function enemyPhase(run){
   }
   if(run.cue && run.turn%4===0){ run.cue.bits=[]; run.cue.ready=false; }
   for(const m of run.party){ m.guard=false; m.ward=0; m.acted=false; }
+  if(run.aleLeak){const lost=Math.min(run.A,run.aleLeak);run.A-=lost;if(lost)log.push('枠のノイズでエール−'+lost);}
+  if(run.mpLeak)for(const m of alive(run)){const lost=Math.min(m.c,run.mpLeak);m.c-=lost;if(lost)log.push(m.name+'は進行の混乱でMP−'+lost);}
   run.turn++; run.chain={stage:0,members:[]};
+  if(run.turnLimit&&run.turn>run.turnLimit){run.state="lost";log.push("締めの合図！ 制限ターンを超え、特別チャレンジは失敗した。");return log;}
   startTurnCue(run);
   if(run.rageNew){ for(const sl of run.rageNew){ const e=run.enemies.find(x=>x.slot===sl); if(e) log.push(`${e.display}は怒っている！ 攻撃が強くなった。`); } run.rageNew=null; }
   traitsTurnStart(run, log);
@@ -2225,10 +2341,12 @@ function enemyPhase(run){
 /* ---- 戦闘報酬（第17B・17H節）。一度だけ適用 ---- */
 function applyVictory(st, run){
   const res = { xp:0, gold:0, tickets:0, jp:[], levelBefore:levelOf(st.xp), levelAfter:0, gifts:[], quest:null, kills:0, notes:[] };
-  if(run.rewardsApplied) return res;
+  if(run.rewardsApplied||run.kind==="challenge"&&run.state!=="won") return res;
   storeVitals(st, run); st.bag = clone(run.bag||st.bag||[]); res.items=[]; res.itemsKept=[]; res.itemsLost=[];
   const L0 = levelOf(st.xp); const max0 = Object.fromEntries(st.roster.map(cid=>[cid,charStats(st,cid,L0).maxHP]));
   const n = run.enemies.length;
+  if(run.kind==="challenge")challengeReward(st,run,res);
+  if(run.kind==="field"){st.townBattles=st.townBattles||{};st.townBattles[run.hub]=(st.townBattles[run.hub]||0)+1;}
   if(run.kind==="field"){
     res.xp = Math.min(XP_CAP-st.xp, n*Math.max(1,Math.floor((10+4*run.q)*0.85))); res.gold = n*(24+3*run.q);
     st.xp += res.xp; st.gold += res.gold;
@@ -2254,10 +2372,10 @@ function applyVictory(st, run){
     st.xp+=res.xp; st.gold+=res.gold;
   }
   if(run.kind==="field" && st.streamRetryGate && st.streamRetryGate[run.hub]) st.streamRetryGate[run.hub].battle=true;
-  ultraDrop(st,run,res);
+  if(run.kind!=="challenge")ultraDrop(st,run,res);
   // JP
   for(const m of run.party){
-    const base = run.turn<=3 ? 12 : 6+2*Math.min(3,m.valid);
+    const base = run.kind==="challenge"&&(!res.challenge||!res.challenge.first)?0:run.turn<=3?12:6+2*Math.min(3,m.valid);
     const cur = jpOf(st,m.cid,m.job); const R0=rankOf(cur);
     const gain = Math.min(JP_CAP-cur, base); st.jp[m.cid][m.job]=cur+gain; const R1=rankOf(cur+gain);
     res.jp.push({cid:m.cid, name:m.name, job:m.job, gain, R0, R1});
@@ -2470,9 +2588,10 @@ function aiIncoming(run, m){
   return sum;
 }
 function aiScore(before, after){
-  if(after.state==="won") return 1e6 - after.turn*10;
+  if(after.state==="won") return after.challengeId&&!trialConditions(after).every(c=>c.ok)?-5e5:1e6-after.turn*10;
   if(after.state==="lost") return -1e6;
   let s=0;
+  if(after.challengeId){const d=trialOf(after.challengeId),a=trialMetrics(after),b=trialMetrics(before);const ratio=(m)=>Math.min(1,m.comments/(d.comments||Infinity))+Math.min(1,m.people.length/(d.people||Infinity))+Math.min(1,m.skills/(d.skills||Infinity))+Math.min(1,m.masters/(d.masters||Infinity))+Math.min(1,m.family/(d.family||Infinity))+Math.min(1,m.guardPeople.length/(d.guards||Infinity));s+=(ratio(a)-ratio(b))*1800;if(d.kira){s+=after.kiraDone&&!before.kiraDone?2400:Math.max(0,after.chain.stage-before.chain.stage)*600;}}
   // 敵へのダメージと撃破
   for(const e of after.enemies){ const b=before.enemies.find(x=>x.slot===e.slot); s += (b.hp-e.hp)*3; if(b.hp>0&&e.hp<=0) s+=120; if(e.hp>0) s -= e.hp*0.5; }
   // 味方の生存とHP（敵フェーズ前なら予告から被ダメージを見込む）
@@ -3448,7 +3567,7 @@ function renderStatus(){
   const st=G.st; const L=levelOf(st.xp);
   const head=`<dl class="kv"><dt>総合レベル</dt><dd>${L}</dd><dt>経験値</dt><dd>${st.xp.toLocaleString()}${L<999?`（次のレベルまで ${(xpFor(L+1)-st.xp).toLocaleString()}）`:"（最大）"}</dd>
     <dt>所持ゴールド</dt><dd>${st.gold.toLocaleString()}</dd><dt>もえの到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd></dl>
-    ${st.lastMpGrowth?`<p class="small good">直近のレベルアップ：${st.lastMpGrowth.members.map(m=>`${esc(charName(st,m.cid))} 最大MP ${m.before} → ${m.after}（＋${m.after-m.before}）`).join("／")}</p>`:""}<p class="small">成長ペース：総合レベルの必要経験値は従来の1.8～3倍、ジョブ熟練度は2～4倍。高くなるほど必要量が増えます。</p><p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
+    ${st.lastMpGrowth?`<p class="small good">直近のレベルアップ：${st.lastMpGrowth.members.map(m=>`${esc(charName(st,m.cid))} 最大MP ${m.before} → ${m.after}（＋${m.after-m.before}）`).join("／")}</p>`:""}<p class="small">成長ペース：総合レベルの必要経験値は従来の1.8～3倍、ジョブ熟練度は2～4倍。高くなるほど必要量が増えます。</p><p class="small">配信ギアの攻撃・防御補正を強化しました。ボスのシールドにはエール・キラコメか職業技、長期戦には回復・防護・MP補給を組み合わせましょう。</p><p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
   const cards=st.roster.map(cid=>{
     const s=charStats(st,cid,L), v=vitalOf(cid), e=st.equip[cid], jp=jpOf(st,cid,s.job), C=CHARS[cid];
     const inParty=st.party.includes(cid);
@@ -3466,7 +3585,7 @@ function renderStatus(){
       ${masteryHtml(st,cid,L)}<div class="statsec"><h3 class="label">能力値（レベル${L}・${esc(JOBS[s.job].name)}）</h3>${statBlockHtml(s)}<p class="small dim">伸び方：${gradeText(s.job)}</p></div>
       <dl class="kv">
         <dt>技能</dt><dd>${esc(JOBS[s.job].skill)}（MP${JOBS[s.job].cost}・技能強化${s.S}）<br><span class="small">${esc(JOBS[s.job].desc(s.S))}</span></dd>
-        <dt>職業特性</dt><dd>${esc(JOB_TRAITS[s.job].name)}<br><span class="small">${esc(JOB_TRAITS[s.job].desc)}</span></dd>
+        <dt>配信での役割</dt><dd>${esc(CHARS[cid].pocoRole||"")}</dd><dt>職業特性</dt><dd>${esc(JOB_TRAITS[s.job].name)}<br><span class="small">${esc(JOB_TRAITS[s.job].desc)}</span></dd>
         <dt>武器</dt><dd>${eqName(e.w)}</dd><dt>防具</dt><dd>${eqName(e.a)}</dd><dt>アクセサリー</dt><dd>${eqName(e.acc)}</dd>
       </dl></section>`; }).join("");
   return head+`<div class="stack">${cards}</div><p class="small">体力×2が最大HPの土台。攻撃力＝ちから＋武器・アクセサリー（敵の防御力を引く前の基本ダメージ）。防御力＝身の守り＋防具（敵の攻撃1回ごとに減らせるダメージ）。会心率＝すばやさ÷6＋1％＋装備（会心の一撃は防御を無視して1.5倍）。回避率＝すばやさ÷12％。魅力補正＝魅力÷4％（自分の行動で得るエール、技能・ファミリー応援で回復する量が増える）。メーター突破は使う人の魅力÷3が威力に加わる。能力値はレベル・職業・熟練度で決まり、職業を変えると伸び方も変わります。敵の単体攻撃にはまれに痛恨の一撃（防御・防護を無視して1.5倍。ガードで半分）があります。</p>`;
@@ -3491,7 +3610,7 @@ function renderExplore(){
     <div class="here">${hereHtml()}</div>
     ${partyStrip()}
     <nav class="menu-grid" aria-label="メニュー">
-      <button class="btn" data-a="openSheet" data-k="quests">依頼帳</button>
+      <button class="btn" data-a="openSheet" data-k="quests">依頼帳</button><button class="btn" data-a="openSheet" data-k="challenges">特別挑戦</button><button class="btn" data-a="openSheet" data-k="townStudio">街イベント</button>
       <button class="btn" data-a="openSheet" data-k="guide">道しるべ</button>
       <button class="btn" data-a="openSheet" data-k="map">地図</button>
       <button class="btn" data-a="openSheet" data-k="items">道具</button>
@@ -3544,6 +3663,7 @@ function drawMap(){
   const layer=ART.mapLayer(st.mapId,f);
   const sx=Math.max(0,cam.x), sy=Math.max(0,cam.y), w=Math.min(VW,layer.width-sx), h=Math.min(VH,layer.height-sy);
   g.drawImage(layer,sx,sy,w,h,sx-cam.x,sy-cam.y,w,h);
+  for(const d of m.pocoDecor||[]){const x=d.x*16-cam.x,y=d.y*16-cam.y;g.fillStyle=POCO_COLORS[(m.pocoTheme||0)%POCO_COLORS.length];g.fillRect(x+2,y+4,3,3);g.fillRect(x+6,y+4,3,3);g.fillRect(x+3,y+6,5,3);g.fillRect(x+4,y+9,3,1);}
   const sprites=[];
   for(const o of m.objects){
     let img;
@@ -3552,7 +3672,7 @@ function drawMap(){
     else if(o.type==="inn"){ sprites.push({y:o.y-0.1,img:ART.object("inn",f),x:o.x}); img=ART.person("innkeeper",PAL.slate,PAL.navy,0,f2*2); }
     else if(o.type==="box") img=ART.object(st.boxes[o.box]?"boxOpen":"box",f);
     else if(o.type==="boss"){ if(st.bossDefeated[o.boss]) continue; img=ART.object("boss",f); }
-    else img=ART.object(o.type,f);
+    else img=ART.object(o.type==='challenge'?'board':o.type==='studio'?'inn':o.type,f);
     sprites.push({y:o.y,x:o.x,img});
   }
   const moving=G.walk.path.length>0; const wf=moving?Math.floor(now/166)%4:0;
@@ -3693,6 +3813,8 @@ function interact(o){
   const face=()=>{ const dx=o.x-st.pos.x, dy=o.y-st.pos.y; if(dx||dy) st.dir = Math.abs(dy)>=Math.abs(dx)?(dy>0?0:1):(dx<0?2:3); };
   face();
   switch(o.type){
+    case "challenge": return openSheet("challenges");
+    case "studio": return openSheet("townStudio");
     case "station": return openSheet("station");
     case "npc": return talkNpc(o.npc);
     case "shop": return openSheet("shop",{shop:o.shop, npc:o.npc, tab:"buy"});
@@ -3701,7 +3823,7 @@ function interact(o){
       return openSheet("travel",{to:o.to,tx:o.tx,ty:o.ty}); }
     case "box": return openBox(o);
     case "sign": { const a=AREAS[o.area]; const b=Object.values(BOSSES).find(x=>x.areaId===o.area);
-      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・推奨レベル${a.q}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${b.q}）。`:"")],["案内板",a.lore]]); }
+      return say([["案内板",`${a.name}（${o.area}）。強度q${a.q}・推奨レベル${a.q}。`+(b?`この奥に地域ボス「${b.name}」（推奨レベル${bossRecommendedLevel(b.q)}）。`:"")],["案内板",a.lore]]); }
     case "boss": return bossPrompt(o.boss);
     case "rest": return openSheet("rest");
     case "inn": return openSheet("inn",{label:o.label});
@@ -3729,6 +3851,7 @@ function talkNpc(id){
   }
   const gate=(st.streamRetryGate||{})[n.hub];if(gate&&id!=="moe"&&!gate.talks.includes(id))gate.talks.push(id);
   const town=townChange(st,n.hub);if(town){st.townSeen=st.townSeen||{};const key=n.hub+":"+town.phase+":"+!!town.side;if(!st.townSeen[key]){st.townSeen[key]=true;lines.push([n.name,town.text+(town.side?" "+town.side:"")]);}}
+  if((st.festivals||{})[n.hub])lines.push([n.name,POCO_TOWNS[HUB_ORDER.indexOf(n.hub)][3]]);
   commit(); say(lines);
 }
 function openBox(o){
@@ -3746,7 +3869,7 @@ function openBox(o){
 function bossPrompt(bid){
   const st=G.st, b=BOSSES[bid]; const qid=Object.keys(QUESTS).find(k=>QUESTS[k].boss===bid);
   if(st.bossDefeated[bid]) return say([["","乱れは静まっている。図鑑から記録を見られます。"]]);
-  if(st.quests[qid]!=="bossReady") return say([["",`奥から大きな重なりを感じる（${b.name}・推奨レベル${b.q}）。依頼「${qid}」を受けて通常敵を倒すと挑戦できます。`]]);
+  if(st.quests[qid]!=="bossReady") return say([["",`奥から大きな重なりを感じる（${b.name}・推奨レベル${bossRecommendedLevel(b.q)}）。依頼「${qid}」を受けて通常敵を倒すと挑戦できます。`]]);
   openSheet("boss",{bid});
 }
 function say(lines, after){ G.dlg={lines, i:0, after}; render(); }
@@ -3790,7 +3913,7 @@ function startBattle(run){
   commit(); SND.sfx("enc");
   if(st.settings.reduceMotion){ G.screen="battle"; render(); }
   else { const f=document.createElement("div"); f.className="flash"; document.body.appendChild(f); setTimeout(()=>{ f.remove(); G.screen="battle"; render(); },380); }
-  SND.play(run.kind==="boss"?"boss":"battle");
+  SND.play(run.enemies.some(e=>e.boss)?"boss":"battle");
 }
 function partyCard(m,i,run){
   const sel=G.cmd.actor===i; const pct=Math.round(100*m.hp/m.maxHP);
@@ -3830,9 +3953,9 @@ function renderBattle(){
   const chain = run.kiraDone?"キラコメ済":`キラコメ${run.chain.stage}/3 次:${["挨拶","作戦","感謝"][run.chain.stage]}`;
   const last = (run.log||[]).slice(-3);
   return `<section class="battle">
-    <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><span>コメント連携${run.B}・${chain}</span></div>
+    <div class="bhead"><span>ターン${run.turn}・${esc(DIFFICULTY[run.difficulty].name)}・${run.kind==="challenge"?"特別チャレンジ":run.kind==="boss"?"地域ボス":esc(AREAS[run.areaId].name)}</span><span>コメント連携${run.B}・${chain}</span></div>
     <div class="gauge" aria-label="エール${run.A}"><span>エール</span><span class="bar ale"><i style="width:${run.A}%"></i></span><b>${run.A}</b></div>
-    ${battleSupportPanel(run)}
+    ${pocoBattleStatus(run)}${battleSupportPanel(run)}
     ${cueText(run)}
     <div class="enemies"><canvas class="stagebg" width="160" height="64" aria-hidden="true"></canvas>${enemies}</div>
     <div class="party">${run.party.map((m,i)=>partyCard(m,i,run)).join("")}</div>
@@ -3840,13 +3963,13 @@ function renderBattle(){
     <button class="log" data-a="openSheet" data-k="battleLog" aria-live="polite" aria-label="戦闘ログ（タップで直近6件）">${last.map(l=>`<span>${esc(l)}</span>`).join("")}</button>
   </section>`;
 }
-function battleSupportPanel(run){const stage=run.chain.stage,bonus=run.support==='PR06'?15:10,ready=run.party.filter(m=>m.hp>0).length;const notice=run.supportNotice;return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||run.state!=='input'||G.auto?'disabled':''}>全員回復・復活<br>エール40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||run.state!=='input'||G.auto?'disabled':''}>敵全体を攻撃<br>エール80</button></div><p class="small">${run.A<40?`全員回復まであと${40-run.A}`:run.A<80?`全員回復が使えます／全体攻撃まであと${80-run.A}`:'全員回復・全体攻撃が使えます'}（エール上限100）</p><p class="small">コメント連携：${run.B?`次の通常攻撃・一部の単体技に基本＋${run.B*run.V}ダメージ`:'応援コメントで次の攻撃を強化'}</p><p class="small">キラコメ：${run.kiraDone?'この戦闘で発動済み':`挨拶 → 作戦 → 感謝　${stage}/3・次は${['挨拶','別の人の作戦','さらに別の人の感謝'][stage]}`}${!run.kiraDone&&ready<3?'（完成には生存者3人が必要）':''}</p>${notice?`<div class="support-notice" role="status"><b>${esc(notice.actor)}：${esc(notice.action)}</b><p class="small">エール ${notice.beforeA} → ${notice.afterA}${notice.costA?`（${notice.costA}消費）`:''}${notice.kira?`／キラコメ成功：エール追加${notice.kira.gain}・防護が増えた味方${notice.kira.protected}人`:''}</p></div>`:''}<button class="btn" data-a="openSheet" data-k="battleSupportHelp">応援・連携の効果とやり方</button></div>`;}
-function renderBattleSupportHelp(){return `<h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
+function battleSupportPanel(run){const stage=run.chain.stage,bonus=run.support==='PR06'?15:10,ready=run.party.filter(m=>m.hp>0).length;const notice=run.supportNotice;return `<div class="battle-support"><div class="support-actions"><button class="btn" data-a="supportQuick" data-v="family" ${run.A<40||run.state!=='input'||G.auto?'disabled':''}>回復・復活・防護<br>エール40</button><button class="btn" data-a="supportQuick" data-v="meter" ${run.A<80||run.state!=='input'||G.auto?'disabled':''}>敵全体を攻撃<br>エール80</button></div><p class="small">${run.A<40?`全員回復まであと${40-run.A}`:run.A<80?`全員回復が使えます／全体攻撃まであと${80-run.A}`:'全員回復・全体攻撃が使えます'}（エール上限100）</p><p class="small">コメント連携：${run.B?`次の通常攻撃・一部の単体技に基本＋${run.B*run.V}ダメージ`:'応援コメントで次の攻撃を強化'}</p><p class="small">キラコメ：${run.kiraDone?'この戦闘で発動済み':`挨拶 → 作戦 → 感謝　${stage}/3・次は${['挨拶','別の人の作戦','さらに別の人の感謝'][stage]}`}${!run.kiraDone&&ready<3?'（完成には生存者3人が必要）':''}</p>${notice?`<div class="support-notice" role="status"><b>${esc(notice.actor)}：${esc(notice.action)}</b><p class="small">エール ${notice.beforeA} → ${notice.afterA}${notice.costA?`（${notice.costA}消費）`:''}${notice.kira?`／キラコメ成功：エール追加${notice.kira.gain}・防護が増えた味方${notice.kira.protected}人`:''}</p></div>`:''}<button class="btn" data-a="openSheet" data-k="battleSupportHelp">応援・連携の効果とやり方</button></div>`;}
+function renderBattleSupportHelp(){return `<p class="small">ここで説明する効果・数値・連携順序は、このゲーム独自のルールです。</p><h3>エール＝全員で共有する応援ゲージ</h3><p>応援コメントや技でためます。上限は100。40消費で「ファミリー応援」（全員のHP回復・戦闘不能から復活・生存者へ防護1）、80消費で「メーター突破」（敵全体への大ダメージ）が使えます。どちらも行動を1回使います。回復量やダメージは決定前の予測で確認できます。</p><h3>コメント連携＝次の攻撃への上乗せ</h3><p>応援コメントなどで連携値4を用意し、次の通常攻撃・対応する単体技に上乗せします。上乗せ量は成長係数や職業で変わり、対応する攻撃で使うと連携値を消費します。</p><h3>キラコメ＝別の3人で完成させる連携</h3><ol><li>1人目が応援コメントの「挨拶」</li><li>別の2人目が「作戦」</li><li>さらに別の3人目が「感謝」</li></ol><p>同じターンにこの順番で行います。途中で攻撃・道具などを挟むか、ターンが終わるとやり直しです。成功するとエール＋10（宮崎支援時は＋15）と、生きている味方全員に防護＋2。エール100・防護8の上限を超えた分は増えません。</p><p>防護は敵の攻撃ダメージを軽くし、敵の行動終了時に消えます。キラコメ完成は1戦闘に1回だけ。2人以下のパーティーでも、応援コメントによるエールとコメント連携の効果は使えます。</p>`;}
 
 function skillNeeds(job){ return ({J01:"enemy",J02:"line",J03:"ally",J04:"mode",J05:"enemy",J06:"mode",J07:"none",J08:"ally",J09:"enemy",J10:"none",J11:"none",J12:"none",J13:"ally",J14:"none",J15:"enemy",J16:"enemy",J17:"none",J18:"ally",J19:"enemy",J20:"none",J21:"enemy",J22:"allyOther"})[job]; }
 function renderCommand(run){
   if(run.state==="won") return `<div class="win cmd"><p>勝利！ ノイズ体をすべて鎮めた。</p><button class="btn primary wide" data-a="toResult">結果を見る</button></div>`;
-  if(run.state==="lost") return `<div class="win cmd"><p class="small">全員が戦闘不能。この戦闘の報酬は0。所持ゴールドの半分を失い、全員のHPとMPを回復して安全な場所へ戻ります。受注・討伐数・経験値・熟練度・所持品は保持。</p><button class="btn primary wide" data-a="defeatReturn">安全な場所へ戻る</button></div>`;
+  if(run.state==="lost") return `<div class="win cmd"><p class="small">${run.turnLimit&&run.turn>run.turnLimit?"制限ターンを超えました。":"全員が戦闘不能。"}この戦闘の報酬は0。${run.kind==="challenge"?"特別挑戦の参加料は戻りませんが、追加のゴールド損失はありません。":"所持ゴールドの半分を失い、"}全員のHPとMPを回復して安全な場所へ戻ります。受注・討伐数・経験値・熟練度・所持品は保持。</p><button class="btn primary wide" data-a="defeatReturn">安全な場所へ戻る</button></div>`;
   if(G.auto){
     const al2=run.party.filter(m=>m.hp>0&&!m.acted);
     const tap=autoMode()==="tap", wait=tap&&G.autoWait;
@@ -4043,7 +4166,7 @@ function renderResult(){
   const pct=(a,b)=>Math.max(0,Math.min(100,Math.round(a/b*100)));
   const xpNow=st.xp-xpFor(L), xpSpan=L<999?xpFor(L+1)-xpFor(L):1;
   const foes=r.enemies||[];
-  const title = r.kind==="boss" ? "ボスを鎮めた！" : "勝利！";
+  const title=r.challenge?(r.challenge.passed?"特別チャレンジ達成！":"討伐成功・課題未達"):r.kind==="boss"?"ボスを鎮めた！":"勝利！";
   const sub = (r.turns?`${r.turns}ターン`:"")+(foes.length?`・${foes.map(e=>esc(e.name)).join("、")}を鎮めた`:"");
   const card=(lab,val,cls="")=>`<div class="rstat ${cls}"><span class="rlab">${lab}</span><span class="rval">${val}</span></div>`;
   const mem=(r.members||[]).map(x=>{
@@ -4070,12 +4193,12 @@ function renderResult(){
   const gifts=r.gifts.map(g=>`<li class="ritem">${eqBadge(g)}専用品「${esc(EQUIP[g].name)}」を贈られた</li>`);
   const anyLow=st.roster.some(c=>{const v=vitalOf(c),s=charStats(st,c,L); return v.hp<=0||isLow(v.hp,s.maxHP);});
   return `<section class="result" aria-labelledby="rtitle">
-    <div class="rbanner ${r.kind==="boss"?"boss":""}"><h2 id="rtitle">${title}</h2><p>${sub}</p></div>
+    <div class="rbanner ${r.kind==="boss"||r.challenge?"boss":""}"><h2 id="rtitle">${title}</h2><p>${sub}</p></div>
     ${up?`<div class="rlevel"><b>レベルアップ！</b><span>レベル${r.levelBefore} → <b class="big">${r.levelAfter}</b></span>${Vof(r.levelAfter)>Vof(r.levelBefore)?`<span class="small">技能・装備・道具の効果量が上昇</span>`:""}<span class="small good">全員のHP・MPが全回復した！</span></div>
       ${r.statDetail?levelUpHtml(st,r.statDetail):r.statUps?`<div class="rbox rups"><h3 class="label">能力が上がった</h3><ul class="rlist">${Object.entries(r.statUps).filter(([c])=>st.roster.includes(c)).map(([c,list])=>`<li><b>${esc(charName(st,c))}</b>　${list.length?list.map(([k,v])=>`${STAT_NAMES[k]}＋${v}`).join("・"):"変化なし"}</li>`).join("")}</ul></div>`:""}`:""}
     <div class="rgrid">${card("経験値",`＋${r.xp.toLocaleString()}`)}${card("ゴールド",`＋${r.gold.toLocaleString()}`,"gold")}${r.tickets?card("チケット",`＋${r.tickets.toLocaleString()}`):card("所持金",`${st.gold.toLocaleString()}G`)}</div>
     <div class="gauge rxp"><span>レベル${L}</span><span class="bar xp"><i style="width:${pct(xpNow,xpSpan)}%"></i></span><b>${L<999?`次まで${(xpSpan-xpNow).toLocaleString()}`:"最大"}</b></div>
-    ${r.quest?`<div class="rquest done">依頼「${r.quest} ${esc(QUESTS[r.quest].name)}」完了！</div>`:r.kills&&r.killQuest?`<div class="rquest"><span>依頼 ${r.killQuest} 討伐</span><span class="bar"><i style="width:${pct(r.killNow,r.killNeed)}%"></i></span><b>${r.killNow}/${r.killNeed}</b></div>`:""}
+    ${r.challenge?`<div class="rbox"><h3 class="label">${esc(r.challenge.name)}</h3><ul class="list">${r.challenge.conditions.map(c=>`<li>${c.ok?"✓":"未"} ${esc(c.label)}（${c.value}）</li>`).join("")}</ul></div>`:""}${r.quest?`<div class="rquest done">依頼「${r.quest} ${esc(QUESTS[r.quest].name)}」完了！</div>`:r.kills&&r.killQuest?`<div class="rquest"><span>依頼 ${r.killQuest} 討伐</span><span class="bar"><i style="width:${pct(r.killNow,r.killNeed)}%"></i></span><b>${r.killNow}/${r.killNeed}</b></div>`:""}
     ${items.length||gifts.length?`<div class="rbox"><h3 class="label">手に入れたもの</h3><ul class="rlist">${[...items,...gifts].join("")}</ul></div>`:""}
     ${r.notes.filter(n=>!/効果量が上昇/.test(n)).map(n=>`<p class="good rnote">${esc(n)}</p>`).join("")}
     <h3 class="label">仲間</h3><div class="rmems ${(r.members||[]).some(x=>graphemes(charName(st,x.cid)).length>7)?"longname":""}">${mem}</div>
@@ -4161,6 +4284,8 @@ function renderSheet(){
     case "rest": return sheetWrap("休息", `${d.reason?`<p class="warn">${esc(d.reason)}</p>`:""}<p>日付を進めると翌日になり、旅程枠が6に戻ります（費用なし）。HPとMPは回復しません。回復は宿屋で。今は${st.day}日目・残り${st.slots}枠。</p><div class="stack"><button class="btn primary" data-a="doRest">日付を進める</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "party": return sheetWrap("編成", renderParty());
     case "rename": return sheetWrap("名前の変更",renderRename());
+    case "challenges": return sheetWrap("特別チャレンジ",renderChallenges());
+    case "townStudio": return sheetWrap("ファミリー交流所",renderTownStudio());
     case "status": return sheetWrap("パーティーのステータス", renderStatus());
     case "inn": { const hub=curHub(); const per=INN_PRICE[hub]||10; const n=st.roster.length; const total=per*n; const can=st.gold>=total;
       return sheetWrap(d.label||"宿屋", `<p>「いらっしゃいませ。お一人さま${per}ゴールド、${n}人で${total}ゴールドです。」</p>
@@ -4174,7 +4299,7 @@ function renderSheet(){
     case "dex": return sheetWrap("ノイズ図鑑", renderDex());
     case "shop": return sheetWrap(SHOPS[d.shop].name, renderShop());
     case "moe": return sheetWrap("もえ", renderMoe());
-    case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil(x*df.atk*ps.atk); return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${b.q}。現在レベル${levelOf(st.xp)}。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人がガード</b>すると、直後の強攻撃が20%減り、エール＋12（静観型）。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
+    case "boss": { const b=BOSSES[d.bid]; const ps=bossScale(d.bid, st.party.length); const df=DIFFICULTY[st.settings.difficulty]; const pw=x=>Math.ceil((x+ENEMY_TUNE.bossAdd)*df.atk*ps.atk*ENEMY_TUNE.bossAtk),counter={guard:"ガード",comment:"応援コメント",damage:"攻撃"}[b.cue]||"ガード"; return sheetWrap("地域ボス", `<p><b>${esc(b.name)}</b>（${d.bid}）　強度q${b.q}・推奨レベル${bossRecommendedLevel(b.q)}。現在レベル${levelOf(st.xp)}。</p><p class="small">目安は強化した武器・防具、MP回復の道具、攻撃と回復の役割分担を含む推奨です。</p><p class="small">HP${Math.ceil((100+36*b.q)*df.hp*ps.hp*BOSS_HP_UP*ENEMY_TUNE.bossHp)}（${df.name}）。${st.party.length<4&&(ps.hp<1||ps.atk<1)?`戦闘メンバー${st.party.length}人のため、HP×${ps.hp}・攻撃×${ps.atk}の少人数補正（挑戦時の人数で固定）。`:""}</p><p class="small">行動周期：1人へ攻撃${pw(12+b.q)} → 全員へ攻撃${pw(6+Math.floor(b.q/2))} → ため → 全員へ強攻撃${pw(10+3*b.q)}。ため予告中に<b>異なる2人が${counter}</b>すると、直後の強攻撃が20%減り、エール＋12。回復・防護・エールの技能（攻撃しない技能）も対処に数えます。通常攻撃を35％軽減するノイズシールドはエール40以上かキラコメ完成で解除でき、職業技は常に軽減を受けません。6ターン目以降、3ターンごとに攻撃が10％ずつ上がります（最大50％）。エール80のメーター突破は、残る敵が1体なら威力1.5倍。</p><p class="small">敗北・撤退しても受注と討伐数は保持され、0枠で再挑戦できます。</p><div class="stack"><button class="btn primary" data-a="bossGo" data-v="${d.bid}">挑戦する</button><button class="btn" data-a="closeSheet">準備する</button></div>`); }
     case "streamSetup": return sheetWrap("配信の準備", renderStreamSetup());
     case "battleSupportHelp": return sheetWrap("エール応援・キラコメ連携",renderBattleSupportHelp());
     case "battleLog": return sheetWrap("戦闘ログ", `<div class="stack">${((G.st.run&&G.st.run.log)||[]).slice(-6).map(l=>`<p>${esc(l)}</p>`).join("")||"<p>まだありません。</p>"}</div>`);
@@ -4192,7 +4317,7 @@ function renderSettings(){
   const st=G.st; const s=st?st.settings:G.tmpSettings||(G.tmpSettings={difficulty:"std",sound:soundPref(),reduceMotion:false});
   const busy = st&&st.run;
   const D=DIFFICULTY[s.difficulty]||DIFFICULTY.std;
-  const diffDesc={easy:"敵のHP0.8倍・攻撃力0.75倍、戦闘開始時のエール＋20。",std:"指示書どおりの強さ。",hard:"敵のHP1.2倍・攻撃力1.15倍。"};
+  const diffDesc={easy:"敵のHP0.8倍・攻撃力0.75倍、戦闘開始時のエール＋20。",std:"配信ギア・回復・職業固有技を使い分ける強さ。",hard:"敵のHP1.2倍・攻撃力1.15倍。"};
   const snd=soundIsOn(), rm=!!s.reduceMotion, dock=s.dock!==false, am=autoMode(), ps=padSide();
   const padPic=side=>side==="right"?`<span class="padpic"><i class="pa">A</i><i class="pb">B</i><i class="psp"></i><i class="pst"></i></span>`:`<span class="padpic"><i class="pst"></i><i class="psp"></i><i class="pb">B</i><i class="pa">A</i></span>`;
   const dot=ok=>`<span class="sdot ${ok?"ok":"ng"}" aria-hidden="true"></span>`;
@@ -4334,7 +4459,7 @@ function renderParty(){
         <button class="btn" data-a="partyView" data-c="${cid}" data-v="">人物へ戻る</button>`;
     }
     const e=st.equip[cid]; const C=CHARS[cid];
-    return `<div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><b>${esc(charName(st,cid))}</b>　${[C.age?C.age+"歳":"",C.from?esc(C.from):""].filter(Boolean).join("・")}<br><span class="small">${cid==="moe"?"経歴":"職歴"}：${esc((cid==="hero"?(st.profile.career||C.career):C.career))}（ジョブとは別）</span></div></div>
+    return `<div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><b>${esc(charName(st,cid))}</b>　${[C.age?C.age+"歳":"",C.from?esc(C.from):""].filter(Boolean).join("・")}<br><span class="small">${cid==="moe"?"経歴":"職歴"}：${esc((cid==="hero"?(st.profile.career||C.career):C.career))}（ジョブとは別）</span><p class="small">${esc(C.pocoRole||"")}</p></div></div>
       <dl class="kv"><dt>ジョブ</dt><dd>${esc(JOBS[cur.job].name)}　熟練度${cur.R}・技能強化${cur.S}</dd><dt>HP</dt><dd>${vitalOf(cid).hp}／${cur.maxHP}</dd><dt>MP</dt><dd>${vitalOf(cid).c}／${cur.startC}</dd>
       <dt>武器</dt><dd>${e.w?esc(EQUIP[e.w].name):"なし"}</dd><dt>防具</dt><dd>${e.a?esc(EQUIP[e.a].name):"なし"}</dd><dt>アクセサリー</dt><dd>${e.acc?esc(EQUIP[e.acc].name):"なし"}</dd></dl>
       <h3 class="label">使用できる技</h3><p>${esc(JOBS[cur.job].skill)}（MP${JOBS[cur.job].cost}）</p><ul class="list">${Object.values(EXTRA_SKILLS).filter(sk=>sk.job===cur.job||((st.learnedGearSkills||{})[cid]||[]).includes(sk.id)).map(sk=>`<li>${esc(sk.name)}：MP${sk.cost}・${esc(sk.desc)}${sk.job&&!cur.extraSkills.includes(sk.id)?`（Lv${sk.level}${sk.rank?`・熟練度${sk.rank}`:""}で習得）`:"（習得済み）"}</li>`).join("")}</ul>
@@ -4370,10 +4495,10 @@ function renderDex(){
   const st=G.st; const d=G.sheetData; const area=d.area||"KY01-A1"; const page=d.page||0;
   if(d.detail){
     const [a,i]=d.detail.split("|"); const e=enemyDef(a,+i); const seen=st.seen[e.id];
-    const q=e.q; const steps=e.cycle.map(([t,p])=>t==="c"?"ため":`${t==="s"?"単体":"全体"}${p+Math.floor(4*(q-1)/5)}`).join(" → ");
+    const q=e.q,rb=(e.rarity||1)-1; const steps=e.cycle.map(([t,p])=>t==="c"?"ため":`${t==="s"?"単体":"全体"}${Math.ceil((p*ENEMY_TUNE.atkMul+ENEMY_TUNE.atkAdd+Math.floor(4*(q-1)/5))*(1+ENEMY_TUNE.rarAtk*rb))}`).join(" → ");
     return `<div class="who"><canvas class="sprite-lg" data-dex="${a}|${i}" width="32" height="32" aria-hidden="true"></canvas><div><b>${esc(e.name)}</b><br><span class="small">${e.id}</span></div></div>
       <dl class="kv"><dt>種族／属性／種類</dt><dd>${esc(e.species)}／${esc(e.attr)}／${esc(e.type)}</dd><dt>レア度</dt><dd>${"★".repeat(e.rarity)} ${["","通常","やや珍しい","希少","極希少","幻影"][e.rarity]}</dd>
-      <dt>エリア</dt><dd>${esc(AREAS[a].name)}・推奨レベル${q}</dd><dt>HP／防御力</dt><dd>${e.baseHP+12*(q-1)}／${e.baseDEF+Math.floor((q-1)/12)}（標準）</dd>
+      <dt>エリア</dt><dd>${esc(AREAS[a].name)}・推奨レベル${q}</dd><dt>HP／防御力</dt><dd>${Math.ceil((e.baseHP+12*(q-1))*ENEMY_TUNE.hp*(1+ENEMY_TUNE.rarHp*rb))}／${e.baseDEF+Math.floor((q-1)/3)+ENEMY_TUNE.def+(rb>=2?1:0)}（標準・通常状態）</dd>
       <dt>行動周期</dt><dd>${steps}</dd><dt>対処</dt><dd>${esc(e.counter)}</dd>
       <dt>1枠の出現率</dt><dd>${(e.weight/100).toFixed(2)}%</dd><dt>歩行遭遇率</dt><dd>危険タイル1歩ごとに1/24</dd>
       <dt>記録</dt><dd>${seen?"遭遇済み":"未遭遇"}・討伐${st.killCount[e.id]||0}</dd></dl>
@@ -4408,7 +4533,7 @@ function renderShop(){
       return head+`<p>${eqBadge(d.item)}<b>${esc(it.name)}</b>：${esc(itemText(it,Vof(levelOf(st.xp))))}</p><p>単価${it.price}ゴールド・所持${own}/8</p>${qtyRow(qty,8-own)}<p>合計${total}ゴールド → 取引後${(st.gold-total).toLocaleString()}ゴールド</p>${can?"":`<p class="warn">${own+qty>8?"所持上限8を超えます。":!eqCanAdd(st,d.item,qty)?`装備品の持ち物が${EQ_KINDS}種類でいっぱいです。`:st.gold<total?"ゴールドが足りません。":""}</p>`}
       <div class="stack"><button class="btn primary" data-a="shopDo" ${can?"":"disabled"}>${esc(it.name)}×${qty}を買う</button><button class="btn" data-a="shopItem" data-v="">一覧へ</button></div>${shopWhoHtml(st,d.item,levelOf(st.xp))}`; }
     const sellable=availableCount(st,d.item); const unit=Math.floor(it.price/2); const can=!locked&&qty<=sellable;
-    return head+`<p>${eqBadge(d.item)}<b>${esc(it.name)}</b>　所持${own}・装備中${equippedCount(st,d.item)}・売却可能${sellable}</p>${it.nonSale?`<p class="warn">職歴の初期装備（非売品）です。売ると店では買い直せません。</p>`:""}<p>買取単価${unit}ゴールド${unit===0?"（返却してもゴールドは増えません）":""}</p>${qtyRow(qty,Math.max(1,sellable))}<p>受取${unit*qty}ゴールド → 取引後${(st.gold+unit*qty).toLocaleString()}ゴールド</p>
+    return head+`<p>${eqBadge(d.item)}<b>${esc(it.name)}</b>　所持${own}・装備中${equippedCount(st,d.item)}・売却可能${sellable}</p>${it.nonSale?`<p class="warn">非売品です。売ると店では買い直せません。</p>`:""}<p>買取単価${unit}ゴールド${unit===0?"（返却してもゴールドは増えません）":""}</p>${qtyRow(qty,Math.max(1,sellable))}<p>受取${unit*qty}ゴールド → 取引後${(st.gold+unit*qty).toLocaleString()}ゴールド</p>
       <div class="stack"><button class="btn primary" data-a="shopDo" ${can&&sellable>0?"":"disabled"}>${esc(it.name)}×${qty}を売る</button><button class="btn" data-a="shopItem" data-v="">一覧へ</button></div>`;
   }
   if(tab==="buy"){
@@ -4549,9 +4674,11 @@ const ACT = {
   },
   async continue(){ const s=await loadSave(); if(!s) return toast("記録が見つかりません。"); G.st=migrate(s.state); G.soundWant=null; if(G.st.settings.sound===false&&SND.on) SND.setOn(false); else if(G.st.settings.sound!==false&&!SND.on) SND.setOn(true); if(s.fromPrev) toast("最新の記録が壊れていたため、1つ前の世代から復元しました。"); else if(s.src==="クラウド") toast("クラウドに保存した記録から再開しました。");
     commit();
-    if(G.st.run){ G.screen="battle"; SND.play(G.st.run.kind==="boss"?"boss":"battle"); } else if(G.st.stream){ G.screen="stream"; SND.play("stream"); } else { G.screen="explore"; exploreBgm(); }
+    if(G.st.run){ G.screen="battle"; SND.play(G.st.run.enemies.some(e=>e.boss)?"boss":"battle"); } else if(G.st.stream){ G.screen="stream"; SND.play("stream"); } else { G.screen="explore"; exploreBgm(); }
     render(); if(G.screen==="explore")openPendingName(); },
   async toTitle(){ await commit(); G.sheet=null; G.screen="title"; G.dlg=null; SND.play("title"); render(); },
+  trialStart(el){startChallenge(el.dataset.v);},
+  festivalClaim(){claimFestival();},
   renameOpen(el){if(G.st.run||G.st.stream)return toast("名前は戦闘・配信の終了後に変更できます。");if(!G.st.roster.includes(el.dataset.c))return;openSheet("rename",{cid:el.dataset.c,back:"status"});},
   renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
   renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
@@ -4593,7 +4720,7 @@ const ACT = {
   toResult(){ toResult(); },
   resultDone(){ resultDone(); },
   defeatReturn(){ const st=G.st; const run=st.run; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
-    const lost=Math.floor(st.gold/2); st.gold-=lost; restoreAll(st); commit(); G.screen="explore"; exploreBgm(); render(); say([["",`安全な場所へ運ばれた。所持ゴールドの半分（${lost}）を失った。`],["","全員のHPとMPが回復した。"]]); },
+    const lost=run.kind==="challenge"?0:Math.floor(st.gold/2); st.gold-=lost; restoreAll(st); commit(); G.screen="explore"; exploreBgm(); render(); say([["",`安全な場所へ運ばれた。${run.kind==="challenge"?"特別挑戦の追加ペナルティはありません。":"所持ゴールドの半分（"+lost+"）を失った。"}`],["","全員のHPとMPが回復した。"]]); },
   retreat(){ openSheet("retreat"); },
   doRetreat(){ const st=G.st; const run=st.run; storeVitals(st,run); if(run.bag) st.bag=clone(run.bag); st.run=null; st.mapId=run.returnPos.map; st.pos={x:run.returnPos.x,y:run.returnPos.y}; G.sheet=null; commit(); G.screen="explore"; exploreBgm(); render(); toast("撤退した。"); },
   pauseBattle(){ commit(); openSheet("pause"); },
@@ -4616,7 +4743,7 @@ const ACT = {
   copyBackup(){ const t=$("#backupOut"); try{ navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました。メモ帳などへ貼り付けて保管してください。"),()=>{t.select();toast("文字列を選択しました。コピーしてください。");}); }catch(e){ t.select(); toast("文字列を選択しました。コピーしてください。"); } },
   async restore(){ const t=$("#restoreIn"); const raw=(t.value||"").trim(); if(raw.length>5000000) return toast("大きすぎます（上限5,000,000バイト）。");
     try{ const o=JSON.parse(raw); if(o.app!=="toplivermichi-kyushu"||!o.state||o.state.schemaVersion!==SCHEMA_VERSION||!o.state.profile) throw 0; validateState(o.state);
-      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.kind==="boss"?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); if(G.screen==="explore")openPendingName();toast("記録を読み込みました。"); }
+      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.enemies.some(e=>e.boss)?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); if(G.screen==="explore")openPendingName();toast("記録を読み込みました。"); }
     catch(e){ toast("読み込めませんでした。文字列が途中で切れていないか確認してください。"); } },
   partyView(el){ G.sheetData={cid:el.dataset.c||null, view:el.dataset.v||""}; render(); drawMiniSprites(); },
   partyUp(el){ const st=G.st,i=+el.dataset.v; [st.party[i-1],st.party[i]]=[st.party[i],st.party[i-1]]; commit(); render(); },
@@ -4672,6 +4799,9 @@ function validateState(s){
   if(s.pendingNames&&(!Array.isArray(s.pendingNames)||s.pendingNames.some(c=>!s.roster.includes(c))))throw Error("bad pending names");
   if(!Array.isArray(s.party)||!s.party.length||s.party.length>4||new Set(s.party).size!==s.party.length||s.party.some(c=>!s.roster.includes(c)))throw Error("bad party");
   for(const c of s.roster)if(!JOBS[s.jobs[c]]||!obj(s.jp[c])||!obj(s.equip[c]))throw Error("bad character");
+  for(const key of ["challenges","festivals","townBattles"])if(s[key]&&!obj(s[key]))throw Error("bad "+key);
+  if(s.challenges)for(const [id,r]of Object.entries(s.challenges))if(!trialOf(id)||!obj(r)||(r.attempts!==undefined&&(!Number.isInteger(r.attempts)||r.attempts<0))||(r.cleared!==undefined&&typeof r.cleared!=="boolean"))throw Error("bad challenge record");
+  if(s.run&&s.run.challengeId&&!trialOf(s.run.challengeId))throw Error("bad challenge");
   if(s.run&&(!Array.isArray(s.run.party)||!s.run.party.length||!Array.isArray(s.run.enemies)||!s.run.enemies.length||!obj(s.run.returnPos)||!MAPS[s.run.returnPos.map]))throw Error("bad battle");
   if(s.stream&&(!HUBS[s.stream.hub]||!STREAM_THEMES[s.stream.theme]||!CHARS[s.stream.host]||!Array.isArray(s.stream.requestIds)||s.stream.requestIds.length!==4||s.stream.requestIds.some(k=>!STREAM_ACTS[k])||!Array.isArray(s.stream.used)||!Array.isArray(s.stream.picks)||!num(s.stream.score)||!Number.isInteger(s.stream.hand)||s.stream.hand<0||s.stream.hand>4))throw Error("bad stream");
 }
@@ -4680,7 +4810,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){s.names=s.names||{};s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureVitals(s);ensureWorld(s); return s; }
+function migrate(s){s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureVitals(s);ensureWorld(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
