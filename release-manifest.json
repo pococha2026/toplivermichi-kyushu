@@ -1,0 +1,12 @@
+{
+  "version": "7.31",
+  "date": "2026-10-24",
+  "files": {
+    "GAME_SPEC.md": "ae14b3ddfc264931c7f843b8780e06469b9f0f1be917ea4dc3bf4ad3a1e21570",
+    "GAME_SPEC.txt": "bd1265313ae4c4cfbd17dbc96adaf7063b9c60e70d4ce79491fa5325ac73a1b8",
+    "README.md": "def3a6dc4133be79ff22e30251718f1d3776cbf94b9c5dd45cf60e4f657426b5",
+    "VERSION.txt": "f06cc8b607ec46686ad37a570df7fab579a9ede4667914b48f974ca18cccdfa8",
+    "index.html": "1532f920e407756425f07617976dc3282ba519cbb08bac6740c42de9fdb62724"
+  },
+  "game_logic_sha256": "bf2f07b62eb72872087895bdb6dcd610a0dee7b3c966dea5be65339017cd436b"
+}
