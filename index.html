@@ -434,7 +434,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.08";
+const GAME_VERSION = "6.09";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1484,7 +1484,22 @@ const ULTRA_GEAR={
 };
 for(const[id,it]of Object.entries(ULTRA_GEAR)){EQUIP[id]={...it,ultra:true,rare:true,price:8000,text:`超レア装備。装備すると専用技「${it.tech}」を永久習得。${TECH_INFO[it.effect][2]}・MP${it.cost}・再使用待ち3ターン。`};EXTRA_SKILLS[it.skill]={id:it.skill,name:it.tech,effect:it.effect,need:it.need,cost:it.cost,desc:TECH_INFO[it.effect][2],level:1,cooldown:3,power:1.2,ultra:true};}
 function learnEquipped(st){st.learnedGearSkills=st.learnedGearSkills||{};for(const cid of st.roster){const learned=st.learnedGearSkills[cid]||(st.learnedGearSkills[cid]=[]);for(const id of Object.values(st.equip[cid]||{})){const it=EQUIP[id];if(it&&it.ultra&&!learned.includes(it.skill))learned.push(it.skill);}}}
-function extraSkillsFor(st,cid,L,job){return Object.values(EXTRA_SKILLS).filter(s=>s.job===job&&L>=s.level||s.ultra&&((st.learnedGearSkills||{})[cid]||[]).includes(s.id)).map(s=>s.id);}
+/* 熟練度は現在の職業・人物ごとに判定。既存のレベル習得技は保持。 */
+JOB_IDS.forEach((job,i)=>{
+ for(let k=0;k<2;k++){
+  const effect=JOB_TECHS[i][k+2],[need,cost,desc]=TECH_INFO[effect],id=job+'M'+(k+1);
+  EXTRA_SKILLS[id]={id,job,name:(k?'奥義・':'熟練・')+JOB_TECHS[i][k],effect,need,cost:cost+(k?6:3),desc:effect==='rally'?`エール獲得量を${k?'165':'135'}％に強化し、生存者全員へ防護1`:effect==='ward'?`味方1人へ防護${Math.floor(5*(k?1.65:1.35))}（上限8）`:effect==='wardAll'?`生存者全員へ防護${Math.floor(4*(k?1.65:1.35))}（上限8）`:desc+`（攻撃・回復量を${k?'165':'135'}％に強化、端数は効果ごとに処理）`,level:1,rank:k?15:5,cooldown:k?4:3,power:k?1.65:1.35};
+ }
+ const offensive=['strike','pierce','all'].includes(JOB_TECHS[i][2]),id='JI'+job.slice(1);
+ const eff=offensive?['dmg',80]:['hpc',60,20];
+ ITEMS[id]={id,name:JOBS[job].name+(offensive?'の戦術札':'の専用補給箱'),cat:offensive?'攻撃':'HP・MP回復',target:offensive?'敵1体':'味方1人',eff,stars:3,tier:1,acq:'S',price:offensive?400:350,sell:offensive?200:175,battleOnly:offensive,job,needR:10,text:(offensive?'敵1体に80×V−防御のダメージ（最低1）':'味方1人のHPを60×V、MPを20回復')+`。${JOBS[job].name}専用・熟練度10以上の使用者が必要`};
+});
+function canUseJobItem(job,R,it){return !it.job||(job===it.job&&R>=it.needR);}
+function jobItemUnlocked(st,it){return !it.job||st.roster.some(c=>canUseJobItem(st.jobs[c],rankOf(jpOf(st,c,st.jobs[c])),it));}
+function jobItemRequirement(it){return it.job?`${JOBS[it.job].name}専用・熟練度${it.needR}以上`:'';}
+function masteryHtml(st,cid,L){const s=charStats(st,cid,L),skills=Object.values(EXTRA_SKILLS).filter(sk=>sk.job===s.job&&sk.rank),next=MASTERY_STEPS.find(n=>n>s.R),item=ITEMS['JI'+s.job.slice(1)];return `<div class="setcard"><h3 class="label">熟練度の効果</h3><p class="small">5つの基礎能力＋${s.mastery}％・熟練度による最大MP＋${Math.floor(s.R/2)}・技能強化${Kof(s.R)}${next?`（次の強化は熟練度${next}）`:'（最終段階）'}。能力補正は熟練度999で47％。現在の職業でのみ有効。</p><ul class="list">${skills.map(sk=>`<li>${s.R>=sk.rank?'習得済み':'未習得'}：${esc(sk.name)}（熟練度${sk.rank}・MP${sk.cost}・再使用待ち${sk.cooldown}ターン）<br><span class="small">${esc(sk.desc)}</span></li>`).join('')}<li>${s.R>=10?'使用可能':'未解禁'}：${esc(item.name)}（熟練度10・ショップの道具売場で購入）<br><span class="small">${esc(itemText(item,Vof(L)))}</span></li></ul></div>`;}
+
+function extraSkillsFor(st,cid,L,job){return Object.values(EXTRA_SKILLS).filter(s=>s.job===job&&L>=s.level&&rankOf(jpOf(st,cid,job))>=(s.rank||1)||s.ultra&&((st.learnedGearSkills||{})[cid]||[]).includes(s.id)).map(s=>s.id);}
 function ultraDrop(st,run,res){if(run.q<10)return;const den=run.kind==='boss'?40:200;if(randInt(den)!==0)return;const pool=Object.keys(ULTRA_GEAR);giveGear(st,pool[randInt(pool.length)],res,'超レアドロップ');}
 function planExtraSkill(run,a,act,p,h){
  const sk=EXTRA_SKILLS[act.skillId];if(!sk||!(a.extraSkills||[]).includes(sk.id)){p.ok=false;p.reason='この技は未習得です。';return;}
@@ -1631,13 +1646,45 @@ const jpFor = R => 2*R*(R+1)-4;
 function levelOf(xp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(xpFor(m)<=xp) lo=m; else hi=m-1;} return lo; }
 function rankOf(jp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(jpFor(m)<=jp) lo=m; else hi=m-1;} return lo; }
 const Vof = L => 1+Math.floor((L-1)/20);
-const Kof = R => R>=10?3:R>=6?2:R>=3?1:0;
+const MASTERY_STEPS=[3,6,10,20,40,60,100,200,400,700,999];
+const Kof = R => MASTERY_STEPS.filter(n=>R>=n).length;
+const masteryPercent=R=>Math.floor(50*(R-1)/(R+49));
 const clone = o => JSON.parse(JSON.stringify(o));
 const HEROINE_DEFAULT = {name:"もえ", gender:"女性"};
 function heroineOf(st){ const h=(st&&st.profile&&st.profile.heroine)||HEROINE_DEFAULT; return {name:h.name||HEROINE_DEFAULT.name, gender:h.gender||"女性"}; }
 function heroineShort(st){ const n=heroineOf(st).name; return n===HEROINE_DEFAULT.name?"もえ":n; }
 function heroineCustom(st){ const h=heroineOf(st); return h.name!==HEROINE_DEFAULT.name || h.gender!=="女性"; }
-const charName = (st,cid) => cid==="hero" ? st.profile.name : cid==="moe" ? heroineShort(st) : CHARS[cid].name;
+const charName = (st,cid) => (st.names&&st.names[cid]) || (cid==="hero" ? st.profile.name : cid==="moe" ? heroineShort(st) : CHARS[cid].name);
+function setCharacterName(st,cid,raw){
+ if(!st||!st.roster.includes(cid))return {ok:false,reason:"仲間が見つかりません。"};
+ if(st.run||st.stream)return {ok:false,reason:"戦闘・配信中は名前を変更できません。"};
+ const v=validateName(raw);if(!v.ok)return {ok:false,reason:v.errors[0]};
+ if(st.roster.some(c=>c!==cid&&charName(st,c)===v.value))return {ok:false,reason:"ほかの仲間と同じ名前は使えません。"};
+ st.names=st.names||{};
+ if(cid==='hero'){st.profile.name=v.value;delete st.names[cid];}
+ else if(cid==='moe'){st.profile.heroine={...heroineOf(st),name:v.value};delete st.names[cid];}
+ else st.names[cid]=v.value;
+ return {ok:true};
+}
+function companionText(text,st){
+ if(!st||typeof text!=='string')return text;
+ const pairs=Object.entries(st.names||{}).filter(([c,n])=>CHARS[c]&&c!=='hero'&&c!=='moe'&&n!==CHARS[c].name);
+ if(!pairs.length)return text;
+ const keep=[];let t=text;const token=w=>{keep.push(w);return '\u0003'+(keep.length-1)+'\u0004';};
+ const protectedNames=[...st.roster.map(c=>charName(st,c))].sort((a,b)=>b.length-a.length);
+ for(const n of new Set(protectedNames))t=t.split(n).join(token(n));
+ const replacements=pairs.flatMap(([c,n])=>[[CHARS[c].full,n],[CHARS[c].name,n]]).sort((a,b)=>b[0].length-a[0].length);
+ for(const [old,n]of replacements)t=t.split(old).join(token(n));
+ return t.replace(/\u0003(\d+)\u0004/g,(m,i)=>keep[+i]);
+}
+function openPendingName(){const st=G.st;if(!st||G.readOnly||st.run||st.stream||G.dlg)return;const cid=(st.pendingNames||[]).find(c=>st.roster.includes(c));if(cid)openSheet('rename',{cid,joining:true});}
+function finishRename(){
+ if(!G.st||G.readOnly)return;const d=G.sheetData||{};
+ G.st.pendingNames=(G.st.pendingNames||[]).filter(c=>c!==d.cid);commit();G.sheet=d.back||null;G.sheetData={};render();if(!G.sheet)openPendingName();
+}
+function renderRename(){const st=G.st,d=G.sheetData,cid=d.cid;if(!st.roster.includes(cid))return '<p>仲間が見つかりません。</p>';
+ return `<p>${d.joining?'新しい仲間が加入しました。名前を変更できます。':'名前は何度でも変更できます。'}</p><p>現在の名前：<b>${esc(charName(st,cid))}</b></p><label for="renameInput">新しい名前（全角${NAME_MAX}文字以内）</label><input class="input" id="renameInput" value="${esc(charName(st,cid))}" autocomplete="off" enterkeyhint="done"><p class="small">ひらがな・カタカナ・漢字・全角英数字。空白・記号は使用できません。名前を変えても装備や物語の進行は引き継ぎます。</p><div class="stack"><button class="btn primary" data-a="renameSave">この名前にする</button>${cid!=='hero'&&cid!=='moe'?`<button class="btn" data-a="renameDefault">元の名前「${esc(CHARS[cid].name)}」に戻す</button>`:''}<button class="btn" data-a="closeSheet">${d.joining?'今の名前で進む':'変更せず戻る'}</button></div>`;
+}
 
 /* ---- 新規開始（第06D・16節） ---- */
 function newGame(name, gender, heroine, career){
@@ -1645,7 +1692,7 @@ function newGame(name, gender, heroine, career){
     schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:2,
     profile:{name, gender, career:career||"社会福祉士", heroine:{name:(heroine&&heroine.name)||HEROINE_DEFAULT.name, gender:(heroine&&heroine.gender)||"女性"}}, day:1, slots:6, mapId:"KY01", pos:{x:19,y:19}, dir:0,
     visitedMaps:["KY01"], visitedHubs:["KY01"], xp:0,
-    roster:["hero","moe"], party:["hero","moe"], vitals:null,
+    names:{},pendingNames:[],roster:["hero","moe"], party:["hero","moe"], vitals:null,
     jobs:{}, jp:{}, equip:{}, owned:{CW01:8, CA01:8}, favorite:{},
     gold:0, tickets:200, gifts:{W:{},A:{}},
     bag:INITIAL_ITEMS.map(([id,n])=>({id,n})), keep:[], itemsVersion:1,
@@ -1778,16 +1825,17 @@ function charStats(st, cid, L, jobOverride, equipOverride){
   const W = ok(w)?w:null, A = ok(a)?a:null, X = acc;
   const S = Kof(R) + (W && W.job===job ? 1 : 0);
   const supportHP = 0;
-  const base = baseStats(job, L);
+  const rawBase = baseStats(job, L), mastery=masteryPercent(R);
+  const base=Object.fromEntries(STAT_KEYS.map(k=>[k,Math.floor(rawBase[k]*(100+mastery)/100)]));
   const gearCrit = ((W&&W.crit)||0)+((A&&A.crit)||0)+((X&&X.crit)||0);
   const maxHP = 2*base.vit + 2*Math.floor(R/2) + V*(((A&&A.hp)||0)+((X&&X.hp)||0)+supportHP);
   const mp=JOB_MP[job]||[16,1.4];
-  const startC = Math.min(9999,mp[0]+Math.floor((L-1)*mp[1])+Math.floor(R/5)+((W&&W.c)||0)+((A&&A.c)||0)+((X&&X.c)||0));
+  const startC = Math.min(9999,mp[0]+Math.floor((L-1)*mp[1])+Math.floor(R/2)+((W&&W.c)||0)+((A&&A.c)||0)+((X&&X.c)||0));
   const wAtk=(W&&W.atk)||0, accAtk=(X&&X.atk)||0, armorD=(A&&A.d)||0;
-  const defBase = Math.floor(base.def/5);
-  return { job, R, S, V, maxHP, startC, maxMP:startC, extraSkills:extraSkillsFor(st,cid,L,job), base,
+  const defBase = base.def;
+  return { job, R, S, V, maxHP, startC, maxMP:startC, extraSkills:extraSkillsFor(st,cid,L,job), base, rawBase, mastery,
     atk: base.str + V*(wAtk+accAtk),               // 最終攻撃力＝ちから＋装備
-    defBase, defTotal: defBase + V*armorD,          // 最終防御力＝身の守り÷5＋装備
+    defBase, defTotal: defBase + V*armorD,          // 最終防御力＝身の守り＋装備
     crit: Math.min(30, round1(1 + base.agi/6 + gearCrit)), // 会心率％＝すばやさ÷6＋1＋装備
     eva: Math.min(10, round1(base.agi/12)),        // 回避率％
     cha: Math.floor(base.cha/4),                    // 魅力補正％＝魅力÷4（エール・技能の回復量）
@@ -2205,6 +2253,7 @@ function applyVictory(st, run){
     const cur = jpOf(st,m.cid,m.job); const R0=rankOf(cur);
     const gain = Math.min(JP_CAP-cur, base); st.jp[m.cid][m.job]=cur+gain; const R1=rankOf(cur+gain);
     res.jp.push({cid:m.cid, name:m.name, job:m.job, gain, R0, R1});
+    for(const need of [5,10,15])if(R0<need&&R1>=need)res.notes.push(`${m.name}：${JOBS[m.job].name}熟練度${need}に到達。${need===10?"専用道具が解禁！":need===5?"熟練技を習得！":"奥義を習得！"}`);
     if(R0<4 && R1>=4) giftCheck(st,m.job,"W",res);
     if(R0<7 && R1>=7) giftCheck(st,m.job,"A",res);
   }
@@ -2229,9 +2278,9 @@ function levelUpEffects(st, L0, L1){
   if(L1<=L0) return null;
   st.lastMpGrowth={from:L0,to:L1,members:st.roster.map(cid=>({cid,before:charStats(st,cid,L0).startC,after:charStats(st,cid,L1).startC}))};
   const ups={};
-  for(const cid of st.roster){ const a=baseStats(st.jobs[cid],L0), b=baseStats(st.jobs[cid],L1); ups[cid]=STAT_KEYS.map(k=>[k,b[k]-a[k]]).filter(x=>x[1]>0); }
+  for(const cid of st.roster){ const a=charStats(st,cid,L0).base, b=charStats(st,cid,L1).base; ups[cid]=STAT_KEYS.map(k=>[k,b[k]-a[k]]).filter(x=>x[1]>0); }
   restoreAll(st);
-  if(st.run)for(const m of st.run.party){const cs=charStats(st,m.cid,L1);m.maxC=m.maxMP=cs.startC;m.c=cs.startC;}
+  if(st.run)for(const m of st.run.party){const cs=charStats(st,m.cid,L1);m.name=charName(st,m.cid);m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=m.maxHP;m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=cs.startC;}
   return ups;
 }
 function giftCheck(st, job, kind, res){
@@ -2279,7 +2328,7 @@ function storeVitals(st, run){
 function restoreAll(st){ st.vitals={}; ensureVitals(st); }
 function joinMember(st,cid){
   if(st.roster.includes(cid)) return false;
-  st.roster.push(cid); if(st.party.length<4) st.party.push(cid); joinEquip(st,cid); if(st.vitals) delete st.vitals[cid]; ensureVitals(st); return true;
+  st.roster.push(cid); st.pendingNames=st.pendingNames||[];st.pendingNames.push(cid); if(st.party.length<4) st.party.push(cid); joinEquip(st,cid); if(st.vitals) delete st.vitals[cid]; ensureVitals(st); return true;
 }
 function joinEquip(st,cid){
   for(const [slot,id] of [["w","CW01"],["a","CA01"]]){ if(availableCount(st,id)>0) st.equip[cid][slot]=id; }
@@ -2490,6 +2539,7 @@ function itemNeeds(it){ // 対象の種類
 function planItem(run,a,act,p,h){
   const it=ITEMS[act.item]; p.item=act.item; p.chain=null;
   if(!it){ p.ok=false; p.reason="道具を選んでください。"; return; }
+  if(!canUseJobItem(a.job,a.R,it)){p.ok=false;p.reason=jobItemRequirement(it);return;}
   if(bagCount(run.bag,it.id)<=0){ p.ok=false; p.reason="その道具は持っていません。"; return; }
   const need=itemNeeds(it), V=h.V, boost=a.pouch && it.cat!=="攻撃";
   const mk=(v)=> hasTrait(a,"J04") && it.cat!=="攻撃" ? Math.ceil(v*1.25) : v;
@@ -2517,6 +2567,7 @@ function useItemField(st, id, cid){
   const it=ITEMS[id]; if(!it) return {ok:false, reason:"道具がありません。"};
   if(it.battleOnly) return {ok:false, reason:"戦闘中だけ使える道具です。"};
   if(st.run) return {ok:false, reason:"戦闘中は戦闘の道具コマンドから使います。"};
+  if(it.job&&(!st.roster.includes(cid)||!canUseJobItem(st.jobs[cid],rankOf(jpOf(st,cid,st.jobs[cid])),it)))return {ok:false,reason:jobItemRequirement(it)+"（移動中は本人に使用）"};
   if(bagCount(st.bag,id)<=0) return {ok:false, reason:"その道具は持っていません。"};
   ensureVitals(st); const L=levelOf(st.xp), V=Vof(L), need=itemNeeds(it);
   const all = need==="allyAll"||need==="downAll";
@@ -3178,7 +3229,7 @@ function heroSub(str){
   if(!st||!heroineCustom(st)||typeof str!=="string") return str;
   const H=heroineOf(st), short=heroineShort(st), P=st.profile.name; let t=str;
   const keep=[]; const protect=(w)=>{ if(!w) return; t=t.split(w).join("\u0001"+keep.length+"\u0002"); keep.push(w); };
-  [P,H.name,short].filter((w,i,a)=>w&&a.indexOf(w)===i).sort((a,b)=>b.length-a.length).forEach(protect);
+  [P,H.name,short,...Object.values(st.names||{})].filter((w,i,a)=>w&&a.indexOf(w)===i).sort((a,b)=>b.length-a.length).forEach(protect);
   const tok=w=>{ keep.push(w); return "\u0001"+(keep.length-1)+"\u0002"; };
   const full=tok(H.name), sh=tok(short);
   t=t.replace(/もえ/g,sh);
@@ -3396,21 +3447,21 @@ function renderStatus(){
     const eqName=id=>id?esc(EQUIP[id].name):"なし";
     return `<section class="scard ${v.hp<=0?"ko":""} ${isLow(v.hp,s.maxHP)?"low":""}">
       <div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas>
-        <div><b class="sname">${esc(cid==="hero"?st.profile.name:C.full)}</b><br><span class="small">${inParty?"戦闘メンバー":"控え"}${v.hp<=0?"・戦闘不能":""}</span></div></div>
+        <div><b class="sname">${esc(charName(st,cid))}</b><br><span class="small">${inParty?"戦闘メンバー":"控え"}${v.hp<=0?"・戦闘不能":""}</span></div></div>
       <dl class="kv">
-        <dt>レベル</dt><dd>${L}</dd>
+        <dt>名前</dt><dd><button class="btn" data-a="renameOpen" data-c="${cid}" ${st.run||st.stream?"disabled":""}>名前を変更</button></dd><dt>レベル</dt><dd>${L}</dd>
         <dt>職業（ジョブ）</dt><dd>${esc(JOBS[s.job].name)}</dd>
         <dt>ジョブ熟練度</dt><dd>${s.R}${s.R<999?`（次まで ${jpFor(s.R+1)-jp}）`:"（最大）"}</dd>
         <dt>HP</dt><dd><span class="bar wide"><i style="width:${Math.round(100*v.hp/s.maxHP)}%"></i></span>${v.hp}／最大${s.maxHP}</dd>
         <dt>MP</dt><dd>${v.c}／最大${s.startC}</dd>
       </dl>
-      <div class="statsec"><h3 class="label">能力値（レベル${L}・${esc(JOBS[s.job].name)}）</h3>${statBlockHtml(s)}<p class="small dim">伸び方：${gradeText(s.job)}</p></div>
+      ${masteryHtml(st,cid,L)}<div class="statsec"><h3 class="label">能力値（レベル${L}・${esc(JOBS[s.job].name)}）</h3>${statBlockHtml(s)}<p class="small dim">伸び方：${gradeText(s.job)}</p></div>
       <dl class="kv">
         <dt>技能</dt><dd>${esc(JOBS[s.job].skill)}（MP${JOBS[s.job].cost}・技能強化${s.S}）<br><span class="small">${esc(JOBS[s.job].desc(s.S))}</span></dd>
         <dt>職業特性</dt><dd>${esc(JOB_TRAITS[s.job].name)}<br><span class="small">${esc(JOB_TRAITS[s.job].desc)}</span></dd>
         <dt>武器</dt><dd>${eqName(e.w)}</dd><dt>防具</dt><dd>${eqName(e.a)}</dd><dt>アクセサリー</dt><dd>${eqName(e.acc)}</dd>
       </dl></section>`; }).join("");
-  return head+`<div class="stack">${cards}</div><p class="small">体力×2が最大HPの土台。攻撃力＝ちから＋武器・アクセサリー（敵の防御力を引く前の基本ダメージ）。防御力＝身の守り÷5＋防具（敵の攻撃1回ごとに減らせるダメージ）。会心率＝すばやさ÷6＋1％＋装備（会心の一撃は防御を無視して1.5倍）。回避率＝すばやさ÷12％。魅力補正＝魅力÷4％（自分の行動で得るエール、技能・ファミリー応援で回復する量が増える）。メーター突破は使う人の魅力÷3が威力に加わる。能力値はレベルと職業で決まり、職業を変えると伸び方も変わります。敵の単体攻撃にはまれに痛恨の一撃（防御・防護を無視して1.5倍。ガードで半分）があります。</p>`;
+  return head+`<div class="stack">${cards}</div><p class="small">体力×2が最大HPの土台。攻撃力＝ちから＋武器・アクセサリー（敵の防御力を引く前の基本ダメージ）。防御力＝身の守り＋防具（敵の攻撃1回ごとに減らせるダメージ）。会心率＝すばやさ÷6＋1％＋装備（会心の一撃は防御を無視して1.5倍）。回避率＝すばやさ÷12％。魅力補正＝魅力÷4％（自分の行動で得るエール、技能・ファミリー応援で回復する量が増える）。メーター突破は使う人の魅力÷3が威力に加わる。能力値はレベル・職業・熟練度で決まり、職業を変えると伸び方も変わります。敵の単体攻撃にはまれに痛恨の一撃（防御・防護を無視して1.5倍。ガードで半分）があります。</p>`;
 }
 function heroSprite(dir,frame,gender){ const f=(gender||G.st.profile.gender)==="女性"; return ART.person("hero",f?PAL.brown:PAL.ink,PAL.red,dir,frame,{long:f}); }
 function heroineSprite(dir,frame,gender){ const g=gender||heroineOf(G.st).gender; return g==="男性"? ART.person("moe",PAL.violet,PAL.cream,dir,frame,{}) : ART.person("moe",PAL.violet,PAL.cream,dir,frame,{long:true,ribbon:PAL.coral}); }
@@ -3693,7 +3744,7 @@ function bossPrompt(bid){
 function say(lines, after){ G.dlg={lines, i:0, after}; render(); }
 function renderDialog(){
   const d=G.dlg; if(!d) return "";
-  const [sp,tx]=d.lines[d.i];
+  const [rawSp,rawTx]=d.lines[d.i];const sp=companionText(rawSp,G.st),tx=companionText(rawTx,G.st);
   return `<div class="overlay dlg-ov" role="dialog" aria-modal="true" aria-label="会話">
     <div class="win dlg">${sp?`<div class="speaker">${esc(sp)}</div>`:""}<p class="dlg-text">${esc(tx)}</p>
     <div class="row3"><button class="btn" data-a="dlgBack" ${d.i?"":"disabled"}>戻る</button>
@@ -3716,7 +3767,7 @@ function travelHub(to,tx,ty){
   travelMap(to,tx,ty);
   const j=JOIN_PLAN.find(x=>x.hub===to);
   const arrive = first && SCENES["ARRIVE_"+to];
-  if(j && joinMember(st,j.cid)){ commit(); const L=[...(arrive?SCENES["ARRIVE_"+to].lines(st.profile.name):[]),["",`${HUBS[to]?HUBS[to].name:j.pref}で${CHARS[j.cid].full}と出会った。`],...(JOIN_TALK[j.cid]||[]),["",`${CHARS[j.cid].full}が仲間に加わった。控室の編成ボードで戦闘メンバーを入れ替えられます。`]]; if(arrive) st.scenes["ARRIVE_"+to]=true; say(L); return; }
+  if(j && joinMember(st,j.cid)){ commit(); const L=[...(arrive?SCENES["ARRIVE_"+to].lines(st.profile.name):[]),["",`${HUBS[to]?HUBS[to].name:j.pref}で${CHARS[j.cid].full}と出会った。`],...(JOIN_TALK[j.cid]||[]),["",`${CHARS[j.cid].full}が仲間に加わった。控室の編成ボードで戦闘メンバーを入れ替えられます。`]]; if(arrive) st.scenes["ARRIVE_"+to]=true; say(L,()=>openPendingName()); return; }
   if(arrive){ playScene("ARRIVE_"+to); return; }
   if(first && to==="KY02") say([["",`${HUBS[to].name}に着いた。港の風と倉庫の匂いがする。`],["もえ","ここが北九州……。港の音、配信に入れたら素敵だね。"]]);
 }
@@ -3828,7 +3879,7 @@ function renderCommand(run){
     }
   }
   if(c.type==="item"){
-    const usable=(run.bag||[]).filter(e=>e.n>0&&ITEMS[e.id]);
+    const usable=(run.bag||[]).filter(e=>e.n>0&&ITEMS[e.id]&&canUseJobItem(a.job,a.R,ITEMS[e.id]));
     if(!usable.length) sub=`<span class="hint">使える道具を持っていません。ショップで買えます。</span>`;
     else { sub=usable.map(e=>chip("item",e.id,c.item===e.id,`${esc(ITEMS[e.id].name)}×${e.n}`)).join("");
       const it=c.item&&ITEMS[c.item];
@@ -4057,7 +4108,7 @@ function streamFinish(){
 
 /* ---- シート（メニュー） ---- */
 function openSheet(k,data={}){ G.sheet=k; G.sheetData=data; G.walk.path=[]; render(); const el=$(".sheet"); if(el) el.scrollTop=0; }
-function closeSheet(){ G.sheet=null; render(); }
+function closeSheet(){ if(G.sheet==="rename"&&!G.readOnly){finishRename();return;}G.sheet=null; render(); }
 function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2><button class="btn" data-a="closeSheet">戻る</button></div>${body}</div></div>`; }
 function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
@@ -4101,6 +4152,7 @@ function renderSheet(){
     case "travel": return sheetWrap("移動", `<p>${esc(HUBS[d.to].name)}へ向かいますか？（旅程枠1を使います。残り${st.slots}枠）</p><div class="stack"><button class="btn primary" data-a="doTravel">向かう</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "rest": return sheetWrap("休息", `${d.reason?`<p class="warn">${esc(d.reason)}</p>`:""}<p>日付を進めると翌日になり、旅程枠が6に戻ります（費用なし）。HPとMPは回復しません。回復は宿屋で。今は${st.day}日目・残り${st.slots}枠。</p><div class="stack"><button class="btn primary" data-a="doRest">日付を進める</button><button class="btn" data-a="closeSheet">やめる</button></div>`);
     case "party": return sheetWrap("編成", renderParty());
+    case "rename": return sheetWrap("名前の変更",renderRename());
     case "status": return sheetWrap("パーティーのステータス", renderStatus());
     case "inn": { const hub=curHub(); const per=INN_PRICE[hub]||10; const n=st.roster.length; const total=per*n; const can=st.gold>=total;
       return sheetWrap(d.label||"宿屋", `<p>「いらっしゃいませ。お一人さま${per}ゴールド、${n}人で${total}ゴールドです。」</p>
@@ -4247,7 +4299,7 @@ function renderParty(){
         return `<div class="jcard ${j===cur.job?"on":""}"><div class="srow"><b>${j===cur.job?"▶ ":""}${j} ${esc(JOBS[j].name)}</b><span>熟練度${nx.R}${nx.R>=999?"・最大":`・次まで${jpFor(nx.R+1)-jp}`}</span></div>
         <p class="small">${esc(JOBS[j].field)}｜${esc(JOBS[j].skill)}：MP${JOBS[j].cost}。${esc(JOBS[j].desc(nx.S))}</p>
         <p class="small trait">特性「${esc(JOB_TRAITS[j].name)}」：${esc(JOB_TRAITS[j].desc)}</p>
-        <p class="small">能力の伸び方：${gradeText(j)}／MP成長：初期${JOB_MP[j][0]}・レベルごとに${JOB_MP[j][1]}（端数切り捨て）</p><p class="small">追加技：${Object.values(EXTRA_SKILLS).filter(sk=>sk.job===j).map(sk=>`${esc(sk.name)}（Lv${sk.level}・MP${sk.cost}）`).join("／")}</p>
+        <p class="small">能力の伸び方：${gradeText(j)}／MP成長：初期${JOB_MP[j][0]}・レベルごとに${JOB_MP[j][1]}（端数切り捨て）</p><p class="small">追加技：${Object.values(EXTRA_SKILLS).filter(sk=>sk.job===j).map(sk=>`${esc(sk.name)}（Lv${sk.level}${sk.rank?`・熟練度${sk.rank}`:""}・MP${sk.cost}）`).join("／")}</p>
         ${j===cur.job?"":statDiffHtml(cur,nx,L)}
         ${j===cur.job?"":`<button class="btn" data-a="setJob" data-c="${cid}" data-v="${j}" ${locked?"disabled":""}>このジョブにする</button>`}</div>`; }).join("")}</div>
       <button class="btn" data-a="partyView" data-c="${cid}" data-v="">人物へ戻る</button>`;
@@ -4265,10 +4317,10 @@ function renderParty(){
         <button class="btn" data-a="partyView" data-c="${cid}" data-v="">人物へ戻る</button>`;
     }
     const e=st.equip[cid]; const C=CHARS[cid];
-    return `<div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><b>${esc(cid==="hero"?st.profile.name:C.full)}</b>　${[C.age?C.age+"歳":"",C.from?esc(C.from):""].filter(Boolean).join("・")}<br><span class="small">${cid==="moe"?"経歴":"職歴"}：${esc((cid==="hero"?(st.profile.career||C.career):C.career))}（ジョブとは別）</span></div></div>
+    return `<div class="who"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><b>${esc(charName(st,cid))}</b>　${[C.age?C.age+"歳":"",C.from?esc(C.from):""].filter(Boolean).join("・")}<br><span class="small">${cid==="moe"?"経歴":"職歴"}：${esc((cid==="hero"?(st.profile.career||C.career):C.career))}（ジョブとは別）</span></div></div>
       <dl class="kv"><dt>ジョブ</dt><dd>${esc(JOBS[cur.job].name)}　熟練度${cur.R}・技能強化${cur.S}</dd><dt>HP</dt><dd>${vitalOf(cid).hp}／${cur.maxHP}</dd><dt>MP</dt><dd>${vitalOf(cid).c}／${cur.startC}</dd>
       <dt>武器</dt><dd>${e.w?esc(EQUIP[e.w].name):"なし"}</dd><dt>防具</dt><dd>${e.a?esc(EQUIP[e.a].name):"なし"}</dd><dt>アクセサリー</dt><dd>${e.acc?esc(EQUIP[e.acc].name):"なし"}</dd></dl>
-      <h3 class="label">使用できる技</h3><p>${esc(JOBS[cur.job].skill)}（MP${JOBS[cur.job].cost}）</p><ul class="list">${Object.values(EXTRA_SKILLS).filter(sk=>sk.job===cur.job||((st.learnedGearSkills||{})[cid]||[]).includes(sk.id)).map(sk=>`<li>${esc(sk.name)}：MP${sk.cost}・${esc(sk.desc)}${sk.job&&L<sk.level?`（レベル${sk.level}で習得）`:""}</li>`).join("")}</ul>
+      <h3 class="label">使用できる技</h3><p>${esc(JOBS[cur.job].skill)}（MP${JOBS[cur.job].cost}）</p><ul class="list">${Object.values(EXTRA_SKILLS).filter(sk=>sk.job===cur.job||((st.learnedGearSkills||{})[cid]||[]).includes(sk.id)).map(sk=>`<li>${esc(sk.name)}：MP${sk.cost}・${esc(sk.desc)}${sk.job&&!cur.extraSkills.includes(sk.id)?`（Lv${sk.level}${sk.rank?`・熟練度${sk.rank}`:""}で習得）`:"（習得済み）"}</li>`).join("")}</ul>
       <div class="stack"><button class="btn" data-a="partyView" data-c="${cid}" data-v="job">ジョブを変える</button>
       <button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:w">武器</button><button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:a">防具</button><button class="btn" data-a="partyView" data-c="${cid}" data-v="eq:acc">アクセサリー</button>
       <button class="btn" data-a="partyView" data-c="" data-v="">一覧へ</button></div>`;
@@ -4323,15 +4375,15 @@ function renderShop(){
   const head=`<p>所持 ${st.gold.toLocaleString()}ゴールド</p><div class="capline"><span>道具袋 <b>${st.bag.length}</b>/${BAG_KINDS}種類</span><span>装備品 <b>${eqStockKinds(st)}</b>/${EQ_KINDS}種類</span></div><div class="row3"><button class="btn ${tab==="buy"?"on":""}" data-a="shopTab" data-v="buy">装備を買う</button><button class="btn ${tab==="item"?"on":""}" data-a="shopTab" data-v="item">道具を買う</button><button class="btn ${tab==="sell"?"on":""}" data-a="shopTab" data-v="sell">売る</button></div>${locked?`<p class="warn">配信待ちの間は売買できません。</p>`:""}`;
   if(d.item && ITEMS[d.item]){
     const it=ITEMS[d.item]; const qty=d.qty||1; const own=bagCount(st.bag,d.item);
-    if(tab==="item"){ const room=bagRoom(st.bag,d.item); const total=it.price*qty; const can=!locked&&qty<=room&&st.gold>=total;
-      return head+`<p>${itemBadge(it)}<b>${esc(it.name)}</b>（${esc(ITEM_RARITY[it.stars])}）</p><p>${esc(itemText(it,Vof(levelOf(st.xp))))}。${it.battleOnly?"戦闘中だけ使えます。":"戦闘中・移動中に使えます。"}</p><p>単価${it.price}ゴールド・所持${own}/${BAG_STACK}</p>${qtyRow(qty,Math.max(1,room))}<p>合計${total}ゴールド → 取引後${(st.gold-total).toLocaleString()}ゴールド</p>${can?"":`<p class="warn">${room<=0?(own?"1種類9個までです。":`道具袋が${BAG_KINDS}種類でいっぱいです。`):qty>room?`あと${room}個までしか入りません。`:st.gold<total?"ゴールドが足りません。":""}</p>`}
+    if(tab==="item"){ const room=bagRoom(st.bag,d.item); const total=it.price*qty; const can=!locked&&qty<=room&&st.gold>=total&&jobItemUnlocked(st,it);
+      return head+`<p class="small">${esc(jobItemRequirement(it))}${it.job&&!jobItemUnlocked(st,it)?"（未解禁）":""}</p><p>${itemBadge(it)}<b>${esc(it.name)}</b>（${esc(ITEM_RARITY[it.stars])}）</p><p>${esc(itemText(it,Vof(levelOf(st.xp))))}。${it.battleOnly?"戦闘中だけ使えます。":"戦闘中・移動中に使えます。"}</p><p>単価${it.price}ゴールド・所持${own}/${BAG_STACK}</p>${qtyRow(qty,Math.max(1,room))}<p>合計${total}ゴールド → 取引後${(st.gold-total).toLocaleString()}ゴールド</p>${can?"":`<p class="warn">${room<=0?(own?"1種類9個までです。":`道具袋が${BAG_KINDS}種類でいっぱいです。`):qty>room?`あと${room}個までしか入りません。`:st.gold<total?"ゴールドが足りません。":""}</p>`}
       <div class="stack"><button class="btn primary" data-a="shopDo" ${can?"":"disabled"}>${esc(it.name)}×${qty}を買う</button><button class="btn" data-a="shopItem" data-v="">一覧へ</button></div>`; }
     const unit=it.sell; const can=!locked&&unit>=0&&qty<=own;
     return head+`<p><b>${esc(it.name)}</b>　所持${own}</p>${unit<0?`<p class="warn">この道具は売れません（${esc(ITEM_ACQ[it.acq])}）。</p>`:`<p>買取単価${unit}ゴールド</p>${qtyRow(qty,Math.max(1,own))}<p>受取${unit*qty}ゴールド → 取引後${(st.gold+unit*qty).toLocaleString()}ゴールド</p>`}
       <div class="stack"><button class="btn primary" data-a="shopDo" ${can?"":"disabled"}>${esc(it.name)}×${qty}を売る</button><button class="btn" data-a="shopItem" data-v="">一覧へ</button></div>`;
   }
   if(tab==="item"){
-    return head+itSortBar(false)+`<div class="stack">${sortItems(shopItemsFor(curHub())).map(id=>{const it=ITEMS[id]; return `<button class="btn dexrow" data-a="shopItem" data-v="${id}"><span>${itemBadge(it)}${esc(it.name)}　<span class="small">${"★".repeat(it.stars)}</span></span><span class="small">${it.price}ゴールド・${esc(itemText(it,Vof(levelOf(st.xp))))}・所持${bagCount(st.bag,id)}</span></button>`;}).join("")}</div><p class="small">道具袋は${BAG_KINDS}種類まで、1種類${BAG_STACK}個まで。先の街の店ほど品ぞろえが増えます。</p>`;
+    return head+itSortBar(false)+`<div class="stack">${sortItems(shopItemsFor(curHub())).map(id=>{const it=ITEMS[id]; return `<button class="btn dexrow" data-a="shopItem" data-v="${id}"><span>${itemBadge(it)}${esc(it.name)}　<span class="small">${"★".repeat(it.stars)}</span></span><span class="small">${it.price}ゴールド・${esc(itemText(it,Vof(levelOf(st.xp))))}${it.job?`／${esc(jobItemRequirement(it))}${jobItemUnlocked(st,it)?"・解禁済み":"・未解禁"}`:""}・所持${bagCount(st.bag,id)}</span></button>`;}).join("")}</div><p class="small">道具袋は${BAG_KINDS}種類まで、1種類${BAG_STACK}個まで。先の街の店ほど品ぞろえが増えます。</p>`;
   }
   if(d.item){
     const it=EQUIP[d.item]; const qty=d.qty||1; const own=st.owned[d.item]||0;
@@ -4420,8 +4472,8 @@ function renderItems(){
     let use="";
     if(it.battleOnly) use=`<p class="small">攻撃の道具は戦闘中の「道具」から使います。</p>`;
     else if(nd==="allyAll"||nd==="downAll") use=`<button class="btn primary" data-a="itemUse">使う（${nd==="downAll"?"戦闘不能の全員":"全員"}）</button>`;
-    else use=`<h3 class="label">誰に使う？</h3>`+st.roster.map(c=>{const s=charStats(st,c,L),v=vitalOf(c); const dis = nd==="down"? v.hp>0 : v.hp<=0; return `<button class="btn ${isLow(v.hp,s.maxHP)?"low":""}" data-a="itemUse" data-c="${c}" ${dis?"disabled":""}>${esc(charName(st,c))}　HP ${v.hp}/${s.maxHP}・MP ${v.c}/${s.startC}${v.hp<=0?"（戦闘不能）":""}</button>`;}).join("");
-    return `<p>${itemBadge(it)}<b>${esc(it.name)}</b>　×${n}</p><p class="small">${esc(ITEM_RARITY[it.stars])}・${esc(it.cat)}・入手：${esc(ITEM_ACQ[it.acq])}${it.sell>=0?`・売値${it.sell}ゴールド`:"・売却不可"}</p><p>${esc(itemText(it,Vof(levelOf(st.xp))))}。${it.battleOnly?"戦闘中だけ使えます。":"戦闘中・移動中に使えます。"}</p>
+    else use=`<h3 class="label">誰に使う？</h3>`+st.roster.map(c=>{const s=charStats(st,c,L),v=vitalOf(c); const dis = (nd==="down"? v.hp>0 : v.hp<=0)||!canUseJobItem(s.job,s.R,it); return `<button class="btn ${isLow(v.hp,s.maxHP)?"low":""}" data-a="itemUse" data-c="${c}" ${dis?"disabled":""}>${esc(charName(st,c))}　HP ${v.hp}/${s.maxHP}・MP ${v.c}/${s.startC}${v.hp<=0?"（戦闘不能）":""}</button>`;}).join("");
+    return `<p class="small">${esc(jobItemRequirement(it))}${it.job?"。移動中は条件を満たす本人、戦闘中は使用者のジョブ・熟練度で判定。":""}</p><p>${itemBadge(it)}<b>${esc(it.name)}</b>　×${n}</p><p class="small">${esc(ITEM_RARITY[it.stars])}・${esc(it.cat)}・入手：${esc(ITEM_ACQ[it.acq])}${it.sell>=0?`・売値${it.sell}ゴールド`:"・売却不可"}</p><p>${esc(itemText(it,Vof(levelOf(st.xp))))}。${it.battleOnly?"戦闘中だけ使えます。":"戦闘中・移動中に使えます。"}</p>
       <div class="stack">${use}${it.acq==="E"?`<p class="small">非売品のため捨てられません。</p>`:d.confirmDrop?`<div class="confirmbox" role="alertdialog" aria-label="捨てる確認"><p class="warn">本当に「${esc(it.name)}」を1個捨てますか？<br>捨てた道具は戻りません。${it.sell<0?"この道具は店では買えません。":""}</p><div class="row2"><button class="btn danger" data-a="itemDropDo">捨てる</button><button class="btn" data-a="itemDropNo">やめる</button></div></div>`:`<button class="btn" data-a="itemDrop">捨てる</button>`}<button class="btn" data-a="itemView" data-v="">一覧へ</button></div>`;
   }
   const total=st.bag.reduce((a,e)=>a+e.n,0);
@@ -4481,8 +4533,11 @@ const ACT = {
   async continue(){ const s=await loadSave(); if(!s) return toast("記録が見つかりません。"); G.st=migrate(s.state); G.soundWant=null; if(G.st.settings.sound===false&&SND.on) SND.setOn(false); else if(G.st.settings.sound!==false&&!SND.on) SND.setOn(true); if(s.fromPrev) toast("最新の記録が壊れていたため、1つ前の世代から復元しました。"); else if(s.src==="クラウド") toast("クラウドに保存した記録から再開しました。");
     commit();
     if(G.st.run){ G.screen="battle"; SND.play(G.st.run.kind==="boss"?"boss":"battle"); } else if(G.st.stream){ G.screen="stream"; SND.play("stream"); } else { G.screen="explore"; exploreBgm(); }
-    render(); },
+    render(); if(G.screen==="explore")openPendingName(); },
   async toTitle(){ await commit(); G.sheet=null; G.screen="title"; G.dlg=null; SND.play("title"); render(); },
+  renameOpen(el){if(G.st.run||G.st.stream)return toast("名前は戦闘・配信の終了後に変更できます。");if(!G.st.roster.includes(el.dataset.c))return;openSheet("rename",{cid:el.dataset.c,back:"status"});},
+  renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
+  renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
   openSheet(el){ if(el.dataset.k==="items"||el.dataset.k==="equip") keepFlush(); openSheet(el.dataset.k); }, closeSheet(){ closeSheet(); },
   itemView(el){ G.sheetData={item:el.dataset.v||null}; render(); },
   itemUse(el){ const st=G.st, id=G.sheetData.item; const r=useItemField(st,id,el.dataset.c||null); if(!r.ok) return toast(r.reason); commit(); SND.sfx("heal"); if(bagCount(st.bag,id)<=0) G.sheetData={item:null}; render(); toast(r.log.join("・")); },
@@ -4544,7 +4599,7 @@ const ACT = {
   copyBackup(){ const t=$("#backupOut"); try{ navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました。メモ帳などへ貼り付けて保管してください。"),()=>{t.select();toast("文字列を選択しました。コピーしてください。");}); }catch(e){ t.select(); toast("文字列を選択しました。コピーしてください。"); } },
   async restore(){ const t=$("#restoreIn"); const raw=(t.value||"").trim(); if(raw.length>5000000) return toast("大きすぎます（上限5,000,000バイト）。");
     try{ const o=JSON.parse(raw); if(o.app!=="toplivermichi-kyushu"||!o.state||o.state.schemaVersion!==SCHEMA_VERSION||!o.state.profile) throw 0; validateState(o.state);
-      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.kind==="boss"?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); toast("記録を読み込みました。"); }
+      G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.kind==="boss"?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); if(G.screen==="explore")openPendingName();toast("記録を読み込みました。"); }
     catch(e){ toast("読み込めませんでした。文字列が途中で切れていないか確認してください。"); } },
   partyView(el){ G.sheetData={cid:el.dataset.c||null, view:el.dataset.v||""}; render(); drawMiniSprites(); },
   partyUp(el){ const st=G.st,i=+el.dataset.v; [st.party[i-1],st.party[i]]=[st.party[i],st.party[i-1]]; commit(); render(); },
@@ -4572,7 +4627,7 @@ const ACT = {
   shopDo(el){ el.disabled=true; const st=G.st, d=G.sheetData, q=d.qty||1;
     if(ITEMS[d.item]){ const it=ITEMS[d.item];
       if(d.tab==="sell"){ if(it.sell<0||bagCount(st.bag,d.item)<q) return toast("売却できません。"); bagRemove(st.bag,d.item,q); st.gold+=it.sell*q; keepFlush(); }
-      else { if(st.gold<it.price*q||bagRoom(st.bag,d.item)<q) return toast("購入できません。"); st.gold-=it.price*q; bagAdd(st.bag,d.item,q); }
+      else { if(!jobItemUnlocked(st,it)||st.gold<it.price*q||bagRoom(st.bag,d.item)<q) return toast("購入できません。"); st.gold-=it.price*q; bagAdd(st.bag,d.item,q); }
       SND.sfx("buy"); commit(); toast(`${it.name}×${q}を${d.tab==="sell"?"売った":"買った"}。`); d.item=null; render(); return; }
     const it=EQUIP[d.item];
     if(d.tab==="sell"){ if(availableCount(st,d.item)<q) return toast("売却できる数が足りません。"); st.owned[d.item]-=q; st.gold+=Math.floor(it.price/2)*q; }
@@ -4596,6 +4651,8 @@ function validateState(s){
   if(!num(s.xp)||s.xp>XP_CAP||!num(s.gold)||!num(s.tickets)||!num(s.day)||!num(s.slots)||!MAPS[s.mapId]||!obj(s.pos)||!Number.isInteger(s.pos.x)||!Number.isInteger(s.pos.y))throw Error("bad values");
   for(const k of ["jobs","jp","equip","owned","quests","qprog","talked","boxes","bossDefeated","killCount","streamBest"])if(!obj(s[k]))throw Error("bad "+k);
   if(!Array.isArray(s.roster)||!s.roster.length||new Set(s.roster).size!==s.roster.length||s.roster.some(c=>!CHARS[c]))throw Error("bad roster");
+  if(s.names&&(!obj(s.names)||Object.entries(s.names).some(([c,n])=>!CHAR_ORDER.includes(c)||!s.roster.includes(c)||typeof n!=="string"||!validateName(n).ok)))throw Error("bad names");
+  if(s.pendingNames&&(!Array.isArray(s.pendingNames)||s.pendingNames.some(c=>!s.roster.includes(c))))throw Error("bad pending names");
   if(!Array.isArray(s.party)||!s.party.length||s.party.length>4||new Set(s.party).size!==s.party.length||s.party.some(c=>!s.roster.includes(c)))throw Error("bad party");
   for(const c of s.roster)if(!JOBS[s.jobs[c]]||!obj(s.jp[c])||!obj(s.equip[c]))throw Error("bad character");
   if(s.run&&(!Array.isArray(s.run.party)||!s.run.party.length||!Array.isArray(s.run.enemies)||!s.run.enemies.length||!obj(s.run.returnPos)||!MAPS[s.run.returnPos.map]))throw Error("bad battle");
@@ -4606,7 +4663,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){ migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureVitals(s);ensureWorld(s); return s; }
+function migrate(s){s.names=s.names||{};s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; learnEquipped(s);if(s.run){for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION; ensureVitals(s);ensureWorld(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
