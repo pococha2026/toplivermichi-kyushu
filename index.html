@@ -434,7 +434,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.09";
+const GAME_VERSION = "6.10";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1640,9 +1640,17 @@ CAREERS.forEach((c,i)=>{ const g=CAREER_GEAR[c]; if(!g) return; const n=String(i
   CAREER_GEAR_ID[c]=[wid,aid]; });
 
 /* ===== core: 計算・条件・報酬（状態はJSONで保持し、純粋関数で更新） ===== */
-const xpFor = L => legacyXpFor(L)+Math.floor(0.12*Math.max(0,L-20)**3);
-const XP_CAP = xpFor(999), JP_CAP = 1997996;
-const jpFor = R => 2*R*(R+1)-4;
+/* レベルごとの必要量を段階的に増加。到達済みのレベルは移行時に保持する。 */
+const previousXpFor=L=>legacyXpFor(L)+Math.floor(0.12*Math.max(0,L-20)**3);
+const previousJpFor=R=>2*R*(R+1)-4;
+function progressionTable(previous,startPercent,stepPercent,capPercent){
+ const table=[0,0];for(let n=1;n<999;n++){const percent=Math.min(capPercent,startPercent+stepPercent*(n-1));table[n+1]=table[n]+Math.ceil((previous(n+1)-previous(n))*percent/100);}return Object.freeze(table);
+}
+const XP_THRESHOLDS=progressionTable(previousXpFor,180,3,300);
+const JP_THRESHOLDS=progressionTable(previousJpFor,200,4,400);
+const xpFor=L=>XP_THRESHOLDS[Math.max(1,Math.min(999,Math.trunc(L)))];
+const jpFor=R=>JP_THRESHOLDS[Math.max(1,Math.min(999,Math.trunc(R)))];
+const XP_CAP=xpFor(999),JP_CAP=jpFor(999);
 function levelOf(xp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(xpFor(m)<=xp) lo=m; else hi=m-1;} return lo; }
 function rankOf(jp){ let lo=1,hi=999; while(lo<hi){const m=(lo+hi+1)>>1; if(jpFor(m)<=jp) lo=m; else hi=m-1;} return lo; }
 const Vof = L => 1+Math.floor((L-1)/20);
@@ -1689,7 +1697,7 @@ function renderRename(){const st=G.st,d=G.sheetData,cid=d.cid;if(!st.roster.incl
 /* ---- 新規開始（第06D・16節） ---- */
 function newGame(name, gender, heroine, career){
   const st = {
-    schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:2,
+    schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:3, jpCurveVersion:2,
     profile:{name, gender, career:career||"社会福祉士", heroine:{name:(heroine&&heroine.name)||HEROINE_DEFAULT.name, gender:(heroine&&heroine.gender)||"女性"}}, day:1, slots:6, mapId:"KY01", pos:{x:19,y:19}, dir:0,
     visitedMaps:["KY01"], visitedHubs:["KY01"], xp:0,
     names:{},pendingNames:[],roster:["hero","moe"], party:["hero","moe"], vitals:null,
@@ -3438,9 +3446,9 @@ function partyStrip(){
 }
 function renderStatus(){
   const st=G.st; const L=levelOf(st.xp);
-  const head=`<dl class="kv"><dt>共通レベル</dt><dd>${L}</dd><dt>経験値</dt><dd>${st.xp.toLocaleString()}${L<999?`（次のレベルまで ${(xpFor(L+1)-st.xp).toLocaleString()}）`:"（最大）"}</dd>
+  const head=`<dl class="kv"><dt>総合レベル</dt><dd>${L}</dd><dt>経験値</dt><dd>${st.xp.toLocaleString()}${L<999?`（次のレベルまで ${(xpFor(L+1)-st.xp).toLocaleString()}）`:"（最大）"}</dd>
     <dt>所持ゴールド</dt><dd>${st.gold.toLocaleString()}</dd><dt>もえの到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd></dl>
-    ${st.lastMpGrowth?`<p class="small good">直近のレベルアップ：${st.lastMpGrowth.members.map(m=>`${esc(charName(st,m.cid))} 最大MP ${m.before} → ${m.after}（＋${m.after-m.before}）`).join("／")}</p>`:""}<p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
+    ${st.lastMpGrowth?`<p class="small good">直近のレベルアップ：${st.lastMpGrowth.members.map(m=>`${esc(charName(st,m.cid))} 最大MP ${m.before} → ${m.after}（＋${m.after-m.before}）`).join("／")}</p>`:""}<p class="small">成長ペース：総合レベルの必要経験値は従来の1.8～3倍、ジョブ熟練度は2～4倍。高くなるほど必要量が増えます。</p><p class="small">HPとMPは戦闘後も持ち越します。宿屋に泊まると全員が全回復します。</p>`;
   const cards=st.roster.map(cid=>{
     const s=charStats(st,cid,L), v=vitalOf(cid), e=st.equip[cid], jp=jpOf(st,cid,s.job), C=CHARS[cid];
     const inParty=st.party.includes(cid);
@@ -4266,7 +4274,16 @@ function renderQuests(){
 }
 
 function legacyXpFor(L){return 10*(L-1)*(L+6);}
-function migrateExperience(st){if(st.xpCurveVersion===2)return;const old=Math.max(0,Math.min(legacyXpFor(999),st.xp||0));let L=1;while(L<999&&legacyXpFor(L+1)<=old)L++;const ratio=L<999?(old-legacyXpFor(L))/(legacyXpFor(L+1)-legacyXpFor(L)):0;st.xp=L===999?XP_CAP:xpFor(L)+Math.floor(ratio*(xpFor(L+1)-xpFor(L)));st.xpCurveVersion=2;}
+function remapProgress(value,previous,next){
+ const old=Math.max(0,Math.min(previous(999),Number.isFinite(value)?value:0));let lo=1,hi=999;
+ while(lo<hi){const mid=(lo+hi+1)>>1;if(previous(mid)<=old)lo=mid;else hi=mid-1;}
+ if(lo===999)return next(999);
+ return next(lo)+Math.floor((old-previous(lo))*(next(lo+1)-next(lo))/(previous(lo+1)-previous(lo)));
+}
+function migrateExperience(st){
+ if(st.xpCurveVersion!==3){const previous=st.xpCurveVersion===2?previousXpFor:legacyXpFor;st.xp=remapProgress(st.xp,previous,xpFor);st.xpCurveVersion=3;}
+ if(st.jpCurveVersion!==2){for(const record of Object.values(st.jp||{}))for(const job of Object.keys(record))record[job]=remapProgress(record[job],previousJpFor,jpFor);st.jpCurveVersion=2;}
+}
 function stationNear(st){const m=MAPS[st.mapId];return m&&m.kind==='out'&&m.objects.some(o=>o.type==='station'&&Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1);}
 function railUnlocked(st,id){const i=HUB_ORDER.indexOf(id);return i===0||i>0&&st.quests[mainQuestOf(HUB_ORDER[i-1])]==='complete';}
 function stationDestinations(st){return HUB_ORDER.filter(id=>id!==MAPS[st.mapId].hub&&railUnlocked(st,id));}
@@ -4339,7 +4356,7 @@ function previewEquipFor(st,cid,job){ const e={...st.equip[cid]}; for(const s of
 function renderRecord(){
   const st=G.st; const L=levelOf(st.xp);
   const milestones=[["E1","新規開始"],...Object.keys(QUESTS).filter(k=>QUESTS[k].main&&!QUESTS[k].post).map(k=>[MOE_RANKS[QUESTS[k].rank],k+"完了"])];
-  return `<dl class="kv"><dt>共通レベル</dt><dd>${L}（経験値 ${st.xp.toLocaleString()}${L<999?`・次まで${(xpFor(L+1)-st.xp).toLocaleString()}`:"・最大"}）</dd>
+  return `<dl class="kv"><dt>総合レベル</dt><dd>${L}（経験値 ${st.xp.toLocaleString()}${L<999?`・次まで${(xpFor(L+1)-st.xp).toLocaleString()}`:"・最大"}）</dd>
     <dt>もえのシナリオ到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd><dt>旅</dt><dd>${st.day}日目</dd></dl>
     <p class="small">もえのランクは物語上の到達記録です。レベル・熟練度・実際の応援ポイントとは別に表示します。</p>
     <ul class="list">${milestones.map(([r,c],i)=>`<li>${MOE_RANKS.indexOf(r)<=st.moeRank?"●":"○"} ${r}：${c}</li>`).join("")}</ul>
