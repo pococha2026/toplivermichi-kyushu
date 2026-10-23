@@ -509,7 +509,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "6.18";
+const GAME_VERSION = "6.19";
 const SCHEMA_VERSION = 5;
 
 const PAL = {
@@ -1867,7 +1867,11 @@ function newGearDrop(st,run,res){if(!['field','boss'].includes(run.kind))return;
  else if(!st.bossDefeated[run.bossId]||randInt(3)===0)award('ボス決戦装備（'+(BOSSES[run.bossId]?.name||'ボス')+'）');
 }
 function gearRematchList(st,hub){return Object.entries(BOSSES).filter(([id,b])=>b.hub===hub&&b.specialStage==null&&st.bossDefeated[id]&&!id.startsWith('CB'));}
-function gearRematch(st,id){const b=BOSSES[id],fee=b?30+5*b.q:0;if(G.readOnly||!b||!isSafe()||st.run||streamPending()||!gearRematchList(st,curHub()).some(([bid])=>bid===id)||st.gold<fee)return false;const run=createBossRun(st,id);run.rematch=true;st.gold-=fee;startBattle(run);return true;}
+
+function battleEntryReason(st){if(!st||st!==G.st||G.readOnly)return 'このタブでは戦闘を開始できません。';if(G.screen!=='explore'||st.run||st.stream||G.dlg)return '戦闘・配信・会話を終えてから挑戦してください。';return '';}
+function startRegionalBoss(id){const st=G.st,b=BOSSES[id],qid=Object.keys(QUESTS).find(k=>QUESTS[k].boss===id);if(battleEntryReason(st)||!b||b.specialStage!=null||st.mapId!==b.hub||st.bossDefeated[id]||!qid||st.quests[qid]!=='bossReady'){toast('この地域の本編依頼とボスの挑戦条件を確認してください。');return false;}startBattle(createBossRun(st,id));return true;}
+
+function gearRematch(st,id){const b=BOSSES[id],fee=b?30+5*b.q:0;if(battleEntryReason(st)||!b||!isSafe()||streamPending()||!gearRematchList(st,curHub()).some(([bid])=>bid===id)||st.gold<fee)return false;const run=createBossRun(st,id);run.rematch=true;st.gold-=fee;startBattle(run);return true;}
 function gearEventReason(st,id,claim=false){const it=EQUIP[id],event=st.gearEvent;if(!it||it.gearSource!=='event')return '対象外の装備です。';if(st.run||streamPending()||!isSafe()||it.gearHub!==curHub()||!hubUnlocked(st,it.gearHub))return '該当する街の安全地帯で受け付けます。';if(st.gearEventDone?.[id])return '受取済みです。';if(!claim)return event?'受注中の装備依頼を先に達成するか取り消してください。':'';
  if(!event||event.id!==id)return 'この装備依頼は未受注です。';const need=2+Math.floor(it.gearTier/2),wins=Math.max(0,(st.townBattles?.[it.gearHub]||0)-event.wins);if(localFestivalStatus(st,it.gearHub).talks<2||wins<need)return '住民2人と会話し、受注後にこの街で通常戦闘'+need+'勝が必要です。';if(!eqCanAdd(st,id,1)&&(st.keep||[]).length>=KEEP_MAX)return '持ち物か預かり所に空きを作ってください。';return '';
 }
@@ -1931,7 +1935,7 @@ const SPECIAL_STAGES=SPECIAL_LEVELS.map((level,i)=>({id:'SP'+String(i+1).padStar
 function recommendedAreaLevel(ar){return ar.chapterLevel|| (ar.specialStage!=null?SPECIAL_STAGES[ar.specialStage].level:areaRecommendedLevel(ar.q));}
 function requiredAreaLevel(ar){return ar.chapterLevel?Math.max(1,ar.chapterLevel-25):ar.specialStage!=null?Math.max(100,SPECIAL_STAGES[ar.specialStage].level-40):areaRequiredLevel(ar.q);}
 function specialReason(st,s){if(!s)return '特設エリアが見つかりません。';if(st.quests.M16!=='complete')return '本編M16クリア後に解放されます。';if(levelOf(st.xp)<Math.max(100,s.level-40))return 'パーティLv'+Math.max(100,s.level-40)+'以上で解放されます。';if(s.index&&!st.bossDefeated[SPECIAL_STAGES[s.index-1].boss])return '前の特設エリアのボスを撃破してください。';return '';}
-function enterSpecial(id){const st=G.st,s=SPECIAL_STAGES.find(s=>s.id===id);if(G.readOnly||st.run||st.stream||streamPending()||!isSafe()||G.sheet!=='specialWorld'||specialReason(st,s))return false;st.specialReturn={map:st.mapId,x:st.pos.x,y:st.pos.y};travelMap(s.id,3,15);return true;}
+function enterSpecial(id){const st=G.st,s=SPECIAL_STAGES.find(s=>s.id===id);if(battleEntryReason(st)||streamPending()||!isSafe()||G.sheet!=='specialWorld'||specialReason(st,s))return false;st.specialReturn={map:st.mapId,x:st.pos.x,y:st.pos.y};travelMap(s.id,3,15);return true;}
 function specialXP(s){return Math.max(1000,Math.ceil((xpFor(Math.min(999,s.level+1))-xpFor(s.level===999?998:s.level))*0.65));}
 function specialBossReward(st,run,res){const b=BOSSES[run.bossId];if(b?.specialStage==null||run.kind!=='boss')return;const s=SPECIAL_STAGES[b.specialStage];st.specialRewards=st.specialRewards||{};if(!st.specialRewards[s.id]){if(giveGear(st,s.reward,res,'特設ボス初回報酬'))st.specialRewards[s.id]=true;else res.notes.push('特設ボス報酬は保管場所が満杯です。空きを作り、同じ守護者を再撃破すると受け取れます。');}}
 function renderSpecialWorld(){const st=G.st;return `${specialReminder(st)}<button class="btn" data-a="openSheet" data-k="specialTracker">特別エリア・クリア状況</button><p>本編M16クリア後の特設エリア。通常敵500種・ボス10体・特設チャレンジ10件。パーティレベル・職業熟練度の上限は999です。</p><div class="stack">${[...SPECIAL_STAGES].sort((a,b)=>Number(b.id===G.sheetData.specialFocus)-Number(a.id===G.sheetData.specialFocus)).map(s=>`<section class="setcard ${!specialReason(st,s)&&!st.bossDefeated[s.boss]?'special-pending':''}"><b>${esc(s.name)}</b><p class="special-state ${st.bossDefeated[s.boss]?'good':!specialReason(st,s)?'warn':'dim'}">${st.bossDefeated[s.boss]?'✓ エリアクリア':!specialReason(st,s)?'★ 解放済み・未クリア':st.specialUnlocked?.[s.id]||st.visitedMaps.includes(s.id)?'解放済み・準備待ち':'未解放'}</p><p>適正Lv${s.level}／通常敵50種／守護者${st.bossDefeated[s.boss]?'撃破済み':'未撃破'}</p><p>${esc(specialReason(st,s)||'挑戦できます。帰還口から出発した施設へ戻れます。')}</p><button class="btn" data-a="specialEnter" data-v="${s.id}" ${specialReason(st,s)?'disabled':''}>エリアへ移動</button></section>`).join('')}</div>`;}
@@ -2620,8 +2624,7 @@ function applyVictory(st, run){
     const gain = Math.min(JP_CAP-cur, base); st.jp[m.cid][m.job]=cur+gain; const R1=rankOf(cur+gain);
     res.jp.push({cid:m.cid, name:m.name, job:m.job, gain, R0, R1});
     for(const need of [5,10,15])if(R0<need&&R1>=need)res.notes.push(`${m.name}：${JOBS[m.job].name}熟練度${need}に到達。${need===10?"専用道具が解禁！":need===5?"熟練技を習得！":"奥義を習得！"}`);
-    if(R0<4 && R1>=4) giftCheck(st,m.job,"W",res);
-    if(R0<7 && R1>=7) giftCheck(st,m.job,"A",res);
+    if(run.kind!=="challenge"||res.challenge?.first){if(R1>=4)giftCheck(st,m.job,"W",res);if(R1>=7)giftCheck(st,m.job,"A",res);}
   }
   if(run.kind==="boss"){
     const firstBoss=!st.bossDefeated[run.bossId];
@@ -2649,12 +2652,13 @@ function levelUpEffects(st, L0, L1){
   if(st.run)for(const m of st.run.party){const cs=charStats(st,m.cid,L1);m.name=charName(st,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(st.jp[m.cid]);m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=m.maxHP;m.defBase=cs.defBase;m.str=cs.base.str;m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=cs.startC;}
   return ups;
 }
-function giftCheck(st, job, kind, res){
-  if(st.gifts[kind][job]) return;
-  st.gifts[kind][job]=true; const id=(kind==="W"?"JW":"JA")+job.slice(1);
-  if(eqCanAdd(st,id,1)){ st.owned[id]=Math.min(8,(st.owned[id]||0)+1); res.gifts.push(id); }
-  else { st.keep=st.keep||[]; if(st.keep.length<KEEP_MAX){ st.keep.push(id); res.gifts.push(id); res.notes.push(`装備品の持ち物が${EQ_KINDS}種類でいっぱいのため、${EQUIP[id].name}は宿屋の預かり所へ送った。`); } }
+function giftCheck(st,job,kind,res){
+ if(st.gifts[kind][job])return true;const id=(kind==='W'?'JW':'JA')+job.slice(1);
+ if(eqCanAdd(st,id,1)){st.owned[id]=(st.owned[id]||0)+1;res.gifts.push(id);st.gifts[kind][job]=true;return true;}
+ st.keep=st.keep||[];if(st.keep.length<KEEP_MAX){st.keep.push(id);res.gifts.push(id);st.gifts[kind][job]=true;res.notes.push(EQUIP[id].name+'は装備品の持ち物が満杯のため、宿屋の預かり所へ送りました。');return true;}
+ res.notes.push('熟練度報酬「'+EQUIP[id].name+'」は持ち物と預かり所が満杯のため受取待ちです。空きを作り、この職業で通常戦闘か地域ボスに勝利すると受け取れます。');return false;
 }
+
 /* ---- 装備品の持ち物（未装備の在庫）：最大20種類、1種類は装備中を含め8個まで ---- */
 function eqStockKinds(st){ return Object.keys(st.owned).filter(id=>availableCount(st,id)>0).length; }
 function eqCanAdd(st,id,n){ // 在庫へn個加えられるか
@@ -4178,6 +4182,7 @@ function travelHub(to,tx,ty){
 
 /* ---- 戦闘 ---- */
 function startBattle(run){
+  const reason=battleEntryReason(G.st);if(reason){toast(reason);return false;}
   G.battleInspect=false;G.battleChoiceKey=null;G.battlePreview="";
   G.auto=false;G.autoWait=false;G.autoAct=null; clearTimeout(G.autoT); G.autoLast=null;
   const st=G.st; st.run=run; st.runSeq=run.seq;
@@ -5015,7 +5020,7 @@ const ACT = {
     st.slots-=2; st.quests[id]="active"; st.activeQuest=id; st.qprog[id]=st.qprog[id]||0; commit(); G.sheet=null; render();
     say([["",`依頼「${id} ${QUESTS[id].name}」を受けた。`],["もえ",QUESTS[id].main&&HUB_TEXT[QUESTS[id].hub]?HUB_TEXT[QUESTS[id].hub].accept:"一緒に考えよう。"],["",QUESTS[id].goal]]); },
   abandonQuest(el){ const st=G.st, id=el.dataset.v; st.quests[id]="available"; st.qprog[id]=0; st.activeQuest=null; G.sheet="quests";G.sheetData={};commit(); render(); toast("依頼を放棄した。受注費は戻りません。"); },
-  bossGo(el){ startBattle(createBossRun(G.st, el.dataset.v)); },
+  bossGo(el){ startRegionalBoss(el.dataset.v); },
   pickActor(el){ const i=+el.dataset.i; const m=G.st.run.party[i]; if(m.hp<=0||m.acted) return; G.cmd={actor:i}; render(); },
   liveLogPage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0&&n<G.liveLogPages){G.liveLogPage=n;if(G.auto){G.auto=false;G.autoWait=false;clearTimeout(G.autoT);}render();}},
   battleChoicePage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0&&n<G.battleChoicePages){G.battleChoicePage=n;render();}},
@@ -5064,7 +5069,7 @@ const ACT = {
   partyView(el){ G.sheetData={cid:el.dataset.c||null, view:el.dataset.v||""}; render(); drawMiniSprites(); },
   specialGuide(el){openSpecialGuide(el.dataset.v);},
   specialEnter(el){if(!enterSpecial(el.dataset.v))toast('解放条件と現在の状態を確認してください。');},
-  specialBossGo(el){const st=G.st,s=SPECIAL_STAGES.find(s=>s.boss===el.dataset.v);if(G.readOnly||!s||st.run||st.stream||st.mapId!==s.id||specialReason(st,s))return toast('特設エリア内で挑戦してください。');startBattle(createBossRun(st,s.boss));},
+  specialBossGo(el){const st=G.st,s=SPECIAL_STAGES.find(s=>s.boss===el.dataset.v);if(battleEntryReason(st)||streamPending()||!s||st.mapId!==s.id||specialReason(st,s))return toast('特設エリア内で挑戦してください。');startBattle(createBossRun(st,s.boss));},
   familyParty(){const st=G.st;if(st.run||st.stream||streamPending()||!isSafe()||!MAPS[st.mapId].objects.some(o=>o.type==='studio'&&Math.abs(o.x-st.pos.x)+Math.abs(o.y-st.pos.y)<=1))return toast('街のファミリー施設で利用してください。');G.familyRosterMap=st.mapId;openSheet('party');},
   partyReplaceSlot(el){G.sheetData.replaceSlot=Number(el.dataset.v);render();},
   partyUp(el){if(changeCompanions(G.st,'up',el.dataset.v)){commit();render();}else toast('同行者の変更は街のファミリー施設で行います。');},
@@ -5073,9 +5078,9 @@ const ACT = {
   setJob(el){ const st=G.st,cid=el.dataset.c,j=el.dataset.v;if(G.readOnly||st.run||st.stream||streamPending()||!isSafe()||!st.roster.includes(cid)||!JOBS[j])return toast("今は転職できません。");rememberSkills(st,cid,characterLevel(st,cid)); if(!eqChangeOk(st,t=>{ t.equip[cid]=previewEquipFor(st,cid,j); })) return toast(`ジョブ専用の装備を外すと、装備品の持ち物が${EQ_KINDS}種類を超えます。先に捨てるか売ってください。`); st.jobs[cid]=j; st.equip[cid]=previewEquipFor(st,cid,j);rememberSkills(st,cid,characterLevel(st,cid));
     for(const [s,id] of [["w","CW01"],["a","CA01"]]) if(!st.equip[cid][s]&&availableCount(st,id)>0) st.equip[cid][s]=id;
     commit(); G.sheetData={cid,view:""}; render(); drawMiniSprites(); toast(`${charName(st,cid)}のジョブを${JOBS[j].name}にした。`); },
-  setEquip(el){ const st=G.st,cid=el.dataset.c,s=el.dataset.s,id=el.dataset.v||null;if(G.readOnly||st.run||st.stream||streamPending()||!isSafe())return toast("安全地帯で装備を変更してください。");if(!st.roster.includes(cid)||!["w","a","acc"].includes(s)||id&&(!EQUIP[id]||EQUIP[id].slot!==s||!canEquipC(st,cid,EQUIP[id])))return toast("この装備は職業・熟練度・部位の条件を満たしていません。");let took=""; if(id&&availableCount(st,id)<=0&&st.equip[cid][s]!==id){ const from=st.roster.find(c=>c!==cid&&st.equip[c]&&st.equip[c][s]===id); if(!from) return toast("未装備の在庫がありません。"); st.equip[from][s]=null; took=charName(st,from); }
-    if(!eqChangeOk(st,t=>{ t.equip[cid][s]=id; })) return toast(`装備品の持ち物が${EQ_KINDS}種類でいっぱいのため外せません。いらない装備品を捨てるか売ってください。`);
-    const old=st.equip[cid][s]; st.equip[cid][s]=id; commit(); SND.sfx("ok");
+  setEquip(el){ const st=G.st,cid=el.dataset.c,s=el.dataset.s,id=el.dataset.v||null;if(G.readOnly||st.run||st.stream||streamPending()||!isSafe())return toast("安全地帯で装備を変更してください。");if(!st.roster.includes(cid)||!["w","a","acc"].includes(s)||id&&(!EQUIP[id]||EQUIP[id].slot!==s||!canEquipC(st,cid,EQUIP[id])))return toast("この装備は職業・熟練度・部位の条件を満たしていません。");if(st.equip[cid][s]===id)return toast("装備は変更済みです。");let took="",donor=null;if(id&&availableCount(st,id)<=0){donor=st.roster.find(c=>c!==cid&&st.equip[c]&&st.equip[c][s]===id);if(!donor)return toast("未装備の在庫がありません。");took=charName(st,donor);}
+    if(!eqChangeOk(st,t=>{if(donor)t.equip[donor][s]=null;t.equip[cid][s]=id;})) return toast(`装備品の持ち物が${EQ_KINDS}種類でいっぱいのため外せません。いらない装備品を捨てるか売ってください。`);
+    const old=st.equip[cid][s];if(donor)st.equip[donor][s]=null;st.equip[cid][s]=id; commit(); SND.sfx("ok");
     if(G.sheet==="equip") G.sheetData={cid}; else G.sheetData={cid,view:""};
     render(); drawMiniSprites(); toast(id?(took?`${took}から付け替えて、${charName(st,cid)}は${EQUIP[id].name}を装備した。`:`${charName(st,cid)}は${EQUIP[id].name}を装備した。`):`${charName(st,cid)}は${EQUIP[old].name}を外した。`); },
   eqSort(el){ G.eqSort=el.dataset.v; render(); drawMiniSprites(); },
