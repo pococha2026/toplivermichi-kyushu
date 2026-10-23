@@ -509,8 +509,22 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.10";
-const SCHEMA_VERSION = 5;
+const GAME_VERSION = "7.11";
+const SCHEMA_VERSION = 6;
+/* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
+const SAVE_EPOCH='2026-10-23-reset-1';
+const SAVE_LOCAL_KEY='tlr-kyushu-auto-'+SAVE_EPOCH;
+const SAVE_DB_NAME='toplivermichi-kyushu-'+SAVE_EPOCH;
+const SAVE_LOCK_NAME='toplivermichi-kyushu-owner-'+SAVE_EPOCH;
+function currentSaveState(s){return !!s&&s.schemaVersion===SCHEMA_VERSION&&s.saveEpoch===SAVE_EPOCH;}
+function validSaveRecord(r){if(!r||r.app!=='toplivermichi-kyushu'||typeof r.state!=='string'||checksum(r.state)!==r.sum)return false;try{const st=JSON.parse(r.state);validateState(st);return true;}catch(e){return false;}}
+function foreignSaveRecord(r){try{return !!r&&typeof r.state==='string'&&JSON.parse(r.state).saveEpoch!==SAVE_EPOCH;}catch(e){return false;}}
+function legacySaveLocalKey(key){return typeof key==='string'&&key!==SAVE_LOCAL_KEY&&/^tlr-kyushu-(?:auto|save)(?:-|$)/.test(key);}
+function cleanupLegacyLocalSaves(){const out={removed:[],failed:false};try{const keys=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(legacySaveLocalKey(k))keys.push(k);}for(const key of keys){localStorage.removeItem(key);out.removed.push(key);}}catch(e){out.failed=true;}return out;}
+let resetCleanupPromise=null;
+function cleanupLegacySaves(){if(resetCleanupPromise)return resetCleanupPromise;resetCleanupPromise=(async()=>{const local=cleanupLegacyLocalSaves(),status={localRemoved:local.removed,localFailed:local.failed,deleted:[],pending:[],failed:[]};const names=new Set(['toplivermichi-kyushu']);try{if(typeof indexedDB!=='undefined'&&typeof indexedDB.databases==='function'){const list=await storageDeadline(indexedDB.databases());for(const row of list)if(row.name&&row.name!==SAVE_DB_NAME&&(row.name==='toplivermichi-kyushu'||row.name.startsWith('toplivermichi-kyushu-')))names.add(row.name);}}catch(e){}for(const name of names){if(name===SAVE_DB_NAME)continue;await new Promise(resolve=>{let settled=false;const finish=(kind)=>{if(!status[kind].includes(name))status[kind].push(name);if(!settled){settled=true;clearTimeout(timer);resolve();}};const timer=setTimeout(()=>finish('pending'),1200);try{const r=indexedDB.deleteDatabase(name);r.onblocked=()=>finish('pending');r.onerror=()=>finish('failed');r.onsuccess=()=>{status.pending=status.pending.filter(n=>n!==name);finish('deleted');};}catch(e){finish('failed');}});}G.resetCleanup=status;return status;})();return resetCleanupPromise;}
+window.addEventListener('storage',e=>{if(legacySaveLocalKey(e.key))cleanupLegacyLocalSaves();});
+
 
 const PAL = {
   ink:"#101820", navy:"#23364D", slate:"#455A68", mist:"#8B9BA0",
@@ -2449,7 +2463,7 @@ function renderRename(){const st=G.st,d=G.sheetData,cid=d.cid;if(!st.roster.incl
 /* ---- 新規開始（第06D・16節） ---- */
 function newGame(name, gender, heroine, career){
   const st = {
-    schemaVersion:SCHEMA_VERSION, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:3, jpCurveVersion:2,
+    schemaVersion:SCHEMA_VERSION, saveEpoch:SAVE_EPOCH, gameVersion:GAME_VERSION, saveGeneration:0, xpCurveVersion:3, jpCurveVersion:2,
     profile:{name, gender, career:career||"社会福祉士", heroine:{name:(heroine&&heroine.name)||HEROINE_DEFAULT.name, gender:(heroine&&heroine.gender)||"女性"}}, day:1, slots:6, mapId:"KY01", pos:{x:19,y:19}, dir:0,
     visitedMaps:["KY01"], visitedHubs:["KY01"], xp:0,
     names:{},pendingNames:[],roster:["hero","moe"], party:["hero","moe"], vitals:null,
@@ -3964,11 +3978,12 @@ const SND = (()=>{
 const IS_PUBLIC = typeof window!=="undefined" && !!window.TLR_PUBLIC; // GitHub公開版ではclaude.aiのクラウド保存を使わない
 const DB = (()=>{
   let db=null;
-  function open(){ return new Promise((res,rej)=>{ try{ const r=indexedDB.open("toplivermichi-kyushu",1); r.onupgradeneeded=()=>r.result.createObjectStore("saves"); r.onsuccess=()=>{db=r.result;res(db);}; r.onerror=()=>rej(r.error);}catch(e){rej(e);} }); }
+  function open(){ return new Promise((res,rej)=>{ try{ const r=indexedDB.open(SAVE_DB_NAME,1); r.onupgradeneeded=()=>r.result.createObjectStore("saves"); r.onsuccess=()=>{db=r.result;db.onversionchange=()=>{db.close();db=null;};res(db);}; r.onerror=()=>rej(r.error);}catch(e){rej(e);} }); }
   async function tx(mode, fn){ if(!db) await open(); return new Promise((res,rej)=>{ let t; try{ t=db.transaction("saves",mode,{durability:"strict"}); }catch(e){ t=db.transaction("saves",mode); } const s=t.objectStore("saves"); let out; fn(s,v=>out=v); t.oncomplete=()=>res(out); t.onerror=()=>rej(t.error); t.onabort=()=>rej(t.error); }); }
   const get=k=>tx("readonly",(s,set)=>{ const r=s.get(k); r.onsuccess=()=>set(r.result); });
   const putPair=(cur,prev)=>tx("readwrite",s=>{ if(prev) s.put(prev,"auto-prev"); s.put(cur,"auto"); });
-  return { get, putPair };
+  const remove=k=>tx("readwrite",s=>s.delete(k));
+  return { get, putPair, remove };
 })();
 function storageDeadline(p){ return new Promise((resolve,reject)=>{ const timer=setTimeout(()=>reject(new Error("保存領域の応答待ち時間を超えました")),2000); Promise.resolve(p).then(v=>{clearTimeout(timer);resolve(v);},e=>{clearTimeout(timer);reject(e);}); }); }
 function checksum(str){ let h=2166136261; for(let i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619);} return (h>>>0).toString(16); }
@@ -3989,7 +4004,7 @@ const CLOUD=(()=>{
       db=d; uid=id; state="有効"; return true; }catch(e){ state="使えません"; return false; } })();
     return ready;
   }
-  const ref=k=>db.doc("data/users/"+uid+"/"+k);
+  const ref=k=>db.doc("data/users/"+uid+"/"+SAVE_EPOCH+"-"+k);
   async function load(){ if(!await init()) return {}; const out={};
     for(const k of ["save-auto","save-prev"]){ try{ const sn=await ref(k).get(); if(sn.exists) out[k]=sn.data(); }catch(e){} }
     last=out["save-auto"]||null; return out; }
@@ -4013,6 +4028,7 @@ const CLOUD=(()=>{
 function afterCloud(ok){ if(!G.localOK) return; setSave(ok?"保存済み（端末とクラウド）":"保存済み（端末のみ。クラウド："+CLOUD.state()+"）"); }
 function commit(){
   const st=G.st; if(!st) return Promise.resolve();
+  if(!currentSaveState(st)){G.localOK=false;G.hasSave=false;setSave("初期化前の記録は保存できません。更新版ではじめから開始してください。");return Promise.resolve();}
   if(G.readOnly){ G.localOK=false; setSave("未保存：別のタブを閉じ、この画面を再読み込みしてください。"); return Promise.resolve(); }
   normalizeChapterLocation(st);learnEquipped(st);rememberSpecialUnlocks(st);
   if(!st.run) ensureVitals(st);
@@ -4020,10 +4036,10 @@ function commit(){
   const json=JSON.stringify(st); const rec={app:"toplivermichi-kyushu", gen:st.saveGeneration, time:Date.now(), state:json, sum:checksum(json)};
   setSave("保存中…"); G.localOK=false;
   // 端末内：まずlocalStorageへ同期的に書く（タブを閉じても残る）→ IndexedDBへ2世代
-  let ls=false; try{ localStorage.setItem("tlr-kyushu-auto", JSON.stringify(rec)); ls=true; G.localOK=true; G.hasSave=true; setSave("保存済み（端末）"); }catch(e){}
+  let ls=false; try{ localStorage.setItem(SAVE_LOCAL_KEY, JSON.stringify(rec)); ls=true; G.localOK=true; G.hasSave=true; setSave("保存済み（端末）"); }catch(e){}
   CLOUD.push(rec);
   saveChain = saveChain.catch(()=>{}).then(async()=>{
-    try{ const prev=await storageDeadline(DB.get("auto")); await storageDeadline(DB.putPair(rec, prev&&prev.time<rec.time?prev:null)); G.localOK=true; G.hasSave=true; }
+    try{ const prev=await storageDeadline(DB.get("auto")); await storageDeadline(DB.putPair(rec, validSaveRecord(prev)&&prev.time<rec.time?prev:null)); G.localOK=true; G.hasSave=true; }
     catch(e){ G.localOK=ls; }
     if(G.localOK) setSave(CLOUD.on()? (CLOUD.dirty()?"保存済み（端末）・クラウドへ送信中…":"保存済み（端末とクラウド）") : "保存済み（端末）");
     else if(!CLOUD.on()) setSave("未保存：この端末では保存できません。設定からバックアップを書き出してください。");
@@ -4031,10 +4047,11 @@ function commit(){
   return saveChain;
 }
 async function loadSave(){
-  const valid = r => r && typeof r.state==="string" && checksum(r.state)===r.sum && (()=>{try{const st=JSON.parse(r.state);validateState(st);return true;}catch(e){return false;}})();
+  await cleanupLegacySaves();
+  const valid=validSaveRecord;
   const cur=[], prev=[];
-  try{ const a=await storageDeadline(DB.get("auto")); if(valid(a)) cur.push({...a,src:"端末"}); const b=await storageDeadline(DB.get("auto-prev")); if(valid(b)) prev.push({...b,src:"端末"}); }catch(e){}
-  try{ const l=JSON.parse(localStorage.getItem("tlr-kyushu-auto")||"null"); if(valid(l)) cur.push({...l,src:"端末"}); }catch(e){}
+  try{ const a=await storageDeadline(DB.get("auto")); if(valid(a))cur.push({...a,src:"端末"});else if(foreignSaveRecord(a))await storageDeadline(DB.remove("auto"));const b=await storageDeadline(DB.get("auto-prev")); if(valid(b))prev.push({...b,src:"端末"});else if(foreignSaveRecord(b))await storageDeadline(DB.remove("auto-prev"));}catch(e){}
+  try{ const l=JSON.parse(localStorage.getItem(SAVE_LOCAL_KEY)||"null"); if(valid(l))cur.push({...l,src:"端末"});else if(foreignSaveRecord(l))localStorage.removeItem(SAVE_LOCAL_KEY);}catch(e){}
   try{ const c=await CLOUD.load(); if(valid(c["save-auto"])) cur.push({...c["save-auto"],src:"クラウド"}); if(valid(c["save-prev"])) prev.push({...c["save-prev"],src:"クラウド"}); }catch(e){}
   const pick = arr => arr.sort((x,y)=>(y.time-x.time)||(y.gen-x.gen))[0];
   const best = pick(cur) || null;
@@ -4051,7 +4068,7 @@ let releaseSaveLock=null;
 window.addEventListener("pagehide",()=>{ if(G.st&&!G.readOnly) commit(); if(releaseSaveLock){ releaseSaveLock(); releaseSaveLock=null; } });
 window.addEventListener("pageshow",e=>{ if(e.persisted) location.reload(); });
 function acquireLock(){
-  try{ if(navigator.locks){ navigator.locks.request("toplivermichi-kyushu-owner",{ifAvailable:true}, lock=>{ if(!lock){ G.readOnly=true; setSave("未保存：別のタブで起動中です。他のタブを閉じて再読み込みしてください。"); render(); return; } return new Promise(resolve=>{ releaseSaveLock=resolve; }); }); } }catch(e){}
+  try{ if(navigator.locks){ navigator.locks.request(SAVE_LOCK_NAME,{ifAvailable:true}, lock=>{ if(!lock){ G.readOnly=true; setSave("未保存：別のタブで起動中です。他のタブを閉じて再読み込みしてください。"); render(); return; } return new Promise(resolve=>{ releaseSaveLock=resolve; }); }); } }catch(e){}
 }
 
 /* ===== ui 共通 ===== */
@@ -4182,6 +4199,8 @@ function renderTitle(){
     <h1 class="logo"><span class="main">トップライバーへの道</span><span class="sub">全国ツアー 九州から東京へ</span></h1>
     <p class="lead">アイドルグループ「おやすみセカイ」を脱退したヒロインと2人で旅立ち、グラドル活動とPococha配信を重ね、全国を巡って東京ドームの成功を目指す、昭和風ドットRPG。</p>
     <p class="note">主人公とヒロイン役の名前・性別を選べます。22ジョブ・装備・道具100種・戦闘オートに対応。</p>
+    <p class="note">2026年10月23日に全ユーザーの進行を初期化しました。初期化前のセーブ・バックアップは利用できません。新しく始めた記録は通常どおり保存されます。</p>
+    ${G.resetCleanup?.pending.length?`<p class="note">初期化前に開いていたゲームのタブを閉じ、更新版を開き直してください。</p>`:""}${G.resetCleanup?.localFailed||G.resetCleanup?.failed.length?`<p class="note">旧記録の消去を完了できない保存領域があります。初期化前の記録は読み込み対象から外れています。</p>`:""}
     <div class="menu">
       <button class="btn primary" data-a="newGame">はじめから</button>
       <button class="btn" data-a="continue" ${G.hasSave?"":"disabled"}>つづきから${G.hasSave?"":"（記録なし）"}</button>
@@ -5040,7 +5059,7 @@ function renderSheet(){
         <li>スマホ縦画面の片手操作（スティック・A/Bボタン・タップ）。スティックの左右は設定で入れ替え可能</li>
       </ul>
       <h3 class="label">この版の収録範囲</h3>
-      <p>全国47都道府県を扱う本編6編55拠点、地域特別6拠点、追加遠征4拠点の計65拠点を収録。九州→中国・四国→近畿・東海→北陸・甲信越→東北・北海道→関東の順に、本編クリアで次の編が解放されます。地域特別エリアと東京ドーム成功後の追加遠征は任意です。レベル・仲間・装備・旧記録は引き継ぎます。</p>
+      <p>全国47都道府県を扱う本編6編55拠点、地域特別6拠点、追加遠征4拠点の計65拠点を収録。九州→中国・四国→近畿・東海→北陸・甲信越→東北・北海道→関東の順に、本編クリアで次の編が解放されます。地域特別エリアと東京ドーム成功後の追加遠征は任意です。各編の間でレベル・仲間・装備を引き継ぎます。全ユーザー初期化前の記録は使用できません。</p>
       <h3 class="label">記録について</h3>
       ${IS_PUBLIC?`<p>行動を決めるたびに、この端末のブラウザ内へ自動保存します。ブラウザの閲覧データを消すと記録も消えるため、設定の「バックアップを表示」で控えを取っておいてください。別の端末へ移すときも、この控えを「記録の復元」に貼り付けます。</p>`:`<p>行動を決めるたびに自動保存します。端末のブラウザ内に加え、claude.ai上のあなただけが読める保存場所にも送るので、アプリの更新やタブを閉じても続きから遊べます。念のため、設定の「バックアップを表示」で控えておくこともできます。</p>`}
       <h3 class="label">創作と非公式について</h3>
@@ -5135,7 +5154,7 @@ function renderSettings(){
       <div class="stack"><button class="btn primary" data-a="saveNow">今すぐセーブ</button><button class="btn" data-a="showBackup">バックアップを表示（控えを取る）</button></div>
       ${G.sheetData.backup?`<textarea id="backupOut" class="input mono" rows="5" readonly>${esc(G.sheetData.backup)}</textarea><button class="btn" data-a="copyBackup">コピーする</button>`:""}</div>`:""}
     <div class="setcard"><div class="sethead"><span class="settitle">記録の復元</span></div>
-      <p class="setdesc">控えておいたバックアップの文字列を貼り付けて読み込みます。<b>今の記録は置き換わります。</b></p>
+      <p class="setdesc">2026年10月23日の全ユーザー初期化後に作ったバックアップだけ復元できます。初期化前のバックアップは利用できません。文字列を貼り付けて読み込みます。<b>今の記録は置き換わります。</b></p>
       <textarea id="restoreIn" class="input mono" rows="3" aria-label="バックアップの貼り付け"></textarea>
       <div class="stack"><button class="btn" data-a="restore">貼り付けた記録を読み込む</button></div></div>
     <h3 class="label setgroup">共有</h3>
@@ -5558,7 +5577,7 @@ const ACT = {
   showBackup(){ G.sheetData.backup=JSON.stringify({app:"toplivermichi-kyushu",version:GAME_VERSION,state:G.st}); render(); },
   copyBackup(){ const t=$("#backupOut"); try{ navigator.clipboard.writeText(t.value).then(()=>toast("コピーしました。メモ帳などへ貼り付けて保管してください。"),()=>{t.select();toast("文字列を選択しました。コピーしてください。");}); }catch(e){ t.select(); toast("文字列を選択しました。コピーしてください。"); } },
   async restore(){ const t=$("#restoreIn"); const raw=(t.value||"").trim(); if(raw.length>5000000) return toast("大きすぎます（上限5,000,000バイト）。");
-    try{ const o=JSON.parse(raw); if(o.app!=="toplivermichi-kyushu"||!o.state||o.state.schemaVersion!==SCHEMA_VERSION||!o.state.profile) throw 0; validateState(o.state);
+    try{ const o=JSON.parse(raw); if(o.app!=="toplivermichi-kyushu"||!o.state||!o.state.profile)throw 0;if(!currentSaveState(o.state))return toast("全ユーザー初期化前のバックアップは復元できません。はじめから開始してください。");validateState(o.state);
       G.st=migrate(o.state); await commit(); G.hasSave=true; G.sheet=null; G.screen=G.st.run?"battle":G.st.stream?"stream":"explore"; if(G.screen==="battle")SND.play(G.st.run.enemies.some(e=>e.boss)?"boss":"battle");else if(G.screen==="stream")SND.play("stream");else exploreBgm(); render(); if(G.screen==="explore"){if(G.st.careerSession)openSheet("careerTour");else openPendingName();}toast("記録を読み込みました。"); }
     catch(e){ toast("読み込めませんでした。文字列が途中で切れていないか確認してください。"); } },
   partyView(el){ G.sheetData={cid:el.dataset.c||null, view:el.dataset.v||""}; render(); drawMiniSprites(); },
@@ -5617,6 +5636,7 @@ function drawMiniSprites(){
   document.querySelectorAll("canvas[data-dex]").forEach(c=>{ const [a,i]=c.dataset.dex.split("|"); const e=enemyDef(a,+i); const g=c.getContext("2d"); g.imageSmoothingEnabled=false; g.drawImage(ART.enemy(e.profile,e.species,e.attr,a,0),0,0); });
 }
 function validateState(s){
+  if(!currentSaveState(s))throw Error("reset epoch mismatch");
   validateNarrative(s);
   const obj=v=>v&&typeof v==="object"&&!Array.isArray(v),num=v=>Number.isFinite(v)&&v>=0;
   if(!obj(s)||s.schemaVersion!==SCHEMA_VERSION||!obj(s.profile)||typeof s.profile.name!=="string"||!obj(s.settings))throw Error("bad state");
@@ -5650,7 +5670,7 @@ function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdva
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
-function migrate(s){ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
+function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
 
 document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
@@ -5719,14 +5739,15 @@ window.addEventListener("resize",()=>{if(G.screen==="result"||G.screen==="battle
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{fitEndView();fitBattleView();}).catch(()=>{});
 
 async function boot(){
+  await cleanupLegacySaves();
   acquireLock(); PAD.mount(); SND.play("title");
-  try{ const ls=JSON.parse(localStorage.getItem("tlr-kyushu-auto")||"null"); G.hasSave=!!(ls&&ls.state); }catch(e){}
+  try{ const ls=JSON.parse(localStorage.getItem(SAVE_LOCAL_KEY)||"null"); G.hasSave=validSaveRecord(ls); }catch(e){}
   CLOUD.init();
   loadSave().then(s=>{ const had=G.hasSave; G.hasSave=!!s; if(G.screen==="title"&&had!==G.hasSave){ render(); drawTitleArt(); } }).catch(()=>{});
   const hot=window.claude&&window.claude.hot;
   if(hot&&hot.snapshot) hot.snapshot(()=>({st:G.st, screen:G.screen}));
   const data = hot&&hot.data;
-  if(data&&data.st){ G.st=data.st; G.screen=data.screen==="new"?"title":data.screen; G.hasSave=true; }
+  if(data&&data.st){try{validateState(data.st);G.st=data.st;G.screen=data.screen==="new"?"title":data.screen;G.hasSave=true;}catch(e){G.st=null;G.screen="title";}}
   render(); if(G.screen==="title") drawTitleArt();
 }
 
