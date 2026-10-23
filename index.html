@@ -5,7 +5,7 @@
 .special-reminder:focus-visible{outline:2px solid var(--cream);outline-offset:2px}.special-pending{border-color:var(--gold)}.special-state{display:inline-block;padding:2px 5px;border:1px solid currentColor;font-size:12px;margin:3px 0}.special-fold{margin-top:12px}.special-fold summary{padding:10px 4px;cursor:pointer;color:var(--gold)}
 
 </style></head><body>
-<title>トップライバーへの道 全国ツアー編</title>
+<title>トップライバーへの道｜昭和風ドットRPG</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DotGothic16&family=BIZ+UDPGothic:wght@400;700&display=swap">
@@ -53,7 +53,7 @@ h3.label{font-size:16px;margin-top:8px}
 #titleArt{width:100%;max-width:480px;image-rendering:pixelated;border:3px double var(--cream)}
 .logo{display:flex;flex-direction:column;font-family:var(--f-dot);font-weight:400;line-height:1.25}
 .logo .main{font-size:clamp(24px,7.6vw,40px);white-space:nowrap;color:var(--cream);letter-spacing:.04em;text-shadow:3px 3px 0 var(--red)}
-.logo .sub{font-size:24px;color:var(--gold);letter-spacing:.3em}
+.logo .sub{font-size:clamp(14px,4.5vw,20px);color:var(--gold);letter-spacing:.12em}
 .lead{font-size:18px}
 .menu{display:flex;flex-direction:column;gap:8px}
 .note{font-size:15px;color:var(--mist)}
@@ -509,7 +509,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.11";
+const GAME_VERSION = "7.12";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -4196,10 +4196,8 @@ function statusBar(){
 function renderTitle(){
   return `<section class="title-screen">
     <canvas id="titleArt" width="160" height="64" aria-hidden="true"></canvas>
-    <h1 class="logo"><span class="main">トップライバーへの道</span><span class="sub">全国ツアー 九州から東京へ</span></h1>
-    <p class="lead">アイドルグループ「おやすみセカイ」を脱退したヒロインと2人で旅立ち、グラドル活動とPococha配信を重ね、全国を巡って東京ドームの成功を目指す、昭和風ドットRPG。</p>
-    <p class="note">主人公とヒロイン役の名前・性別を選べます。22ジョブ・装備・道具100種・戦闘オートに対応。</p>
-    <p class="note">2026年10月23日に全ユーザーの進行を初期化しました。初期化前のセーブ・バックアップは利用できません。新しく始めた記録は通常どおり保存されます。</p>
+    <h1 class="logo"><span class="main">トップライバーへの道</span><span class="sub">昭和風ドットRPG</span></h1>
+    <p class="note">2026年10月23日の初期化前のセーブ・バックアップは利用できません。</p>
     ${G.resetCleanup?.pending.length?`<p class="note">初期化前に開いていたゲームのタブを閉じ、更新版を開き直してください。</p>`:""}${G.resetCleanup?.localFailed||G.resetCleanup?.failed.length?`<p class="note">旧記録の消去を完了できない保存領域があります。初期化前の記録は読み込み対象から外れています。</p>`:""}
     <div class="menu">
       <button class="btn primary" data-a="newGame">はじめから</button>
@@ -4208,10 +4206,11 @@ function renderTitle(){
       <button class="btn" data-a="openSheet" data-k="about">この作品について</button>
       <button class="btn share-btn" data-a="openSheet" data-k="share">📣 友だちに教える（URLを共有）</button>
     </div>
-    <p class="note">配信文化を参考にした非公式の創作ゲームです。実在のサービス・アカウントとは連携しません。BGMと効果音は最初からONです（画面に触れると鳴り始めます。設定で消音にできます）。${IS_PUBLIC?"記録はこの端末のブラウザへ自動保存されます。":"記録は端末とクラウドへ自動保存されます。"}</p>
-    <p class="note">${IS_PUBLIC?`公開版 v${GAME_VERSION}（${window.TLR_BUILD||""}）・`:""}この版（v${GAME_VERSION}）の収録範囲：全国47都道府県を扱う本編6編55拠点、地域特別6拠点、追加遠征4拠点。九州から始まり関東・東京ドームで本編完結。</p>
+    <p class="note">非公式の創作ゲームです。実在のサービス・アカウントとは連携しません。音と保存の案内は「設定」で確認できます。</p>
+    <p class="note">${IS_PUBLIC?"公開版 ":""}v${GAME_VERSION}${window.TLR_BUILD?`（${window.TLR_BUILD}）`:""}</p>
   </section>`;
 }
+
 /* タイトル画面：星のまたたき・流れ雲・流れ星・2人の呼吸（v5.36） */
 function titleStill(){ return !!((G.st&&G.st.settings.reduceMotion)||(G.tmpSettings&&G.tmpSettings.reduceMotion)); }
 function drawTitleArt(){
@@ -5039,34 +5038,7 @@ function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria
 function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
   switch(k){
-    case "about": return sheetWrap("この作品について",`
-      <h3 class="label">あらすじ</h3>
-      <p>福岡市を故郷とする主人公は、アイドルグループ「おやすみセカイ」を脱退したヒロインと出会います。PocochaのE帯から再出発し、S6トップライバーを目指すヒロインを補佐するため、2人は九州から全国を巡る旅へ出発します。グラドル出演・撮影会・配信を重ね、S6到達を最初の節目に、中国・四国、近畿・東海、北陸・甲信越、東北・北海道を巡って関東へ集結。東京ドーム満員の公演と全国的な成功を、二人と仲間で目指します。</p>
-      <h3 class="label">遊びの特徴</h3>
-      <ul class="list">
-        <li>本編の準備6件、任意のNPC連作18話、資料の照合・暗号・順序・状況判断の謎48問。特別イベント品は通常の道具袋と別に200種類まで持てます。</li>
-        <li>主要NPC27人に、それぞれの背景・事件・恋愛・口癖があります。人物相関図の「NPC同士」で関係の変化を確認できます。</li>
-        <li>主人公とヒロイン役の名前（全角1～12文字）と性別を選べる</li>
-        <li>主人公とヒロインの2人旅から始まり、各県の最初の町で仲間が1人ずつ加わる（全9人・戦闘は最大4人）</li>
-        <li>22ジョブと人物ごとの熟練度、装備（武器・防具・アクセサリー）を自由に組み合わせる</li><li>追加装備1,000種（共通296・職業専用704）。ショップ・通常敵・ボス・街の装備依頼に各250種。装備メニューの追加装備図鑑で入手先を確認できます。</li>
-        <li>各職業に基本技、レベル5・12の追加技、熟練技、全国編の上位技があります。さらに人物固有の必殺技も使えます。最大MPは職業・レベル・装備で変わります。</li>
-        <li>超レア武器3種・防具3種は強度10以上の戦闘で低確率入手。装備時に専用技を永久習得し、外しても使えます。</li>
-        <li>各ジョブに、技能とは別に戦闘中いつも働く「職業特性」がある（攻める・守る・支える・エールを集める、で役割が分かれる）</li>
-        <li>回復・MP・蘇生・攻撃の道具100種。店・イベント・モンスターから手に入る</li>
-        <li>同行は最大4人。待機者は経験値・熟練度を得ず、同行者の入れ替えは街のファミリー施設で行います。</li><li>九州編はLv・熟練度100、中国・四国編解放で200。新地域編ごとに100ずつ上限解放し、最終999。転職後も習得技・職業別熟練度・職業固有の永続ボーナスを保持します。</li><li>本編M16クリア後に特設探索へ進めます。現在の解放上限を超える特設エリア・チャレンジは、全国編・追加遠征の上限解放後に挑戦できます。</li><li>敵の予告を見て守り・攻めを選ぶコマンド戦闘。オートは通常戦闘のみ使用できます。</li>
-        <li>HP・MPは戦闘後も持ち越し、宿屋で全回復</li>
-        <li>4手番の配信イベントで、ヒロインのシナリオ到達ランクが上がる</li>
-        <li>スマホ縦画面の片手操作（スティック・A/Bボタン・タップ）。スティックの左右は設定で入れ替え可能</li>
-      </ul>
-      <h3 class="label">この版の収録範囲</h3>
-      <p>全国47都道府県を扱う本編6編55拠点、地域特別6拠点、追加遠征4拠点の計65拠点を収録。九州→中国・四国→近畿・東海→北陸・甲信越→東北・北海道→関東の順に、本編クリアで次の編が解放されます。地域特別エリアと東京ドーム成功後の追加遠征は任意です。各編の間でレベル・仲間・装備を引き継ぎます。全ユーザー初期化前の記録は使用できません。</p>
-      <h3 class="label">記録について</h3>
-      ${IS_PUBLIC?`<p>行動を決めるたびに、この端末のブラウザ内へ自動保存します。ブラウザの閲覧データを消すと記録も消えるため、設定の「バックアップを表示」で控えを取っておいてください。別の端末へ移すときも、この控えを「記録の復元」に貼り付けます。</p>`:`<p>行動を決めるたびに自動保存します。端末のブラウザ内に加え、claude.ai上のあなただけが読める保存場所にも送るので、アプリの更新やタブを閉じても続きから遊べます。念のため、設定の「バックアップを表示」で控えておくこともできます。</p>`}
-      <h3 class="label">創作と非公式について</h3>
-      <p>本作は配信文化を参考にした非公式の創作RPGです。人物・台詞・敵・数値・画像・音はゲーム用の創作で、実在のサービスの配信・課金・アカウント・ランキングとは連携しません。</p>
-      <p>ヒロインがおやすみセカイの元メンバーで、脱退後にPocochaから全国的な成功を目指すという背景は、物語の設定です。作中のランクは物語上の到達記録で、実際のランク歴ではありません。元の仲間5人も全国ツアーで登場し、それぞれの今を尊重する関係を描きます。詳細は「おやすみセカイの詳細」で確認できます。</p>
-      <p>敵の名前は、配信・応援の言葉とRPGの語感を組み合わせた本作の創作名です。</p>
-      <p class="small">gameVersion ${GAME_VERSION}／schemaVersion ${SCHEMA_VERSION}</p>`);
+    case "about": return sheetWrap("この作品について",`<p>最大4人で戦う、ターン制バトルの昭和風ドットRPGです。</p>`);
     case "townEvent": {const t=townChange(st,curHub());return sheetWrap(t.title,`<p>${esc(t.text)}</p><p>住民の声を、どんな形で街に残しますか？ 選択は保存され、街の様子が変わります。</p><div class="stack"><button class="btn" data-a="townResolve" data-v="quiet">声を録って展示を作る</button><button class="btn" data-a="townResolve" data-v="live">住民の交流会を開く</button></div>`);}
     case "settings": return sheetWrap("設定と保存", renderSettings());
     case "share": return sheetWrap("友だちに教える", renderShare());
@@ -5163,7 +5135,7 @@ function renderSettings(){
 }
 /* ---- 共有（URLのコピー・LINE・X・端末の共有メニュー） ---- */
 const SHARE_ARTIFACT_URL = "https://claude.ai/artifact/G1jFAs8yyUcJhtvgKragNh";
-const SHARE_TEXT = "スマホで遊べる昭和風ドットRPG『トップライバーへの道 全国ツアー編』";
+const SHARE_TEXT = "最大4人で戦う、ターン制バトルの昭和風ドットRPG『トップライバーへの道』";
 function shareUrl(){
   if(window.TLR_SHARE_URL) return String(window.TLR_SHARE_URL);
   if(IS_PUBLIC){ try{ return location.origin+location.pathname; }catch(e){} } // 公開版：今開いているページのURL
@@ -5562,7 +5534,7 @@ const ACT = {
   noop(){},
   shareCopyUrl(){ copyText(shareUrl(),"URLをコピーしました。LINEやDMに貼り付けて送れます。"); },
   shareCopyMsg(){ copyText(shareMessage(),"紹介文とURLをコピーしました。"); },
-  shareNative(){ try{ navigator.share({title:"トップライバーへの道 全国ツアー編", text:SHARE_TEXT, url:shareUrl()}).catch(e=>{ if(!e||e.name!=="AbortError") copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); }); }catch(e){ copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); } },
+  shareNative(){ try{ navigator.share({title:"トップライバーへの道", text:SHARE_TEXT, url:shareUrl()}).catch(e=>{ if(!e||e.name!=="AbortError") copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); }); }catch(e){ copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); } },
   moeTalk(){ G.moeLine=chatLine("moe"); commit(); render(); drawMiniSprites(); },
   setOpt(el){ const k=el.dataset.k; let v=el.dataset.v; if(v==="true")v=true; if(v==="false")v=false; const s=G.st?G.st.settings:(G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}); s[k]=v; if(G.st) commit(); render();
     const msg = k==="difficulty"?`難易度を「${DIFFICULTY[v].name}」にしました。`: k==="reduceMotion"?`演出を減らす：${v?"ON":"OFF"}にしました。`: k==="dock"?`ジョイコントローラーを${v?"表示":"非表示に"}しました。`: k==="moveSpeed"?`移動の速さを「${v==="fast"?"速い":"ふつう"}」にしました。`:""; if(msg) toast(msg); SND.sfx("ok"); },
