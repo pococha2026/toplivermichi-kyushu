@@ -14,7 +14,7 @@ class SyncTest(unittest.TestCase):
   (self.root/'GAME_SPEC.txt').write_text('stale')
   with self.assertRaisesRegex(ValueError,'Out-of-sync'):m.validate(self.root)
  def test_version_drift(self):
-  (self.root/'VERSION.txt').write_text('7.32\n2026-10-24\n')
+  parts=(self.root/'VERSION.txt').read_text().splitlines(); nums=parts[0].split('.');nums[-1]=str(int(nums[-1])+1);(self.root/'VERSION.txt').write_text('.'.join(nums)+'\n'+parts[1]+'\n')
   with self.assertRaisesRegex(ValueError,'Out-of-sync'):m.validate(self.root)
  def test_missing_manifest(self):
   (self.root/'release-manifest.json').unlink()

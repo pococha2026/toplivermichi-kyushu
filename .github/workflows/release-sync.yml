@@ -14,3 +14,5 @@ jobs:
         run: python3 scripts/sync-release.py --check
       - name: Verify synchronization failure cases
         run: python3 scripts/test-release-sync.py
+      - name: Verify activity preparation regression cases
+        run: node scripts/test-career.cjs
