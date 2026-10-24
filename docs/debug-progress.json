@@ -1,5 +1,5 @@
 {
-  "version": "8.73",
+  "version": "8.76",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -95,5 +95,9 @@
   "unifiedConfirm": {
     "status": "中央決定へ集約し独立Aを撤去。中央決定・戻・残存A除去を3回反復し関連回帰成功",
     "report": "docs/debug-v8.73.json"
+  },
+  "updateRecovery": {
+    "status": "欠落・検査漏れ・仕様更新すり抜けを再現後に修正。6出力境界のI/O失敗を各3回反復し復旧と関連回帰を確認",
+    "report": "docs/debug-v8.76.json"
   }
 }

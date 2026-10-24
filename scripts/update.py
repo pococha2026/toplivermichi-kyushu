@@ -14,9 +14,18 @@ def load_sync():
 
 def configuration():
     config = json.loads((ROOT/'scripts/checks.json').read_text(encoding='utf-8'))
-    for path in config['always'] + config['full'] + [p for v in config['related'].values() for p in v]:
+    if not isinstance(config,dict) or set(config)!={'always','full','related'}:
+        raise ValueError('checks.json requires always, full and related')
+    if not isinstance(config['related'],dict) or not all(isinstance(k,str) and k for k in config['related']):
+        raise ValueError('checks.json related must map path prefixes to test lists')
+    lists=[config['always'],config['full'],*config['related'].values()]
+    if any(not isinstance(group,list) or any(not isinstance(p,str) or not p for p in group) for group in lists):
+        raise ValueError('checks.json test groups must be lists of non-empty paths')
+    if any(not group for group in lists):
+        raise ValueError('checks.json test groups cannot be empty')
+    for path in [p for group in lists for p in group]:
         resolved = (ROOT/path).resolve()
-        if not resolved.is_relative_to(ROOT) or not resolved.is_file():
+        if not resolved.is_relative_to(ROOT) or resolved.suffix not in {'.py','.cjs'} or not resolved.is_file():
             raise ValueError('Missing/invalid check: '+path)
     return config
 
@@ -27,9 +36,12 @@ def selected_checks(changed, full=False):
         tests += config['full']
     else:
         for path in changed:
+            matched=False
             for prefix, related in config['related'].items():
                 if path == prefix or (prefix.endswith('/') and path.startswith(prefix)):
-                    tests += related
+                    tests += related;matched=True
+            if path.startswith('src/') and not matched:
+                tests += config['full']
     return list(dict.fromkeys(tests))
 
 def changed_files(base='HEAD'):
@@ -37,9 +49,9 @@ def changed_files(base='HEAD'):
     untracked = subprocess.check_output(['git','ls-files','--others','--exclude-standard','-z'],cwd=ROOT).decode().split('\0')
     return sorted(set(filter(None,tracked+untracked)))
 
-def run_checks(full=False, base='HEAD'):
+def run_checks(full=False, base='HEAD', tests=None):
     load_sync().validate(ROOT)
-    tests = selected_checks(changed_files(base), full)
+    if tests is None:tests = selected_checks([] if full else changed_files(base), full)
     node = os.environ.get('CODEX_PRIMARY_RUNTIME_NODE') or shutil.which('node')
     for path in tests:
         executable = sys.executable if path.endswith('.py') else node
@@ -58,13 +70,14 @@ def prepare(version=None, day=None):
         raise ValueError('Invalid version')
     if tuple(map(int,version.split('.'))) < tuple(map(int,old_version.split('.'))):
         raise ValueError('Version rollback is not allowed')
+    tests=selected_checks(changed_files())
     try:
         target.write_text(version+'\n'+day+'\n',encoding='utf-8')
         load_sync().validate(ROOT,write=True)
     except Exception:
         target.write_bytes(original)
         raise
-    run_checks()
+    run_checks(tests=tests)
 
 def verify_public(root=ROOT, base=PUBLIC, opener=urlopen):
     manifest = json.loads((root/'release-manifest.json').read_text(encoding='utf-8'))

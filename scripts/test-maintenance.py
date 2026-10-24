@@ -50,7 +50,7 @@ class MaintenanceTest(unittest.TestCase):
         original=(self.root/'VERSION.txt').read_bytes()
         class BrokenSync:
             def validate(self,*args,**kwargs):raise ValueError('generation blocked')
-        with patch.object(update,'ROOT',self.root),patch.object(update,'load_sync',return_value=BrokenSync()):
+        with patch.object(update,'ROOT',self.root),patch.object(update,'load_sync',return_value=BrokenSync()),patch.object(update,'changed_files',return_value=[]),patch.object(update,'selected_checks',return_value=[]):
             with self.assertRaisesRegex(ValueError,'generation blocked'):
                 update.prepare('99.01','2027-01-02')
         self.assertEqual((self.root/'VERSION.txt').read_bytes(),original)
