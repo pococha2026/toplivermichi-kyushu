@@ -44,3 +44,6 @@ jobs:
 
       - name: Verify mobile encyclopedia navigation and generated views
         run: node scripts/test-mobile-dex.cjs
+
+      - name: Verify all encyclopedia cards and cross-category discovery
+        run: node scripts/test-catalog-completeness.cjs

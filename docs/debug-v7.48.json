@@ -1,0 +1,423 @@
+{
+  "version": "7.48",
+  "reports": {
+    "completeness": {
+      "groups": {
+        "food-prefecture-card": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "omuta-real-card": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "raw-item-registered": {
+          "cases": 312,
+          "passed": 312,
+          "failed": 0
+        },
+        "raw-gear-registered": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "raw-event-registered": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "actual-paged-card": {
+          "cases": 15321,
+          "passed": 15321,
+          "failed": 0
+        },
+        "category-page-coverage": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "global-name-search": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "wrong-category-recovery": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "filter-hidden-recovery": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "readonly-search": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 20624,
+      "failed": 0,
+      "failures": [],
+      "pagesChecked": 1278,
+      "visibleChecked": 15321,
+      "foodCards": 154,
+      "expectedEnemies": 10343,
+      "expectedItems": 4978,
+      "scope": "Exhaustive generated card names and IDs across all six category pages, official regional food data, cross-category search and shop restrictions in VM. No browser/device rendering."
+    },
+    "mobileDex": {
+      "groups": {
+        "mobile-html": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "tab-memory": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "density-toggle": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "page-jump": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "page-scroll": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "draft-search": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "invalid-density": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-native-select": {
+          "cases": 48,
+          "passed": 48,
+          "failed": 0
+        },
+        "enemy-native-select": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "category-counts": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "sort-and-size": {
+          "cases": 72,
+          "passed": 72,
+          "failed": 0
+        },
+        "invalid-size": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "density-anchor": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "single-detail": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "context-entry": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "total": 375,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual generated HTML, UI handlers and scroll calculations with mocked DOM rectangles in VM. Does not verify browser layout, touch behavior or physical screen sizes."
+    },
+    "collection": {
+      "groups": {
+        "totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "entry-status": {
+          "cases": 15321,
+          "passed": 15321,
+          "failed": 0
+        },
+        "permanent-item": {
+          "cases": 312,
+          "passed": 312,
+          "failed": 0
+        },
+        "permanent-gear": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "permanent-event-item": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "event-legacy-evidence": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "bag-direct": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "overflow": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "legacy": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "invalid-save": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "filter-counts": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "regional-progress": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "search": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "page-clamp": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "html-mobile": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "completion": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "encounter": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "exclusive-category": {
+          "cases": 4978,
+          "passed": 4978,
+          "failed": 0
+        },
+        "classification-totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 25424,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual collection acquisition hooks, save validation/migration, catalog filters and generated HTML in VM. No browser/device rendering."
+    },
+    "regional": {
+      "groups": {
+        "verified-regional-data": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "local-shop-restriction": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "enemy-balance-and-identity": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "field-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "battle-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "purchase-local-item": {
+          "cases": 214,
+          "passed": 214,
+          "failed": 0
+        },
+        "added-food-enemy-drop": {
+          "cases": 84,
+          "passed": 84,
+          "failed": 0
+        },
+        "regional-drop-roll": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "full-bag-overflow": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-guide-html": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "omuta-city-exclusivity": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "omuta-guide-and-unlock": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "omuta-selector-handler": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "soul-food-coverage": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        }
+      },
+      "total": 11133,
+      "failed": 0,
+      "failures": [],
+      "regions": 47,
+      "newItems": 154,
+      "motifTypes": 295,
+      "regionalEnemySlots": 1227,
+      "scope": "Actual data, shops, field/battle use, drops and generated guide HTML in VM. Source metadata checked against pref pages separately. Real-device rendering not covered."
+    },
+    "deepRegression": {
+      "groups": {
+        "boss-generation": {
+          "cases": 558,
+          "passed": 558,
+          "failed": 0
+        },
+        "boss-reward-idempotency": {
+          "cases": 93,
+          "passed": 93,
+          "failed": 0
+        },
+        "nonvictory-no-reward": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "stale-result-return": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "result-return-context": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-remove-repeat": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-change-blocked": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "sheet-back-one-level": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "navigation-reset": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "progression-unlock-sequence": {
+          "cases": 10,
+          "passed": 10,
+          "failed": 0
+        }
+      },
+      "total": 688,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual boss construction/enemy action/reward/equipment/navigation code. DOM/render/save/audio calls mocked; boss victories synthetically marked, not full boss fights."
+    }
+  },
+  "otherChecks": {
+    "interactions": {
+      "total": 19,
+      "failed": 0
+    },
+    "releaseSync": {
+      "total": 7,
+      "failed": 0
+    }
+  },
+  "confirmedCause": "Prefecture guide incorrectly reused hub shop availability filter and omitted Omuta-only food cards for OMI001, OMI002, OMI003. Data and collection catalog entries existed.",
+  "scope": "All 154 official regional food cards and all 15321 enemy/item generated cards across 1278 pages were checked for actual card names and IDs, not introductory text. No physical-device/browser rendering or live user-save inspection.",
+  "functionalCasesTotal": 58270,
+  "failed": 0
+}
