@@ -1,5 +1,5 @@
 {
-  "version": "8.72",
+  "version": "8.73",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -91,5 +91,9 @@
   "retiredMapControls": {
     "status": "画像の残存表示と公開コードの差を確認。旧DOM除去・復帰URL・版表示を3回反復",
     "report": "docs/debug-v8.72.json"
+  },
+  "unifiedConfirm": {
+    "status": "中央決定へ集約し独立Aを撤去。中央決定・戻・残存A除去を3回反復し関連回帰成功",
+    "report": "docs/debug-v8.73.json"
   }
 }
