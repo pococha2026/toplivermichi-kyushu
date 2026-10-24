@@ -1,13 +1,13 @@
 {
-  "version": "8.89",
+  "version": "8.90",
+  "reference": "User-provided IMG_3806.jpeg",
   "changes": [
-    "Unlabelled enemy artwork, names retained only in data/aria",
-    "Compact party fields and expanded grouped progression log",
-    "Battle kind/ale strip below party",
-    "Help-menu-auto toolbar in dock or inline fallback"
+    "Stronger region borders, spacing and typography hierarchy",
+    "Explicit low-HP and empty-MP markers",
+    "Compact log arrows and unbroken menu label"
   ],
-  "validation": "Three passes over seven viewports/modes plus visible-label removal, grouped logs/no text loss, state strip, toolbar uniqueness/order and visibility, sprite pipeline and scroll restoration; full regression.",
+  "validation": "Battle UI regression, warning thresholds, CSS contracts and full configured checks.",
   "limitations": [
-    "VM/mock DOM and CSS contract checks; no browser/device rendering verification"
+    "Reference image inspected; updated browser/device rendering unverified"
   ]
 }
