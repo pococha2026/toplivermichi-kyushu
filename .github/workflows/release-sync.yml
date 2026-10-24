@@ -65,3 +65,6 @@ jobs:
 
       - name: Verify repeated map input and context boundaries
         run: node scripts/test-map-boundaries.cjs
+
+      - name: Verify sign removal, top guidance and saved display toggle
+        run: node scripts/test-map-guidance.cjs
