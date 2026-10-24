@@ -1,0 +1,853 @@
+{
+  "checked": "2026-10-24",
+  "publisher": "農林水産省 うちの郷土料理",
+  "basis": "Official prefecture pages fetched and listed dish names checked. Game effects and enemies are fiction; no recipe text or images copied.",
+  "regions": [
+    {
+      "id": "R01",
+      "pref": "北海道",
+      "prefecture": "北海道",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hokkaido.html",
+      "foods": [
+        {
+          "name": "石狩鍋",
+          "sourceTitle": "石狩鍋",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hokkaido.html"
+        },
+        {
+          "name": "いももち",
+          "sourceTitle": "いももち／いもだんご",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hokkaido.html"
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "pref": "青森",
+      "prefecture": "青森県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aomori.html",
+      "foods": [
+        {
+          "name": "せんべい汁",
+          "sourceTitle": "せんべい汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aomori.html"
+        },
+        {
+          "name": "けの汁",
+          "sourceTitle": "けの汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aomori.html"
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "pref": "岩手",
+      "prefecture": "岩手県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/iwate.html",
+      "foods": [
+        {
+          "name": "ひっつみ",
+          "sourceTitle": "ひっつみ／ひっつみ汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/iwate.html"
+        },
+        {
+          "name": "まめぶ汁",
+          "sourceTitle": "まめぶ汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/iwate.html"
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "pref": "宮城",
+      "prefecture": "宮城県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyagi.html",
+      "foods": [
+        {
+          "name": "ずんだ餅",
+          "sourceTitle": "ずんだ餅",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyagi.html"
+        },
+        {
+          "name": "はらこ飯",
+          "sourceTitle": "はらこ飯",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyagi.html"
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "pref": "秋田",
+      "prefecture": "秋田県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/akita.html",
+      "foods": [
+        {
+          "name": "きりたんぽ鍋",
+          "sourceTitle": "きりたんぽ鍋",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/akita.html"
+        },
+        {
+          "name": "いぶりがっこ",
+          "sourceTitle": "いぶりがっこ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/akita.html"
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "pref": "山形",
+      "prefecture": "山形県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamagata.html",
+      "foods": [
+        {
+          "name": "芋煮",
+          "sourceTitle": "芋煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamagata.html"
+        },
+        {
+          "name": "玉こんにゃく",
+          "sourceTitle": "玉こんにゃく",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamagata.html"
+        }
+      ]
+    },
+    {
+      "id": "R07",
+      "pref": "福島",
+      "prefecture": "福島県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukushima.html",
+      "foods": [
+        {
+          "name": "こづゆ",
+          "sourceTitle": "こづゆ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukushima.html"
+        },
+        {
+          "name": "いかにんじん",
+          "sourceTitle": "いかにんじん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukushima.html"
+        }
+      ]
+    },
+    {
+      "id": "R08",
+      "pref": "茨城",
+      "prefecture": "茨城県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ibaraki.html",
+      "foods": [
+        {
+          "name": "干しいも",
+          "sourceTitle": "干しいも",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ibaraki.html"
+        },
+        {
+          "name": "そぼろ納豆",
+          "sourceTitle": "そぼろ納豆／しょぼろ納豆",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ibaraki.html"
+        }
+      ]
+    },
+    {
+      "id": "R09",
+      "pref": "栃木",
+      "prefecture": "栃木県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tochigi.html",
+      "foods": [
+        {
+          "name": "しもつかれ",
+          "sourceTitle": "しもつかれ／シモツカレ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tochigi.html"
+        },
+        {
+          "name": "耳うどん",
+          "sourceTitle": "耳うどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tochigi.html"
+        }
+      ]
+    },
+    {
+      "id": "R10",
+      "pref": "群馬",
+      "prefecture": "群馬県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gunma.html",
+      "foods": [
+        {
+          "name": "焼きまんじゅう",
+          "sourceTitle": "焼きまんじゅう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gunma.html"
+        },
+        {
+          "name": "おきりこみ",
+          "sourceTitle": "おきりこみ／おっきりこみ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gunma.html"
+        }
+      ]
+    },
+    {
+      "id": "R11",
+      "pref": "埼玉",
+      "prefecture": "埼玉県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saitama.html",
+      "foods": [
+        {
+          "name": "いがまんじゅう",
+          "sourceTitle": "いがまんじゅう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saitama.html"
+        },
+        {
+          "name": "煮ぼうとう",
+          "sourceTitle": "煮ぼうとう／ひもかわ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saitama.html"
+        }
+      ]
+    },
+    {
+      "id": "R12",
+      "pref": "千葉",
+      "prefecture": "千葉県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/chiba.html",
+      "foods": [
+        {
+          "name": "なめろう",
+          "sourceTitle": "なめろう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/chiba.html"
+        },
+        {
+          "name": "ゆで落花生",
+          "sourceTitle": "ゆで落花生",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/chiba.html"
+        }
+      ]
+    },
+    {
+      "id": "R13",
+      "pref": "東京",
+      "prefecture": "東京都",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokyo.html",
+      "foods": [
+        {
+          "name": "深川めし",
+          "sourceTitle": "深川めし／深川丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokyo.html"
+        },
+        {
+          "name": "もんじゃ焼き",
+          "sourceTitle": "もんじゃ焼き",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokyo.html"
+        }
+      ]
+    },
+    {
+      "id": "R14",
+      "pref": "神奈川",
+      "prefecture": "神奈川県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kanagawa.html",
+      "foods": [
+        {
+          "name": "けんちん汁",
+          "sourceTitle": "けんちん汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kanagawa.html"
+        },
+        {
+          "name": "小田原かまぼこ",
+          "sourceTitle": "小田原かまぼこ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kanagawa.html"
+        }
+      ]
+    },
+    {
+      "id": "R15",
+      "pref": "山梨",
+      "prefecture": "山梨県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamanasi.html",
+      "foods": [
+        {
+          "name": "ほうとう",
+          "sourceTitle": "ほうとう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamanasi.html"
+        },
+        {
+          "name": "鳥もつ煮",
+          "sourceTitle": "鳥もつ煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamanasi.html"
+        }
+      ]
+    },
+    {
+      "id": "R16",
+      "pref": "長野",
+      "prefecture": "長野県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagano.html",
+      "foods": [
+        {
+          "name": "おやき",
+          "sourceTitle": "おやき",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagano.html"
+        },
+        {
+          "name": "野沢菜漬",
+          "sourceTitle": "野沢菜漬",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagano.html"
+        }
+      ]
+    },
+    {
+      "id": "R17",
+      "pref": "静岡",
+      "prefecture": "静岡県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shizuoka.html",
+      "foods": [
+        {
+          "name": "静岡おでん",
+          "sourceTitle": "静岡おでん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shizuoka.html"
+        },
+        {
+          "name": "安倍川もち",
+          "sourceTitle": "安倍川もち",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shizuoka.html"
+        }
+      ]
+    },
+    {
+      "id": "R18",
+      "pref": "新潟",
+      "prefecture": "新潟県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/niigata.html",
+      "foods": [
+        {
+          "name": "笹団子",
+          "sourceTitle": "笹団子",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/niigata.html"
+        },
+        {
+          "name": "へぎそば",
+          "sourceTitle": "へぎそば",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/niigata.html"
+        }
+      ]
+    },
+    {
+      "id": "R19",
+      "pref": "富山",
+      "prefecture": "富山県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/toyama.html",
+      "foods": [
+        {
+          "name": "ます寿司",
+          "sourceTitle": "ます寿司",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/toyama.html"
+        },
+        {
+          "name": "白えびのかき揚げ",
+          "sourceTitle": "白えびのかき揚げ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/toyama.html"
+        }
+      ]
+    },
+    {
+      "id": "R20",
+      "pref": "石川",
+      "prefecture": "石川県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ishikawa.html",
+      "foods": [
+        {
+          "name": "じぶ煮",
+          "sourceTitle": "じぶ煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ishikawa.html"
+        },
+        {
+          "name": "かぶらずし",
+          "sourceTitle": "かぶらずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ishikawa.html"
+        }
+      ]
+    },
+    {
+      "id": "R21",
+      "pref": "福井",
+      "prefecture": "福井県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukui.html",
+      "foods": [
+        {
+          "name": "へしこ",
+          "sourceTitle": "へしこ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukui.html"
+        },
+        {
+          "name": "おろしそば",
+          "sourceTitle": "おろしそば",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukui.html"
+        }
+      ]
+    },
+    {
+      "id": "R22",
+      "pref": "岐阜",
+      "prefecture": "岐阜県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gifu.html",
+      "foods": [
+        {
+          "name": "朴葉味噌",
+          "sourceTitle": "朴葉味噌",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gifu.html"
+        },
+        {
+          "name": "栗きんとん",
+          "sourceTitle": "栗きんとん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gifu.html"
+        }
+      ]
+    },
+    {
+      "id": "R23",
+      "pref": "愛知",
+      "prefecture": "愛知県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aichi.html",
+      "foods": [
+        {
+          "name": "きしめん",
+          "sourceTitle": "きしめん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aichi.html"
+        },
+        {
+          "name": "味噌煮込みうどん",
+          "sourceTitle": "味噌煮込みうどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aichi.html"
+        }
+      ]
+    },
+    {
+      "id": "R24",
+      "pref": "三重",
+      "prefecture": "三重県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/mie.html",
+      "foods": [
+        {
+          "name": "伊勢うどん",
+          "sourceTitle": "伊勢うどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/mie.html"
+        },
+        {
+          "name": "てこねずし",
+          "sourceTitle": "てこねずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/mie.html"
+        }
+      ]
+    },
+    {
+      "id": "R25",
+      "pref": "滋賀",
+      "prefecture": "滋賀県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shiga.html",
+      "foods": [
+        {
+          "name": "ふなずし",
+          "sourceTitle": "ふなずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shiga.html"
+        },
+        {
+          "name": "赤こんにゃく煮",
+          "sourceTitle": "赤こんにゃく煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shiga.html"
+        }
+      ]
+    },
+    {
+      "id": "R26",
+      "pref": "京都",
+      "prefecture": "京都府",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kyoto.html",
+      "foods": [
+        {
+          "name": "宇治金時",
+          "sourceTitle": "宇治金時",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kyoto.html"
+        },
+        {
+          "name": "水無月",
+          "sourceTitle": "水無月",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kyoto.html"
+        }
+      ]
+    },
+    {
+      "id": "R27",
+      "pref": "大阪",
+      "prefecture": "大阪府",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/osaka.html",
+      "foods": [
+        {
+          "name": "たこ焼き",
+          "sourceTitle": "たこ焼き",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/osaka.html"
+        },
+        {
+          "name": "きつねうどん",
+          "sourceTitle": "きつねうどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/osaka.html"
+        }
+      ]
+    },
+    {
+      "id": "R28",
+      "pref": "兵庫",
+      "prefecture": "兵庫県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hyogo.html",
+      "foods": [
+        {
+          "name": "明石焼",
+          "sourceTitle": "明石焼／玉子焼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hyogo.html"
+        },
+        {
+          "name": "イカナゴのくぎ煮",
+          "sourceTitle": "イカナゴのくぎ煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hyogo.html"
+        }
+      ]
+    },
+    {
+      "id": "R29",
+      "pref": "奈良",
+      "prefecture": "奈良県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nara.html",
+      "foods": [
+        {
+          "name": "柿の葉寿司",
+          "sourceTitle": "柿の葉寿司",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nara.html"
+        },
+        {
+          "name": "飛鳥鍋",
+          "sourceTitle": "飛鳥鍋",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nara.html"
+        }
+      ]
+    },
+    {
+      "id": "R30",
+      "pref": "和歌山",
+      "prefecture": "和歌山県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/wakayama.html",
+      "foods": [
+        {
+          "name": "梅干し",
+          "sourceTitle": "梅干し",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/wakayama.html"
+        },
+        {
+          "name": "めはりずし",
+          "sourceTitle": "めはりずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/wakayama.html"
+        }
+      ]
+    },
+    {
+      "id": "R31",
+      "pref": "鳥取",
+      "prefecture": "鳥取県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tottori.html",
+      "foods": [
+        {
+          "name": "とうふちくわ",
+          "sourceTitle": "とうふちくわ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tottori.html"
+        },
+        {
+          "name": "らっきょう漬け",
+          "sourceTitle": "らっきょう漬け",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tottori.html"
+        }
+      ]
+    },
+    {
+      "id": "R32",
+      "pref": "島根",
+      "prefecture": "島根県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shimane.html",
+      "foods": [
+        {
+          "name": "出雲そば",
+          "sourceTitle": "出雲そば",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shimane.html"
+        },
+        {
+          "name": "しじみ汁",
+          "sourceTitle": "しじみ汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shimane.html"
+        }
+      ]
+    },
+    {
+      "id": "R33",
+      "pref": "岡山",
+      "prefecture": "岡山県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okayama.html",
+      "foods": [
+        {
+          "name": "まつりずし",
+          "sourceTitle": "まつりずし／ばらずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okayama.html"
+        },
+        {
+          "name": "ママカリの酢漬け",
+          "sourceTitle": "ママカリの酢漬け",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okayama.html"
+        }
+      ]
+    },
+    {
+      "id": "R34",
+      "pref": "広島",
+      "prefecture": "広島県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hiroshima.html",
+      "foods": [
+        {
+          "name": "お好み焼き",
+          "sourceTitle": "お好み焼き",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hiroshima.html"
+        },
+        {
+          "name": "かきの土手鍋",
+          "sourceTitle": "かきの土手鍋",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hiroshima.html"
+        }
+      ]
+    },
+    {
+      "id": "R35",
+      "pref": "山口",
+      "prefecture": "山口県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamaguchi.html",
+      "foods": [
+        {
+          "name": "瓦そば",
+          "sourceTitle": "瓦そば",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamaguchi.html"
+        },
+        {
+          "name": "岩国寿司",
+          "sourceTitle": "岩国寿司",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamaguchi.html"
+        }
+      ]
+    },
+    {
+      "id": "R36",
+      "pref": "徳島",
+      "prefecture": "徳島県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokushima.html",
+      "foods": [
+        {
+          "name": "そば米雑炊",
+          "sourceTitle": "そば米雑炊／そば米汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokushima.html"
+        },
+        {
+          "name": "半田そうめん",
+          "sourceTitle": "半田そうめん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokushima.html"
+        }
+      ]
+    },
+    {
+      "id": "R37",
+      "pref": "香川",
+      "prefecture": "香川県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagawa.html",
+      "foods": [
+        {
+          "name": "しっぽくうどん",
+          "sourceTitle": "しっぽくうどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagawa.html"
+        },
+        {
+          "name": "しょうゆ豆",
+          "sourceTitle": "しょうゆ豆",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagawa.html"
+        }
+      ]
+    },
+    {
+      "id": "R38",
+      "pref": "愛媛",
+      "prefecture": "愛媛県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ehime.html",
+      "foods": [
+        {
+          "name": "鯛めし",
+          "sourceTitle": "鯛めし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ehime.html"
+        },
+        {
+          "name": "じゃこ天",
+          "sourceTitle": "じゃこ天",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ehime.html"
+        }
+      ]
+    },
+    {
+      "id": "R39",
+      "pref": "高知",
+      "prefecture": "高知県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kochi.html",
+      "foods": [
+        {
+          "name": "かつおのたたき",
+          "sourceTitle": "かつおのたたき",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kochi.html"
+        },
+        {
+          "name": "皿鉢料理",
+          "sourceTitle": "皿鉢料理",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kochi.html"
+        }
+      ]
+    },
+    {
+      "id": "R40",
+      "pref": "福岡",
+      "prefecture": "福岡県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukuoka.html",
+      "foods": [
+        {
+          "name": "がめ煮",
+          "sourceTitle": "がめ煮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukuoka.html"
+        },
+        {
+          "name": "若鶏の水炊き",
+          "sourceTitle": "若鶏の水炊き",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukuoka.html"
+        }
+      ]
+    },
+    {
+      "id": "R41",
+      "pref": "佐賀",
+      "prefecture": "佐賀県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saga.html",
+      "foods": [
+        {
+          "name": "須古ずし",
+          "sourceTitle": "須古ずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saga.html"
+        },
+        {
+          "name": "だぶ",
+          "sourceTitle": "だぶ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saga.html"
+        }
+      ]
+    },
+    {
+      "id": "R42",
+      "pref": "長崎",
+      "prefecture": "長崎県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagasaki.html",
+      "foods": [
+        {
+          "name": "ちゃんぽん",
+          "sourceTitle": "ちゃんぽん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagasaki.html"
+        },
+        {
+          "name": "かんころ餅",
+          "sourceTitle": "かんころ餅",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagasaki.html"
+        }
+      ]
+    },
+    {
+      "id": "R43",
+      "pref": "熊本",
+      "prefecture": "熊本県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kumamoto.html",
+      "foods": [
+        {
+          "name": "からし蓮根",
+          "sourceTitle": "からし蓮根",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kumamoto.html"
+        },
+        {
+          "name": "いきなり団子",
+          "sourceTitle": "いきなり団子",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kumamoto.html"
+        }
+      ]
+    },
+    {
+      "id": "R44",
+      "pref": "大分",
+      "prefecture": "大分県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/oita.html",
+      "foods": [
+        {
+          "name": "とり天",
+          "sourceTitle": "とり天",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/oita.html"
+        },
+        {
+          "name": "やせうま",
+          "sourceTitle": "やせうま",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/oita.html"
+        }
+      ]
+    },
+    {
+      "id": "R45",
+      "pref": "宮崎",
+      "prefecture": "宮崎県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyazaki.html",
+      "foods": [
+        {
+          "name": "チキン南蛮",
+          "sourceTitle": "チキン南蛮",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyazaki.html"
+        },
+        {
+          "name": "冷や汁",
+          "sourceTitle": "冷や汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyazaki.html"
+        }
+      ]
+    },
+    {
+      "id": "R46",
+      "pref": "鹿児島",
+      "prefecture": "鹿児島県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagoshima.html",
+      "foods": [
+        {
+          "name": "つけあげ",
+          "sourceTitle": "つけあげ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagoshima.html"
+        },
+        {
+          "name": "かるかん",
+          "sourceTitle": "かるかん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagoshima.html"
+        }
+      ]
+    },
+    {
+      "id": "R47",
+      "pref": "沖縄",
+      "prefecture": "沖縄県",
+      "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okinawa.html",
+      "foods": [
+        {
+          "name": "ゴーヤーチャンプルー",
+          "sourceTitle": "ゴーヤーチャンプルー",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okinawa.html"
+        },
+        {
+          "name": "サーターアンダーギー",
+          "sourceTitle": "サーターアンダーギー",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okinawa.html"
+        }
+      ]
+    }
+  ]
+}

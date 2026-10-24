@@ -35,3 +35,6 @@ jobs:
 
       - name: Verify broadcast forecast, feedback, history and UI-only actions
         run: node scripts/test-broadcast-coach.cjs
+
+      - name: Verify regional item shops, combat, sources and drops
+        run: node scripts/test-regional.cjs
