@@ -1,5 +1,38 @@
 # 更新ガイド
 
+## まず使う4つのコマンド
+
+リポジトリ直下で実行。Windowsは環境により `python3` を `python` に読み替える。Python 3.10以上、Node.js、Gitが必要。追加のPythonパッケージは不要。ソースはUTF-8で読み、構文検査用ファイルは閉じてからNode.jsへ渡すため、Windowsの一時ファイル共有制約にも対応する。Windows実機での実行は未確認。
+
+```bash
+# 変更した場所と関連検査を表示（読み取りだけ）
+python3 scripts/update.py plan
+# 版と日付を設定し、生成と関連検査をまとめて実行（次回の版の例）
+python3 scripts/update.py prepare --version 8.76 --date 2026-10-25
+# すべての既存ゲーム検査を実行（公開直前や広範囲の変更時）
+python3 scripts/update.py check --full
+# 公開した後、6ファイルの一致を確認（不一致・通信失敗は終了コード1）
+python3 scripts/update.py verify-public
+```
+
+これらのコマンド自体は公開しない。公開は検査成功と差分確認後に行う。版番号と日付は `VERSION.txt` が唯一の編集元。アプリのビルド日・仕様の日付も自動生成。日付だけ変更する場合は `prepare --date YYYY-MM-DD` を使う。
+
+`plan` と通常の `check` は未コミットの変更から関連検査を選ぶ。コミット後にその差分を調べるには `plan --base HEAD^` または `check --base HEAD^`。CIは `check --full` を使い、変更検知に依存せず全検査を行う。対象一覧は `scripts/checks.json` の1か所で管理する。
+
+## エラーが出た時
+
+|表示|直し方|
+|---|---|
+|Sources missing from template|新規JS/CSSをsrc/index.template.htmlの正しい順番へ追加|
+|Duplicate source include|同じファイルの重複指定を取り除く|
+|Missing source include|ファイル名や移動先とテンプレート指定を一致させる|
+|Unresolved template placeholder|変数名の誤記を修正|
+|Out-of-sync release files|prepareを実行し、生成結果を確認|
+|JavaScript構文エラー|表示された行付近を直し、prepareを再実行|
+|公開照合が不一致|デプロイ完了を確認し、verify-publicを再実行。先に公開完了と案内しない|
+
+構文エラーでは生成物を上書きしない。テスト失敗は生成成功後にも起こり得るため、失敗した検査を直して再実行する。公開処理は自動では始まらない。
+
 ## いつも使う手順
 
 1. 下表から編集元を選び、変更する。公開用 `index.html` は直接編集しない。
@@ -48,3 +81,7 @@ JavaScriptは分割後も同じscript内の共有スコープで実行する。�
 - 最新仕様TXT： https://pococha2026.github.io/toplivermichi-kyushu/GAME_SPEC.txt
 
 最新版の共有には `?v=VERSION.txtの版番号` を付けられる。公開版の照合はmanifest記載の5ファイルのSHA-256で行う。ブラウザ自動デバッグは行わない。構文検査や画面生成テストを実機のタッチ・音の確認と呼ばない。
+
+## 更新依頼時の公開同期
+
+ユーザーの継続指示により、ChatGPTへ依頼した更新は検証後に既存公開版へ同期する。v8.75以降、通常の更新ごとに公開確認を取り直さない。GitHubへの反映だけで完了とせず、公開サイトの6ファイル一致と配布指示書の同期を確認する。下書き・未公開の指定がある場合はその指定を優先する。失敗や競合は隠さず未完了として報告する。ローカルのupdate.pyコマンド自体はコミット・公開を行わない。

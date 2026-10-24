@@ -10,75 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Verify generated release companions and JavaScript syntax
-        run: python3 scripts/sync-release.py --check
-      - name: Verify editable source build and source mismatch detection
-        run: python3 scripts/test-source-build.py
-      - name: Verify synchronization failure cases
-        run: python3 scripts/test-release-sync.py
-      - name: Verify activity preparation regression cases
-        run: node scripts/test-career.cjs
-      - name: Verify music, sound effect and mix controls
-        run: node scripts/test-av.cjs
-
-      - name: Verify comprehensive data and boundary regressions
-        run: node scripts/test-comprehensive.cjs
-      - name: Verify transactions and automatic battle actions
-        run: node scripts/test-interactions.cjs
-
-      - name: Verify boss rewards, equipment and navigation regressions
-        run: node scripts/test-deep-regression.cjs
-
-      - name: Verify stream sequences, save consistency, jobs and narrative cases
-        run: node scripts/test-stream-story.cjs
-
-      - name: Verify broadcast metrics, settlement and backwards compatibility
-        run: node scripts/test-broadcast.cjs
-
-      - name: Verify broadcast forecast, feedback, history and UI-only actions
-        run: node scripts/test-broadcast-coach.cjs
-
-      - name: Verify regional item shops, combat, sources and drops
-        run: node scripts/test-regional.cjs
-
-      - name: Verify collection acquisition, persistence and catalog filters
-        run: node scripts/test-collection.cjs
-
-      - name: Verify mobile encyclopedia navigation and generated views
-        run: node scripts/test-mobile-dex.cjs
-
-      - name: Verify all encyclopedia cards and cross-category discovery
-        run: node scripts/test-catalog-completeness.cjs
-
-      - name: Verify focused repeated navigation, inventory and save regressions
-        run: node scripts/test-focused-debug.cjs
-
-      - name: Verify repeated battle controls, automation and return paths
-        run: node scripts/test-battle-focused.cjs
-
-      - name: Verify national overworld, city safety and travel compatibility
-        run: node scripts/test-national-map.cjs
-
-      - name: Verify geographic positions, terrain art and bounded world rendering
-        run: node scripts/test-geographic-world.cjs
-
-      - name: Verify continuous streets, transport, direction signs and repeated navigation
-        run: node scripts/test-world-wayfinding.cjs
-
-      - name: Verify repeated map input and context boundaries
-        run: node scripts/test-map-boundaries.cjs
-
-      - name: Verify sign removal, top guidance and saved display toggle
-        run: node scripts/test-map-guidance.cjs
-
-      - name: Verify persistent status, compact dock and nearby confirmation
-        run: node scripts/test-map-travel-layout.cjs
-
-      - name: Verify land traversal, hierarchical back and direct return
-        run: node scripts/test-terrain-back.cjs
-
-      - name: Verify four-button dock, top map information and exclusive ultra catalog
-        run: node scripts/test-map-catalog-ui.cjs
-
-      - name: Verify retired map control cleanup and restored-page refresh URLs
-        run: node scripts/test-retired-map-controls.cjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify release, editable sources and all game regressions
+        run: python3 scripts/update.py check --full

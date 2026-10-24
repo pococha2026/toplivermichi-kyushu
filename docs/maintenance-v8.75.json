@@ -1,0 +1,9 @@
+{
+  "version": "8.75",
+  "runtime_unchanged_except_version": true,
+  "normalized_runtime_sha256": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+  "maintenance_tests": 16,
+  "source_build_tests": 4,
+  "release_sync_tests": 7,
+  "note": "VM/generated HTML checks do not verify physical-device rendering, touch or Windows execution."
+}

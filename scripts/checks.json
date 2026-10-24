@@ -1,0 +1,67 @@
+{
+  "always": [
+    "scripts/test-source-build.py",
+    "scripts/test-release-sync.py",
+    "scripts/test-maintenance.py"
+  ],
+  "full": [
+    "scripts/test-career.cjs",
+    "scripts/test-av.cjs",
+    "scripts/test-comprehensive.cjs",
+    "scripts/test-interactions.cjs",
+    "scripts/test-deep-regression.cjs",
+    "scripts/test-stream-story.cjs",
+    "scripts/test-broadcast.cjs",
+    "scripts/test-broadcast-coach.cjs",
+    "scripts/test-regional.cjs",
+    "scripts/test-collection.cjs",
+    "scripts/test-mobile-dex.cjs",
+    "scripts/test-catalog-completeness.cjs",
+    "scripts/test-focused-debug.cjs",
+    "scripts/test-battle-focused.cjs",
+    "scripts/test-national-map.cjs",
+    "scripts/test-geographic-world.cjs",
+    "scripts/test-world-wayfinding.cjs",
+    "scripts/test-map-boundaries.cjs",
+    "scripts/test-map-guidance.cjs",
+    "scripts/test-map-travel-layout.cjs",
+    "scripts/test-terrain-back.cjs",
+    "scripts/test-map-catalog-ui.cjs",
+    "scripts/test-retired-map-controls.cjs"
+  ],
+  "related": {
+    "src/game/data.js": [
+      "scripts/test-comprehensive.cjs"
+    ],
+    "src/game/core.js": [
+      "scripts/test-deep-regression.cjs",
+      "scripts/test-national-map.cjs"
+    ],
+    "src/game/art.js": [
+      "scripts/test-geographic-world.cjs"
+    ],
+    "src/game/audio.js": [
+      "scripts/test-av.cjs"
+    ],
+    "src/game/save.js": [
+      "scripts/test-focused-debug.cjs"
+    ],
+    "src/game/views.js": [
+      "scripts/test-mobile-dex.cjs",
+      "scripts/test-map-catalog-ui.cjs"
+    ],
+    "src/game/actions.js": [
+      "scripts/test-interactions.cjs"
+    ],
+    "src/game/input.js": [
+      "scripts/test-map-travel-layout.cjs",
+      "scripts/test-retired-map-controls.cjs"
+    ],
+    "src/styles/": [
+      "scripts/test-map-catalog-ui.cjs"
+    ],
+    "src/index.template.html": [
+      "scripts/test-map-travel-layout.cjs"
+    ]
+  }
+}
