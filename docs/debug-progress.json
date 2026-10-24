@@ -1,5 +1,5 @@
 {
-  "version": "8.40",
+  "version": "8.50",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -73,7 +73,7 @@
     "report": "docs/debug-v8.21.json"
   },
   "mapTravelLayout": {
-    "status": "移動・停止・中断のレイアウト切替を3回反復",
-    "report": "docs/debug-v8.40.json"
+    "status": "移動中も常時表示へ変更。操作パッド2ボタン・A/中央決定の周辺調査を3回反復",
+    "report": "docs/debug-v8.50.json"
   }
 }
