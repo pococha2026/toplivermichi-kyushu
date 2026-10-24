@@ -1,7 +1,7 @@
 {
   "checked": "2026-10-24",
-  "publisher": "農林水産省 うちの郷土料理",
-  "basis": "Official prefecture pages fetched and listed dish names checked. Game effects and enemies are fiction; no recipe text or images copied.",
+  "publisher": "農林水産省・JNTO・自治体・公式観光サイト",
+  "basis": "Official regional food and tourism sources. Original 94 IDs preserved; 10 additions have individual source links. Game effects and characters are fiction.",
   "regions": [
     {
       "id": "R01",
@@ -18,6 +18,20 @@
           "name": "いももち",
           "sourceTitle": "いももち／いもだんご",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hokkaido.html"
+        },
+        {
+          "name": "札幌味噌ラーメン",
+          "sourceTitle": "札幌味噌ラーメン",
+          "source": "https://www.japan.travel/en/guide/ramen/",
+          "kind": "ramen",
+          "item": "RGX001"
+        },
+        {
+          "name": "いかめし",
+          "sourceTitle": "いかめし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ikameshi_hokkaido.html",
+          "kind": "squid",
+          "item": "RGX004"
         }
       ]
     },
@@ -54,6 +68,13 @@
           "name": "まめぶ汁",
           "sourceTitle": "まめぶ汁",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/iwate.html"
+        },
+        {
+          "name": "盛岡駄菓子・味噌パン",
+          "sourceTitle": "盛岡駄菓子・味噌パン",
+          "source": "https://iwatetabi.jp/spots/6780/",
+          "kind": "candy",
+          "item": "RGX008"
         }
       ]
     },
@@ -72,6 +93,13 @@
           "name": "はらこ飯",
           "sourceTitle": "はらこ飯",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyagi.html"
+        },
+        {
+          "name": "仙台駄菓子",
+          "sourceTitle": "仙台駄菓子",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/traditional-foods/menu/sendai-dagasi.html",
+          "kind": "candy",
+          "item": "RGX007"
         }
       ]
     },
@@ -126,6 +154,13 @@
           "name": "いかにんじん",
           "sourceTitle": "いかにんじん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukushima.html"
+        },
+        {
+          "name": "喜多方ラーメン",
+          "sourceTitle": "喜多方ラーメン",
+          "source": "https://www.japan.travel/en/spot/2125/",
+          "kind": "ramen",
+          "item": "RGX002"
         }
       ]
     },
@@ -342,6 +377,13 @@
           "name": "白えびのかき揚げ",
           "sourceTitle": "白えびのかき揚げ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/toyama.html"
+        },
+        {
+          "name": "ほたるいかの酢味噌和え",
+          "sourceTitle": "ほたるいかの酢味噌和え",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/37_1_toyama.html",
+          "kind": "squid",
+          "item": "RGX005"
         }
       ]
     },
@@ -396,6 +438,20 @@
           "name": "栗きんとん",
           "sourceTitle": "栗きんとん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gifu.html"
+        },
+        {
+          "name": "飛騨駄菓子・豆板",
+          "sourceTitle": "飛騨駄菓子・豆板",
+          "source": "https://www.city.takayama.lg.jp/shisei/1015267/1009393/index.html",
+          "kind": "candy",
+          "item": "RGX009"
+        },
+        {
+          "name": "飛騨駄菓子・こくせん",
+          "sourceTitle": "飛騨駄菓子・こくせん",
+          "source": "https://www.hidatakayama.or.jp/special/detail_290.html",
+          "kind": "candy",
+          "item": "RGX010"
         }
       ]
     },
@@ -720,6 +776,13 @@
           "name": "若鶏の水炊き",
           "sourceTitle": "若鶏の水炊き",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukuoka.html"
+        },
+        {
+          "name": "博多ラーメン",
+          "sourceTitle": "博多ラーメン",
+          "source": "https://www.crossroadfukuoka.jp/en/spot/13220",
+          "kind": "ramen",
+          "item": "RGX003"
         }
       ]
     },
@@ -738,6 +801,13 @@
           "name": "だぶ",
           "sourceTitle": "だぶ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saga.html"
+        },
+        {
+          "name": "呼子のイカ",
+          "sourceTitle": "呼子のイカ",
+          "source": "https://www.asobo-saga.jp/galleries/detail/4e507602-a274-4fcc-a667-3f5e0c6f8814",
+          "kind": "squid",
+          "item": "RGX006"
         }
       ]
     },

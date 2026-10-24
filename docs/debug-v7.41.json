@@ -1,0 +1,211 @@
+{
+  "groups": {
+    "verified-regional-data": {
+      "cases": 47,
+      "passed": 47,
+      "failed": 0
+    },
+    "local-shop-restriction": {
+      "cases": 65,
+      "passed": 65,
+      "failed": 0
+    },
+    "enemy-balance-and-identity": {
+      "cases": 10250,
+      "passed": 10250,
+      "failed": 0
+    },
+    "field-item-use": {
+      "cases": 104,
+      "passed": 104,
+      "failed": 0
+    },
+    "battle-item-use": {
+      "cases": 104,
+      "passed": 104,
+      "failed": 0
+    },
+    "purchase-local-item": {
+      "cases": 146,
+      "passed": 146,
+      "failed": 0
+    },
+    "added-food-enemy-drop": {
+      "cases": 16,
+      "passed": 16,
+      "failed": 0
+    },
+    "regional-drop-roll": {
+      "cases": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "full-bag-overflow": {
+      "cases": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "regional-guide-html": {
+      "cases": 47,
+      "passed": 47,
+      "failed": 0
+    }
+  },
+  "total": 10783,
+  "failed": 0,
+  "failures": [],
+  "regions": 47,
+  "newItems": 104,
+  "motifTypes": 245,
+  "regionalEnemySlots": 1023,
+  "scope": "Actual data, shops, field/battle use, drops and generated guide HTML in VM. Source metadata checked against pref pages separately. Real-device rendering not covered.",
+  "version": "7.41",
+  "otherChecks": {
+    "interactions": {
+      "cases": 19,
+      "failed": 0
+    },
+    "deepRegression": {
+      "cases": 688,
+      "failed": 0
+    },
+    "releaseSync": {
+      "cases": 7,
+      "failed": 0
+    },
+    "comprehensive": {
+      "designGroups": 21,
+      "groups": {
+        "area-definition": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "enemy-definition-and-difficulty": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "encounter-boundary": {
+          "cases": 20500,
+          "passed": 20500,
+          "failed": 0
+        },
+        "experience-level-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "mastery-rank-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "regional-reward": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "equipment-reference": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "skill-reference": {
+          "cases": 375,
+          "passed": 375,
+          "failed": 0
+        },
+        "map-dimensions-and-objects": {
+          "cases": 140,
+          "passed": 140,
+          "failed": 0
+        },
+        "quest-reference": {
+          "cases": 130,
+          "passed": 130,
+          "failed": 0
+        },
+        "shop-stock-reference": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "shop-quote-boundary": {
+          "cases": 24470,
+          "passed": 24470,
+          "failed": 0
+        },
+        "field-battle-creation": {
+          "cases": 615,
+          "passed": 615,
+          "failed": 0
+        },
+        "bag-stack-and-removal": {
+          "cases": 1310,
+          "passed": 1310,
+          "failed": 0
+        },
+        "bag-kind-capacity": {
+          "cases": 26,
+          "passed": 26,
+          "failed": 0
+        },
+        "layout-parameter": {
+          "cases": 360,
+          "passed": 360,
+          "failed": 0
+        },
+        "new-save-roundtrip": {
+          "cases": 66,
+          "passed": 66,
+          "failed": 0
+        },
+        "invalid-save-rejected": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "name-validation": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "combat-damage-invariants": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "invalid-bag-quantity": {
+          "cases": 22,
+          "passed": 22,
+          "failed": 0
+        }
+      },
+      "total": 67118,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual game code in a VM with mocked DOM/storage/audio surfaces. Data and parameter cases; not unique viewpoints, browser rendering or full playthroughs."
+    },
+    "audio": {
+      "cases": 13,
+      "failed": 0
+    },
+    "career": {
+      "cases": 16,
+      "failed": 0
+    }
+  },
+  "art": {
+    "rendered": 980,
+    "motifs": 245,
+    "failed": 0,
+    "method": "Native canvas, not browser; contact sheet inspected"
+  },
+  "functionalCasesTotal": 78644,
+  "compatibility": {
+    "originalRegionalIdsPreserved": 94,
+    "additionalItemIds": 10,
+    "allGameItems": 262
+  }
+}
