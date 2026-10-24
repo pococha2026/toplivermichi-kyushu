@@ -32,3 +32,6 @@ jobs:
 
       - name: Verify broadcast metrics, settlement and backwards compatibility
         run: node scripts/test-broadcast.cjs
+
+      - name: Verify broadcast forecast, feedback, history and UI-only actions
+        run: node scripts/test-broadcast-coach.cjs
