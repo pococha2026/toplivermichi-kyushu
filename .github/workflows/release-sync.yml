@@ -29,3 +29,6 @@ jobs:
 
       - name: Verify stream sequences, save consistency, jobs and narrative cases
         run: node scripts/test-stream-story.cjs
+
+      - name: Verify broadcast metrics, settlement and backwards compatibility
+        run: node scripts/test-broadcast.cjs

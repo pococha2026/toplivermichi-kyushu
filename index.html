@@ -591,6 +591,8 @@ h3.label{border-bottom:1px solid #657786;padding-bottom:4px}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
 body.reduce-motion .btn{transition:none}
 @media(forced-colors:active){.win,.btn,.m-card,.status,.xhead{background:Canvas;color:CanvasText;border-color:CanvasText;box-shadow:none;text-shadow:none}.btn:disabled{color:GrayText;border-color:GrayText}.btn.on{border-color:Highlight}.btn:focus-visible{outline-color:Highlight}}
+
+.broadcast-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0}.broadcast-grid>div{padding:8px;background:#102133;border:1px solid #768d9e;min-width:0}.broadcast-grid dt{font-size:13px;color:#e8d5a6}.broadcast-grid dd{margin:2px 0 0;font-size:18px;font-variant-numeric:tabular-nums;color:#fff0c8;overflow-wrap:anywhere}.broadcast-grid>div:last-child{grid-column:1/-1;border-color:#e5c471}.broadcast-grid>div:last-child dd{color:#a4ebd6;font-weight:700}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -609,7 +611,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.37";
+const GAME_VERSION = "7.38";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -3492,10 +3494,10 @@ TOWN_FEATURES.push(...NEXT_CHAPTER.map(c=>[c.title,'ノイズは静まり、'+c.
 TOWN_FEATURES.push(...NATIONAL_ALL_EXTRA.map(c=>[c.title,c.before,c.after]));
 function townChange(st,hub){const i=HUB_ORDER.indexOf(hub),f=TOWN_FEATURES[i];if(!f)return null;const q=mainQuestOf(hub),sq=sideQuestOf(hub);const phase=st.quests[q]==="complete"?2:st.bossDefeated[(QUESTS[q]||{}).boss]?1:0;return {phase,title:f[0],text:phase===2?f[2]:phase===1?f[1]:`${f[0]}の準備中。住民はまだ声を届けるきっかけを探している。`,side:sq&&st.quests[sq]==="complete"?"任意依頼の協力者も加わり、街の案内を手伝っている。":""};}
 
-function newStream(st, hub, host, theme, style){
+function newStream(st, hub, host, theme, style, options){
   if(st.streamRetryGate&&retryReady(st,hub))delete st.streamRetryGate[hub];
   return { hub, prefId:HUBS[hub].prefId, requestIds:STREAM_REQ[HUBS[hub].prefId].slice(), host, theme, style,
-    hand:0, score:0, used:[], themeBonusUsed:false, picks:[], done:false };
+    hand:0, score:0, used:[], themeBonusUsed:false, picks:[], done:false, broadcastPlan:broadcastPlan(st,options) };
 }
 function streamPlay(s, act){
   const gain = { first:0, match:0, theme:0 };
@@ -3506,10 +3508,19 @@ function streamPlay(s, act){
   if(s.hand>=4) s.done=true;
   return {gain,total};
 }
+const BROADCAST_POLICIES=Object.freeze(Object.assign(Object.create(null),{reach:{name:'新規視聴者重視',reach:125,support:85,fans:100},community:{name:'交流・ファン重視',reach:100,support:100,fans:150},income:{name:'収益重視',reach:85,support:150,fans:90}}));
+const BROADCAST_GOALS=[50,100,300,1000];
+function broadcastPlan(st,options={}){return {policy:BROADCAST_POLICIES[options.policy]?options.policy:'community',goal:BROADCAST_GOALS.includes(Number(options.viewerGoal))?Number(options.viewerGoal):100,incomeGoal:BROADCAST_GOALS.includes(Number(options.incomeGoal))?Number(options.incomeGoal):100,level:partyLevel(st),fans:Math.min(1000000000,st.broadcastStats?.fans||0),qid:Object.keys(QUESTS).find(q=>st.quests[q]==='combatDone')||null};}
+function broadcastMetrics(st,s){const p=s.broadcastPlan||{policy:'community',goal:100,incomeGoal:100,level:partyLevel(st),fans:0},policy=BROADCAST_POLICIES[p.policy],score=s.score,passed=s.done&&score>=80,base=40+p.level*3+Math.floor(p.fans/10),viewers=Math.max(1,Math.min(10000000,Math.floor(base*(40+score)/100*policy.reach/100))),peak=Math.max(1,Math.min(viewers,Math.floor(viewers*(35+Math.floor(score/5))/100))),average=Math.max(1,Math.floor(peak*.65)),support=passed?Math.floor(viewers*score*policy.support/70000):0,program=passed?10+p.level*2+Math.floor(score*.75):0,gross=program+support,costs=Math.floor(gross*(s.style==='video'?20:10)/100),net=gross-costs,fans=passed?Math.max(1,Math.floor(viewers*score*policy.fans/200000)):0;return {policy:p.policy,goal:p.goal,incomeGoal:p.incomeGoal||100,incomeGoalMet:net>=(p.incomeGoal||100),score,passed,viewers,peak,average,newFans:fans,program,support,gross,costs,net,goalMet:viewers>=p.goal};}
+function emptyBroadcastStats(){return {attempts:0,fans:0,gross:0,costs:0,net:0,paid:{},history:[]};}
+function settleBroadcast(st,s,qid){if(s.broadcastReceipt)return s.broadcastReceipt;if(!s.done)return null;const m=broadcastMetrics(st,s),stats=st.broadcastStats||emptyBroadcastStats(),eligible=m.passed&&!!QUESTS[qid]?.stream&&QUESTS[qid].hub===s.hub&&(!s.broadcastPlan||s.broadcastPlan.qid===qid),paid=eligible&&!stats.paid[qid],r={...m,hub:s.hub,theme:s.theme,style:s.style,qid:qid||null,paid,index:stats.attempts+1,newFans:paid?Math.min(m.newFans,1000000000-stats.fans):0,program:paid?m.program:0,support:paid?m.support:0,gross:paid?m.gross:0,costs:paid?m.costs:0,net:paid?m.net:0};if(!Number.isSafeInteger(st.gold+r.net)||!Number.isSafeInteger(stats.net+r.net)||stats.attempts>=1000000000)return null;st.broadcastStats=stats;stats.attempts++;stats.fans=Math.min(1000000000,stats.fans+r.newFans);stats.gross+=r.gross;stats.costs+=r.costs;stats.net+=r.net;if(paid){stats.paid[qid]=true;st.gold+=r.net;}stats.history.unshift(r);stats.history.length=Math.min(20,stats.history.length);s.broadcastReceipt=r;return r;}
+function broadcastResultPanel(st,s){const m=broadcastMetrics(st,s),already=!!st.broadcastStats?.paid[s.broadcastPlan?.qid||streamPending()],rows=[['総視聴者',m.viewers+'人'],['最大同時視聴者',m.peak+'人'],['平均同時視聴者',m.average+'人'],['獲得ファン予定',(already?0:m.newFans)+'人'],['番組報酬',m.program+'G'],['応援収入',m.support+'G'],['収入合計',m.gross+'G'],['制作経費','−'+m.costs+'G'],['差引利益予定',(already?0:m.net)+'G']];return '<section class="m-card"><h3>配信リザルト</h3><p>'+BROADCAST_POLICIES[m.policy].name+'／視聴者目標 '+m.goal+'人：'+(m.goalMet?'達成':'次回に挑戦')+'／利益目標 '+m.incomeGoal+'G：'+(m.incomeGoalMet?'達成':'次回に挑戦')+'</p><dl class="broadcast-grid">'+rows.map(([k,v])=>'<div><dt>'+k+'</dt><dd>'+v+'</dd></div>').join('')+'</dl><p class="small">視聴者数はゲーム独自の推計値。Gはゲーム内通貨で、実際のPocochaの報酬・円換算ではありません。'+(m.passed?already?'この本編配信の収益は受取済みです。':'終了ボタンで利益・ファンを確定します。本編配信1件につき1回。':'目標点未達のため収入・経費・ファン獲得は0です。')+'</p><p class="small">次回のヒント：'+(s.used.length<4?'同じ演出の連続を避け、4種類の演出を試そう。':s.score<160?'各手番の視聴者の要望とテーマに合う演出を選ぼう。':'要望への対応が好評。別の配信方針も試してみよう。')+'</p></section>';}
+function renderBroadcastHistory(){const x=G.st.broadcastStats||emptyBroadcastStats();return '<p class="small">ゲーム内の配信実績。現実の視聴者数や金銭とは関係ありません。</p><div class="m-total">配信 '+x.attempts+'回／獲得ファン '+x.fans.toLocaleString()+'人<br>累計収入 '+x.gross.toLocaleString()+'G − 経費 '+x.costs.toLocaleString()+'G<br><b>累計利益 '+x.net.toLocaleString()+'G</b></div><h3 class="label">直近20回</h3><div class="stack">'+(x.history.map(r=>'<article class="m-card"><b>#'+r.index+' '+esc(HUBS[r.hub].name)+'／'+streamGrade(r.score)+'</b><p>'+r.viewers.toLocaleString()+'人・最大同接 '+r.peak.toLocaleString()+'人・平均同接 '+r.average.toLocaleString()+'人</p><p>収入 '+r.gross+'G − 経費 '+r.costs+'G＝利益 '+r.net+'G／ファン＋'+r.newFans+'人</p><p class="small">'+BROADCAST_POLICIES[r.policy].name+'／目標'+r.goal+'人 '+(r.goalMet?'達成':'未達')+'／'+(r.paid?'報酬確定':r.passed?'受取対象外・受取済み':'未達成・報酬なし')+'</p></article>').join('')||'<p>まだ記録がありません。本編の配信を終えると記録されます。</p>')+'</div>';}
+function validateBroadcastData(st){const x=st.broadcastStats,int=(n,max=Number.MAX_SAFE_INTEGER)=>Number.isSafeInteger(n)&&n>=0&&n<=max,plan=st.stream?.broadcastPlan;if(plan&&(!BROADCAST_POLICIES[plan.policy]||!BROADCAST_GOALS.includes(plan.goal)||plan.incomeGoal!==undefined&&!BROADCAST_GOALS.includes(plan.incomeGoal)||!int(plan.level,999)||plan.level<1||!int(plan.fans,1000000000)||plan.qid!==null&&(!QUESTS[plan.qid]?.stream||QUESTS[plan.qid].hub!==st.stream.hub)))throw Error('bad broadcast plan');if(!x)return;if(!int(x.attempts,1000000000)||!int(x.fans,1000000000)||!int(x.gross)||!int(x.costs)||!int(x.net)||x.gross-x.costs!==x.net||!x.paid||typeof x.paid!=='object'||Array.isArray(x.paid)||Object.entries(x.paid).some(([q,v])=>!QUESTS[q]?.stream||v!==true)||!Array.isArray(x.history)||x.history.length>20)throw Error('bad broadcast stats');let previous=x.attempts+1;for(const r of x.history){if(!r||!HUBS[r.hub]||!BROADCAST_POLICIES[r.policy]||!BROADCAST_GOALS.includes(r.goal)||!BROADCAST_GOALS.includes(r.incomeGoal)||!STREAM_THEMES[r.theme]||!['video','voice'].includes(r.style)||typeof r.goalMet!=='boolean'||typeof r.incomeGoalMet!=='boolean'||r.passed!==(r.score>=80)||r.qid!==null&&(!QUESTS[r.qid]?.stream||QUESTS[r.qid].hub!==r.hub)||typeof r.paid!=='boolean'||typeof r.passed!=='boolean'||!int(r.index,x.attempts)||r.index<1||r.index>=previous||!['viewers','peak','average','newFans','program','support','gross','costs','net','score'].every(k=>int(r[k]))||r.score>170||r.peak>r.viewers||r.average>r.peak||r.gross!==r.program+r.support||r.net!==r.gross-r.costs||r.paid&&(!x.paid[r.qid]||!r.passed)||!r.paid&&(r.net||r.gross||r.costs||r.newFans))throw Error('bad broadcast history');previous=r.index;}if(st.stream?.broadcastReceipt)throw Error('settled stream should already be closed');}
 const STREAM_UI_TOKENS=new WeakMap();let streamUiSerial=0;
 function streamSessionToken(s){if(!STREAM_UI_TOKENS.has(s))STREAM_UI_TOKENS.set(s,'stream-'+(++streamUiSerial));return STREAM_UI_TOKENS.get(s);}
 function streamInputReady(s,token){return !!G.st&&!G.readOnly&&G.screen==='stream'&&!G.st.run&&!G.sheet&&!G.dlg&&G.st.stream===s&&!!s&&streamSessionToken(s)===token;}
-function streamRetry(token){const st=G.st,s=st?.stream;if(!streamInputReady(s,token)||!s.done||s.score>=80)return false;markStreamFailure(st,s.hub);st.stream=null;commit();G.screen='explore';exploreBgm();render();return true;}
+function streamRetry(token){const st=G.st,s=st?.stream;if(!streamInputReady(s,token)||!s.done||s.score>=80)return false;markStreamFailure(st,s.hub);settleBroadcast(st,s,streamPending());st.stream=null;commit();G.screen='explore';exploreBgm();render();return true;}
 function validateStreamSnapshot(s){if(!s)return;const a=s.picks;if(!Array.isArray(a)||a.length!==s.hand||typeof s.done!=='boolean'||s.done!==(s.hand===4)||!['video','voice'].includes(s.style))throw Error('inconsistent stream progress');const probe={requestIds:s.requestIds,theme:s.theme,used:[],themeBonusUsed:false,picks:[],hand:0,score:0,done:false};for(const p of a){if(!p||!STREAM_ACTS[p.act])throw Error('invalid stream pick');const r=streamPlay(probe,p.act);if(p.total!==r.total)throw Error('inconsistent stream gain');}if(s.score!==probe.score||s.themeBonusUsed!==probe.themeBonusUsed||JSON.stringify(s.used)!==JSON.stringify(probe.used))throw Error('inconsistent stream score');}
 function streamGrade(score){ return score>=160?"大盛況":score>=120?"好評":score>=80?"目標達成":score>=60?"温かな反応":"もう一歩"; }
 
@@ -4450,7 +4461,7 @@ function syncMobileLayout(){const p=mobilePlan(G.st?.run);G.mobilePlan=p;const r
 function queueMobileLayout(){clearTimeout(MOBILE_UI.timer);MOBILE_UI.timer=setTimeout(()=>{const el=document.activeElement,typing=el&&['INPUT','TEXTAREA','SELECT'].includes(el.tagName),saved=typing?{id:el.id,value:el.value,start:el.selectionStart,end:el.selectionEnd}:null;PAD.reset?.();MOBILE_UI.mapPress=null;if(G.screen==='explore'){G.walk.path=[];G.walk.pending=null;G.walk.prog=0;}if(saved?.id==='battleSearch')G.battlePickerQuery=saved.value;if(saved?.id==='helloWorkSearch'&&G.sheet==='helloWork')G.sheetData={...G.sheetData,q:saved.value};render();if(saved?.id){const now=document.getElementById(saved.id);if(now){now.value=saved.value;try{now.focus({preventScroll:true});if(saved.start!=null)now.setSelectionRange(saved.start,saved.end);}catch(e){}}}},90);}
 function mobileName(text,n=12){const g=graphemes(String(text));return g.length>n?g.slice(0,n).join('')+'…':String(text);}
 function compactNumber(n){return n>=10000?(Math.floor(n/1000)/10)+'万':String(n);}
-const EXPLORATION_MENU=[['quests','依頼帳'],['guide','道しるべ'],['nearby','近くを調べる'],['map','全国・地図'],['items','道具'],['equip','装備'],['status','ステータス'],['party','編成'],['townStudio','街・活動'],['challenges','特別挑戦'],['specialTracker','特別エリア'],['record','記録'],['dex','図鑑'],['settings','設定・保存']];
+const EXPLORATION_MENU=[['quests','依頼帳'],['guide','道しるべ'],['nearby','近くを調べる'],['map','全国・地図'],['items','道具'],['equip','装備'],['status','ステータス'],['party','編成'],['townStudio','街・活動'],['broadcastHistory','配信実績'],['challenges','特別挑戦'],['specialTracker','特別エリア'],['record','記録'],['dex','図鑑'],['settings','設定・保存']];
 function systemHelpPlace(){
  if(G.sheet==='systemGuide')return 'none';
  if(G.screen!=='new'&&mobilePlan(G.st?.run).dock>0)return 'dock';
@@ -5299,9 +5310,9 @@ function resultDone(){
 function renderStream(){
   const st=G.st,s=st.stream;if(!s)return "";
   const req=s.requestIds,theme=STREAM_THEMES[s.theme];
-  if(s.done){const pass=s.score>=80;return statusBar()+`<section class="win stream"><h2 class="label">22時00分 締め</h2><p class="big">${esc(streamGrade(s.score))}</p><p>${pass?"配信目標を達成しました！":"今回は目標に届きませんでした。街の声を聞き、冒険で準備を整えましょう。"}</p><div class="stack">${pass?`<button class="btn primary" data-a="streamFinish" data-token="${streamSessionToken(s)}">配信を終える</button>`:`<p>再挑戦条件：この街の異なる住民2人と話し、この地域の通常戦闘で1回勝利する。</p><button class="btn primary" data-a="streamRetry" data-token="${streamSessionToken(s)}">街に戻って準備する</button>`}</div></section>`;}
+  if(s.done){const pass=s.score>=80;return statusBar()+`<section class="win stream"><h2 class="label">22時00分 締め</h2><p class="big">${esc(streamGrade(s.score))}</p><p>${pass?"配信目標を達成しました！":"今回は目標に届きませんでした。街の声を聞き、冒険で準備を整えましょう。"}</p>${broadcastResultPanel(st,s)}<div class="stack">${pass?`<button class="btn primary" data-a="streamFinish" data-token="${streamSessionToken(s)}">報酬を受け取って終了</button>`:`<p>再挑戦条件：この街の異なる住民2人と話し、この地域の通常戦闘で1回勝利する。</p><button class="btn primary" data-a="streamRetry" data-token="${streamSessionToken(s)}">街に戻って準備する</button>`}</div></section>`;}
   const comments=[`初見です！ ${STREAM_ACTS[req[s.hand]].req}`,"こんばんは〜",s.hand?`${STREAM_ACTS[s.picks[s.hand-1].act].name}よかった！`:((HUB_TEXT[s.hub]||{}).stream||{}).from||"応援しています"];
-  return statusBar()+`<section class="win stream"><div class="srow"><span class="label">九州エール便</span><span>${STREAM_TIMES[s.hand]}（${s.hand+1}／4手番）</span></div><p class="small">配信サポート：${esc(charName(st,s.host))}　テーマ：${esc(theme.name)}</p><div class="comments">${comments.map(c=>`<div class="cmt">${esc(c)}</div>`).join("")}</div><p class="req">要望：「${esc(STREAM_ACTS[req[s.hand]].req)}」</p><div class="stack">${Object.entries(STREAM_ACTS).map(([k,v])=>`<button class="btn opt" data-a="streamAct" data-v="${k}" data-hand="${s.hand}" data-token="${streamSessionToken(s)}">${esc(v.name)}${s.used.includes(k)?"（使用済み）":""}</button>`).join("")}</div></section>`;
+  return statusBar()+`<section class="win stream"><div class="srow"><span class="label">九州エール便</span><span>${STREAM_TIMES[s.hand]}（${s.hand+1}／4手番）</span></div><p class="small">配信サポート：${esc(charName(st,s.host))}　テーマ：${esc(theme.name)}</p><p class="m-summary">ライブ指標（ゲーム推計）：視聴者 ${broadcastMetrics(st,s).viewers}人／最大同接 ${broadcastMetrics(st,s).peak}人／反応 ${s.score}点</p><div class="comments">${comments.map(c=>`<div class="cmt">${esc(c)}</div>`).join("")}</div><p class="req">要望：「${esc(STREAM_ACTS[req[s.hand]].req)}」</p><div class="stack">${Object.entries(STREAM_ACTS).map(([k,v])=>`<button class="btn opt" data-a="streamAct" data-v="${k}" data-hand="${s.hand}" data-token="${streamSessionToken(s)}">${esc(v.name)}${s.used.includes(k)?"（使用済み）":""}</button>`).join("")}</div></section>`;
 }
 function streamAct(k,expectedHand,token){
   const st=G.st, s=st?.stream; if(!streamInputReady(s,token)||s.done||!Number.isInteger(expectedHand)||expectedHand!==s.hand||!STREAM_ACTS[k])return false; const r=streamPlay(s,k);
@@ -5313,10 +5324,10 @@ function streamAct(k,expectedHand,token){
   commit(); say([["もえ",lines[k]],["",r.total?"視聴者から反応が届いた。":"同じ演出が続き、反応が落ち着いている。"]]);
 }
 function streamFinish(token){
-  const st=G.st,s=st?.stream;if(!streamInputReady(s,token)||!s.done||s.score<80)return false;if(streamPending()==='N607'&&nationalFinalReason(st)){toast(nationalFinalReason(st));return;} const qid=streamPending(); if(!qid)return; delete (st.streamRetryGate||{})[st.stream.hub]; st.stream=null;
-  const L0=partyLevel(st); const res={xp:0,tickets:0}; completeQuest(st,qid,res); const up=levelUpEffects(st,L0,partyLevel(st));
+  const st=G.st,s=st?.stream;if(!streamInputReady(s,token)||!s.done||s.score<80)return false;if(streamPending()==='N607'&&nationalFinalReason(st)){toast(nationalFinalReason(st));return;} const qid=streamPending(); if(!qid)return;if(!s.broadcastPlan)s.broadcastPlan={policy:'community',goal:100,incomeGoal:100,level:partyLevel(st),fans:0,qid}; delete (st.streamRetryGate||{})[st.stream.hub]; st.stream=null;
+  const L0=partyLevel(st); const res={xp:0,tickets:0}; completeQuest(st,qid,res); const receipt=settleBroadcast(st,s,qid); const up=levelUpEffects(st,L0,partyLevel(st));
   commit(); G.screen="explore"; exploreBgm(); render();
-  toast(`${qid}完了：経験値＋${res.xp}・チケット＋${res.tickets}`+(res.notes?.length?'。'+res.notes.join(' '):'')+(up?`。レベル${partyLevel(st)}に上がり、HP・MPが全回復！ ${st.lastMpGrowth.members.map(m=>`${charName(st,m.cid)} 最大MP ${m.before}→${m.after}`).join("／")}`:""));
+  toast(`${qid}完了：配信利益＋${receipt?.net||0}G・ファン＋${receipt?.newFans||0}人／経験値＋${res.xp}・チケット＋${res.tickets}`+(res.notes?.length?'。'+res.notes.join(' '):'')+(up?`。レベル${partyLevel(st)}に上がり、HP・MPが全回復！ ${st.lastMpGrowth.members.map(m=>`${charName(st,m.cid)} 最大MP ${m.before}→${m.after}`).join("／")}`:""));
   const Qf=QUESTS[qid]; if(Qf && Qf.scene && SCENES[Qf.scene]) playScene(Qf.scene);
 }
 
@@ -5484,6 +5495,7 @@ function renderSheet(){
       ${can?"":`<p class="warn">ゴールドが足りません（あと${total-st.gold}）。通常敵を倒すとゴールドが手に入ります。</p>`}
       <div class="stack"><button class="btn primary" data-a="doInn" ${can?"":"disabled"}>泊まる（${total}ゴールド）</button><button class="btn" data-a="closeSheet">やめる</button></div>`); }
     case "record": return sheetWrap("記録", renderRecord());
+    case "broadcastHistory": return sheetWrap("配信実績",renderBroadcastHistory());
     case "items": return sheetWrap("道具", renderItems());
     case "equip": return sheetWrap("装備", renderEquip());
     case "dex": return sheetWrap("ノイズ図鑑", renderDex());
@@ -5780,11 +5792,16 @@ function renderStreamSetup(){
   const st=G.st; const d=G.sheetData;
   const hosts=st.roster.filter(c=>c!=="moe");
   d.host=d.host||hosts[0]; d.theme=d.theme||"newbie"; d.style=d.style||"video";
+  d.incomeGoal=BROADCAST_GOALS.includes(Number(d.incomeGoal))?Number(d.incomeGoal):100;
+  d.policy=BROADCAST_POLICIES[d.policy]?d.policy:'community';d.viewerGoal=BROADCAST_GOALS.includes(Number(d.viewerGoal))?Number(d.viewerGoal):100;
   const req=STREAM_REQ[HUBS[curHub()].prefId]||STREAM_REQ.PR01;
   return `<p>メインライバーはもえ。配信サポート担当とテーマを選びます。街で聞いた声を思い出し、視聴者の要望に合わせて番組を組み立てましょう。</p>
     <h3 class="label">配信サポート担当</h3><div class="opts">${hosts.map(c=>`<button class="btn opt ${d.host===c?"on":""}" data-a="ssSet" data-k="host" data-v="${c}">${d.host===c?"▶ ":""}${esc(charName(st,c))}</button>`).join("")}</div>
     <h3 class="label">番組テーマ</h3><div class="opts">${Object.entries(STREAM_THEMES).map(([k,t])=>`<button class="btn opt ${d.theme===k?"on":""}" data-a="ssSet" data-k="theme" data-v="${k}">${d.theme===k?"▶ ":""}${t.name}（${STREAM_ACTS[t.act].name}を生かすテーマ）</button>`).join("")}</div>
     <h3 class="label">スタイル</h3><div class="opts">${[["video","映像あり"],["voice","声中心"]].map(([k,n])=>`<button class="btn opt ${d.style===k?"on":""}" data-a="ssSet" data-k="style" data-v="${k}">${d.style===k?"▶ ":""}${n}</button>`).join("")}</div>
+    <h3 class="label">配信方針</h3><div class="opts">${Object.entries(BROADCAST_POLICIES).map(([k,p])=>`<button class="btn opt ${d.policy===k?'on':''}" data-a="ssSet" data-k="policy" data-v="${k}">${p.name}</button>`).join('')}</div><p class="small">新規重視は視聴者、交流重視はファン、収益重視は応援収入を伸ばします。テーマによる得点とは別の設定です。</p>
+    <h3 class="label">視聴者目標</h3><div class="row2">${BROADCAST_GOALS.map(n=>`<button class="btn ${Number(d.viewerGoal)===n?'on':''}" data-a="ssSet" data-k="viewerGoal" data-v="${n}">${n}人</button>`).join('')}</div><p class="small">目標は挑戦の目安です。未達でも本編の合格点80点以上なら進めます。収益はゲーム内Gで、現実のお金ではありません。</p>
+    <h3 class="label">利益目標（ゲーム内G）</h3><div class="row2">${BROADCAST_GOALS.map(n=>`<button class="btn ${Number(d.incomeGoal)===n?'on':''}" data-a="ssSet" data-k="incomeGoal" data-v="${n}">${n}G</button>`).join('')}</div><p class="small">目標値を変えても収入そのものは増えません。演出・方針・成長によって結果が決まります。</p>
     <h3 class="label">4手番の予定</h3><ol class="list">${req.map((r,i)=>`<li>${STREAM_TIMES[i]}：「${esc(STREAM_ACTS[r].req)}」→ ${esc(STREAM_ACTS[r].name)}</li>`).join("")}</ol>
     <p class="small">同じ演出を繰り返さず、街の魅力と視聴者の声を大切にしましょう。</p>${retryDescription(st,curHub())}
     <button class="btn primary wide" data-a="streamStart">配信を始める</button>`;
@@ -5988,7 +6005,7 @@ const ACT = {
   shopDo(el){if(el)el.disabled=true;const st=G.st,d=G.sheetData;if(!st||G.sheet!=='shop')return;const t=shopQuote(st,d,true);if(t.reason){render();return toast(t.reason);}if(t.isItem){if(t.sell)bagRemove(st.bag,t.id,t.q);else bagAdd(st.bag,t.id,t.q);}else st.owned[t.id]=(st.owned[t.id]||0)+(t.sell?-t.q:t.q);st.gold=t.after;const moved=t.sell?keepFlush():0;commit();SND.sfx('buy');shopListReturn(t.it.name+'×'+t.q+'を'+(t.sell?'売りました。':'購入しました。')+' 所持金 '+manageNumber(st.gold)+'G。'+(moved?' 預かり所から'+moved+'個受け取りました。':''));},
   replay(el){ G.sheet=null; playScene(el.dataset.v,undefined,true); },
   ssSet(el){ G.sheetData[el.dataset.k]=el.dataset.v; render(); },
-  streamStart(){ const st=G.st, d=G.sheetData,qid=st&&streamPending();if(!st||G.readOnly||G.screen!=="explore"||G.sheet!=="streamSetup"||G.dlg||st.run||st.stream||!qid||QUESTS[qid].hub!==curHub()||!isSafe()||!st.roster.includes(d.host)||d.host==="moe"||!STREAM_THEMES[d.theme]||!["video","voice"].includes(d.style))return false;if(st.careerSession)return toast("活動準備を先に終えてください。"); if(!retryReady(st,curHub()))return toast("再挑戦の準備が必要です。住民2人との会話と通常戦闘1勝を達成してください。"); st.stream=newStream(st,curHub(),d.host,d.theme,d.style); commit(); G.sheet=null; G.screen="stream"; SND.play("stream"); render(); },
+  streamStart(){ const st=G.st, d=G.sheetData,qid=st&&streamPending();if(!st||G.readOnly||G.screen!=="explore"||G.sheet!=="streamSetup"||G.dlg||st.run||st.stream||!qid||QUESTS[qid].hub!==curHub()||!isSafe()||!st.roster.includes(d.host)||d.host==="moe"||!STREAM_THEMES[d.theme]||!["video","voice"].includes(d.style))return false;if(st.careerSession)return toast("活動準備を先に終えてください。"); if(!retryReady(st,curHub()))return toast("再挑戦の準備が必要です。住民2人との会話と通常戦闘1勝を達成してください。"); st.stream=newStream(st,curHub(),d.host,d.theme,d.style,d); commit(); G.sheet=null; G.screen="stream"; SND.play("stream"); render(); },
   streamAct(el){ streamAct(el.dataset.v,Number(el.dataset.hand),el.dataset.token); },
   streamRetry(el){return streamRetry(el?.dataset.token);},
   streamLeave(){ G.st.stream=null; commit(); G.screen="explore"; exploreBgm(); render(); },
@@ -6040,6 +6057,7 @@ function validateState(s){
   validateBattleSnapshot(s.run,s.roster);
   if(s.stream&&(!HUBS[s.stream.hub]||!STREAM_THEMES[s.stream.theme]||!CHARS[s.stream.host]||!Array.isArray(s.stream.requestIds)||s.stream.requestIds.length!==4||s.stream.requestIds.some(k=>!STREAM_ACTS[k])||!Array.isArray(s.stream.used)||!Array.isArray(s.stream.picks)||!num(s.stream.score)||!Number.isInteger(s.stream.hand)||s.stream.hand<0||s.stream.hand>4))throw Error("bad stream");
   validateStreamSnapshot(s.stream);
+  validateBroadcastData(s);
 }
 
 function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdvance==="tap"||s.autoAdvance==="timer")) return s.autoAdvance; try{ const v=localStorage.getItem("tlr-kyushu-autoadv"); if(v==="tap"||v==="timer") return v; }catch(e){} return "timer"; }
