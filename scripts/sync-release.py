@@ -9,17 +9,20 @@ def game_body(html):
  html=re.sub(r'window.TLR_BUILD="[0-9-]+";', 'window.TLR_BUILD="DATE";',html)
  return re.sub(r'const GAME_VERSION = "[0-9.]+";', 'const GAME_VERSION = "RELEASE";',html)
 def spec_body(spec):return re.sub(r'^改訂 v[0-9.]+｜[0-9]+年[0-9]+月[0-9]+日｜', '改訂 RELEASE｜DATE｜',spec,flags=re.M)
+def build_module():
+ import importlib.util
+ spec=importlib.util.spec_from_file_location('build_game',ROOT/'scripts/build-game.py')
+ module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+ return module
+
+def parse_release(text):return build_module().parse_release(text)
+def read_release(root):return build_module().release(root)
+
 def planned(root):
- lines=(root/'VERSION.txt').read_text(encoding='utf-8').splitlines()
- if len(lines)!=2 or not re.fullmatch(r'\d+\.\d+(?:\.\d+)*',lines[0]):raise ValueError('VERSION.txt: expected version and date')
- from datetime import date
- date.fromisoformat(lines[1]);version,day=lines
+ builder=build_module();version,day=builder.release(root)
  if (root/'src').exists():
   if not (root/'src/index.template.html').is_file():raise ValueError('Missing source template: src/index.template.html')
-  import importlib.util
-  module_spec=importlib.util.spec_from_file_location('build_game',ROOT/'scripts/build-game.py')
-  builder=importlib.util.module_from_spec(module_spec);module_spec.loader.exec_module(builder)
-  game=builder.render(root)
+  game=builder.render(root,metadata=(version,day))
  else:
   game=(root/'index.html').read_text(encoding='utf-8')
  spec=(root/'GAME_SPEC.md').read_text(encoding='utf-8');readme=(root/'README.md').read_text(encoding='utf-8')
@@ -48,9 +51,9 @@ def read_manifest(path):
   raise ValueError('Invalid release manifest: malformed SHA-256')
  if not isinstance(previous.get('version'),str) or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)+',previous['version']):
   raise ValueError('Invalid release manifest version')
- from datetime import date
  if not isinstance(previous.get('date'),str):raise ValueError('Invalid release manifest date')
- date.fromisoformat(previous['date'])
+ try:parse_release(previous['version']+'\n'+previous['date']+'\n')
+ except ValueError as error:raise ValueError('Invalid release manifest metadata: '+str(error)) from error
  return previous
 
 @contextmanager
@@ -75,10 +78,25 @@ def validate(root,write=False):
  if not write:return _validate(root,False)
  with release_lock(root):return _validate(root,True)
 
+def input_fingerprints(root):
+ names={'VERSION.txt','GAME_SPEC.md','README.md','release-manifest.json'}
+ if (root/'src').exists():
+  names.update(p.relative_to(root).as_posix() for p in (root/'src').rglob('*') if p.is_file())
+ else:names.add('index.html')
+ snapshot={}
+ for name in sorted(names):
+  path=root/name
+  if not path.resolve().is_relative_to(root.resolve()):raise ValueError('Input escapes project: '+name)
+  snapshot[name]=digest(path.read_bytes()) if path.is_file() else None
+ return snapshot
+
 def _validate(root,write=False):
+ inputs=input_fingerprints(root) if write else None
  files,manifest=planned(root);mp=root/'release-manifest.json'
  if write and mp.exists():
   previous=read_manifest(mp)
+  if tuple(map(int,manifest['version'].split('.')))<tuple(map(int,previous['version'].split('.'))):
+   raise ValueError('Version rollback below the previous release manifest is not allowed')
   raw_spec=(root/'GAME_SPEC.md').read_bytes()
   same_spec=(previous['spec_content_sha256']==manifest['spec_content_sha256']) if 'spec_content_sha256' in previous else (previous.get('files',{}).get('GAME_SPEC.md')==digest(raw_spec))
   if previous.get('game_logic_sha256')!=manifest['game_logic_sha256'] and same_spec:
@@ -94,6 +112,7 @@ def _validate(root,write=False):
    path.write_text(body,encoding='utf-8')
    subprocess.run([node,'--check',str(path)],check=True,capture_output=True,text=True)
  if write:
+  if input_fingerprints(root)!=inputs:raise ValueError('Inputs changed during release generation; user edits preserved. Retry after editing stops.')
   write_bundle(root,files)
  else:
   stale=[name for name,content in files.items() if not (root/name).exists() or (root/name).read_bytes()!=content]

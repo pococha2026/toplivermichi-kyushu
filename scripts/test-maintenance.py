@@ -1,5 +1,5 @@
 from pathlib import Path
-import importlib.util, json, shutil, subprocess, tempfile, unittest
+import importlib.util, shutil, subprocess, tempfile, unittest
 ROOT=Path(__file__).resolve().parents[1]
 def module(name,filename):
     spec=importlib.util.spec_from_file_location(name,ROOT/'scripts'/filename)
@@ -49,6 +49,8 @@ class MaintenanceTest(unittest.TestCase):
         from unittest.mock import patch
         original=(self.root/'VERSION.txt').read_bytes()
         class BrokenSync:
+            parse_release=staticmethod(sync.parse_release)
+            write_bundle=staticmethod(sync.write_bundle)
             def release_lock(self,*args):
                 from contextlib import nullcontext
                 return nullcontext()

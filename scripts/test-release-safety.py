@@ -31,6 +31,8 @@ class SafetyTest(unittest.TestCase):
  def test_keyboard_interrupt_restores_prepare_version(self):
   original=(self.root/'VERSION.txt').read_bytes()
   class InterruptedSync:
+   parse_release=staticmethod(sync.parse_release)
+   write_bundle=staticmethod(sync.write_bundle)
    def release_lock(self,*args):return nullcontext()
    def validate(self,*args,**kwargs):raise KeyboardInterrupt()
    def _validate(self,*args,**kwargs):raise KeyboardInterrupt()

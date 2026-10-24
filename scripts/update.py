@@ -2,7 +2,7 @@
 """Local update entry point. Never commits or publishes changes."""
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
-import argparse, hashlib, importlib.util, json, os, re, shutil, subprocess, sys, time
+import argparse, hashlib, importlib.util, json, os, shutil, subprocess, sys, time
 from urllib.request import Request, urlopen
 ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = 'https://pococha2026.github.io/toplivermichi-kyushu/'
@@ -72,18 +72,20 @@ def prepare(version=None, day=None):
     sync=load_sync()
     with sync.release_lock(ROOT):
         target = ROOT/'VERSION.txt'; original = target.read_bytes()
-        old_version, old_day = original.decode().splitlines()
+        old_version, old_day = sync.parse_release(original.decode('utf-8'))
         version, day = version or old_version, day or old_day
-        if not all(x.isdecimal() for x in version.split('.')) or len(version.split('.')) < 2:
-            raise ValueError('Invalid version')
+        sync.parse_release(version+'\n'+day+'\n')
         if tuple(map(int,version.split('.'))) < tuple(map(int,old_version.split('.'))):
             raise ValueError('Version rollback is not allowed')
         tests=selected_checks(changed_files())
+        prepared_version=(version+'\n'+day+'\n').encode('utf-8')
         try:
-            target.write_text(version+'\n'+day+'\n',encoding='utf-8')
+            sync.write_bundle(ROOT,{'VERSION.txt':prepared_version})
             sync._validate(ROOT,write=True)
         except BaseException:
-            target.write_bytes(original)
+            # Restore our temporary version only; preserve an editor's newer input.
+            if target.is_file() and target.read_bytes()==prepared_version:
+                sync.write_bundle(ROOT,{'VERSION.txt':original})
             raise
         run_checks(tests=tests)
 
@@ -95,10 +97,7 @@ def doctor(root=None):
     version=None
     if (root/'VERSION.txt').is_file():
         try:
-            from datetime import date
-            lines=(root/'VERSION.txt').read_text(encoding='utf-8').splitlines()
-            if len(lines)!=2 or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)+',lines[0]):raise ValueError('Expected version and ISO date')
-            date.fromisoformat(lines[1]);version=lines
+            version=load_sync().read_release(root)
         except (OSError,ValueError) as error:issues.append({'kind':'invalid_version','detail':str(error)})
     if (root/'scripts/checks.json').is_file():
         try:configuration(root)
@@ -114,6 +113,12 @@ def doctor(root=None):
                     issues.append({'kind':'stale_output','path':name,'action':'Run prepare after editing.'})
         except (OSError,ValueError) as error:issues.append({'kind':'invalid_manifest','detail':str(error)})
     else:issues.append({'kind':'missing_generated','path':'release-manifest.json','action':'Regenerate with prepare.'})
+    if (root/'src').exists():
+        try:
+            rendered=load_sync().build_module().render(root).encode('utf-8')
+            if not (root/'index.html').is_file() or rendered!=(root/'index.html').read_bytes():
+                issues.append({'kind':'stale_source','path':'src/','action':'Regenerate from edited sources with prepare.'})
+        except (OSError,ValueError) as error:issues.append({'kind':'invalid_source','detail':str(error)})
     lock=root/'.release-update.lock'
     if lock.exists():
         item={'kind':'lock','path':str(lock),'action':'Check the update process before manually resolving this lock; never delete an active lock.'}

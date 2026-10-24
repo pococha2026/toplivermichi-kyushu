@@ -6,18 +6,23 @@ import re
 ROOT = Path(__file__).resolve().parents[1]
 INCLUDE = re.compile(r'\{\{include:([^}]+)\}\}')
 
-def release(root):
-    lines = (root / 'VERSION.txt').read_text(encoding='utf-8').splitlines()
-    if len(lines) != 2 or not re.fullmatch(r'\d+\.\d+(?:\.\d+)*', lines[0]):
-        raise ValueError('VERSION.txt: expected version and ISO date on two lines')
+def parse_release(text):
+    lines=text.splitlines()
+    if len(lines)!=2 or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)+',lines[0]):
+        raise ValueError('Expected an ASCII dotted version and YYYY-MM-DD date on two lines')
+    if not re.fullmatch(r'[0-9]{4}-[0-9]{2}-[0-9]{2}',lines[1]):
+        raise ValueError('Expected canonical YYYY-MM-DD date')
     date.fromisoformat(lines[1])
     return lines
 
-def render(root=ROOT):
+def release(root):
+    return parse_release((root/'VERSION.txt').read_text(encoding='utf-8'))
+
+def render(root=ROOT, metadata=None):
     source = (root / 'src').resolve()
-    version, day = release(root)
+    version, day = metadata or release(root)
     template = (source / 'index.template.html').read_text(encoding='utf-8')
-    included = set()
+    included = set();contents=[template]
     def include(match):
         relative = match[1]
         path = (source / relative).resolve()
@@ -28,14 +33,17 @@ def render(root=ROOT):
         included.add(path)
         if not path.is_file():
             raise ValueError('Missing source include: ' + relative)
-        return path.read_text(encoding='utf-8')
+        content=path.read_text(encoding='utf-8');contents.append(content)
+        return content
     html = INCLUDE.sub(include, template)
     orphaned = sorted(str(p.relative_to(source)) for p in source.rglob('*')
                       if p.suffix in {'.js', '.css'} and p.resolve() not in included)
     if orphaned:
         raise ValueError('Sources missing from template: ' + ', '.join(orphaned))
-    if template.count('{{VERSION}}') + sum((p.read_text(encoding='utf-8').count('{{VERSION}}')) for p in included) != 1:
-        raise ValueError('Exactly one {{VERSION}} placeholder is required')
+    for name in ['VERSION','BUILD_DATE']:
+        placeholder='{{'+name+'}}'
+        if sum(content.count(placeholder) for content in contents)!=1:
+            raise ValueError('Exactly one '+placeholder+' placeholder is required')
     html = html.replace('{{VERSION}}', version).replace('{{BUILD_DATE}}', day)
     if re.search(r'\{\{[^{}]*\}\}', html):
         raise ValueError('Unresolved template placeholder')
