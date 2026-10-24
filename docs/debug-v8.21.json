@@ -405,9 +405,11 @@
   },
   "additionalChecks": {
     "interactions": 19,
-    "releaseSync": 7
+    "releaseSync": 7,
+    "audio": 13
   },
-  "total": 7102,
+  "total": 7115,
   "failed": 0,
-  "scope": "マップ重点・関連回帰を3回反復。VM・模擬DOM/音声/保存。実機とブラウザ表示は未確認。全体無欠陥とは判定しない。"
+  "scope": "マップ重点・関連回帰を3回反復。VM・模擬DOM/音声/保存。実機とブラウザ表示は未確認。全体無欠陥とは判定しない。",
+  "audioHarnessFix": "音声単体テストが部分抽出する関数に新しいhubOf依存を供給。実ゲームの関数と同じ地域参照を検証する。"
 }
