@@ -1,14 +1,12 @@
 {
-  "version": "8.82",
-  "archived_reports": 35,
-  "consolidated_files": [
-    "release-8.79.json",
-    "release-8.80.json",
-    "release-8.81.json",
-    "cleanup-8.78.json"
+  "version": "8.83",
+  "changes": [
+    "依頼帳・設定のメニュー重複を撤去",
+    "図鑑・収集品へ統合し通常敵詳細を同じ一覧内へ表示",
+    "依頼帳・設定・保存へ表記統一"
   ],
-  "renamed": {
-    "docs/structure-v8.81.json": "docs/history/file-layout-8.81.json"
-  },
-  "scope": "File organization only; game runtime unchanged except release version. Device operation not tested."
+  "validation": "Three-pass menu/collection integration, filter/page state, return navigation, legacy detail compatibility and full configured regression checks.",
+  "limitations": [
+    "VM/mock DOM tests; physical-device rendering and touch unverified"
+  ]
 }

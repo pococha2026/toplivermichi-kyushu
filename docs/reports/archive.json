@@ -11965,6 +11965,20 @@
       ],
       "broken_history_links_fixed": 15,
       "history_note": "Removed file contents remain retrievable from the previous Git commit; no duplicate archive copies retained."
+    },
+    "release-8.82.json": {
+      "version": "8.82",
+      "archived_reports": 35,
+      "consolidated_files": [
+        "release-8.79.json",
+        "release-8.80.json",
+        "release-8.81.json",
+        "cleanup-8.78.json"
+      ],
+      "renamed": {
+        "docs/structure-v8.81.json": "docs/history/file-layout-8.81.json"
+      },
+      "scope": "File organization only; game runtime unchanged except release version. Device operation not tested."
     }
   },
   "entry_sha256": {
@@ -12002,6 +12016,7 @@
     "release-8.79.json": "0aba8c4fb37a9bd660c6a31ed3520fd76365d46907fbd564c3fb015ef358ef59",
     "release-8.80.json": "641e6c428bdaf48722446122ded99fdf01a67fbc1d918bf1d301054e034ba3e6",
     "release-8.81.json": "98bb5496805e77432c01088094da90c3c8068a7cac7c0fd128822404a91931d9",
-    "cleanup-8.78.json": "83f5a64ab126267c2e3da0b8f2dc9923c2ce64704267e229172759d0377a0f1e"
+    "cleanup-8.78.json": "83f5a64ab126267c2e3da0b8f2dc9923c2ce64704267e229172759d0377a0f1e",
+    "release-8.82.json": "9921325671583d3cb92c0ac381f3d3311b13d29a24e34f0f80e55faf47523f00"
   }
 }
