@@ -1108,7 +1108,7 @@ function recordSheetAction(name,action){return function(...args){
  }
  return result;
 };}
-function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}${sheetHasParent()&&!["rename","mobileMenu","mobileBattleMenu"].includes(G.sheet)?`<button class="btn" data-a="returnToPlay">${G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"元の画面へ"}</button>`:""}<button class="btn" data-a="closeSheet">${G.sheet==="rename"?"名前を確定":sheetHasParent()&&!["mobileMenu","mobileBattleMenu"].includes(G.sheet)?"戻る":G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"戻る"}</button></div>${body}</div></div>`; }
+function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}${sheetHasParent()&&!["rename","mobileMenu","mobileBattleMenu"].includes(G.sheet)?`<button class="btn" data-a="returnToPlay">${G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"元の画面へ"}</button>`:""}<button class="btn" data-a="${G.sheet==='rename'?'renameSave':'closeSheet'}">${G.sheet==="rename"?"名前を確定":sheetHasParent()&&!["mobileMenu","mobileBattleMenu"].includes(G.sheet)?"戻る":G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"戻る"}</button></div>${body}</div></div>`; }
 function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
   switch(k){

@@ -643,7 +643,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.83";
+const GAME_VERSION = "8.84";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -2652,7 +2652,7 @@ function finishRename(){
  G.st.pendingNames=(G.st.pendingNames||[]).filter(c=>c!==d.cid);commit();backSheet(d.back||null);if(!G.sheet)openPendingName();
 }
 function renderRename(){const st=G.st,d=G.sheetData,cid=d.cid;if(!st.roster.includes(cid))return '<p>仲間が見つかりません。</p>';
- return `<p>${d.joining?'新しい仲間が加入しました。名前を変更できます。':'名前は何度でも変更できます。'}</p><p>現在の名前：<b>${esc(charName(st,cid))}</b></p><label for="renameInput">新しい名前（全角${NAME_MAX}文字以内）</label><input class="input" id="renameInput" value="${esc(charName(st,cid))}" autocomplete="off" enterkeyhint="done"><p class="small">ひらがな・カタカナ・漢字・全角英数字。空白・記号は使用できません。名前を変えても装備や物語の進行は引き継ぎます。</p><div class="stack"><button class="btn primary" data-a="renameSave">この名前にする</button>${cid!=='hero'&&cid!=='moe'?`<button class="btn" data-a="renameDefault">元の名前「${esc(CHARS[cid].name)}」に戻す</button>`:''}<button class="btn" data-a="closeSheet">${d.joining?'今の名前で進む':'変更せず戻る'}</button></div>`;
+ return `<p>${d.joining?'新しい仲間が加入しました。名前を変更できます。':'名前は何度でも変更できます。'}</p><p>現在の名前：<b>${esc(charName(st,cid))}</b></p><label for="renameInput">新しい名前（全角${NAME_MAX}文字以内）</label><input class="input" id="renameInput" value="${esc(typeof d.nameDraft==='string'?d.nameDraft:charName(st,cid))}" autocomplete="off" enterkeyhint="done"><p class="small">ひらがな・カタカナ・漢字・全角英数字。空白・記号は使用できません。名前を変えても装備や物語の進行は引き継ぎます。</p><div class="stack"><button class="btn primary" data-a="renameSave">この名前にする</button>${cid!=='hero'&&cid!=='moe'?`<button class="btn" data-a="renameDefault">元の名前「${esc(CHARS[cid].name)}」に戻す</button>`:''}<button class="btn" data-a="closeSheet">${d.joining?'今の名前で進む':'変更せず戻る'}</button></div>`;
 }
 
 /* ---- 新規開始（第06D・16節） ---- */
@@ -5787,7 +5787,7 @@ function recordSheetAction(name,action){return function(...args){
  }
  return result;
 };}
-function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}${sheetHasParent()&&!["rename","mobileMenu","mobileBattleMenu"].includes(G.sheet)?`<button class="btn" data-a="returnToPlay">${G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"元の画面へ"}</button>`:""}<button class="btn" data-a="closeSheet">${G.sheet==="rename"?"名前を確定":sheetHasParent()&&!["mobileMenu","mobileBattleMenu"].includes(G.sheet)?"戻る":G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"戻る"}</button></div>${body}</div></div>`; }
+function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}${sheetHasParent()&&!["rename","mobileMenu","mobileBattleMenu"].includes(G.sheet)?`<button class="btn" data-a="returnToPlay">${G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"元の画面へ"}</button>`:""}<button class="btn" data-a="${G.sheet==='rename'?'renameSave':'closeSheet'}">${G.sheet==="rename"?"名前を確定":sheetHasParent()&&!["mobileMenu","mobileBattleMenu"].includes(G.sheet)?"戻る":G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"戻る"}</button></div>${body}</div></div>`; }
 function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
   switch(k){
@@ -6221,7 +6221,7 @@ const ACT = {
   trialStart(el){startChallenge(el.dataset.v);},
   festivalClaim(){claimFestival();},
   renameOpen(el){if(G.st.run||G.st.stream)return toast("名前は戦闘・配信の終了後に変更できます。");if(!G.st.roster.includes(el.dataset.c))return;openSheet("rename",{cid:el.dataset.c,back:"status"});},
-  renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
+  renameSave(){if(G.sheet!=="rename"||!G.st||G.readOnly)return;const raw=$("#renameInput")?.value??G.sheetData.nameDraft??charName(G.st,G.sheetData.cid);const r=setCharacterName(G.st,G.sheetData.cid,raw);if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
   renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
   mapZoom(el){const st=G.st;if(G.screen!=="explore"||G.sheet||G.dlg)return;st.settings.mapZoom=Math.max(1,Math.min(3,(st.settings.mapZoom||2)+Number(el.dataset.v)));G.walk.path=[];G.walk.pending=null;G.walk.prog=0;commit();render();},
   battleCommandOpen(el){const run=battleInputRun();if(!run||G.auto)return;mobileBattleActor(run);G.battleCommand=true;G.battlePicker=null;G.cursorSig=null;render();},
@@ -6458,6 +6458,12 @@ document.addEventListener("click",e=>{
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
 
+
+// Keep drafts when keyboard resize/blur causes the rename sheet to render again.
+function rememberRenameInput(e){if(G.sheet==='rename'&&e.target?.id==='renameInput'&&!G.readOnly)G.sheetData.nameDraft=e.target.value;}
+document.addEventListener('input',rememberRenameInput);
+document.addEventListener('compositionend',rememberRenameInput);
+document.addEventListener('keydown',e=>{if(e.target?.id==='renameInput'&&G.sheet==='rename'&&e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&!e.repeat){e.preventDefault();rememberRenameInput(e);ACT.renameSave();}});
 /* ===== 操作パネルの位置合わせ：表示枠の下が画面外に出ている分（--vcut）だけ持ち上げる ===== */
 const VFIT=(()=>{
   /* 3段構え：①実測（IntersectionObserver） ②iPhoneアプリ枠の推定 ③利用者が一度だけ合わせた値（最優先・端末に永久保存） */

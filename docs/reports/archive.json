@@ -11979,6 +11979,18 @@
         "docs/structure-v8.81.json": "docs/history/file-layout-8.81.json"
       },
       "scope": "File organization only; game runtime unchanged except release version. Device operation not tested."
+    },
+    "release-8.83.json": {
+      "version": "8.83",
+      "changes": [
+        "依頼帳・設定のメニュー重複を撤去",
+        "図鑑・収集品へ統合し通常敵詳細を同じ一覧内へ表示",
+        "依頼帳・設定・保存へ表記統一"
+      ],
+      "validation": "Three-pass menu/collection integration, filter/page state, return navigation, legacy detail compatibility and full configured regression checks.",
+      "limitations": [
+        "VM/mock DOM tests; physical-device rendering and touch unverified"
+      ]
     }
   },
   "entry_sha256": {
@@ -12017,6 +12029,7 @@
     "release-8.80.json": "641e6c428bdaf48722446122ded99fdf01a67fbc1d918bf1d301054e034ba3e6",
     "release-8.81.json": "98bb5496805e77432c01088094da90c3c8068a7cac7c0fd128822404a91931d9",
     "cleanup-8.78.json": "83f5a64ab126267c2e3da0b8f2dc9923c2ce64704267e229172759d0377a0f1e",
-    "release-8.82.json": "9921325671583d3cb92c0ac381f3d3311b13d29a24e34f0f80e55faf47523f00"
+    "release-8.82.json": "9921325671583d3cb92c0ac381f3d3311b13d29a24e34f0f80e55faf47523f00",
+    "release-8.83.json": "dcdd643ceae59604f7025b3595b6e3102b42437de1a3e10cd39f9340aa69f57f"
   }
 }

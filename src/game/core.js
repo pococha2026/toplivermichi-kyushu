@@ -660,7 +660,7 @@ function finishRename(){
  G.st.pendingNames=(G.st.pendingNames||[]).filter(c=>c!==d.cid);commit();backSheet(d.back||null);if(!G.sheet)openPendingName();
 }
 function renderRename(){const st=G.st,d=G.sheetData,cid=d.cid;if(!st.roster.includes(cid))return '<p>仲間が見つかりません。</p>';
- return `<p>${d.joining?'新しい仲間が加入しました。名前を変更できます。':'名前は何度でも変更できます。'}</p><p>現在の名前：<b>${esc(charName(st,cid))}</b></p><label for="renameInput">新しい名前（全角${NAME_MAX}文字以内）</label><input class="input" id="renameInput" value="${esc(charName(st,cid))}" autocomplete="off" enterkeyhint="done"><p class="small">ひらがな・カタカナ・漢字・全角英数字。空白・記号は使用できません。名前を変えても装備や物語の進行は引き継ぎます。</p><div class="stack"><button class="btn primary" data-a="renameSave">この名前にする</button>${cid!=='hero'&&cid!=='moe'?`<button class="btn" data-a="renameDefault">元の名前「${esc(CHARS[cid].name)}」に戻す</button>`:''}<button class="btn" data-a="closeSheet">${d.joining?'今の名前で進む':'変更せず戻る'}</button></div>`;
+ return `<p>${d.joining?'新しい仲間が加入しました。名前を変更できます。':'名前は何度でも変更できます。'}</p><p>現在の名前：<b>${esc(charName(st,cid))}</b></p><label for="renameInput">新しい名前（全角${NAME_MAX}文字以内）</label><input class="input" id="renameInput" value="${esc(typeof d.nameDraft==='string'?d.nameDraft:charName(st,cid))}" autocomplete="off" enterkeyhint="done"><p class="small">ひらがな・カタカナ・漢字・全角英数字。空白・記号は使用できません。名前を変えても装備や物語の進行は引き継ぎます。</p><div class="stack"><button class="btn primary" data-a="renameSave">この名前にする</button>${cid!=='hero'&&cid!=='moe'?`<button class="btn" data-a="renameDefault">元の名前「${esc(CHARS[cid].name)}」に戻す</button>`:''}<button class="btn" data-a="closeSheet">${d.joining?'今の名前で進む':'変更せず戻る'}</button></div>`;
 }
 
 /* ---- 新規開始（第06D・16節） ---- */

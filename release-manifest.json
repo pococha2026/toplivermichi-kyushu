@@ -1,13 +1,13 @@
 {
-  "version": "8.83",
+  "version": "8.84",
   "date": "2026-10-24",
   "files": {
-    "GAME_SPEC.md": "fbbc1102e66eae52b869c9e8dac73f2ad1d59e5813199bbb028db6332b1c6a4f",
-    "GAME_SPEC.txt": "7dffa6666f14a7a6674cb249077b689311b8235b31be5ec8f76bd41302dc55e5",
-    "README.md": "afae251744a91f00b5914fa8a39acaf2f7ed8ecd5add7c16bbec1e4fc1c51a40",
-    "VERSION.txt": "cc6784852cc8a9de9cb893bf91ce86de5e27c50ed54451697aec9468c25f81b6",
-    "index.html": "8a9e46dc0db8b60e456ddfe37ee4f1ba685ac43286e8b2964756e016c8c5612d"
+    "GAME_SPEC.md": "8b0b620cff875f1d58191af0ca1bbdb0cc1d20b2c72d5ba6674ef79c1738e6ac",
+    "GAME_SPEC.txt": "850e8d6e8012923ca376e91edcc68985b585e6039ab85bda99c6cc078e42e6bf",
+    "README.md": "ef58bab0b6ca7ab4af75a7348ffb8a2cfc2588e9d27884ac415884a3ede751f8",
+    "VERSION.txt": "08ac6ddb584eef05cff3d27ba9ced098e85a28dc39955b7ff06354ad34bb6e0e",
+    "index.html": "f16a9307adc45472ae51cb88caf6a2a354b7eedf6a8d498d233ae6808c3ee9aa"
   },
-  "game_logic_sha256": "373888c25b9c806b8d206e2b367004c316ac78ad00cc1df4ac61d42c330a1e0e",
-  "spec_content_sha256": "977f7688c373483183f6221384de405b338f1570215732e5c5f947914487fe91"
+  "game_logic_sha256": "4fc5b238bf09367b3b5008edfb082878c02b67bdd215a4a043720a9964827698",
+  "spec_content_sha256": "4834bdc611554994ad48b6f302e0fd4282caf659214e45a6ea70414a60ce0d99"
 }

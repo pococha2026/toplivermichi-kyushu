@@ -63,7 +63,7 @@ const ACT = {
   trialStart(el){startChallenge(el.dataset.v);},
   festivalClaim(){claimFestival();},
   renameOpen(el){if(G.st.run||G.st.stream)return toast("名前は戦闘・配信の終了後に変更できます。");if(!G.st.roster.includes(el.dataset.c))return;openSheet("rename",{cid:el.dataset.c,back:"status"});},
-  renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
+  renameSave(){if(G.sheet!=="rename"||!G.st||G.readOnly)return;const raw=$("#renameInput")?.value??G.sheetData.nameDraft??charName(G.st,G.sheetData.cid);const r=setCharacterName(G.st,G.sheetData.cid,raw);if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
   renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
   mapZoom(el){const st=G.st;if(G.screen!=="explore"||G.sheet||G.dlg)return;st.settings.mapZoom=Math.max(1,Math.min(3,(st.settings.mapZoom||2)+Number(el.dataset.v)));G.walk.path=[];G.walk.pending=null;G.walk.prog=0;commit();render();},
   battleCommandOpen(el){const run=battleInputRun();if(!run||G.auto)return;mobileBattleActor(run);G.battleCommand=true;G.battlePicker=null;G.cursorSig=null;render();},
@@ -300,3 +300,9 @@ document.addEventListener("click",e=>{
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
 
+
+// Keep drafts when keyboard resize/blur causes the rename sheet to render again.
+function rememberRenameInput(e){if(G.sheet==='rename'&&e.target?.id==='renameInput'&&!G.readOnly)G.sheetData.nameDraft=e.target.value;}
+document.addEventListener('input',rememberRenameInput);
+document.addEventListener('compositionend',rememberRenameInput);
+document.addEventListener('keydown',e=>{if(e.target?.id==='renameInput'&&G.sheet==='rename'&&e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&!e.repeat){e.preventDefault();rememberRenameInput(e);ACT.renameSave();}});
