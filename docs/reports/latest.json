@@ -1,12 +1,12 @@
 {
-  "version": "8.84",
-  "fixes": [
-    "Rename header saves the entered name",
-    "Draft survives keyboard blur/rerender",
-    "IME-aware Enter confirmation"
+  "version": "8.85",
+  "changes": [
+    "Per-character best and role-aware owned equipment auto-selection",
+    "Affordable strongest/value shop advice with explicit purchase confirmation"
   ],
-  "validation": "Three repeated sequences: join/rename/save migration, draft rerender, invalid/skip, IME Enter; configured full regression.",
+  "validation": "Three repeated inventory/context/stale/select-then-buy/save sequences; all 22 jobs eligible-catalog maxima; full configured regression.",
   "limitations": [
-    "VM/mock DOM; no physical-device keyboard/touch verification"
+    "Scores are transparent heuristics, not universal battle optima",
+    "VM/mock DOM; physical device rendering/touch unverified"
   ]
 }

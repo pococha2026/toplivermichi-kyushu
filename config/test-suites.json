@@ -33,7 +33,8 @@
     "tests/game/test-map-travel-layout.cjs",
     "tests/game/test-terrain-back.cjs",
     "tests/game/test-map-catalog-ui.cjs",
-    "tests/game/test-retired-map-controls.cjs"
+    "tests/game/test-retired-map-controls.cjs",
+    "tests/game/test-equipment-advisor.cjs"
   ],
   "related": {
     "src/game/data.js": [
@@ -54,10 +55,12 @@
     ],
     "src/game/views.js": [
       "tests/game/test-mobile-dex.cjs",
-      "tests/game/test-map-catalog-ui.cjs"
+      "tests/game/test-map-catalog-ui.cjs",
+      "tests/game/test-equipment-advisor.cjs"
     ],
     "src/game/actions.js": [
-      "tests/game/test-interactions.cjs"
+      "tests/game/test-interactions.cjs",
+      "tests/game/test-equipment-advisor.cjs"
     ],
     "src/game/input.js": [
       "tests/game/test-map-travel-layout.cjs",

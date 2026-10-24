@@ -11991,6 +11991,18 @@
       "limitations": [
         "VM/mock DOM tests; physical-device rendering and touch unverified"
       ]
+    },
+    "release-8.84.json": {
+      "version": "8.84",
+      "fixes": [
+        "Rename header saves the entered name",
+        "Draft survives keyboard blur/rerender",
+        "IME-aware Enter confirmation"
+      ],
+      "validation": "Three repeated sequences: join/rename/save migration, draft rerender, invalid/skip, IME Enter; configured full regression.",
+      "limitations": [
+        "VM/mock DOM; no physical-device keyboard/touch verification"
+      ]
     }
   },
   "entry_sha256": {
@@ -12030,6 +12042,7 @@
     "release-8.81.json": "98bb5496805e77432c01088094da90c3c8068a7cac7c0fd128822404a91931d9",
     "cleanup-8.78.json": "83f5a64ab126267c2e3da0b8f2dc9923c2ce64704267e229172759d0377a0f1e",
     "release-8.82.json": "9921325671583d3cb92c0ac381f3d3311b13d29a24e34f0f80e55faf47523f00",
-    "release-8.83.json": "dcdd643ceae59604f7025b3595b6e3102b42437de1a3e10cd39f9340aa69f57f"
+    "release-8.83.json": "dcdd643ceae59604f7025b3595b6e3102b42437de1a3e10cd39f9340aa69f57f",
+    "release-8.84.json": "65488adb20369518ab00cdb62d50f35a433805a8c7092f40171e56cdac802e4f"
   }
 }
