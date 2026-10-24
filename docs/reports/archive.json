@@ -12079,6 +12079,26 @@
       "limitations": [
         "Reference image inspected; updated browser/device rendering unverified"
       ]
+    },
+    "release-8.91.json": {
+      "version": "8.91",
+      "reference": [
+        "IMG_3808.jpeg",
+        "IMG_3809.jpeg",
+        "IMG_3810.jpeg",
+        "IMG_3811.jpeg"
+      ],
+      "changes": [
+        "Non-shrinking sheet contents and explicit atlas height",
+        "Two-column sheet tabs and consistent borders",
+        "Collapsible people picker before relationship graph",
+        "Full-width log body and separate navigation row",
+        "Clear enemy HP rows and selected ally outline"
+      ],
+      "validation": "Focused generated UI, log text preservation, diagram/atlas contracts and full configured regression.",
+      "limitations": [
+        "Updated browser/device rendering and touch unverified"
+      ]
     }
   },
   "entry_sha256": {
@@ -12125,6 +12145,7 @@
     "release-8.87.json": "b7c4fa59f70ac02c5f68d5d94de0fb1b076b262b034967876416d6b04cf8325a",
     "release-8.88.json": "a496be32e1e1623230d4d4ad81960ce826c6c0524b649f91c7d9387a18a53d8a",
     "release-8.89.json": "0b2b09e6d2a8168577ffa2c49e13f090e847760fc125534a6a91445f9e015f02",
-    "release-8.90.json": "a6f4814459aab9c75ec49f1f452993e69db127cd3f9a34826f297d3b43db9ac3"
+    "release-8.90.json": "a6f4814459aab9c75ec49f1f452993e69db127cd3f9a34826f297d3b43db9ac3",
+    "release-8.91.json": "1757b1e00ebb69d310800a978ad24037e9c1600fab6af0868af08ffc25d79bfd"
   }
 }

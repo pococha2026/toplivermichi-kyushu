@@ -1440,7 +1440,7 @@ function previewEquipFor(st,cid,job){const e={...st.equip[cid]};for(const slot o
 function renderRecord(){
   const st=G.st; const L=partyLevel(st);
   const milestones=[["E1","新規開始"],...Object.keys(QUESTS).filter(k=>QUESTS[k].main&&!QUESTS[k].post&&!QUESTS[k].chapterLevel).map(k=>[MOE_RANKS[QUESTS[k].rank],k+"完了"])];
-  return `${progressionHtml(st)}<dl class="kv"><dt>総合レベル</dt><dd>${L}（経験値 ${partyExperience(st).toLocaleString()}${L<progressionCap(st)?`・次まで${(xpFor(L+1)-partyExperience(st)).toLocaleString()}`:"・最大"}）</dd>
+  return `${progressionHtml(st)}<dl class="kv record-values"><dt>総合レベル</dt><dd>${L}（経験値 ${partyExperience(st).toLocaleString()}${L<progressionCap(st)?`・次まで${(xpFor(L+1)-partyExperience(st)).toLocaleString()}`:"・最大"}）</dd>
     <dt>もえのシナリオ到達ランク</dt><dd>${MOE_RANKS[st.moeRank]}</dd><dt>旅</dt><dd>${st.day}日目</dd></dl>
     <p class="small">もえのランクは物語上の到達記録です。レベル・熟練度・実際の応援ポイントとは別に表示します。</p>
     <ul class="list">${milestones.map(([r,c],i)=>`<li>${MOE_RANKS.indexOf(r)<=st.moeRank?"●":"○"} ${r}：${c}</li>`).join("")}</ul>

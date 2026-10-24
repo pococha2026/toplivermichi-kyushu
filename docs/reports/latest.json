@@ -1,19 +1,14 @@
 {
-  "version": "8.91",
-  "reference": [
-    "IMG_3808.jpeg",
-    "IMG_3809.jpeg",
-    "IMG_3810.jpeg",
-    "IMG_3811.jpeg"
-  ],
+  "version": "8.92",
+  "reference": "User-provided ten screenshots IMG_3810(1) through IMG_3819",
   "changes": [
-    "Non-shrinking sheet contents and explicit atlas height",
-    "Two-column sheet tabs and consistent borders",
-    "Collapsible people picker before relationship graph",
-    "Full-width log body and separate navigation row",
-    "Clear enemy HP rows and selected ally outline"
+    "Consistent sheet density and dark input controls",
+    "Compact equipment/roster statistics and balanced menu grids",
+    "Stacked record values and folded progression explanation",
+    "Full relationship names",
+    "Real map sheet accepts atlas region and layer changes"
   ],
-  "validation": "Focused generated UI, log text preservation, diagram/atlas contracts and full configured regression.",
+  "validation": "Atlas handlers through actual change listeners in legacy/current contexts; focused UI checks and full configured regression.",
   "limitations": [
     "Updated browser/device rendering and touch unverified"
   ]
