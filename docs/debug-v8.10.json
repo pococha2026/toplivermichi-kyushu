@@ -1,0 +1,1080 @@
+{
+  "version": "8.10",
+  "update": "広大な日本列島型の街外・地形・交通・名所",
+  "generatedAt": "2026-10-24T07:06:08.370771+00:00",
+  "reports": {
+    "broadcast": {
+      "groups": {
+        "metrics-parameter": {
+          "cases": 53946,
+          "passed": 53946,
+          "failed": 0
+        },
+        "independent-economic-example": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "settlement-once": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "failure-no-payout": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "restore-and-repeat": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "history-cap": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "goal-is-not-cheat": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "legacy-stream": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "invalid-ledger": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "legacy-settlement": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "policy-whitelist": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "generated-ui": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 53965,
+      "failed": 0,
+      "failures": [],
+      "scope": "Game-fiction metrics and real settlement/save/HTML code in VM with mocked UI/audio/storage; not actual Pococha revenue forecasts."
+    },
+    "collection": {
+      "groups": {
+        "totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "entry-status": {
+          "cases": 15321,
+          "passed": 15321,
+          "failed": 0
+        },
+        "permanent-item": {
+          "cases": 312,
+          "passed": 312,
+          "failed": 0
+        },
+        "permanent-gear": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "permanent-event-item": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "event-legacy-evidence": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "bag-direct": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "overflow": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "legacy": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "invalid-save": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "filter-counts": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "regional-progress": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "search": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "page-clamp": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "html-mobile": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "completion": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "encounter": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "exclusive-category": {
+          "cases": 4978,
+          "passed": 4978,
+          "failed": 0
+        },
+        "classification-totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 25424,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual collection acquisition hooks, save validation/migration, catalog filters and generated HTML in VM. No browser/device rendering."
+    },
+    "regional": {
+      "groups": {
+        "verified-regional-data": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "local-shop-restriction": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "enemy-balance-and-identity": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "field-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "battle-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "purchase-local-item": {
+          "cases": 214,
+          "passed": 214,
+          "failed": 0
+        },
+        "added-food-enemy-drop": {
+          "cases": 84,
+          "passed": 84,
+          "failed": 0
+        },
+        "regional-drop-roll": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "full-bag-overflow": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-guide-html": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "omuta-city-exclusivity": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "omuta-guide-and-unlock": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "omuta-selector-handler": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "soul-food-coverage": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        }
+      },
+      "total": 11133,
+      "failed": 0,
+      "failures": [],
+      "regions": 47,
+      "newItems": 154,
+      "motifTypes": 295,
+      "regionalEnemySlots": 1227,
+      "scope": "Actual data, shops, field/battle use, drops and generated guide HTML in VM. Source metadata checked against pref pages separately. Real-device rendering not covered."
+    },
+    "map": {
+      "groups": {
+        "safe-city-and-facility-paths": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "city-step-encounter-suppression": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "exterior-encounter-real-engine": {
+          "cases": 585,
+          "passed": 585,
+          "failed": 0
+        },
+        "city-direct-combat-rejected": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "single-connected-national-map": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "unlock-and-road-gates": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "progressive-route-connectivity": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "exit-enter-and-save": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "walking-not-teleporting": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "departure-does-not-mutate-when-blocked": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "shinkansen-transaction": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "challenge-reception-moves-outside-before-payment": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "rematch-reception-moves-outside-before-payment": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "held-input-does-not-reenter-city": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "regional-guide-and-return-route": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "atlas-and-phone-controls": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "old-city-battle-save-migration": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "locked-or-invalid-world-save-recovery": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        }
+      },
+      "total": 2187,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three repeated passes of actual national topology, city facilities, unlock gates, walking arrivals, rail transactions and save migration in VM. Render/audio/storage mocked; no browser/device layout verification."
+    },
+    "stream": {
+      "groups": {
+        "stream-all-action-sequences": {
+          "cases": 252720,
+          "passed": 252720,
+          "failed": 0
+        },
+        "stream-ui-guard": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "stream-completion": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "stream-save-rejection": {
+          "cases": 7,
+          "passed": 7,
+          "failed": 0
+        },
+        "stream-save-roundtrip": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "stream-rendered-action": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "stream-start": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "stream-start-rejection": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "job-event-completion-and-stale-step": {
+          "cases": 22,
+          "passed": 22,
+          "failed": 0
+        },
+        "narrative-case-full-flow": {
+          "cases": 24,
+          "passed": 24,
+          "failed": 0
+        }
+      },
+      "total": 252803,
+      "failed": 0,
+      "failures": [],
+      "scope": "Exhaustive four-action stream scoring combinations; actual stream handlers, job events, narrative flows and save validation with mocked UI/storage/audio. Not browser or live cloud tests."
+    },
+    "completeness": {
+      "groups": {
+        "food-prefecture-card": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "omuta-real-card": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "raw-item-registered": {
+          "cases": 312,
+          "passed": 312,
+          "failed": 0
+        },
+        "raw-gear-registered": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "raw-event-registered": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "actual-paged-card": {
+          "cases": 15321,
+          "passed": 15321,
+          "failed": 0
+        },
+        "category-page-coverage": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "global-name-search": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "wrong-category-recovery": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "filter-hidden-recovery": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "readonly-search": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 20624,
+      "failed": 0,
+      "failures": [],
+      "pagesChecked": 1278,
+      "visibleChecked": 15321,
+      "foodCards": 154,
+      "expectedEnemies": 10343,
+      "expectedItems": 4978,
+      "scope": "Exhaustive generated card names and IDs across all six category pages, official regional food data, cross-category search and shop restrictions in VM. No browser/device rendering."
+    },
+    "comprehensive": {
+      "designGroups": 21,
+      "groups": {
+        "area-definition": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "enemy-definition-and-difficulty": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "encounter-boundary": {
+          "cases": 20500,
+          "passed": 20500,
+          "failed": 0
+        },
+        "experience-level-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "mastery-rank-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "regional-reward": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "equipment-reference": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "skill-reference": {
+          "cases": 375,
+          "passed": 375,
+          "failed": 0
+        },
+        "map-dimensions-and-objects": {
+          "cases": 141,
+          "passed": 141,
+          "failed": 0
+        },
+        "quest-reference": {
+          "cases": 130,
+          "passed": 130,
+          "failed": 0
+        },
+        "shop-stock-reference": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "shop-quote-boundary": {
+          "cases": 24470,
+          "passed": 24470,
+          "failed": 0
+        },
+        "field-battle-creation": {
+          "cases": 615,
+          "passed": 615,
+          "failed": 0
+        },
+        "bag-stack-and-removal": {
+          "cases": 1560,
+          "passed": 1560,
+          "failed": 0
+        },
+        "bag-kind-capacity": {
+          "cases": 26,
+          "passed": 26,
+          "failed": 0
+        },
+        "layout-parameter": {
+          "cases": 360,
+          "passed": 360,
+          "failed": 0
+        },
+        "new-save-roundtrip": {
+          "cases": 66,
+          "passed": 66,
+          "failed": 0
+        },
+        "invalid-save-rejected": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "name-validation": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "combat-damage-invariants": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "invalid-bag-quantity": {
+          "cases": 22,
+          "passed": 22,
+          "failed": 0
+        }
+      },
+      "total": 67369,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual game code in a VM with mocked DOM/storage/audio surfaces. Data and parameter cases; not unique viewpoints, browser rendering or full playthroughs."
+    },
+    "geography": {
+      "groups": {
+        "expanded-scale": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "coordinate-projection": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "real-relative-position": {
+          "cases": 21,
+          "passed": 21,
+          "failed": 0
+        },
+        "terrain-present-and-traversal": {
+          "cases": 57,
+          "passed": 57,
+          "failed": 0
+        },
+        "landmark-art": {
+          "cases": 27,
+          "passed": 27,
+          "failed": 0
+        },
+        "landmark-geography-and-source": {
+          "cases": 30,
+          "passed": 30,
+          "failed": 0
+        },
+        "atlas-region-and-ui-purity": {
+          "cases": 36,
+          "passed": 36,
+          "failed": 0
+        },
+        "old-world-save-reposition": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "old-battle-return-reposition": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "bounded-canvas-cache": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "full-world-viewport-render": {
+          "cases": 228,
+          "passed": 228,
+          "failed": 0
+        }
+      },
+      "total": 604,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual coordinate projection, terrain tiles, landmark art, native region selection and old-save migration. Canvas commands recorded in Node VM; no browser/device test.",
+      "cache": {
+        "chunks": 40,
+        "limit": 40,
+        "chunkPixels": 65536,
+        "bytes": 10485760
+      }
+    },
+    "coach": {
+      "groups": {
+        "forecast-purity-and-range": {
+          "cases": 150,
+          "passed": 150,
+          "failed": 0
+        },
+        "timeline-replay-and-persistence": {
+          "cases": 585,
+          "passed": 585,
+          "failed": 0
+        },
+        "goal-suggestion": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "previous-settings": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "history-filters": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "saved-timeline-rejection": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "legacy-history": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "result-coaching": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 746,
+      "failed": 0,
+      "failures": [],
+      "scope": "Forecasts are hypothetical game values. Tests use actual logic and HTML with mocked UI/storage/audio; no real browser or cloud."
+    },
+    "focused": {
+      "groups": {
+        "A1-stale-navigation": {
+          "cases": 15,
+          "passed": 15,
+          "failed": 0
+        },
+        "A1-invalid-area": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "A1-page-bounds": {
+          "cases": 10,
+          "passed": 10,
+          "failed": 0
+        },
+        "A1-detail-bounds": {
+          "cases": 7,
+          "passed": 7,
+          "failed": 0
+        },
+        "A2-repeated-valid-navigation": {
+          "cases": 615,
+          "passed": 615,
+          "failed": 0
+        },
+        "B1-invalid-reward-quantity": {
+          "cases": 36,
+          "passed": 36,
+          "failed": 0
+        },
+        "B1-invalid-item-and-gear": {
+          "cases": 33,
+          "passed": 33,
+          "failed": 0
+        },
+        "B2-valid-overflow": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "C1-reject-corrupt-saves": {
+          "cases": 63,
+          "passed": 63,
+          "failed": 0
+        },
+        "C2-valid-save-roundtrip": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "C2-legacy-items": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 800,
+      "failed": 0,
+      "failures": [],
+      "phases": [
+        "1: reproduction and invalid boundaries",
+        "2: three repeated valid/invalid sequences",
+        "3: broad regression and checksum-valid save roundtrips"
+      ],
+      "focus": [
+        "A: enemy encyclopedia and stale UI navigation",
+        "B: item/gear acquisition and overflow",
+        "C: inventory and encounter save validation"
+      ],
+      "scope": "Actual functions and real checksum validation in VM with mocked UI/audio/storage. Boundary calls are injected, not evidence that every case occurs via normal UI. No browser/device or live cloud tests."
+    },
+    "battle": {
+      "groups": {
+        "stale-battle-input": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "null-run-safe": {
+          "cases": 7,
+          "passed": 7,
+          "failed": 0
+        },
+        "auto-idempotence": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "old-auto-callback": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "old-flash-callback": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "manual-confirm-blocked": {
+          "cases": 15,
+          "passed": 15,
+          "failed": 0
+        },
+        "retreat-cleans-up": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "defeat-once": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "manual-comment-flow": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "all-battle-kinds-auto": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "replaced-auto-reservation": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "valid-flash-enters-battle": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "auto-pause-and-resume": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "tap-and-timer-mode": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "stale-dom-battle-control": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "current-dom-battle-control": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "native-target-event": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "full-auto-sequence": {
+          "cases": 2682,
+          "passed": 2682,
+          "failed": 0
+        }
+      },
+      "total": 2793,
+      "failed": 0,
+      "failures": [],
+      "battleRuns": 2682,
+      "actions": 26545,
+      "wins": 50,
+      "losses": 2533,
+      "capped": 99,
+      "scope": "Actual battle engine and victory/defeat/retreat handlers, three rounds over all 205 areas and 93 bosses at three difficulties. Simulated timers and UI/audio/storage. Battles above 120 actions are capped then retreated; not claimed as victories. Physical device and live cloud not tested."
+    },
+    "deep": {
+      "groups": {
+        "boss-generation": {
+          "cases": 558,
+          "passed": 558,
+          "failed": 0
+        },
+        "boss-reward-idempotency": {
+          "cases": 93,
+          "passed": 93,
+          "failed": 0
+        },
+        "nonvictory-no-reward": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "stale-result-return": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "result-return-context": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-remove-repeat": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-change-blocked": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "sheet-back-one-level": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "navigation-reset": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "progression-unlock-sequence": {
+          "cases": 10,
+          "passed": 10,
+          "failed": 0
+        }
+      },
+      "total": 688,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual boss construction/enemy action/reward/equipment/navigation code. DOM/render/save/audio calls mocked; boss victories synthetically marked, not full boss fights."
+    },
+    "mobile": {
+      "groups": {
+        "mobile-html": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "tab-memory": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "density-toggle": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "page-jump": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "page-scroll": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "draft-search": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "invalid-density": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-native-select": {
+          "cases": 48,
+          "passed": 48,
+          "failed": 0
+        },
+        "enemy-native-select": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "category-counts": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "sort-and-size": {
+          "cases": 72,
+          "passed": 72,
+          "failed": 0
+        },
+        "invalid-size": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "density-anchor": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "single-detail": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "context-entry": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "total": 375,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual generated HTML, UI handlers and scroll calculations with mocked DOM rectangles in VM. Does not verify browser layout, touch behavior or physical screen sizes."
+    }
+  },
+  "additionalChecks": {
+    "interactions": 19,
+    "audio": 13,
+    "career": 16,
+    "releaseSync": 7
+  },
+  "total": 439566,
+  "failed": 0,
+  "mapFacts": {
+    "sizeTiles": [
+      720,
+      984
+    ],
+    "previousSizeTiles": [
+      142,
+      87
+    ],
+    "tileAreaRatio": 57.3482272948033,
+    "geographicCities": 65,
+    "terrainTypes": 19,
+    "landmarks": 10,
+    "chunkCacheLimit": 40,
+    "chunkCacheMaxBytes": 10485760
+  },
+  "verification": [
+    "地理・描画604ケースと移動2187ケースで3回反復",
+    "地形・名所のキャンバス描画命令を画像化して目視確認",
+    "全65入口・10名所・航路の描画を3回反復",
+    "解放順の接続・セーブ互換・新幹線・街中非遭遇を検証"
+  ],
+  "limitations": [
+    "ブラウザ自動デバッグは実施していない。実機の表示・タッチ・性能は未確認。",
+    "海岸線・河川・山地は手描きの概略。実測地形や実際の道路・鉄道・橋・航路を再現したものではない。",
+    "密集地は入口の記号のみ重なりを避けて移動し、真の投影位置を細線で結ぶ。",
+    "砂漠は創作。鳥取砂丘を砂漠として誤って紹介するものではない。",
+    "初期パーティーの戦闘シミュレーションは120手で打切り撤退。全ボス撃破の検証ではない。",
+    "ケース数はデータ・パラメータの組合せ。独立した検証観点数や全体無欠陥を意味しない。"
+  ]
+}

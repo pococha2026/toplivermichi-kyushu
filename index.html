@@ -608,6 +608,8 @@ body.reduce-motion .btn{transition:none}
 .collection-search-help{border:1px solid #b49a5a;border-radius:8px;padding:10px;margin:8px 0;background:#20364a}.collection-search-help .btn{width:100%;min-height:44px;text-align:left}.collection-search-help p{line-height:1.7;overflow-wrap:anywhere}.collection-active-filter{font-size:13px;border-left:3px solid #d5b34c;padding-left:8px;overflow-wrap:anywhere}
 
 .map-tools .btn[data-a="leaveCity"],.map-tools .btn[data-a="worldReturn"]{width:64px;font-size:12px;line-height:1.3;white-space:normal}.map-tools .btn[data-k="world"]{font-size:12px}.short-map .map-scope{line-height:1.2;font-size:11px}
+
+.atlas-region{display:flex;align-items:center;gap:12px;margin:8px 0}.atlas-region select{flex:1;min-height:44px;font-size:16px;min-width:0}.national-atlas.japan-atlas{max-height:60vh;overflow:auto;background:linear-gradient(#214e66,#103248)}.japan-atlas svg{min-width:0;width:100%;min-height:360px;max-height:560px}.terrain-legend summary{min-height:44px;display:flex;align-items:center;color:#ebcf8c;cursor:pointer}.terrain-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.terrain-grid span{font-size:13px}.terrain-grid i{display:inline-block;width:18px;height:18px;border:1px solid #afc0bc;vertical-align:middle;margin-right:6px}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -626,7 +628,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.00";
+const GAME_VERSION = "8.10";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -1925,7 +1927,7 @@ function fixQuestChain(st){
 function sideQuestOf(hub){ return Object.keys(QUESTS).find(k=>!QUESTS[k].main&&QUESTS[k].hub===hub); }
 
 /* 施設のマーク */
-const FACILITY = { cityEntry:{mark:"街",name:"街の入口",color:"#83B9AE"},worldExit:{mark:"外",name:"街外へ出る",color:"#D5B34C"}, station:{mark:"駅",name:"新幹線駅",color:"#83B9AE"}, shop:{mark:"店",name:"ショップ",color:"#D5B34C"}, inn:{mark:"宿",name:"宿屋",color:"#83B9AE"}, door:{mark:"控",name:"控室（実家）",color:"#E88470"}, gate:{mark:"道",name:"街の出口",color:"#C9BFA6"}, rest:{mark:"休",name:"休息",color:"#83B9AE"}, board:{mark:"編",name:"編成",color:"#D5B34C"} };
+const FACILITY = { landmark:{mark:"景",name:"名所・ランドマーク",color:"#d5b34c"},port:{mark:"港",name:"港・航路案内",color:"#83b9ae"}, cityEntry:{mark:"街",name:"街の入口",color:"#83B9AE"},worldExit:{mark:"外",name:"街外へ出る",color:"#D5B34C"}, station:{mark:"駅",name:"新幹線駅",color:"#83B9AE"}, shop:{mark:"店",name:"ショップ",color:"#D5B34C"}, inn:{mark:"宿",name:"宿屋",color:"#83B9AE"}, door:{mark:"控",name:"控室（実家）",color:"#E88470"}, gate:{mark:"道",name:"街の出口",color:"#C9BFA6"}, rest:{mark:"休",name:"休息",color:"#83B9AE"}, board:{mark:"編",name:"編成",color:"#D5B34C"} };
 
 /* ---- 職歴ごとの初期装備（非売品。売却・捨てるは可能）。能力はCW01・CA01と同程度 ----
    武器 A型：単体攻撃力＋2 ／ B型：単体攻撃力＋1・応援コメントのエール＋1
@@ -2846,35 +2848,78 @@ function generateTown(id,seed){
   const decor=[];for(let y=2;y<m.h-2;y++)for(let x=2;x<m.w-2;x++)if(grid[y][x]===','&&!m.objects.some(o=>Math.max(Math.abs(o.x-x),Math.abs(o.y-y))<=1))decor.push({x,y,key:r()});m.pocoDecor=decor.sort((a,b)=>a.key-b.key).slice(0,10);
   m.tiles=grid;m.layoutKey=seed+':'+id;m.safeAnchor=base.safeAnchor.slice();m.layoutStyle=style;return m;
 }
-/* v8: national overworld, separate from safe city maps. Layout is a game schematic. */
+/* Japan-inspired geographic overworld. Coast and transport are simplified game geometry. */
 const WORLD_NODES={},WORLD_ROADS=[];
+const WORLD_GEO={west:126,north:46.5,sx:34,sy:44,w:720,h:984,version:2};
+const WORLD_TERRAIN={ '~':['海','#215970',false],G:['草原','#7b9b58',true],T:['森林','#3d6847',false],M:['山岳','#777d78',false],N:['雪山','#c7d8d4',false],R:['川・湖','#4f9fae',false],B:['橋','#c2ab79',true],P:['港','#778e9b',true],S:['砂浜','#dfc892',true],D:['砂漠（創作）','#d2ac63',true],W:['荒野','#a69b7b',true],F:['田んぼ','#6c9d73',true],U:['荒れ道','#9f8964',true],A:['舗装道路','#6f7c83',true],L:['新幹線線路','#a6b7bb',false],H:['高速道路','#46586b',false],V:['市街地','#9ca28d',true],C:['都市部','#7e91a1',true],E:['港を結ぶ航路（ゲーム内）','#367b91',true]};
+const WORLD_COASTS=[
+ ['北海道',[[139.75,41.4],[140.4,41.4],[140.8,42.2],[141.8,42.5],[143.2,42],[144.4,42.8],[145.8,43.35],[145.1,43.8],[145.35,44.35],[144.1,44.05],[142,45.5],[141.6,45.4],[141.6,44.4],[141.15,43.7],[140.35,43.35],[140.1,42.6],[139.8,42.2]]],
+ ['本州',[[130.85,34.1],[131.3,34.55],[132.1,34.85],[132.8,35.45],[133.45,35.65],[134.4,35.65],[135.15,35.8],[135.9,35.55],[136.1,36.2],[136.7,37.2],[137.3,37.5],[137.05,36.85],[137.7,36.8],[138.3,37.4],[139.45,38.3],[140,39.4],[139.9,40.3],[140.4,41.25],[140.8,41.2],[141.2,41.5],[141.5,41.35],[141.4,40.8],[141.85,40.35],[142.05,39.6],[141.55,38.95],[141.55,38.3],[141,37.8],[140.85,36.9],[140.7,36.2],[140.9,35.75],[140.4,35.15],[139.85,34.9],[139.75,35.4],[139.15,35.15],[138.85,34.6],[138.5,34.65],[138.2,34.9],[137.6,34.6],[136.9,34.65],[136.8,34.3],[136,33.45],[135.5,33.45],[135.05,33.9],[135.05,34.25],[135.4,34.65],[134.6,34.75],[134.15,34.5],[133.5,34.3],[132.55,34.15],[132.1,33.85],[131.45,33.95]]],
+ ['四国',[[132.05,33.35],[132.6,33],[132.75,32.75],[133.2,33.2],[133.9,33.3],[134.3,33.2],[134.8,33.85],[134.6,34.25],[134.1,34.4],[133.5,34.25],[133,34.1],[132.7,33.8]]],
+ ['九州',[[129.55,33.35],[129.85,33.6],[130.25,33.8],[130.65,33.95],[131.05,33.95],[131.65,33.7],[131.85,33.45],[131.55,33],[131.95,32.8],[131.6,31.7],[131.3,31.35],[131.05,31],[130.7,31],[130.7,31.55],[130.5,31.6],[130.45,31.15],[130.1,31.2],[130.15,31.8],[130.4,32.4],[130.15,32.7],[129.65,32.55],[129.6,32.85],[129.75,33.1]]],
+ ['沖縄',[[127.62,26.04],[127.8,26.2],[127.84,26.45],[128.1,26.65],[128.27,26.86],[128.31,26.88],[128.05,26.85],[127.92,26.65],[127.72,26.43],[127.64,26.2]]],
+ ['奄美',[[129.15,28],[129.7,28.15],[129.75,28.5],[129.4,28.55]]],
+ ['屋久島',[[130.35,30.2],[130.7,30.2],[130.7,30.5],[130.35,30.5]]],
+ ['種子島',[[130.85,30.3],[131.05,30.4],[131.1,30.85],[130.95,30.85]]],
+ ['佐渡',[[138.15,37.8],[138.55,38],[138.5,38.35],[138.25,38.35]]],
+ ['淡路島',[[134.65,34.15],[134.9,34.2],[135.02,34.6],[134.8,34.5]]],
+ ['小笠原',[[142.12,27.02],[142.25,27.02],[142.25,27.17],[142.12,27.17]]]
+];
+const WORLD_LANDMARKS=[
+ ['fuji','富士山',35.36,138.73,'mountain','https://www.japan.travel/en/spot/1308/'],
+ ['aso','阿蘇山',32.88,131.1,'volcano','https://www.env.go.jp/en/park/aso/data/mtasovc/explore-mt-aso.html'],
+ ['miyajima','厳島神社・宮島',34.3,132.32,'shrine','https://www.japan.travel/en/spot/887/'],
+ ['biwa','琵琶湖',35.25,136.08,'lake','https://www.japan.travel/en/spot/1052/'],
+ ['osaka','大阪城',34.687,135.526,'castle','https://www.japan.travel/en/spot/1087/'],
+ ['himeji','姫路城',34.839,134.694,'castle','https://www.japan.travel/en/spot/1030/'],
+ ['shuri','首里城',26.217,127.719,'palace','https://www.japan.travel/en/spot/574/'],
+ ['clock','札幌市時計台',43.063,141.354,'clock','https://www.japan.travel/en/spot/1921/'],
+ ['shirakawa','白川郷',36.26,136.906,'village','https://www.japan.travel/en/spot/2031/'],
+ ['tottori','鳥取砂丘',35.54,134.235,'dune','https://www.japan.travel/en/spot/949/']
+].map(([id,name,lat,lon,style,source])=>({id,name,lat,lon,style,source}));
+function worldProject(lon,lat){return {x:Math.round(16+(lon-WORLD_GEO.west)*WORLD_GEO.sx),y:Math.round(16+(WORLD_GEO.north-lat)*WORLD_GEO.sy)};}
+function worldUnproject(x,y){return {lon:WORLD_GEO.west+(x-16)/WORLD_GEO.sx,lat:WORLD_GEO.north-(y-16)/WORLD_GEO.sy};}
+function worldPolygonContains(x,y,p){let inside=false;for(let i=0,j=p.length-1;i<p.length;j=i++)if((p[i].y>y)!==(p[j].y>y)&&x<(p[j].x-p[i].x)*(y-p[i].y)/(p[j].y-p[i].y)+p[i].x)inside=!inside;return inside;}
 function buildNationalOverworld(){
- const cols=10,cellW=14,cellH=12,rows=Math.ceil(HUB_ORDER.length/cols),w=cols*cellW+2,h=rows*cellH+3;
- const m={hub:'KY01',name:'全国街道・街外マップ',kind:'out',mapScope:'world',w,h,tiles:Array.from({length:h},()=>Array(w).fill('~')),objects:[],zones:{},owners:{},areas:{},layoutKey:'national-v8',safeAnchor:[7,7]};
- const rooms=new Set();
- const put=(x,y,hub,area=null,t='1')=>{const k=x+','+y;m.tiles[y][x]=t;const a=m.owners[k]||(m.owners[k]=[]);if(!a.includes(hub))a.push(hub);if(area)m.areas[k]=area;};
- for(let i=0;i<HUB_ORDER.length;i++){
-  const hub=HUB_ORDER[i],row=Math.floor(i/cols),col=row%2?cols-1-i%cols:i%cols,x=7+col*cellW,y=4+row*cellH;
-  WORLD_NODES[hub]={hub,x,y,spawn:{x,y:y+1},road:{x,y:y+8}};for(let yy=y-1;yy<=y+7;yy++)for(let xx=x-4;xx<=x+4;xx++)rooms.add(xx+','+yy);
-  const areas=Object.keys(AREAS).filter(a=>a.slice(0,4)===hub);
-  for(let yy=y+2;yy<=y+6;yy++)for(let xx=x-4;xx<=x+4;xx++)put(xx,yy,hub,areas[Math.min(areas.length-1,Math.floor((xx-x+4)/3))]);
-  for(let yy=y;yy<=y+8;yy++)put(x,yy,hub,yy>=y+2?areas[1]||areas[0]:null,yy>=y+2?'1':',');
-  m.objects.push({id:'city_'+hub,x,y,type:'cityEntry',label:HUBS[hub].name+'に入る',to:hub,walk:true});
-  areas.forEach((area,j)=>m.objects.push({id:'field_'+area,x:x-4+j*3,y:y+2,type:'sign',label:AREAS[area].name,area}));
-  const bosses=Object.entries(BOSSES).filter(([id,b])=>b.hub===hub&&b.specialStage==null&&!id.startsWith('CB'));
-  bosses.forEach(([boss,b],j)=>m.objects.push({id:'world_boss_'+boss,x:x-3+j*2,y:y+6,type:'boss',label:b.name,boss,walk:true}));
+ const {w,h}=WORLD_GEO,m={hub:'KY01',name:'日本列島・全国街外マップ',kind:'out',mapScope:'world',w,h,tiles:Array.from({length:h},()=>Array(w).fill('~')),objects:[],zones:{},owners:{},areas:{},landmarks:[],rivers:[],transport:[],coasts:[],layoutKey:'japan-geographic-v2',safeAnchor:[0,0]};
+ const size=w*h,rooms=new Uint8Array(size),land=new Uint8Array(size),baseLand=[];
+ const projectedCities=HUB_ORDER.map(id=>({id,...worldProject(GAME_GEO[id].lon,GAME_GEO[id].lat)}));
+ const nearest=(x,y)=>{let best='KY01',dist=Infinity;for(const p of projectedCities){const id=p.id,d=(p.x-x)**2+(p.y-y)**2;if(d<dist){dist=d;best=id;}}return best;};
+ const put=(x,y,hub,area=null,t=null)=>{if(x<1||y<1||x>=w-1||y>=h-1)return;const k=x+','+y;if(t)m.tiles[y][x]=t;const a=m.owners[k]||(m.owners[k]=[]);if(!a.includes(hub))a.push(hub);if(area)m.areas[k]=area;};
+ for(const[name,poly]of WORLD_COASTS){const p=poly.map(([lon,lat])=>worldProject(lon,lat));m.coasts.push({name,points:p});const x0=Math.max(1,Math.min(...p.map(a=>a.x))),x1=Math.min(w-2,Math.max(...p.map(a=>a.x))),y0=Math.max(1,Math.min(...p.map(a=>a.y))),y1=Math.min(h-2,Math.max(...p.map(a=>a.y)));for(let y=y0;y<=y1;y++)for(let x=x0;x<=x1;x++)if(worldPolygonContains(x,y,p)){m.tiles[y][x]='G';land[y*w+x]=1;}}
+ for(let y=1;y<h-1;y++)for(let x=1;x<w-1;x++)if(land[y*w+x]){const hub=nearest(x,y),geo=worldUnproject(x,y),v=Math.sin(x*.17+y*.11)+Math.cos(x*.09-y*.13);let t=v>1.35?'M':v< -1.25?'T':v>.6?'W':v< -.6?'F':'G';if(geo.lat>42.8&&v>1)t='N';if(!land[y*w+x-1]||!land[y*w+x+1]||!land[(y-1)*w+x]||!land[(y+1)*w+x])t='S';const center=worldProject(GAME_GEO[hub].lon,GAME_GEO[hub].lat),distance=Math.hypot(x-center.x,y-center.y);put(x,y,hub,hub+'-A'+(distance<18?1:distance<36?2:3),t);baseLand.push([x,y]);}
+ // Major mountain belts, rivers and lake: simplified geography rather than random grid rooms.
+ function line(points,visit){for(let i=1;i<points.length;i++){let{x,y}=points[i-1],b=points[i],dx=Math.abs(b.x-x),dy=Math.abs(b.y-y),sx=x<b.x?1:-1,sy=y<b.y?1:-1,err=dx-dy;for(;;){visit(x,y);if(x===b.x&&y===b.y)break;const e=2*err;if(e> -dy){err-=dy;x+=sx;}if(e<dx){err+=dx;y+=sy;}}}}
+ const geoLine=(arr,visit)=>line(arr.map(([lon,lat])=>worldProject(lon,lat)),visit);
+ for(const arr of [[[137.2,36.7],[137.7,36.2],[138.1,35.5]],[[140.7,40.6],[140.8,39.4],[140.4,38.4]],[[130.6,32.7],[131.05,32.3],[130.8,31.8]],[[142.5,44.3],[142.7,43.4],[143,42.7]]])geoLine(arr,(x,y)=>{for(let dy=-2;dy<=2;dy++)for(let dx=-2;dx<=2;dx++)if(land[(y+dy)*w+x+dx])m.tiles[y+dy][x+dx]=worldUnproject(x,y).lat>42?'N':'M';});
+ const rivers=[['石狩川',[[142.5,43.7],[141.9,43.6],[141.45,43.25],[141.3,43.15]]],['信濃川',[[138.2,36.8],[138.6,37.2],[138.85,37.5],[139.05,37.95]]],['利根川',[[139,36.7],[139.5,36.2],[140.1,35.95],[140.8,35.75]]],['淀川',[[135.9,35],[135.7,34.9],[135.5,34.65]]],['四万十川',[[133,33.5],[132.9,33.2],[132.95,32.95]]],['筑後川',[[131.1,33.3],[130.7,33.4],[130.3,33.1]]]];
+ for(const[name,points]of rivers){const ps=points.map(([lon,lat])=>worldProject(lon,lat));m.rivers.push({name,points:ps});line(ps,(x,y)=>{if(land[y*w+x])m.tiles[y][x]='R';});}
+ const lake=worldProject(136.08,35.25);for(let y=lake.y-7;y<=lake.y+7;y++)for(let x=lake.x-3;x<=lake.x+3;x++)if(((x-lake.x)/3)**2+((y-lake.y)/7)**2<1&&land[y*w+x])m.tiles[y][x]='R';
+ // Preserve true geographic markers; offset only entrance symbols where dense cities overlap.
+ for(const hub of HUB_ORDER){const geo=worldProject(GAME_GEO[hub].lon,GAME_GEO[hub].lat);let n=null;for(let r=0;r<=44&&!n;r++)for(let dy=-r;dy<=r&&!n;dy++)for(let dx=-r;dx<=r&&!n;dx++){if(r&&Math.max(Math.abs(dx),Math.abs(dy))!==r)continue;const x=geo.x+dx,y=geo.y+dy;if(x<8||y<3||x>=w-8||y>=h-10)continue;let free=true;for(let yy=y-2;yy<=y+8&&free;yy++)for(let xx=x-5;xx<=x+5;xx++)if(rooms[yy*w+xx]){free=false;break;}if(free)n={hub,x,y,geoX:geo.x,geoY:geo.y,lat:GAME_GEO[hub].lat,lon:GAME_GEO[hub].lon,spawn:{x,y:y+1},road:{x,y:y+8}};}
+  if(!n)throw Error('city placement failed '+hub);WORLD_NODES[hub]=n;const{x,y}=n;for(let yy=y-1;yy<=y+7;yy++)for(let xx=x-4;xx<=x+4;xx++)rooms[yy*w+xx]=1;
+  const areaIds=Object.keys(AREAS).filter(a=>a.slice(0,4)===hub);for(let yy=y-1;yy<=y+7;yy++)for(let xx=x-4;xx<=x+4;xx++){m.owners[xx+','+yy]=[hub];put(xx,yy,hub,areaIds[Math.min(2,Math.floor((xx-x+4)/3))],yy<y+2?(Math.abs(xx-x)<2?'C':'V'):['G','F','U'][Math.min(2,Math.floor((xx-x+4)/3))]);}
+  for(let yy=y;yy<=y+8;yy++){m.owners[x+','+yy]=[hub];put(x,yy,hub,areaIds[1],yy<y+2?'A':'U');}
+  m.objects.push({id:'city_'+hub,x,y,type:'cityEntry',label:HUBS[hub].name+'に入る',to:hub,walk:true});areaIds.forEach((area,j)=>m.objects.push({id:'field_'+area,x:x-4+j*3,y:y+2,type:'sign',label:AREAS[area].name,area}));
+  Object.entries(BOSSES).filter(([id,b])=>b.hub===hub&&b.specialStage==null&&!id.startsWith('CB')).forEach(([boss,b],j)=>m.objects.push({id:'world_boss_'+boss,x:x-3+j*2,y:y+6,type:'boss',label:b.name,boss,walk:true}));
  }
- // Route each town to the town owning its unlock quest. Overlapping roads are junctions.
- for(const hub of HUB_ORDER.slice(1)){
-  const req=hubRequirement(hub),parent=QUESTS[req]?.hub||'KY01',a=WORLD_NODES[parent]||WORLD_NODES.KY01,b=WORLD_NODES[hub];
-  const key=(x,y)=>x+','+y,q=[a.road],prev=new Map([[key(a.road.x,a.road.y),null]]);let end=null;
-  for(let i=0;i<q.length;i++){const p=q[i];if(p.x===b.road.x&&p.y===b.road.y){end=p;break;}for(const[dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const x=p.x+dx,y=p.y+dy,k=key(x,y);if(x<1||y<1||x>=w-1||y>=h-1||prev.has(k))continue;if(rooms.has(k))continue;prev.set(k,p);q.push({x,y});}}
-  if(!end)throw Error('national road missing '+hub);const path=[];while(end){path.push(end);end=prev.get(key(end.x,end.y));}
-  const area=Object.keys(AREAS).find(id=>id.slice(0,4)===hub);for(const p of path)put(p.x,p.y,hub,area,'=');WORLD_ROADS.push({from:parent,to:hub,path});
+ // Weighted A* follows land when practical, using ferry lanes for long island crossings.
+ const dist=new Float64Array(size),prev=new Int32Array(size),seen=new Uint32Array(size),closed=new Uint32Array(size);let epoch=0;
+ function route(a,b){epoch++;const start=a.y*w+a.x,end=b.y*w+b.x,heap=[];const push=(id,c)=>{let i=heap.length;heap.push({id,c});while(i){let p=(i-1)>>1;if(heap[p].c<=c)break;heap[i]=heap[p];i=p;}heap[i]={id,c};};const pop=()=>{const root=heap[0],last=heap.pop();if(heap.length){let i=0;while(i*2+1<heap.length){let c=i*2+1;if(c+1<heap.length&&heap[c+1].c<heap[c].c)c++;if(heap[c].c>=last.c)break;heap[i]=heap[c];i=c;}heap[i]=last;}return root;};dist[start]=0;prev[start]=-1;seen[start]=epoch;push(start,0);let count=0;while(heap.length&&count++<size*3){const{id}=pop();if(closed[id]===epoch)continue;closed[id]=epoch;if(id===end)break;const x=id%w,y=Math.floor(id/w);for(const[dx,dy]of [[1,0],[-1,0],[0,1],[0,-1]]){const nx=x+dx,ny=y+dy,k=ny*w+nx;if(nx<1||ny<1||nx>=w-1||ny>=h-1||rooms[k])continue;const t=m.tiles[ny][nx],cost=t==='~'?5:t==='M'||t==='N'?3:t==='R'?2:1,nd=dist[id]+cost;if(closed[k]===epoch||seen[k]===epoch&&nd>=dist[k])continue;seen[k]=epoch;dist[k]=nd;prev[k]=id;push(k,nd+2*(Math.abs(nx-b.x)+Math.abs(ny-b.y)));}}
+  if(seen[end]!==epoch||prev[end]<0)throw Error('national connection missing');const out=[];for(let k=end;k>=0;k=prev[k]){out.push({x:k%w,y:Math.floor(k/w)});if(k===start)break;}return out;}
+ for(const hub of HUB_ORDER.slice(1)){const req=hubRequirement(hub),parent=QUESTS[req]?.hub||'KY01',a=WORLD_NODES[parent]||WORLD_NODES.KY01,b=WORLD_NODES[hub],path=route(a.road,b.road),area=hub+'-A1';let sea=0;for(const p of path)if(['~','E'].includes(m.tiles[p.y][p.x]))sea++;for(const p of path){const old=m.tiles[p.y][p.x];put(p.x,p.y,hub,area,['E','B','P'].includes(old)?old:old==='~'?(sea>12?'E':'B'):old==='R'?'B':(p.x+p.y)%11<4?'A':'U');}WORLD_ROADS.push({from:parent,to:hub,path,seaTiles:sea});if(sea>12)for(const p of [path[0],path.at(-1)]){put(p.x,p.y,hub,area,'P');if(!m.objects.some(o=>o.x===p.x&&o.y===p.y))m.objects.push({id:'port_'+hub+'_'+p.x,x:p.x,y:p.y,type:'port',label:'港・離島航路案内',hub,walk:true});}}
+ // Transport layers are scenery; footpaths remain intact at crossings.
+ for(let i=0;i<WORLD_ROADS.length;i++){const road=WORLD_ROADS[i];if(road.seaTiles>12)continue;for(const p of road.path)for(const[offset,t]of [[2,'L'],[-2,'H']]){const x=p.x+offset,y=p.y;if(x<1||x>=w-1||rooms[y*w+x]||!land[y*w+x]||!['G','F','W','T'].includes(m.tiles[y][x]))continue;m.tiles[y][x]=t;m.transport.push({x,y,type:t});}}
+ // Spots retain their reference coordinates; nearby footpaths are game access paths.
+ for(const spot of WORLD_LANDMARKS){const p=worldProject(spot.lon,spot.lat),hub=nearest(p.x,p.y),n=WORLD_NODES[hub];let best=null;for(let r=0;r<35&&!best;r++)for(let dy=-r;dy<=r&&!best;dy++)for(let dx=-r;dx<=r&&!best;dx++){const x=p.x+dx,y=p.y+dy;if(x<2||y<2||x>=w-2||y>=h-2||rooms[y*w+x]||m.objects.some(o=>o.x===x&&o.y===y))continue;best={x,y};}
+  if(!best)continue;const access=route(n.road,best);for(const q of access)put(q.x,q.y,hub,hub+'-A1',['E','B','P'].includes(m.tiles[q.y][q.x])?m.tiles[q.y][q.x]:['~','R'].includes(m.tiles[q.y][q.x])?'B':'U');const o={...spot,...best,type:'landmark',label:spot.name,hub,walk:true,geoX:p.x,geoY:p.y};put(o.x,o.y,hub,null,spot.style==='dune'?'S':'G');m.landmarks.push(o);m.objects.push(o);
  }
- MAPS.WORLD=m;
+ const dunes=worldProject(134.235,35.54);for(let y=dunes.y-4;y<=dunes.y+4;y++)for(let x=dunes.x-8;x<=dunes.x+8;x++)if(land[y*w+x]&&!rooms[y*w+x]&&['G','F','W','S'].includes(m.tiles[y][x]))m.tiles[y][x]=x<dunes.x?'D':'S';
+ m.scenicNote='街・観光地は緯度経度を参考に配置。海岸線・地形・道路・鉄道・航路はゲーム用に簡略化。砂漠は創作。';
+ m.objectIndex=Object.fromEntries(m.objects.map(o=>[o.x+','+o.y,o]));m.safeAnchor=[WORLD_NODES.KY01.spawn.x,WORLD_NODES.KY01.spawn.y];m.terrainCounts={};for(const row of m.tiles)for(const t of row)m.terrainCounts[t]=(m.terrainCounts[t]||0)+1;MAPS.WORLD=m;
 }
 buildNationalOverworld();
+
 function separateCityMap(m){
  m.mapScope='city';m.zones={};m.tiles=m.tiles.map(row=>row.map(t=>'123'.includes(t)?'.':t));
  m.objects=m.objects.filter(o=>o.type!=='boss'&&o.type!=='sign');
@@ -2885,20 +2930,35 @@ function separateCityMap(m){
 function worldOwnersAt(x,y){return MAPS.WORLD.owners[x+','+y]||[];}
 function worldHubAt(x,y,st=G.st){const owners=worldOwnersAt(x,y),open=owners.filter(id=>st&&hubUnlocked(st,id));return open[0]||owners[0]||st?.overworldHome||'KY01';}
 function worldTileOpen(x,y,st=G.st){return !!st&&worldOwnersAt(x,y).some(id=>hubUnlocked(st,id));}
-function worldAreaAt(x,y,st=G.st){if(!worldTileOpen(x,y,st))return null;const k=x+','+y,o=objAt(MAPS.WORLD,x,y);if(o||tileAt(MAPS.WORLD,x,y)===',')return null;const a=MAPS.WORLD.areas[k];return a&&hubUnlocked(st,a.slice(0,4))?a:Object.keys(AREAS).find(id=>id.slice(0,4)===worldHubAt(x,y,st))||null;}
-function mapGuideObjects(){const m=MAPS[G.st.mapId],hub=curHub();return m.objects.filter(o=>o.type!=='tower'&&(m.mapScope!=='world'||o.to===hub||o.area?.slice(0,4)===hub||BOSSES[o.boss]?.hub===hub));}
+function worldWalkableAt(x,y,st=G.st){if(!worldTileOpen(x,y,st))return false;const o=objAt(MAPS.WORLD,x,y);return o?!!o.walk:!!WORLD_TERRAIN[tileAt(MAPS.WORLD,x,y)]?.[2];}
+function worldAreaAt(x,y,st=G.st){if(!worldWalkableAt(x,y,st))return null;const k=x+','+y,o=objAt(MAPS.WORLD,x,y);if(o||['A','V','C','P','E','B'].includes(tileAt(MAPS.WORLD,x,y)))return null;const a=MAPS.WORLD.areas[k];return a&&hubUnlocked(st,a.slice(0,4))?a:Object.keys(AREAS).find(id=>id.slice(0,4)===worldHubAt(x,y,st))||null;}
+function mapGuideObjects(){const m=MAPS[G.st.mapId],hub=curHub();return m.objects.filter(o=>o.type!=='tower'&&(m.mapScope!=='world'||o.to===hub||o.area?.slice(0,4)===hub||BOSSES[o.boss]?.hub===hub||o.hub===hub));}
 function mapScopeText(st=G.st){return st.mapId==='WORLD'?'街外｜'+HUBS[worldHubAt(st.pos.x,st.pos.y,st)].name+'周辺':MAPS[st.mapId].mapScope==='city'?'街中｜敵との遭遇なし':MAPS[st.mapId].kind==='in'?'屋内｜敵との遭遇なし':'街外｜特設エリア';}
 function exteriorBattleReady(st){if(MAPS[st.mapId]?.mapScope==='city')return leaveCity();if(MAPS[st.mapId]?.kind==='in'){toast('街外へ出てから挑戦してください。');return false;}return true;}
-function worldMoveReason(st){if(st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||st.careerSession||G.dlg)return '戦闘・配信・会話・準備を終えてから移動してください。';return '';}
+function worldMoveReason(st){if(!st||st!==G.st||G.readOnly||G.screen!=='explore'||st.run||st.stream||st.careerSession||G.dlg)return '戦闘・配信・会話・準備を終えてから移動してください。';return '';}
 function leaveCity(){const st=G.st,reason=worldMoveReason(st);if(reason){toast(reason);return false;}const n=WORLD_NODES[curHub()];if(!n||!['city'].includes(MAPS[st.mapId].mapScope)){toast('街の出口から出発してください。');return false;}if(streamPending()){toast('配信待ちの依頼を完了してから街外へ出てください。');return false;}st.overworldHome=n.hub;travelMap('WORLD',n.spawn.x,n.spawn.y);return true;}
 function enterWorldCity(to){const st=G.st,n=WORLD_NODES[to];if(worldMoveReason(st)||st.mapId!=='WORLD'||!n||Math.abs(st.pos.x-n.x)+Math.abs(st.pos.y-n.y)>1)return false;if(!hubUnlocked(st,to)){toast('未開放エリア：'+HUBS[to].name);return false;}const m=MAPS[to];st.overworldHome=to;travelHub(to,...m.safeAnchor);return true;}
-function walkNationalTo(to){const st=G.st;if(!WORLD_NODES[to]||!hubUnlocked(st,to)){toast('未開放エリアには移動できません。');return false;}const reason=worldMoveReason(st);if(reason){toast(reason);return false;}if(st.mapId!=='WORLD'&&!leaveCity())return false;const n=WORLD_NODES[to];G.sheet=null;walkTo(n.x,n.y);render();return !!G.walk.path.length;}
+function walkNationalTo(to){const st=G.st;if(!st||!WORLD_NODES[to]||!hubUnlocked(st,to)){toast('未開放エリアには移動できません。');return false;}const reason=worldMoveReason(st);if(reason){toast(reason);return false;}if(st.mapId!=='WORLD'&&!leaveCity())return false;const n=WORLD_NODES[to];G.sheet=null;walkTo(n.x,n.y);render();return !!G.walk.path.length;}
 function migrateNationalLocation(st){
+ if((st.mapTravelVersion||0)<2){const hub=hubUnlocked(st,st.overworldHome)?st.overworldHome:st.run&&WORLD_NODES[st.run.hub]&&hubUnlocked(st,st.run.hub)?st.run.hub:'KY01',n=WORLD_NODES[hub];if(st.mapId==='WORLD'){st.mapId='WORLD';st.pos={...n.spawn};}if(st.run?.returnPos?.map==='WORLD'){const r=WORLD_NODES[st.run.hub]||n;st.run.returnPos={map:'WORLD',...r.spawn};}}
  if(st.mapId==='WORLD'&&(!worldTileOpen(st.pos.x,st.pos.y,st)||!walkable(MAPS.WORLD,st.pos.x,st.pos.y,st))){const hub=hubUnlocked(st,st.overworldHome)?st.overworldHome:'KY01';st.mapId=hub;st.pos={x:MAPS[hub].safeAnchor[0],y:MAPS[hub].safeAnchor[1]};}
  if(st.run&&MAPS[st.run.returnPos?.map]?.mapScope==='city'){const n=WORLD_NODES[st.run.hub]||WORLD_NODES[st.run.returnPos.map];if(n){if(hubUnlocked(st,n.hub)){st.run.returnPos={map:'WORLD',x:n.spawn.x,y:n.spawn.y};st.mapId='WORLD';st.pos={...n.spawn};}}}
- st.mapTravelVersion=1;
+ st.mapTravelVersion=2;
 }
-function renderNationalAtlas(){const st=G.st,w=MAPS.WORLD.w,h=MAPS.WORLD.h;return '<div class="national-atlas"><svg viewBox="0 0 '+w+' '+h+'" role="img" aria-label="全国街道の接続図。暗い街は未開放。ゲーム内の模式配置です。"><rect width="'+w+'" height="'+h+'" fill="#132e3d"/>'+WORLD_ROADS.map(r=>'<path d="M'+WORLD_NODES[r.from].x+' '+WORLD_NODES[r.from].y+' L'+r.path.slice().reverse().map(p=>p.x+' '+p.y).join(' L')+' L'+WORLD_NODES[r.to].x+' '+WORLD_NODES[r.to].y+'" fill="none" stroke="'+(hubUnlocked(st,r.to)?'#d5b34c':'#435462')+'" stroke-width=".6"/>').join('')+HUB_ORDER.map(id=>{const n=WORLD_NODES[id],open=hubUnlocked(st,id),here=curHub()===id;return '<g><circle cx="'+n.x+'" cy="'+n.y+'" r="'+(here?2:1.3)+'" fill="'+(here?'#fff0ac':open?'#83b9ae':'#59616b')+'"/><text x="'+n.x+'" y="'+(n.y-2.3)+'" text-anchor="middle" font-size="2.2" fill="'+(open?'#fff5dc':'#94a0ac')+'">'+esc(HUBS[id].name)+'</text></g>';}).join('')+'</svg></div><p class="small">全国につながる1枚の街外マップです。ゲーム内の模式配置で、地理・距離・海上の道は創作です。金色＝解放済み街道／灰色＝未開放。街道移動は無料、途中で敵に遭遇します。</p>';}
+const WORLD_ATLAS_REGIONS={all:'日本全体',near:'現在地周辺',kyushu:'九州',okinawa:'沖縄',shikoku:'四国',chugoku:'中国',kinki:'近畿・東海',hokuriku:'北陸・甲信越',tohoku:'東北',hokkaido:'北海道',kanto:'関東',ogasawara:'小笠原'};
+function worldAtlasRegionHub(id,region){const g=GAME_GEO[id];if(region==='all'||region==='near')return true;return region==='kyushu'?id.startsWith('KY')&&g.lat>30:region==='okinawa'?g.lon<130&&g.lat<30:region==='shikoku'?['NX01','NX02','NX03','NX04'].includes(id):region==='chugoku'?['NX05','NX06','NX07','NX08','NX09','EN01','RS02'].includes(id):region==='kinki'?id.startsWith('KT')||id==='RS03':region==='hokuriku'?id.startsWith('HK')||['EN02','RS04'].includes(id):region==='tohoku'?id.startsWith('TH')&&g.lat<41.5||id==='EN03':region==='hokkaido'?g.lat>41.5:region==='kanto'?id.startsWith('KN')||id==='EN04':region==='ogasawara'?id==='RS06':false;}
+function worldAtlasBounds(region){if(region==='all')return {x:0,y:0,w:WORLD_GEO.w,h:WORLD_GEO.h};if(region==='near'){const p=G.st.mapId==='WORLD'?G.st.pos:WORLD_NODES[curHub()];return {x:Math.max(0,p.x-44),y:Math.max(0,p.y-36),w:88,h:72};}const nodes=HUB_ORDER.filter(id=>worldAtlasRegionHub(id,region)).map(id=>WORLD_NODES[id]),x=Math.min(...nodes.map(n=>n.x))-24,y=Math.min(...nodes.map(n=>n.y))-28;return {x,y,w:Math.max(70,Math.max(...nodes.map(n=>n.x))-x+24),h:Math.max(65,Math.max(...nodes.map(n=>n.y))-y+28)};}
+function renderNationalAtlas(){
+ const st=G.st,region=Object.hasOwn(WORLD_ATLAS_REGIONS,G.sheetData.atlasRegion)?G.sheetData.atlasRegion:'all',b=worldAtlasBounds(region),m=MAPS.WORLD,stroke=region==='all'?.85:1.1,font=region==='all'?7:3.2;
+ const poly=m.coasts.map(c=>'<polygon points="'+c.points.map(p=>p.x+','+p.y).join(' ')+'" fill="#647f60" stroke="#a7b991" stroke-width=".65"><title>'+esc(c.name)+'</title></polygon>').join('');
+ const rivers=m.rivers.map(r=>'<polyline points="'+r.points.map(p=>p.x+','+p.y).join(' ')+'" fill="none" stroke="#79bacb" stroke-width="1.6"><title>'+esc(r.name)+'</title></polyline>').join('');
+ const roads=WORLD_ROADS.map(r=>'<polyline points="'+r.path.map(p=>p.x+','+p.y).join(' ')+'" fill="none" stroke="'+(hubUnlocked(st,r.to)?r.seaTiles>12?'#86c7d1':'#e4c67b':'#424e57')+'" stroke-width="'+stroke+'" '+(r.seaTiles>12?'stroke-dasharray="2 2"':'')+'/>').join('');
+ const major=['KY01','KY15','NX09','KT04','KT09','HK06','TH02','TH07','KN07','RS06'];
+ const nodes=HUB_ORDER.map(id=>{const n=WORLD_NODES[id],open=hubUnlocked(st,id),here=curHub()===id,show=region!=='all'||major.includes(id);return '<g><title>'+esc(HUBS[id].name)+'／'+(open?'解放済み':'未開放エリア')+'</title><line x1="'+n.geoX+'" y1="'+n.geoY+'" x2="'+n.x+'" y2="'+n.y+'" stroke="#cad0b5" stroke-width=".4"/><circle cx="'+n.x+'" cy="'+n.y+'" r="'+(here?2.7:1.6)+'" fill="'+(here?'#fff0ac':open?'#e0cc94':'#52606b')+'"/>'+(show?'<text x="'+(n.x+3)+'" y="'+(n.y-2)+'" font-size="'+font+'" fill="'+(open?'#fff2d2':'#a8b1b7')+'">'+esc(HUBS[id].name)+'</text>':'')+'</g>';}).join('');
+ const spots=m.landmarks.map(o=>'<g><title>'+esc(o.name)+'</title><path d="M'+o.geoX+' '+(o.geoY-2)+' l2 3 -4 0 z" fill="#e4a77b"/>'+(region!=='all'?'<text x="'+(o.geoX+3)+'" y="'+o.geoY+'" font-size="2.6" fill="#ffcf9b">'+esc(o.name)+'</text>':'')+'</g>').join('');
+ return '<label class="atlas-region">表示地域<select id="worldAtlasRegion">'+Object.entries(WORLD_ATLAS_REGIONS).map(([k,v])=>'<option value="'+k+'" '+(region===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><div class="national-atlas japan-atlas"><svg viewBox="'+[b.x,b.y,b.w,b.h].join(' ')+'" role="img" aria-label="日本列島の全国街道の接続図。暗い街は未開放。"><rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" fill="#173d53"/>'+poly+rivers+roads+spots+nodes+'<text x="'+(b.x+5)+'" y="'+(b.y+9)+'" fill="#e5e7cd" font-size="'+font+'">N ↑　'+WORLD_ATLAS_REGIONS[region]+'</text></svg></div><p class="small">街の緯度経度を参考にした日本列島マップ。密集地は入口記号をずらし、細線で投影位置を結びます。金色＝街道／水色の破線＝港を結ぶ航路／暗色＝未開放。地形・交通経路はゲーム向けの概略です。</p><details class="terrain-legend"><summary>地形・交通・名所の見方</summary><div class="terrain-grid">'+Object.entries(WORLD_TERRAIN).map(([k,v])=>'<span><i style="background:'+v[1]+'"></i>'+v[0]+'</span>').join('')+'</div><p>線路・高速・山・通常の海・川には徒歩で入れません。道・橋・港・浮標のある航路を使います。砂漠は鳥取砂丘の周辺に加えた創作の景観です。</p><p><a href="https://maps.gsi.go.jp/" target="_blank" rel="noopener noreferrer">位置の参考：国土地理院 地理院地図</a></p><div class="stack">'+m.landmarks.map(o=>'<a href="'+o.source+'" target="_blank" rel="noopener noreferrer">'+esc(o.name)+'の公式案内</a>').join('')+'</div></details>';
+}
+
 
 function ensureWorld(st){
   if(!st)return;
@@ -3887,6 +3947,21 @@ const ART = (()=>{
       for(let i=0;i<5;i++){ const x=Math.floor(r()*14), y=Math.floor(r()*13); P(x,y+1,1,2,PAL.forest); P(x+1,y,1,2,PAL.forest); }
       if(r()<.18){ const x=2+Math.floor(r()*11), y=2+Math.floor(r()*11); P(x,y,1,1,r()<.5?PAL.coral:PAL.cream); P(x-1,y+1,1,1,PAL.forest); }
       if(r()<.3){ P(Math.floor(r()*15),Math.floor(r()*15),1,1,"#7E9A63"); } };
+    if('GMRBPSDWFUALHVCE N'.replace(/ /g,'').includes(t)&&t.length===1){
+      const colors={G:'#7f9d5e',M:'#8a9184',N:'#b9cdc9',R:'#4d98ac',B:'#ae9870',P:'#7e8d94',S:'#e2cc96',D:'#d9b578',W:'#a49d7c',F:'#6caa84',U:'#aa956f',A:'#68767e',L:'#8b9da2',H:'#4c5f70',V:'#94a18c',C:'#8399a6',E:'#2d7186'};
+      P(0,0,16,16,colors[t]);
+      if(t==='G'){for(let i=0;i<7;i++){const x=Math.floor(r()*15),y=Math.floor(r()*15);P(x,y,1,2,i%2?'#a6b875':'#5a7d4c');}if(r()<.09)P(7,5,2,2,'#ebd69a');}
+      if(t==='M'||t==='N'){P(0,12,16,4,'#586d62');for(let y=1;y<15;y++){const x=8-Math.floor(y*.55);P(x,y,Math.ceil(y*1.05),1,y<5?(t==='N'?'#f2f1e3':'#c2c8b2'):y%3?'#879185':'#677c72');}P(9,7,2,5,'#a2ab99');}
+      if(t==='R'||t==='E'){for(let i=0;i<3;i++)P((i*6+frame*2)%13,3+i*5,4,1,'#7dc0ca');if(t==='E'){P(7,7,2,2,'#e6cf93');P(7,8,1,3,'#b49160');}}
+      if(t==='B'||t==='P'){P(0,0,16,2,'#6c8990');P(0,14,16,2,'#6c8990');for(let x=0;x<16;x+=4){P(x,3,3,10,'#cdb78b');P(x,3,1,10,'#e0cda1');}P(0,2,16,1,'#4d5d5d');P(0,13,16,1,'#4d5d5d');if(t==='P'){P(11,5,2,6,'#58696c');P(10,6,4,1,'#d5d9c1');}}
+      if(t==='S'||t==='D'){for(let y=2;y<16;y+=5){P((y%3),y,12,1,t==='D'?'#b88c54':'#bea876');P(3,y+1,11,1,t==='D'?'#ebce91':'#efdcad');}if(t==='S'&&['~','R'].includes(nb(0,-1)))P(0,0,16,2,'#cae0c8');}
+      if(t==='W'||t==='U'){for(let i=0;i<8;i++){const x=Math.floor(r()*14),y=Math.floor(r()*14);P(x,y,2,1,i%2?'#c8bc91':'#817d62');}if(t==='W'){P(8,9,4,3,'#7a7f70');P(8,8,3,1,'#b4b29a');}}
+      if(t==='F'){P(0,0,16,2,'#afa47b');P(0,0,2,16,'#afa47b');for(let y=4;y<16;y+=4)for(let x=4;x<16;x+=4){P(x,y,1,3,'#b7c67e');P(x-1,y+1,3,1,'#356b53');}P(2,2,14,1,'#8ac1b0');}
+      if(t==='A'||t==='H'){const vertical=['A','H','B'].includes(nb(0,-1))||['A','H','B'].includes(nb(0,1));if(vertical){P(1,0,1,16,'#a5b4b6');P(14,0,1,16,'#a5b4b6');P(7,1,1,5,'#eadcad');P(7,10,1,5,'#eadcad');}else{P(0,1,16,1,'#a5b4b6');P(0,14,16,1,'#a5b4b6');P(1,7,5,1,'#eadcad');P(10,7,5,1,'#eadcad');}if(t==='H'){P(0,0,16,1,'#d0cdb6');P(0,15,16,1,'#182e40');}}
+      if(t==='L'){const horizontal=nb(-1,0)==='L'||nb(1,0)==='L';if(horizontal){for(let x=1;x<16;x+=4)P(x,2,1,12,'#5a665f');P(0,4,16,1,'#f0e9d3');P(0,11,16,1,'#f0e9d3');P(0,5,16,1,'#d7e0d8');}else{for(let y=1;y<16;y+=4)P(2,y,12,1,'#5a665f');P(4,0,1,16,'#f0e9d3');P(11,0,1,16,'#f0e9d3');}}
+      if(t==='V'||t==='C'){P(0,12,16,4,'#687c79');P(11,0,5,16,'#6e8086');P(2,4,7,7,t==='C'?'#c6d1ce':'#d3c4a3');P(1,3,9,2,t==='C'?'#a5bfc4':'#957b66');P(3,6,2,2,'#5b7e86');P(7,6,1,2,'#5b7e86');if(t==='C'){P(5,0,4,4,'#c6d1ce');P(6,1,1,2,'#709ca6');}P(12,5,1,4,'#c3d0c4');}
+      return;
+    }
     switch(t){
       case ".": grass(); break;
       case ",": { P(0,0,16,16,PAL.sand);
@@ -3959,9 +4034,16 @@ const ART = (()=>{
       default: P(0,0,16,16,PAL.ink);
     }
   }
+  const worldChunks=new Map();
+  function worldChunk(cx,cy){const m=MAPS.WORLD,key=m.layoutKey+':'+cx+':'+cy;if(worldChunks.has(key)){const c=worldChunks.get(key);worldChunks.delete(key);worldChunks.set(key,c);return c;}const[c,g]=mk(256,256),at=(x,y)=>m.tiles[y]?.[x]||'~';for(let yy=0;yy<16;yy++)for(let xx=0;xx<16;xx++){const x=cx*16+xx,y=cy*16+yy;drawTile(g,xx*16,yy*16,at(x,y),(dx,dy)=>at(x+dx,y+dy),0,'WORLD'+x+','+y);}worldChunks.set(key,c);while(worldChunks.size>40)worldChunks.delete(worldChunks.keys().next().value);return c;}
+  function drawWorld(g,cam,vw,vh){for(let y=Math.max(0,Math.floor(cam.y/256));y<=Math.floor((cam.y+vh-1)/256);y++)for(let x=Math.max(0,Math.floor(cam.x/256));x<=Math.floor((cam.x+vw-1)/256);x++)if(x*16<MAPS.WORLD.w&&y*16<MAPS.WORLD.h)g.drawImage(worldChunk(x,y),x*256-cam.x,y*256-cam.y);}
+  function worldCacheStats(){return {chunks:worldChunks.size,limit:40,chunkPixels:256*256,bytes:worldChunks.size*256*256*4};}
+  function scenicObject(style){const key='scenic:'+style;if(cache[key])return cache[key];const[c,g]=mk(32,40),p=(x,y,w,h,color)=>px(g,x,y,w,h,color);p(3,34,26,4,'#152c35aa');if(style==='palace'){p(5,21,23,15,'#b54d3d');p(8,25,3,5,'#e3b66e');p(21,25,3,5,'#e3b66e');p(14,27,6,9,'#75453a');p(1,18,30,4,'#da7952');p(5,14,22,4,'#c86243');p(10,10,12,4,'#e4a05d');p(7,8,18,3,'#ba513d');p(14,3,5,5,'#d7a96a');}else if(style==='mountain'||style==='volcano'){for(let i=0;i<24;i++){const n=Math.floor(i*.55);p(15-n,7+i,n*2+2,1,i<7?'#e6e8df':i%3===0?'#84918b':'#586e6e');}if(style==='volcano'){p(11,8,11,3,'#554b4d');p(13,9,6,2,'#db8d63');p(15,2,2,5,'#d2d4c8');}}else if(style==='shrine'){p(4,8,24,4,'#d57b57');p(1,6,30,3,'#b94b42');p(7,12,3,24,'#b94b42');p(23,12,3,24,'#b94b42');p(8,18,17,3,'#df9b6c');p(12,30,8,6,'#65a3ae');}else if(style==='lake'){for(let i=0;i<10;i++)p(9-i/2,12+i*2,11+i,2,i%2?'#78b7be':'#4a91a5');p(12,9,7,2,'#b5dfd0');}else if(style==='dune'){for(let y=16;y<36;y++)p(1, y,30,1,y%5===0?'#c59455':'#dfbf7d');p(12,14,2,7,'#b28350');p(14,13,2,6,'#f1da9c');}else{p(7,19,19,17,'#e2ddc6');p(9,23,4,6,'#638589');p(20,23,3,6,'#638589');p(14,28,5,8,'#455864');const roof=style==='village'?'#9b7753':style==='clock'?'#b37b65':'#506877';p(3,16,27,4,roof);p(7,11,19,5,roof);p(10,8,13,3,roof);if(style==='castle'){p(11,8,11,12,'#f5edcf');p(7,6,19,4,'#506877');p(11,3,11,3,'#506877');}if(style==='clock'){p(13,7,8,10,'#ead9ad');p(15,10,4,4,'#596d70');p(16,10,1,3,'#f5edcf');}}return cache[key]=c;}
+  function ship(){const key='national-ship';if(cache[key])return cache[key];const[c,g]=mk(16,24);px(g,1,16,14,5,'#e0d4b2');px(g,3,20,10,2,'#8a5a4e');px(g,4,9,8,7,'#f1e7cd');px(g,7,5,3,4,'#bc705a');px(g,5,11,2,2,'#538296');px(g,10,11,2,2,'#538296');return cache[key]=c;}
+
   /* マップ全体を1枚へ事前描画（水と草の4コマ） */
   function mapLayer(mapId, frame){
-    if(mapId==='WORLD')frame=0; // One national background cache limits mobile memory.
+    if(mapId==='WORLD')return worldChunk(0,0);
     const key=`m${mapId}:${MAPS[mapId].layoutKey||"base"}:${frame%4}`; if(cache[key]) return cache[key];
     const m=MAPS[mapId]; const [c,g]=mk(m.w*16,m.h*16);
     const at=(x,y)=> (x<0||y<0||x>=m.w||y>=m.h) ? (m.kind==="in"?"#":"T") : m.tiles[y][x];
@@ -4184,7 +4266,7 @@ const ART = (()=>{
     px(g,0,34,160,1,light(ground,0.22));for(let i=0;i<9;i++){const x=(i*23+7)%160;px(g,x,60,1,3,dark(ground,0.38));px(g,x+1,59,1,3,dark(ground,0.3));}
     cache[key]=c; return c;
   }
-  return { tile, mapLayer, person, object, enemy, flashOf, stage };
+  return { tile, mapLayer, drawWorld, worldCacheStats, scenicObject, ship, person, object, enemy, flashOf, stage };
 })();
 
 /* ===== platform/audio: 独自作曲の電子音（パルス2声＋三角波ベース＋ノイズ打楽器の4パート） ===== */
@@ -4539,8 +4621,8 @@ function toast(msg){ msg=heroSub(msg); G.toast=msg; const el=$("#toast"); if(el)
 function hubOf(mapId){return mapId==='WORLD'&&G.st?worldHubAt(G.st.pos.x,G.st.pos.y):MAPS[mapId].hub;}
 function curHub(){ return hubOf(G.st.mapId); }
 function tileAt(m,x,y){ return (m.tiles[y]&&m.tiles[y][x])||"T"; }
-function objAt(m,x,y){ return m.objects.find(o=>o.x===x&&o.y===y); }
-function walkable(m,x,y,st=G.st){if(m.mapScope==='world'&&!worldTileOpen(x,y,st))return false; const o=objAt(m,x,y); if(o) return !!o.walk; return ".,123w=".includes(tileAt(m,x,y)); }
+function objAt(m,x,y){return m.mapScope==='world'?m.objectIndex[x+','+y]:m.objects.find(o=>o.x===x&&o.y===y);}
+function walkable(m,x,y,st=G.st){if(m.mapScope==='world')return worldWalkableAt(x,y,st); const o=objAt(m,x,y); if(o) return !!o.walk; return ".,123w=".includes(tileAt(m,x,y)); }
 function zoneAt(m,x,y){if(m.mapScope==='city'||m.kind==='in')return null;if(m.mapScope==='world')return worldAreaAt(x,y); const o=objAt(m,x,y); if(o&&o.walk) return null; return m.zones[tileAt(m,x,y)]||null; }
 function isSafe(){ return !zoneAt(MAPS[G.st.mapId],G.st.pos.x,G.st.pos.y); }
 function busyReason(){ const st=G.st; if(st.run) return "戦闘中です。"; return null; }
@@ -4905,7 +4987,7 @@ function charSprite(cid,dir,frame){ if(cid==="hero") return heroSprite(dir,frame
 function renderExplore(){return renderMobileExplore();}
 function hereHtml(){
   const st=G.st, m=MAPS[st.mapId], near=nearbyObjects(), zone=zoneAt(m,st.pos.x,st.pos.y), ar=zone?AREAS[zone]:null;
-  return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（挑戦目安Lv${requiredAreaLevel(ar)}・適正Lv${recommendedAreaLevel(ar)}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
+  return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（挑戦目安Lv${requiredAreaLevel(ar)}・適正Lv${recommendedAreaLevel(ar)}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${m.mapScope==='world'?`<span class="small">／${esc(WORLD_TERRAIN[tileAt(m,st.pos.x,st.pos.y)]?.[0]||'地形')}</span>`:''}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
 }
 function nearbyObjects(){ const st=G.st, m=MAPS[st.mapId]; return m.objects.filter(o=>Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1 && o.type!=="tower"); }
 function mountCanvas(){
@@ -4933,22 +5015,24 @@ function drawMap(){
   const st=G.st, m=MAPS[st.mapId]; const cam=camera(); const now=performance.now();
   const still=st.settings.reduceMotion; const f=still?0:Math.floor(now/320)%4, f2=still?0:Math.floor(now/600)%2;
   g.fillStyle=PAL.ink; g.fillRect(0,0,VW,VH);
-  const layer=ART.mapLayer(st.mapId,f);
-  const sx=Math.max(0,cam.x), sy=Math.max(0,cam.y), w=Math.min(VW,layer.width-sx), h=Math.min(VH,layer.height-sy);
-  g.drawImage(layer,sx,sy,w,h,sx-cam.x,sy-cam.y,w,h);
+  if(m.mapScope==='world')ART.drawWorld(g,cam,VW,VH);else{const layer=ART.mapLayer(st.mapId,f);const sx=Math.max(0,cam.x),sy=Math.max(0,cam.y),w=Math.min(VW,layer.width-sx),h=Math.min(VH,layer.height-sy);g.drawImage(layer,sx,sy,w,h,sx-cam.x,sy-cam.y,w,h);}
   for(const d of m.pocoDecor||[]){const x=d.x*16-cam.x,y=d.y*16-cam.y;g.fillStyle=POCO_COLORS[(m.pocoTheme||0)%POCO_COLORS.length];g.fillRect(x+2,y+4,3,3);g.fillRect(x+6,y+4,3,3);g.fillRect(x+3,y+6,5,3);g.fillRect(x+4,y+9,3,1);}
   if(m.mapScope==='world'){
     const x0=Math.max(0,Math.floor(cam.x/16)),y0=Math.max(0,Math.floor(cam.y/16));
     for(let y=y0;y<Math.min(m.h,y0+G.vh+2);y++)for(let x=x0;x<Math.min(m.w,x0+G.vw+2);x++)if(worldOwnersAt(x,y).length&&!worldTileOpen(x,y)){g.fillStyle='rgba(10,15,25,.78)';g.fillRect(x*16-cam.x,y*16-cam.y,16,16);}
     g.font="bold 10px sans-serif";g.textAlign='center';
     for(const id of HUB_ORDER){const n=WORLD_NODES[id],x=n.x*16-cam.x+8,y=n.y*16-cam.y-16;if(x< -100||x>VW+100||y< -20||y>VH+30)continue;g.fillStyle=hubUnlocked(st,id)?'#fff0bc':'#b7bdc6';g.fillText(HUBS[id].name,x,y);if(!hubUnlocked(st,id))g.fillText('未開放エリア',x,y+12);}
+    for(const o of m.landmarks){const x=o.x*16-cam.x+8,y=o.y*16-cam.y-35;if(x< -60||x>VW+60||y< -20||y>VH)continue;g.fillStyle=hubUnlocked(st,o.hub)?'#ffd49e':'#aab5b9';g.fillText(o.name,x,y);}
   }
   const sprites=[];
   for(const o of m.objects){
+    if(o.x*16<cam.x-48||o.x*16>cam.x+VW+32||o.y*16<cam.y-48||o.y*16>cam.y+VH+48)continue;
     let img;
     if(o.type==="npc"){ const n=NPCS[o.npc]; img = o.npc==="moe"? charSprite("moe",0,f2*2) : ART.person(o.npc,n.sprite[1],n.sprite[0],0,f2*2,{long:n.long||["akari","chiyo","misuzu"].includes(o.npc)}); }
     else if(o.type==="shop"){ const n=NPCS[o.npc]; sprites.push({y:o.y-0.1,img:ART.object("shop",0),x:o.x}); img=ART.person(o.npc,n.sprite[1],n.sprite[0],0,f2*2); }
     else if(o.type==="inn"){ sprites.push({y:o.y-0.1,img:ART.object("inn",f),x:o.x}); img=ART.person("innkeeper",PAL.slate,PAL.navy,0,f2*2); }
+    else if(o.type==='landmark')img=ART.scenicObject(o.style);
+    else if(o.type==='port')img=ART.object('station',f);
     else if(o.type==="box") img=ART.object(st.boxes[o.box]?"boxOpen":"box",f);
     else if(o.type==="boss"){ if(st.bossDefeated[o.boss]&&BOSSES[o.boss]?.specialStage==null) continue; img=ART.object("boss",f); }
     else img=ART.object(o.type==='cityEntry'?'inn':o.type==='worldExit'?'gate':o.type==='specialExit'?'door':o.type==='challenge'?'board':o.type==='studio'?'inn':o.type==='helloWork'?'shop':o.type,f);
@@ -4958,13 +5042,13 @@ function drawMap(){
   const pp=playerPixel();
   // 同行者は最大4人。移動履歴を1マスずつ追い、待機者は描画しない。
   if(G.followMap!==st.mapId){G.followMap=st.mapId;G.followTrail=[];}
-  const lead=st.party[0];for(const member of followerPositions(st,G.followTrail||[],G.walk.prog,moving)){sprites.push({y:member.y/16,px:{x:Math.round(member.x),y:Math.round(member.y)},img:charSprite(member.cid,member.dir,moving?(wf+2)%4:0)});}
-  sprites.push({y:pp.y/16+0.01, px:pp, img:charSprite(lead,st.dir,wf)});
+  const sailing=m.mapScope==='world'&&tileAt(m,st.pos.x,st.pos.y)==='E',lead=st.party[0];for(const member of (sailing?[]:followerPositions(st,G.followTrail||[],G.walk.prog,moving))){sprites.push({y:member.y/16,px:{x:Math.round(member.x),y:Math.round(member.y)},img:charSprite(member.cid,member.dir,moving?(wf+2)%4:0)});}
+  sprites.push({y:pp.y/16+0.01, px:pp, img:sailing?ART.ship():charSprite(lead,st.dir,wf)});
   sprites.sort((a,b)=>a.y-b.y);
   for(const s of sprites){const x=(s.px?s.px.x:s.x*16)-cam.x,y=(s.px?s.px.y:s.y*16)-cam.y;g.fillStyle="rgba(16,24,32,.24)";g.fillRect(Math.round(x+3),Math.round(y+13),10,2);g.fillRect(Math.round(x+5),Math.round(y+12),6,1);}
-  for(const s of sprites){ const x=s.px?s.px.x:s.x*16, y=s.px?s.px.y:s.y*16; g.drawImage(s.img,x-cam.x,y-8-cam.y); }
+  for(const s of sprites){ const x=s.px?s.px.x:s.x*16, y=s.px?s.px.y:s.y*16; g.drawImage(s.img,x-cam.x-(s.img.width>16?8:0),y-8-cam.y-(s.img.height>24?16:0)); }
   // 施設のマーク（看板）：店・宿・建物の入口・出口などの上に表示
-  for(const o of m.objects){ const F=FACILITY[o.type]; if(!F) continue; if(o.type==="door"&&o.walk) continue;
+  for(const o of m.objects){if(m.mapScope==='world'&&(o.x*16<cam.x-40||o.x*16>cam.x+VW+40||o.y*16<cam.y-40||o.y*16>cam.y+VH+40))continue; const F=FACILITY[o.type]; if(!F) continue; if(o.type==="door"&&o.walk) continue;
     const bx=o.x*16-cam.x+1, by=o.y*16-cam.y-(o.type==="shop"||o.type==="inn"?27:22); drawSignMark(g,bx,by,F); }
   // 話せる人の印（未会話は「！」、会話済みは「…」）
   for(const o of m.objects){ if(o.type!=="npc"||o.npc==="moe") continue; const talked=st.talked[o.npc];
@@ -5032,11 +5116,14 @@ function startLoop(){
   G.raf=requestAnimationFrame(loop);
 }
 function bfs(m,sx,sy,goal){
-  const key=(x,y)=>y*m.w+x; const prev=new Map(); const q=[[sx,sy]]; prev.set(key(sx,sy),null);
-  while(q.length){ const [x,y]=q.shift(); if(goal(x,y)&&!(x===sx&&y===sy)){ const path=[]; let k=key(x,y); while(k!==key(sx,sy)){ path.unshift({x:k%m.w,y:Math.floor(k/m.w)}); k=prev.get(k);} return path; }
-    for(const [dx,dy] of [[0,1],[0,-1],[-1,0],[1,0]]){ const nx=x+dx, ny=y+dy; if(nx<0||ny<0||nx>=m.w||ny>=m.h) continue; const k=key(nx,ny); if(prev.has(k)) continue; if(!walkable(m,nx,ny)) continue; prev.set(k,key(x,y)); q.push([nx,ny]); } }
+  const key=(x,y)=>y*m.w+x,prev=new Map(),q=[{x:sx,y:sy}];prev.set(key(sx,sy),null);
+  const open=m.mapScope==='world'?new Set(HUB_ORDER.filter(id=>hubUnlocked(G.st,id))):null;
+  const can=(x,y)=>{if(!open)return walkable(m,x,y);const k=x+','+y;if(!(m.owners[k]||[]).some(id=>open.has(id)))return false;const o=m.objectIndex[k];return o?!!o.walk:!!WORLD_TERRAIN[m.tiles[y]?.[x]]?.[2];};
+  for(let head=0;head<q.length;head++){const{x,y}=q[head];if(goal(x,y)&&!(x===sx&&y===sy)){const path=[];let k=key(x,y);while(k!==key(sx,sy)){path.push({x:k%m.w,y:Math.floor(k/m.w)});k=prev.get(k);}return path.reverse();}
+    for(const[dx,dy]of [[0,1],[0,-1],[-1,0],[1,0]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.w||ny>=m.h)continue;const k=key(nx,ny);if(prev.has(k)||!can(nx,ny))continue;prev.set(k,key(x,y));q.push({x:nx,y:ny});}}
   return null;
 }
+
 function walkTo(x,y,pending){
   const st=G.st, m=MAPS[st.mapId]; if(G.readOnly) return toast("閲覧のみのタブです。");
   let path;
@@ -5090,6 +5177,8 @@ function interact(o){
     case "specialExit": {const r=st.specialReturn||{map:"KY16",x:MAPS.KY16.safeAnchor[0],y:MAPS.KY16.safeAnchor[1]};return travelMap(r.map,r.x,r.y);}
     case "studio": return openSheet("townStudio");
     case "helloWork": return openHelloWork();
+    case 'landmark':return say([[o.label,'日本の名所を参考にした景観です。地形や進入路はゲーム向けに簡略化しています。'],['',o.source||'この景観は創作です。']]);
+    case 'port':return say([['港の案内','島への移動は浮標のある航路を進みます。航路上では船の姿に切り替わります。通常の海へは入れません。'],['','橋・港・道路・鉄道・航路はゲーム用の表現で、実際の運航・路線を示しません。']]);
     case "worldExit": return leaveCity();
     case "cityEntry": return enterWorldCity(o.to);
     case "station": return openSheet("station");
@@ -6244,7 +6333,7 @@ function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.se
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
 function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");delete s.slots;ensureJobSystem(s);ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.equip=previewEquipFor(s,m.cid,cs.job);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}if(s.run?.state==="input"){if(!alive(s.run).length){s.run.state="lost";s.run.log=[...(s.run.log||[]),"同行者が全員戦闘不能です。安全な場所へ戻れます。"]; }else if(s.run.enemies.every(e=>e.hp<=0))s.run.state="won";}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s);syncCollection(s); return s; }
 
-document.addEventListener("change",e=>{if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!==""&&battleControlIsCurrent(e.target))ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
+document.addEventListener("change",e=>{if(e.target.id==="worldAtlasRegion"&&G.sheet==="world"&&G.screen==="explore"&&Object.hasOwn(WORLD_ATLAS_REGIONS,e.target.value)){G.sheetData.atlasRegion=e.target.value;render();return;}if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!==""&&battleControlIsCurrent(e.target))ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
 document.addEventListener("submit",e=>{if(e.target.id==="battleSearchForm"){e.preventDefault();ACT.battlePickerSearch();}});
 document.addEventListener("submit",e=>{if(e.target.id==="helloWorkSearchForm"){e.preventDefault();ACT.helloWorkSearch();}});
 document.addEventListener("toggle",e=>{if(G.sheet==='collection')collectionDetailToggle(e.target);},true);

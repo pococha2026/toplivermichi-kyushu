@@ -56,3 +56,6 @@ jobs:
 
       - name: Verify national overworld, city safety and travel compatibility
         run: node scripts/test-national-map.cjs
+
+      - name: Verify geographic positions, terrain art and bounded world rendering
+        run: node scripts/test-geographic-world.cjs
