@@ -1,5 +1,5 @@
 {
-  "version": "8.70",
+  "version": "8.71",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -83,5 +83,9 @@
   "mapAndCatalogUI": {
     "status": "4ボタン、上部情報、描画中央座標と超レア分類を3回反復。全カード・保存記録の関連回帰成功",
     "report": "docs/debug-v8.70.json"
+  },
+  "mapOverlayButtons": {
+    "status": "全141MAPの画面生成を3回確認し、指定4種類の削除とステータス・キャンバス保持を確認",
+    "report": "docs/debug-v8.71.json"
   }
 }

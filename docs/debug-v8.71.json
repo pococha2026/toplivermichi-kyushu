@@ -1,0 +1,18 @@
+{
+  "version": "8.71",
+  "generatedAt": "2026-10-24T09:53:18.953701+00:00",
+  "reports": {
+    "mapViews": {
+      "total": 423,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three generated-view passes over all 141 maps; removed overlay controls, retained city departure/status/canvas and stable initialized state. Initial rendering normalizes lazy state before snapshot. VM/mock DOM; no physical-device rendering."
+    }
+  },
+  "additionalChecks": {
+    "releaseSync": 7
+  },
+  "total": 430,
+  "failed": 0,
+  "scope": "表示ボタン4種の削除を全141MAPで3回確認。初回の遅延初期化後に再表示して状態が安定することも確認。実機の描画・タッチは未確認。"
+}
