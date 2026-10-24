@@ -6,7 +6,8 @@
     "scripts/test-update-recovery.py",
     "scripts/test-release-safety.py",
     "scripts/test-project-audit.py",
-    "scripts/test-source-consistency.py"
+    "scripts/test-source-consistency.py",
+    "scripts/test-verification-consistency.py"
   ],
   "full": [
     "scripts/test-career.cjs",

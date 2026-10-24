@@ -56,7 +56,22 @@ def changed_files(base='HEAD'):
     untracked = subprocess.check_output(['git','ls-files','--others','--exclude-standard','-z'],cwd=ROOT).decode().split('\0')
     return sorted(set(filter(None,tracked+untracked)))
 
+def verification_fingerprints(root):
+    snapshot=load_sync().input_fingerprints(root)
+    paths={root/'index.html',root/'GAME_SPEC.txt'}
+    paths.update(p for p in (root/'scripts').rglob('*') if p.is_file() and p.suffix in {'.py','.cjs','.json'} and '__pycache__' not in p.parts)
+    paths.update(p for p in (root/'docs').rglob('*') if p.is_file() and p.suffix in {'.md','.json','.txt'})
+    for path in sorted(paths):
+        if not path.resolve().is_relative_to(root.resolve()):raise ValueError('Verification input escapes project: '+str(path))
+        snapshot[path.relative_to(root).as_posix()]=hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None
+    return snapshot
+
+def require_public_check_ready(root):
+    if (root/'.release-update.lock').exists():raise ValueError('Release locked; public verification must wait for the active update to finish')
+    if list(root.glob('.release-stage-*')):raise ValueError('Unresolved recovery files; public verification is blocked')
+
 def run_checks(full=False, base='HEAD', tests=None):
+    baseline=verification_fingerprints(ROOT)
     load_sync().validate(ROOT)
     if tests is None:tests = selected_checks([] if full else changed_files(base), full)
     node = os.environ.get('CODEX_PRIMARY_RUNTIME_NODE') or shutil.which('node')
@@ -66,6 +81,8 @@ def run_checks(full=False, base='HEAD', tests=None):
             raise ValueError('Node.js is required')
         print('CHECK '+path,flush=True)
         subprocess.run([executable,str(ROOT/path)],cwd=ROOT,check=True)
+        if verification_fingerprints(ROOT)!=baseline:raise ValueError('Inputs changed during checks; results discarded. Rerun checks after editing stops.')
+    if verification_fingerprints(ROOT)!=baseline:raise ValueError('Inputs changed during checks; results discarded.')
     print(f'OK: {len(tests)} check programs; device rendering/touch not verified',flush=True)
 
 def prepare(version=None, day=None):
@@ -136,8 +153,13 @@ def repository_audit(root=None):
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module.audit(root,configuration(root))
 
-def verify_public(root=ROOT, base=PUBLIC, opener=urlopen):
-    manifest = json.loads((root/'release-manifest.json').read_text(encoding='utf-8'))
+def verify_public(root=None, base=PUBLIC, opener=urlopen):
+    root=root or ROOT
+    require_public_check_ready(root)
+    baseline=verification_fingerprints(root)
+    sync=load_sync();validated=sync.validate(root)
+    manifest=sync.read_manifest(root/'release-manifest.json')
+    if manifest!=validated or verification_fingerprints(root)!=baseline:raise ValueError('Local release changed before public verification; retry')
     expected = dict(manifest['files'])
     expected['release-manifest.json'] = hashlib.sha256((root/'release-manifest.json').read_bytes()).hexdigest()
     def verify(item):
@@ -151,6 +173,12 @@ def verify_public(root=ROOT, base=PUBLIC, opener=urlopen):
             return {'file':name,'match':False,'error':str(error)}
     with ThreadPoolExecutor(max_workers=6) as executor:
         results = list(executor.map(verify,expected.items()))
+    try:
+        require_public_check_ready(root)
+        if verification_fingerprints(root)!=baseline:raise ValueError('Local inputs changed during public verification; results discarded')
+    except (OSError,ValueError) as error:
+        for result in results:
+            result['match']=False;result['error']=str(error)
     return results
 
 def main():
@@ -180,8 +208,6 @@ def main():
             changed=changed_files(args.base)
             print(json.dumps({'changed':changed,'checks':selected_checks(changed)},ensure_ascii=False,indent=2))
         else:
-            # Reject locally stale artifacts before consulting the public website.
-            load_sync().validate(ROOT)
             results=verify_public(base=args.url)
             print(json.dumps(results,ensure_ascii=False,indent=2))
             return 0 if all(r['match'] for r in results) else 1

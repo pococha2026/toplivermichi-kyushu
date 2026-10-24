@@ -88,12 +88,13 @@ class MaintenanceTest(unittest.TestCase):
             def __enter__(self):return self
             def __exit__(self,*args):pass
             def read(self):return self.data
+        remote={p.name:p.read_bytes() for p in self.root.iterdir() if p.is_file()}
         def opener(request,timeout):
             from urllib.parse import urlsplit
             name=urlsplit(request.full_url).path.rsplit('/',1)[-1]
-            return Response((self.root/name).read_bytes())
+            return Response(remote[name])
         self.assertTrue(all(r['match'] for r in update.verify_public(self.root,opener=opener)))
-        (self.root/'index.html').write_text('stale deployment')
+        remote['index.html']=b'stale deployment'
         failed=[r['file'] for r in update.verify_public(self.root,opener=opener) if not r['match']]
         self.assertEqual(failed,['index.html'])
     def test_public_connection_failure_reported(self):

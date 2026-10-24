@@ -1,5 +1,5 @@
 {
-  "version": "8.79",
+  "version": "8.80",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -111,5 +111,9 @@
   "sourceConsistency": {
     "status": "編集元のみ変更、生成中編集、版戻しの編集消失、日付固定化、書式不一致、旧版への巻戻しを再現後修正。10テストと入力変更3回反復が成功",
     "report": "docs/debug-v8.79.json"
+  },
+  "verificationConsistency": {
+    "status": "検査中・公開照合中の変更、不完全manifest、更新ロックによる誤成功を再現後修正。10テストと公開照合時の入力変更3回反復が成功",
+    "report": "docs/debug-v8.80.json"
   }
 }

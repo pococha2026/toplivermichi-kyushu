@@ -4,7 +4,7 @@
 
 - [最新仕様](../GAME_SPEC.md) ／ [配布TXT](../GAME_SPEC.txt)
 - [更新ガイド](UPDATING.md)
-- [検証の進捗](debug-progress.json) ／ [今回の検証](debug-v8.79.json)
+- [検証の進捗](debug-progress.json) ／ [今回の検証](debug-v8.80.json)
 - [整理・削除の記録](cleanup-v8.78.json)
 
 ## 参照資料（ゲームと検査の根拠）
@@ -50,3 +50,5 @@
 - [debug-v8.77](debug-v8.77.json)
 
 - [debug-v8.78](debug-v8.78.json)
+
+- [debug-v8.79](debug-v8.79.json)
