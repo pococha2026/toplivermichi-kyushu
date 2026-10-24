@@ -617,7 +617,8 @@ body.reduce-motion .btn{transition:none}
 
 .map-guidance{min-height:36px;padding:0 4px;gap:4px}.map-guidance>.btn{min-height:36px;padding:2px 5px;font-size:11px}.map-guidance-copy b{font-size:11px;line-height:1.2}.map-guidance-copy small,.map-guidance-copy em{font-size:10px;line-height:1.2}
 
-.dock-tools .explore-dock-button{width:100%;min-width:44px;height:44px;min-height:44px;padding:2px;font-size:12px;letter-spacing:0;line-height:1.2;white-space:normal;overflow-wrap:anywhere}.dock-tools:has(.explore-dock-button:not([hidden])){display:grid;grid-template-columns:repeat(2,minmax(44px,1fr));gap:4px}.mobile-explore .menu-grid.compact-map-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.mobile-explore .compact-map-menu>.btn{display:block!important;grid-column:auto!important}
+.sheet-head{flex-wrap:wrap}.sheet-head h2{flex:1 1 100px;min-width:0}
+.dock-tools .explore-dock-button{width:100%;min-width:44px;height:44px;min-height:44px;padding:2px;font-size:12px;letter-spacing:0;line-height:1.2;white-space:normal;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;text-align:center;box-sizing:border-box}.dock-tools:has(.explore-dock-button:not([hidden])){display:grid;grid-template-columns:repeat(2,minmax(44px,1fr));gap:4px}.mobile-explore .menu-grid.compact-map-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.mobile-explore .compact-map-menu>.btn{display:block!important;grid-column:auto!important}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -636,7 +637,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.50";
+const GAME_VERSION = "8.60";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -2859,7 +2860,7 @@ function generateTown(id,seed){
 /* Japan-inspired geographic overworld. Coast and transport are simplified game geometry. */
 const WORLD_NODES={},WORLD_ROADS=[];
 const WORLD_GEO={west:126,north:46.5,sx:34,sy:44,w:720,h:984,version:2};
-const WORLD_TERRAIN={ '~':['海','#215970',false],G:['草原','#7b9b58',true],T:['森林','#3d6847',false],M:['山岳','#777d78',false],N:['雪山','#c7d8d4',false],R:['川・湖','#4f9fae',false],B:['橋','#c2ab79',true],P:['港','#778e9b',true],S:['砂浜','#dfc892',true],D:['砂漠（創作）','#d2ac63',true],W:['荒野','#a69b7b',true],F:['田んぼ','#6c9d73',true],U:['荒れ道','#9f8964',true],A:['舗装道路','#6f7c83',true],L:['新幹線線路','#a6b7bb',false],H:['高速道路','#46586b',false],V:['市街地','#9ca28d',true],C:['都市部','#7e91a1',true],E:['港を結ぶ航路（ゲーム内）','#367b91',true]};
+const WORLD_TERRAIN={ '~':['海','#215970',false],G:['草原','#7b9b58',true],T:['森林','#3d6847',true],M:['山岳','#777d78',true],N:['雪山','#c7d8d4',true],R:['川・湖','#4f9fae',false],B:['橋','#c2ab79',true],P:['港','#778e9b',true],S:['砂浜','#dfc892',true],D:['砂漠（創作）','#d2ac63',true],W:['荒野','#a69b7b',true],F:['田んぼ','#6c9d73',true],U:['荒れ道','#9f8964',true],A:['舗装道路','#6f7c83',true],L:['新幹線線路','#a6b7bb',true],H:['高速道路','#46586b',true],V:['市街地','#9ca28d',true],C:['都市部','#7e91a1',true],E:['港を結ぶ航路（ゲーム内）','#367b91',true]};
 const WORLD_COASTS=[
  ['北海道',[[139.75,41.4],[140.4,41.4],[140.8,42.2],[141.8,42.5],[143.2,42],[144.4,42.8],[145.8,43.35],[145.1,43.8],[145.35,44.35],[144.1,44.05],[142,45.5],[141.6,45.4],[141.6,44.4],[141.15,43.7],[140.35,43.35],[140.1,42.6],[139.8,42.2]]],
  ['本州',[[130.85,34.1],[131.3,34.55],[132.1,34.85],[132.8,35.45],[133.45,35.65],[134.4,35.65],[135.15,35.8],[135.9,35.55],[136.1,36.2],[136.7,37.2],[137.3,37.5],[137.05,36.85],[137.7,36.8],[138.3,37.4],[139.45,38.3],[140,39.4],[139.9,40.3],[140.4,41.25],[140.8,41.2],[141.2,41.5],[141.5,41.35],[141.4,40.8],[141.85,40.35],[142.05,39.6],[141.55,38.95],[141.55,38.3],[141,37.8],[140.85,36.9],[140.7,36.2],[140.9,35.75],[140.4,35.15],[139.85,34.9],[139.75,35.4],[139.15,35.15],[138.85,34.6],[138.5,34.65],[138.2,34.9],[137.6,34.6],[136.9,34.65],[136.8,34.3],[136,33.45],[135.5,33.45],[135.05,33.9],[135.05,34.25],[135.4,34.65],[134.6,34.75],[134.15,34.5],[133.5,34.3],[132.55,34.15],[132.1,33.85],[131.45,33.95]]],
@@ -2993,7 +2994,7 @@ function drawWorldWayfinding(g,st,cam,vw,vh){g.save();g.font="bold 10px 'Noto Sa
 function worldOwnersAt(x,y){return MAPS.WORLD.owners[x+','+y]||[];}
 function worldHubAt(x,y,st=G.st){const owners=worldOwnersAt(x,y),open=owners.filter(id=>st&&hubUnlocked(st,id));return open[0]||owners[0]||st?.overworldHome||'KY01';}
 function worldTileOpen(x,y,st=G.st){return !!st&&worldOwnersAt(x,y).some(id=>hubUnlocked(st,id));}
-function worldWalkableAt(x,y,st=G.st){if(!worldTileOpen(x,y,st))return false;const o=objAt(MAPS.WORLD,x,y);return o?!!o.walk:!!WORLD_TERRAIN[tileAt(MAPS.WORLD,x,y)]?.[2];}
+function worldWalkableAt(x,y,st=G.st){if(!worldTileOpen(x,y,st))return false;return !!WORLD_TERRAIN[tileAt(MAPS.WORLD,x,y)]?.[2];}
 function worldAreaAt(x,y,st=G.st){if(!worldWalkableAt(x,y,st))return null;const k=x+','+y,o=objAt(MAPS.WORLD,x,y);if(o||['A','V','C','P','E','B'].includes(tileAt(MAPS.WORLD,x,y)))return null;const a=MAPS.WORLD.areas[k];return a&&hubUnlocked(st,a.slice(0,4))?a:Object.keys(AREAS).find(id=>id.slice(0,4)===worldHubAt(x,y,st))||null;}
 function mapGuideObjects(){const m=MAPS[G.st.mapId],hub=curHub(),list=m.objects.filter(o=>o.type!=='tower'&&(m.mapScope!=='world'||o.to===hub||o.area?.slice(0,4)===hub||BOSSES[o.boss]?.hub===hub||o.hub===hub));if(m.mapScope==='world')for(const t of Object.values(m.targets).filter(t=>t.kind==='area'&&t.hub===hub))list.push({...t,type:'areaWaypoint',area:t.id.replace(/^field_/,''),walk:true});return list;}
 
@@ -3023,7 +3024,7 @@ function renderNationalAtlas(){
  const major=['KY01','KY15','NX09','KT04','KT09','HK06','TH02','TH07','KN07','RS06'];
  const nodes=HUB_ORDER.map(id=>{const n=WORLD_NODES[id],open=hubUnlocked(st,id),here=curHub()===id,show=region!=='all'||major.includes(id);return '<g><title>'+esc(HUBS[id].name)+'／'+(open?'解放済み':'未開放エリア')+'</title><line x1="'+n.geoX+'" y1="'+n.geoY+'" x2="'+n.x+'" y2="'+n.y+'" stroke="#cad0b5" stroke-width=".4"/><circle cx="'+n.x+'" cy="'+n.y+'" r="'+(here?2.7:1.6)+'" fill="'+(here?'#fff0ac':open?'#e0cc94':'#52606b')+'"/>'+(show?'<text x="'+(n.x+3)+'" y="'+(n.y-2)+'" font-size="'+font+'" fill="'+(open?'#fff2d2':'#a8b1b7')+'">'+esc(region==='all'?HUBS[id].name:worldPrefectureName(id)+'・'+HUBS[id].name)+'</text>':'')+'</g>';}).join('');
  const spots=m.landmarks.map(o=>'<g><title>'+esc(o.name)+'</title><path d="M'+o.geoX+' '+(o.geoY-2)+' l2 3 -4 0 z" fill="#e4a77b"/>'+(region!=='all'?'<text x="'+(o.geoX+3)+'" y="'+o.geoY+'" font-size="2.6" fill="#ffcf9b">'+esc(o.name)+'</text>':'')+'</g>').join('');
- return '<label class="atlas-region">表示地域<select id="worldAtlasRegion">'+Object.entries(WORLD_ATLAS_REGIONS).map(([k,v])=>'<option value="'+k+'" '+(region===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><label class="atlas-region">道・交通表示<select id="worldAtlasLayer">'+[['walk','街道・徒歩ルート'],['rail','線路・駅'],['highway','高速道路'],['all','すべて重ねる']].map(([k,v])=>'<option value="'+k+'" '+(layer===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><div class="national-atlas japan-atlas"><svg viewBox="'+[b.x,b.y,b.w,b.h].join(' ')+'" role="img" aria-label="日本列島の全国街道の接続図。暗い街は未開放。"><rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" fill="#173d53"/>'+poly+rivers+transportLines+((layer==='walk'||layer==='all')?roads:'')+spots+nodes+'<text x="'+(b.x+5)+'" y="'+(b.y+9)+'" fill="#e5e7cd" font-size="'+font+'">N ↑　'+WORLD_ATLAS_REGIONS[region]+'</text></svg></div><p class="small">街の緯度経度を参考にした日本列島マップ。密集地は入口記号をずらし、細線で投影位置を結びます。金色＝街道／水色の破線＝港を結ぶ航路／暗色＝未開放。地形・交通経路はゲーム向けの概略です。</p><details class="terrain-legend"><summary>地形・交通・名所の見方</summary><div class="terrain-grid">'+Object.entries(WORLD_TERRAIN).map(([k,v])=>'<span><i style="background:'+v[1]+'"></i>'+v[0]+'</span>').join('')+'</div><p>線路・高速・山・通常の海・川には徒歩で入れません。道・橋・港・浮標のある航路を使います。砂漠は鳥取砂丘の周辺に加えた創作の景観です。</p><p><a href="https://maps.gsi.go.jp/" target="_blank" rel="noopener noreferrer">位置の参考：国土地理院 地理院地図</a></p><div class="stack">'+m.landmarks.map(o=>'<a href="'+o.source+'" target="_blank" rel="noopener noreferrer">'+esc(o.name)+'の公式案内</a>').join('')+'</div></details>';
+ return '<label class="atlas-region">表示地域<select id="worldAtlasRegion">'+Object.entries(WORLD_ATLAS_REGIONS).map(([k,v])=>'<option value="'+k+'" '+(region===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><label class="atlas-region">道・交通表示<select id="worldAtlasLayer">'+[['walk','街道・徒歩ルート'],['rail','線路・駅'],['highway','高速道路'],['all','すべて重ねる']].map(([k,v])=>'<option value="'+k+'" '+(layer===k?'selected':'')+'>'+v+'</option>').join('')+'</select></label><div class="national-atlas japan-atlas"><svg viewBox="'+[b.x,b.y,b.w,b.h].join(' ')+'" role="img" aria-label="日本列島の全国街道の接続図。暗い街は未開放。"><rect x="'+b.x+'" y="'+b.y+'" width="'+b.w+'" height="'+b.h+'" fill="#173d53"/>'+poly+rivers+transportLines+((layer==='walk'||layer==='all')?roads:'')+spots+nodes+'<text x="'+(b.x+5)+'" y="'+(b.y+9)+'" fill="#e5e7cd" font-size="'+font+'">N ↑　'+WORLD_ATLAS_REGIONS[region]+'</text></svg></div><p class="small">街の緯度経度を参考にした日本列島マップ。密集地は入口記号をずらし、細線で投影位置を結びます。金色＝街道／水色の破線＝港を結ぶ航路／暗色＝未開放。地形・交通経路はゲーム向けの概略です。</p><details class="terrain-legend"><summary>地形・交通・名所の見方</summary><div class="terrain-grid">'+Object.entries(WORLD_TERRAIN).map(([k,v])=>'<span><i style="background:'+v[1]+'"></i>'+v[0]+'</span>').join('')+'</div><p>未開放エリアと海・川のマスには入れません。開放済みの森林・山・雪山・線路・高速道路などの陸地を移動できます。水上は橋・港・浮標のある航路を使います。砂漠は鳥取砂丘の周辺に加えた創作の景観です。</p><p><a href="https://maps.gsi.go.jp/" target="_blank" rel="noopener noreferrer">位置の参考：国土地理院 地理院地図</a></p><div class="stack">'+m.landmarks.map(o=>'<a href="'+o.source+'" target="_blank" rel="noopener noreferrer">'+esc(o.name)+'の公式案内</a>').join('')+'</div></details>';
 }
 
 
@@ -5197,7 +5198,7 @@ function startLoop(){
 function bfs(m,sx,sy,goal,preferRoad=true){
   const key=(x,y)=>y*m.w+x,prev=new Map(),q=[{x:sx,y:sy}];prev.set(key(sx,sy),null);
   const open=m.mapScope==='world'?new Set(HUB_ORDER.filter(id=>hubUnlocked(G.st,id))):null;
-  const can=(x,y)=>{if(!open)return walkable(m,x,y);const k=x+','+y;if(!(m.owners[k]||[]).some(id=>open.has(id)))return false;const o=m.objectIndex[k];return o?!!o.walk:!!WORLD_TERRAIN[m.tiles[y]?.[x]]?.[2];};
+  const can=(x,y)=>{if(!open)return walkable(m,x,y);const k=x+','+y;if(!(m.owners[k]||[]).some(id=>open.has(id)))return false;return !!WORLD_TERRAIN[m.tiles[y]?.[x]]?.[2];};
   if(open&&preferRoad){const route=worldPreferredPath(m,sx,sy,goal,can);if(route?.length)return route;}
   for(let head=0;head<q.length;head++){const{x,y}=q[head];if(goal(x,y)&&!(x===sx&&y===sy)){const path=[];let k=key(x,y);while(k!==key(sx,sy)){path.push({x:k%m.w,y:Math.floor(k/m.w)});k=prev.get(k);}return path.reverse();}
     for(const[dx,dy]of [[0,1],[0,-1],[-1,0],[1,0]]){const nx=x+dx,ny=y+dy;if(nx<0||ny<0||nx>=m.w||ny>=m.h)continue;const k=key(nx,ny);if(prev.has(k)||!can(nx,ny))continue;prev.set(k,key(x,y));q.push({x:nx,y:ny});}}
@@ -5208,11 +5209,11 @@ function walkTo(x,y,pending,isNavigation=false){
   const st=G.st;if(!st||worldMoveReason(st))return;const m=MAPS[st.mapId];if(!m||!Number.isInteger(x)||!Number.isInteger(y)||x<0||y<0||x>=m.w||y>=m.h)return; if(G.readOnly) return toast("閲覧のみのタブです。");
   let path;
   const obj=objAt(m,x,y);
-  if(obj && !obj.walk){ if(Math.abs(obj.x-st.pos.x)+Math.abs(obj.y-st.pos.y)===1 || (Math.max(Math.abs(obj.x-st.pos.x),Math.abs(obj.y-st.pos.y))<=1)){if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;G.walk.path=[];G.walk.pending=null;} interact(obj); return; }
+  if(obj && !obj.walk && m.mapScope!=='world'){ if(Math.abs(obj.x-st.pos.x)+Math.abs(obj.y-st.pos.y)===1 || (Math.max(Math.abs(obj.x-st.pos.x),Math.abs(obj.y-st.pos.y))<=1)){if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;G.walk.path=[];G.walk.pending=null;} interact(obj); return; }
     path=bfs(m,st.pos.x,st.pos.y,(px,py)=>Math.abs(px-x)+Math.abs(py-y)===1); pending=obj; }
-  else { if(x===st.pos.x&&y===st.pos.y) return; if(!walkable(m,x,y)){if(m.mapScope==='world')toast(worldOwnersAt(x,y).length?'未開放エリア：まだ移動できません。':'海・山には移動できません。');return;} path=bfs(m,st.pos.x,st.pos.y,(px,py)=>px===x&&py===y,m.mapScope!=='world'||!!obj||Object.hasOwn(m.walkRoadIndex,x+','+y)); }
+  else { if(x===st.pos.x&&y===st.pos.y) return; if(!walkable(m,x,y)){if(m.mapScope==='world')toast(!worldTileOpen(x,y,st)?'未開放エリア：まだ移動できません。':'海・川には移動できません。');return;} path=bfs(m,st.pos.x,st.pos.y,(px,py)=>px===x&&py===y,m.mapScope!=='world'||!!obj||Object.hasOwn(m.walkRoadIndex,x+','+y)); }
   if(!path) return toast("そこへは行けません。");
-  if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;}G.walk.path=path; G.walk.prog=0; G.walk.pending=pending||(obj&&obj.walk?obj:null);syncMapTravelLayout();
+  if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;}G.walk.path=path; G.walk.prog=0; G.walk.pending=pending||(obj&&(obj.walk||m.mapScope==='world')?obj:null);syncMapTravelLayout();
 }
 function onMapTap(e){if(G.sheet||G.dlg||G.screen!=='explore'||G.readOnly)return;const cv=G.cv;if(!cv)return;const p=mobileMapTile(e,cv.getBoundingClientRect(),camera(),G.vw,G.vh),m=MAPS[G.st.mapId];if(p&&p.x>=0&&p.y>=0&&p.x<m.w&&p.y<m.h)walkTo(p.x,p.y);}
 
@@ -5685,7 +5686,7 @@ function guideGearSource(id,it){
 function systemGuideEntries(){
  if(SYSTEM_GUIDE_CACHE)return SYSTEM_GUIDE_CACHE;
  const out=[],add=(id,cat,title,body,keys='')=>out.push({id,cat,title,body,search:guideSearchText(title+' '+keys+' '+guidePlain(body))}),p=s=>'<p>'+s+'</p>';
- add('first','start','はじめて遊ぶ人へ：何をしたらいい？',p('地面をタップするか、スティックで歩きます。近くの人や建物は「A 決定」で調べます。スティックの中心を短く押しても決定です。「B 戻る」で一つ前へ戻ります。メニューの詳細・分類・検索・ページを開いた後も、直前の項目と読んでいた位置へ戻れます。いちばん外側で戻るとMAPなどの元の画面へ戻ります。買い物・転職・事件の進み具合は巻き戻りません。')+p('解説は操作パネルの「解説」から開けます。戦闘中は左が解説、右がオートです。MAPのクイックメニューやメニュー一覧には重ねて置きません。操作パネルを消している時は、MAPや戦闘画面の上、メニューの見出しなどに解説が1つ出ます。解説を読んでいる間は、もう1つ解説ボタンを出しません。')+p('街のメニューから「依頼帳」を開き、今できる依頼を選びましょう。「道しるべ」で施設を選ぶと、そこまで歩けます。職業を変える時は、街の「職」ハローワークで専用イベントをクリアしましょう。敵が出る道では戦闘になることがあります。'),'操作 コントローラー ジョイスティック');
+ add('first','start','はじめて遊ぶ人へ：何をしたらいい？',p('地面をタップするか、スティックで歩きます。近くの人や建物は「A 決定」で調べます。スティックの中心を短く押しても決定です。「B 戻る」で詳細から1つ前へ戻ります。見出しの「マップへ／戦闘へ」で一覧の階層をまとめて閉じます。メニューの最上位ではBでも元の画面へ戻ります。メニューの詳細・分類・検索・ページを開いた後も、直前の項目と読んでいた位置へ戻れます。いちばん外側で戻るとMAPなどの元の画面へ戻ります。買い物・転職・事件の進み具合は巻き戻りません。')+p('探索の解説は「メニュー」の詳細一覧から開けます。戦闘中は左が解説、右がオートです。探索の操作パッドは「道しるべ」「メニュー」の2ボタンです。操作パネルを消している時は、MAPや戦闘画面の上、メニューの見出しなどに解説が1つ出ます。解説を読んでいる間は、もう1つ解説ボタンを出しません。')+p('街のメニューから「依頼帳」を開き、今できる依頼を選びましょう。「道しるべ」で施設を選ぶと、そこまで歩けます。職業を変える時は、街の「職」ハローワークで専用イベントをクリアしましょう。敵が出る道では戦闘になることがあります。'),'操作 コントローラー ジョイスティック');
  add('status-screen','start','ステータス：仲間と知りたいことを選ぶ',p('上の仲間選択か左右の矢印で、見たい仲間を切り替えます。「能力・装備」でHP・MP・攻撃力・防御力と次の成長までの必要量を確認。「技」「人物」「職業」で表示を分けています。名前変更もできます。')+p('技は名前や効果で検索し、習得済み・これから覚える技・超レア技・必殺技で絞り込み、6件ずつ確認します。習得済みでも、戦闘中はMP、再使用待ち、必殺技の条件が必要です。超レア技は対応装備を着けた時だけ表示・使用できます。')+p('能力のくわしい内訳と累計経験値は、能力タブの「基礎能力・全能力・成長のくわしい説明」を開きます。戦闘中に確認するHP・MPは、いま戦っている仲間の値です。'),'ステータス 人物選択 HP MP 技 検索 名前');
  add('shop-screen','gear','ショップ：個数・合計・残るゴールドを確認',p('Gはゴールドです。「装備を買う」「道具を買う」「売る」を選びます。名前・効果・職業のことばで検索し、種類や今買える品で絞り込めます。品は6件ずつです。仲間を選ぶと、その仲間の装備条件と能力の変化で比べられます。')+p('商品を選んで、1個・＋・−・最大のボタンで数を決めます。合計と取引後の所持金を確認してから購入・売却を確定します。「最大」は所持金と持ち物の空きから計算。装備は同じ品を8個まで、道具は'+BAG_KINDS+'種類・同じ品を'+BAG_STACK+'個までです。装備中の品は売れません。専用道具には職業と熟練度の条件があります。')+p('買っただけでは装備は変わりません。将来使う装備も買えますが、使う時には本人のレベル・職業・熟練度が必要です。取引後・取りやめ時は元の検索や一覧へ戻ります。売買はその街の店の前で行い、戦闘・配信・活動準備・会話中や閲覧のみのタブでは確定できません。'),'買い物 購入 売却 数量 合計 G 店 所持金 持ち物');
  add('equipment-screen','gear','装備：今と変更後を比べて確定する',p('「仲間の装備」から仲間と武器・防具・アクセサリーを選びます。名前や効果で検索し、「この仲間が装備可能」「未装備・装備可能」「超レア」などで絞り込めます。6件ずつ表示し、種類・職業・強さ・価格でも並べ替えられます。')+p('候補を押しただけでは装備は変わりません。最大HP・最大MP・攻撃力・防御力の今と変更後、増える数・減る数を確認して確定します。その他の能力差も開いて確認できます。外す時も能力差を確認します。ほかの仲間が着けている品は、その仲間の名前と外した後の能力も表示します。')+p('装備条件は本人のレベル・職業・熟練度で判定します。比較後に状態が変わった時は、候補から選び直してください。「未装備の持ち物」では所持数・装備中・未装備を区別。捨てる時は確認が必要で、装備中の最後の1個は捨てられません。装備変更や捨てる操作は安全地帯で行います。検索・選択・読んでいた位置は解説や別画面から戻っても復元します。'),'装備 比較 確認 付け替え 受け渡し レベル 熟練度 捨てる');
@@ -5759,7 +5760,13 @@ function openSheet(k,data={},options={}){
  pushSheetFrame(captureSheetFrame());G.sheet=k;G.sheetData=clone(data);if(options.suspendDialog)G.dlg=null;G.walk.path=[];SHEET_NAV.active=k;SHEET_NAV.pending=null;G.cursorSig=null;render();const el=$('.sheet');if(el)el.scrollTop=0;
 }
 function backSheet(fallback=null){checkSheetNavigation();let prev=SHEET_NAV.frames.pop();while(prev&&prev.sheet===G.sheet&&prev.dlg===G.dlg&&sheetDataKey(prev.data)===sheetDataKey(G.sheetData))prev=SHEET_NAV.frames.pop();if(prev){restoreSheetFrame(prev);return;}G.sheet=fallback;G.sheetData={};SHEET_NAV.active=G.sheet;G.cursorSig=null;render();}
-function closeSheet(){if(G.sheet==='rename'&&!G.readOnly){finishRename();return;}backSheet();}
+function returnToPlay(){
+ if(G.sheet==='rename'&&!G.readOnly){finishRename();return;}
+ checkSheetNavigation();const origin=SHEET_NAV.frames.find(f=>!f.sheet),dlg=origin?origin.dlg:G.dlg;
+ G.sheet=null;G.sheetData={};G.dlg=dlg;G.cursorSig=null;resetSheetNavigation();render();
+}
+function sheetHasParent(){checkSheetNavigation();return SHEET_NAV.frames.some(f=>f.sheet);}
+function closeSheet(){if(G.sheet==='rename'&&!G.readOnly){finishRename();return;}if(['mobileMenu','mobileBattleMenu'].includes(G.sheet)||!sheetHasParent())return returnToPlay();backSheet();}
 /* 同じメニュー内の分類・検索・詳細も「1つ前」に含める。購入や転職などの実行は記録しない。 */
 function recordSheetAction(name,action){return function(...args){
  checkSheetNavigation();const before=captureSheetFrame(),key=sheetDataKey(before.data),result=action.apply(this,args),d=G.sheetData;
@@ -5770,7 +5777,7 @@ function recordSheetAction(name,action){return function(...args){
  }
  return result;
 };}
-function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}<button class="btn" data-a="closeSheet">戻る</button></div>${body}</div></div>`; }
+function sheetWrap(title, body){ return `<div class="overlay" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="win sheet"><div class="sheet-head"><h2 class="label">${esc(title)}</h2>${systemHelpButton("sheet")}${sheetHasParent()&&!["rename","mobileMenu","mobileBattleMenu"].includes(G.sheet)?`<button class="btn" data-a="returnToPlay">${G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"元の画面へ"}</button>`:""}<button class="btn" data-a="closeSheet">${G.sheet==="rename"?"名前を確定":sheetHasParent()&&!["mobileMenu","mobileBattleMenu"].includes(G.sheet)?"戻る":G.screen==="battle"?"戦闘へ":G.screen==="explore"?"マップへ":"戻る"}</button></div>${body}</div></div>`; }
 function renderSheet(){
   const k=G.sheet; if(!k) return ""; const st=G.st; const d=G.sheetData;
   switch(k){
@@ -6225,7 +6232,7 @@ const ACT = {
   guideSearch(){G.sheetData={...G.sheetData,q:($("#systemQuery")?.value||"").slice(0,100),cat:"all",page:0};render();},
   guideCategory(el){if(!SYSTEM_GUIDE_CATEGORIES[el.dataset.v])return;G.sheetData={...G.sheetData,cat:el.dataset.v,page:0};render();},
   guidePage(el){if(G.sheet!=="systemGuide")return;const page=Number(el.dataset.v),r=systemGuideResults(G.sheetData);if(!Number.isInteger(page)||page<0||page>=r.pages)return;G.sheetData={...G.sheetData,page};render();const e=$(".sheet");if(e)e.scrollTop=0;},
-  openSheet(el){ if(el.dataset.k==="collection")return openCollectionFromLink(el);if(el.dataset.k==="systemGuide")return openSystemGuide();if(el.dataset.k==="items"||el.dataset.k==="equip") keepFlush(); openSheet(el.dataset.k); }, closeSheet(){ closeSheet(); },
+  openSheet(el){ if(el.dataset.k==="collection")return openCollectionFromLink(el);if(el.dataset.k==="systemGuide")return openSystemGuide();if(el.dataset.k==="items"||el.dataset.k==="equip") keepFlush(); openSheet(el.dataset.k); }, closeSheet(){ closeSheet(); }, returnToPlay(){returnToPlay();},
   itemView(el){ G.sheetData={item:el.dataset.v||null}; render(); },
   itemUse(el){ const st=G.st, id=G.sheetData.item; const r=useItemField(st,id,el.dataset.c||null); if(!r.ok) return toast(r.reason); commit(); SND.sfx("heal"); if(bagCount(st.bag,id)<=0) G.sheetData={item:null}; render(); toast(r.log.join("・")); },
   itemDrop(el){ G.sheetData.confirmDrop=true; render(); },
@@ -6235,7 +6242,7 @@ const ACT = {
   dlgBack(){ if(G.dlg.i>0){ G.dlg.i--; render(); } },
   dlgSkip(){ const d=G.dlg; G.dlg=null; render(); if(d.after) d.after(); },
   step(el){ if(G.sheet||G.dlg) return; const d=+el.dataset.d; const st=G.st; const m=MAPS[st.mapId]; st.dir=d; const v=[[0,1],[0,-1],[-1,0],[1,0]][d];
-    const nx=st.pos.x+v[0], ny=st.pos.y+v[1]; const o=objAt(m,nx,ny); if(o&&!o.walk) return interact(o); if(walkable(m,nx,ny)){ G.walk.path=[{x:nx,y:ny}]; G.walk.prog=0; } },
+    const nx=st.pos.x+v[0], ny=st.pos.y+v[1]; const o=objAt(m,nx,ny); if(o&&!o.walk&&m.mapScope!=='world') return interact(o); if(walkable(m,nx,ny)){ G.walk.path=[{x:nx,y:ny}]; G.walk.prog=0; } },
   stop(){ if(G.walk.path.length>1) G.walk.path=G.walk.path.slice(0,1); G.walk.pending=null; },
   interactId(el){ const o=MAPS[G.st.mapId].objects.find(x=>x.id===el.dataset.v); G.sheet=null; render(); interact(o); },
   guideTo(el){if(G.readOnly||G.screen!=='explore'||G.dlg)return;const o=mapGuideObjects().find(x=>x.id===el.dataset.v);if(!o)return;if(G.st.mapId==='WORLD'&&MAPS.WORLD.targets[o.id])return navigateWorldTarget(o.id);G.sheet=null;render();walkTo(o.x,o.y);},

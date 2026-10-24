@@ -1,0 +1,501 @@
+{
+  "version": "8.60",
+  "generatedAt": "2026-10-24T09:22:51.381695+00:00",
+  "phases": [
+    "v8.50に新要件の検証を適用して未対応を確認",
+    "修正後の操作を3回反復",
+    "地図・図鑑・戻る・保存の関連回帰"
+  ],
+  "before": {
+    "total": 93,
+    "unmet": 48,
+    "note": "新機能の不存在・表示文言差を含む要件の未達数。48個の独立した既存バグを意味しない。"
+  },
+  "reports": {
+    "test-national-map": {
+      "groups": {
+        "safe-city-and-facility-paths": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "city-step-encounter-suppression": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "exterior-encounter-real-engine": {
+          "cases": 585,
+          "passed": 585,
+          "failed": 0
+        },
+        "city-direct-combat-rejected": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "single-connected-national-map": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "unlock-and-road-gates": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "progressive-route-connectivity": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "exit-enter-and-save": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "walking-not-teleporting": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "departure-does-not-mutate-when-blocked": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "shinkansen-transaction": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "challenge-reception-moves-outside-before-payment": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "rematch-reception-moves-outside-before-payment": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "held-input-does-not-reenter-city": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "regional-guide-and-return-route": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "atlas-and-phone-controls": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "old-city-battle-save-migration": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "locked-or-invalid-world-save-recovery": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        }
+      },
+      "total": 2187,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three repeated passes of actual national topology, city facilities, unlock gates, walking arrivals, rail transactions and save migration in VM. Render/audio/storage mocked; no browser/device layout verification."
+    },
+    "test-geographic-world": {
+      "groups": {
+        "expanded-scale": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "coordinate-projection": {
+          "cases": 195,
+          "passed": 195,
+          "failed": 0
+        },
+        "real-relative-position": {
+          "cases": 21,
+          "passed": 21,
+          "failed": 0
+        },
+        "terrain-present-and-traversal": {
+          "cases": 57,
+          "passed": 57,
+          "failed": 0
+        },
+        "landmark-art": {
+          "cases": 27,
+          "passed": 27,
+          "failed": 0
+        },
+        "landmark-geography-and-source": {
+          "cases": 30,
+          "passed": 30,
+          "failed": 0
+        },
+        "atlas-region-and-ui-purity": {
+          "cases": 36,
+          "passed": 36,
+          "failed": 0
+        },
+        "old-world-save-reposition": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "old-battle-return-reposition": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "bounded-canvas-cache": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "full-world-viewport-render": {
+          "cases": 228,
+          "passed": 228,
+          "failed": 0
+        }
+      },
+      "total": 604,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual coordinate projection, terrain tiles, landmark art, native region selection and old-save migration. Canvas commands recorded in Node VM; no browser/device test.",
+      "cache": {
+        "chunks": 40,
+        "limit": 40,
+        "chunkPixels": 65536,
+        "bytes": 10485760
+      }
+    },
+    "test-deep-regression": {
+      "groups": {
+        "boss-generation": {
+          "cases": 558,
+          "passed": 558,
+          "failed": 0
+        },
+        "boss-reward-idempotency": {
+          "cases": 93,
+          "passed": 93,
+          "failed": 0
+        },
+        "nonvictory-no-reward": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "stale-result-return": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "result-return-context": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-remove-repeat": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "equipment-change-blocked": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "sheet-back-one-level": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "navigation-reset": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "progression-unlock-sequence": {
+          "cases": 10,
+          "passed": 10,
+          "failed": 0
+        }
+      },
+      "total": 688,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual boss construction/enemy action/reward/equipment/navigation code. DOM/render/save/audio calls mocked; boss victories synthetically marked, not full boss fights."
+    },
+    "test-map-guidance": {
+      "total": 1404,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three passes: no physical signs across every map, top HUD placement, saved toggle, readonly guard, virtual area navigation and boss/area/safe level labels. VM/mock UI, no physical-device rendering."
+    },
+    "test-map-boundaries": {
+      "total": 57,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three repeated boundary/context/manual-navigation and regional music checks in VM; UI/audio/storage mocked."
+    },
+    "test-world-wayfinding": {
+      "groups": {
+        "continuous-transport-path": {
+          "cases": 153,
+          "passed": 153,
+          "failed": 0
+        },
+        "no-isolated-transport-pieces": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "road-connected-target-and-navigation": {
+          "cases": 420,
+          "passed": 420,
+          "failed": 0
+        },
+        "relocated-target-coordinates-and-road-approach": {
+          "cases": 606,
+          "passed": 606,
+          "failed": 0
+        },
+        "nonoverlapping-county-town-boss-labels": {
+          "cases": 585,
+          "passed": 585,
+          "failed": 0
+        },
+        "locked-target-refused-without-mutation": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "resume-and-manual-override": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "target-replacement-cancel-and-stale-state": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "atlas-transport-layer-purity": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "county-suffixes": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        }
+      },
+      "total": 1791,
+      "failed": 0,
+      "failures": [],
+      "transportComponents": {
+        "rail": {
+          "components": 1,
+          "singletons": 0
+        },
+        "highway": {
+          "components": 3,
+          "singletons": 0
+        }
+      },
+      "scope": "Three repeated passes over connected transport masks, virtual area waypoints (physical signs removed), all city/boss/scenic approaches, actual navigation controls, dynamic direction signs and viewport label rectangles. VM and mocked UI/audio/storage; no browser/device test."
+    },
+    "terrain-back": {
+      "total": 93,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three passes of real walkability, tap routing and stick stepping across every terrain, locked mountain rejection, detail/back/home state, B button, battle return, suspended dialogue and mandatory rename guard. Mock DOM/render; no physical-device layout or touch check."
+    },
+    "controls": {
+      "total": 72,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three passes of persistent layout, rendered menu, dock visibility, actual A and joystick center/key handlers, cancel and dialog confirmation in VM. DOM dimensions and events mocked; physical-device layout and touch unverified."
+    },
+    "dex": {
+      "groups": {
+        "mobile-html": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "tab-memory": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "density-toggle": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "page-jump": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "page-scroll": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "draft-search": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "invalid-density": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-native-select": {
+          "cases": 48,
+          "passed": 48,
+          "failed": 0
+        },
+        "enemy-native-select": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "category-counts": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "sort-and-size": {
+          "cases": 72,
+          "passed": 72,
+          "failed": 0
+        },
+        "invalid-size": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "density-anchor": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "single-detail": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "context-entry": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        }
+      },
+      "total": 375,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual generated HTML, UI handlers and scroll calculations with mocked DOM rectangles in VM. Does not verify browser layout, touch behavior or physical screen sizes."
+    },
+    "focused": {
+      "groups": {
+        "A1-stale-navigation": {
+          "cases": 15,
+          "passed": 15,
+          "failed": 0
+        },
+        "A1-invalid-area": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "A1-page-bounds": {
+          "cases": 10,
+          "passed": 10,
+          "failed": 0
+        },
+        "A1-detail-bounds": {
+          "cases": 7,
+          "passed": 7,
+          "failed": 0
+        },
+        "A2-repeated-valid-navigation": {
+          "cases": 615,
+          "passed": 615,
+          "failed": 0
+        },
+        "B1-invalid-reward-quantity": {
+          "cases": 36,
+          "passed": 36,
+          "failed": 0
+        },
+        "B1-invalid-item-and-gear": {
+          "cases": 33,
+          "passed": 33,
+          "failed": 0
+        },
+        "B2-valid-overflow": {
+          "cases": 12,
+          "passed": 12,
+          "failed": 0
+        },
+        "C1-reject-corrupt-saves": {
+          "cases": 63,
+          "passed": 63,
+          "failed": 0
+        },
+        "C2-valid-save-roundtrip": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "C2-legacy-items": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 800,
+      "failed": 0,
+      "failures": [],
+      "phases": [
+        "1: reproduction and invalid boundaries",
+        "2: three repeated valid/invalid sequences",
+        "3: broad regression and checksum-valid save roundtrips"
+      ],
+      "focus": [
+        "A: enemy encyclopedia and stale UI navigation",
+        "B: item/gear acquisition and overflow",
+        "C: inventory and encounter save validation"
+      ],
+      "scope": "Actual functions and real checksum validation in VM with mocked UI/audio/storage. Boundary calls are injected, not evidence that every case occurs via normal UI. No browser/device or live cloud tests."
+    }
+  },
+  "additionalChecks": {
+    "releaseSync": 7
+  },
+  "total": 8078,
+  "failed": 0,
+  "visualReview": "中央揃えのCSS指定を確認。実機描画は未確認。",
+  "scope": "VM・模擬DOM・キャンバス記録による地形、タップ経路、スティック、戻ると直接復帰の検証。実機表示・タッチ・全バグ解消は未確認。"
+}

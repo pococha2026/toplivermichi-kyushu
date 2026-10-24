@@ -71,3 +71,6 @@ jobs:
 
       - name: Verify persistent status, compact dock and nearby confirmation
         run: node scripts/test-map-travel-layout.cjs
+
+      - name: Verify land traversal, hierarchical back and direct return
+        run: node scripts/test-terrain-back.cjs

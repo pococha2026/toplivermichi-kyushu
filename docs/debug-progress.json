@@ -1,5 +1,5 @@
 {
-  "version": "8.50",
+  "version": "8.60",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -75,5 +75,9 @@
   "mapTravelLayout": {
     "status": "移動中も常時表示へ変更。操作パッド2ボタン・A/中央決定の周辺調査を3回反復",
     "report": "docs/debug-v8.50.json"
+  },
+  "terrainAndReturn": {
+    "status": "旧版の要件未達確認後、地形と状況別戻るを3回反復・関連回帰成功",
+    "report": "docs/debug-v8.60.json"
   }
 }
