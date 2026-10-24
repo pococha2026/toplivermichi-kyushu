@@ -1,5 +1,5 @@
 from pathlib import Path
-import importlib.util, shutil, tempfile, unittest, hashlib
+import importlib.util, shutil, tempfile, unittest
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('build_game', ROOT/'scripts/build-game.py')
 build = importlib.util.module_from_spec(spec); spec.loader.exec_module(build)

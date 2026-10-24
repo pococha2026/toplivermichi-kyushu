@@ -1,0 +1,21 @@
+{
+  "version": "8.78",
+  "cleanup": "docs/cleanup-v8.78.json",
+  "initial_reproductions": {
+    "methods": 4,
+    "failed": 4
+  },
+  "extra_audit_false_positive": {
+    "code_example_link_reproduced": true,
+    "fixed": true
+  },
+  "project_audit_tests": 10,
+  "broken_history_links_fixed": 15,
+  "audit_after_fix": {
+    "broken_local_links": 0,
+    "unregistered_tests": 0
+  },
+  "runtime_unchanged_except_version": true,
+  "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+  "scope": "Static references, Python fixture/CLI tests and existing Node VM regressions; no browser or physical-device touch checks."
+}

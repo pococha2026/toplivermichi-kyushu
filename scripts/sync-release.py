@@ -37,6 +37,22 @@ def planned(root):
  manifest={'version':version,'date':day,'files':{k:digest(v) for k,v in sorted(files.items())},'game_logic_sha256':digest(game_body(game).encode()),'spec_content_sha256':digest(spec_body(spec).encode())}
  return files,manifest
 
+def read_manifest(path):
+ previous=json.loads(path.read_text(encoding='utf-8'))
+ expected={'index.html','GAME_SPEC.md','GAME_SPEC.txt','README.md','VERSION.txt'}
+ if not isinstance(previous,dict) or not isinstance(previous.get('files'),dict) or set(previous['files'])!=expected:
+  raise ValueError('Invalid release manifest: expected the complete file hash mapping')
+ hashes=[*previous['files'].values(),previous.get('game_logic_sha256')]
+ if 'spec_content_sha256' in previous:hashes.append(previous['spec_content_sha256'])
+ if any(not isinstance(h,str) or not re.fullmatch('[0-9a-f]{64}',h) for h in hashes):
+  raise ValueError('Invalid release manifest: malformed SHA-256')
+ if not isinstance(previous.get('version'),str) or not re.fullmatch(r'[0-9]+(?:\.[0-9]+)+',previous['version']):
+  raise ValueError('Invalid release manifest version')
+ from datetime import date
+ if not isinstance(previous.get('date'),str):raise ValueError('Invalid release manifest date')
+ date.fromisoformat(previous['date'])
+ return previous
+
 @contextmanager
 def release_lock(root):
  path=root/'.release-update.lock';token=uuid.uuid4().hex
@@ -62,14 +78,7 @@ def validate(root,write=False):
 def _validate(root,write=False):
  files,manifest=planned(root);mp=root/'release-manifest.json'
  if write and mp.exists():
-  previous=json.loads(mp.read_text(encoding='utf-8'))
-  expected={'index.html','GAME_SPEC.md','GAME_SPEC.txt','README.md','VERSION.txt'}
-  if not isinstance(previous,dict) or not isinstance(previous.get('files'),dict) or set(previous['files'])!=expected:
-   raise ValueError('Invalid release manifest: expected the complete file hash mapping')
-  hashes=[*previous['files'].values(),previous.get('game_logic_sha256')]
-  if 'spec_content_sha256' in previous:hashes.append(previous['spec_content_sha256'])
-  if any(not isinstance(h,str) or not re.fullmatch('[0-9a-f]{64}',h) for h in hashes):
-   raise ValueError('Invalid release manifest: malformed SHA-256')
+  previous=read_manifest(mp)
   raw_spec=(root/'GAME_SPEC.md').read_bytes()
   same_spec=(previous['spec_content_sha256']==manifest['spec_content_sha256']) if 'spec_content_sha256' in previous else (previous.get('files',{}).get('GAME_SPEC.md')==digest(raw_spec))
   if previous.get('game_logic_sha256')!=manifest['game_logic_sha256'] and same_spec:

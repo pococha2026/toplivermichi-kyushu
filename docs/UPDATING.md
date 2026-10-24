@@ -1,47 +1,21 @@
-# 更新ガイド
+# 現行版の更新ガイド
 
-## まず使う4つのコマンド
+資料全体は[一覧](INDEX.md)、現在の仕様は[GAME_SPEC.md](../GAME_SPEC.md)を参照。過去版ごとの説明は[更新履歴](CHANGELOG.md)で確認する。
 
-リポジトリ直下で実行。Windowsは環境により `python3` を `python` に読み替える。Python 3.10以上、Node.js、Gitが必要。追加のPythonパッケージは不要。ソースはUTF-8で読み、構文検査用ファイルは閉じてからNode.jsへ渡すため、Windowsの一時ファイル共有制約にも対応する。Windows実機での実行は未確認。
+## いつもの更新
 
-```bash
-# 変更した場所と関連検査を表示（読み取りだけ）
-python3 scripts/update.py plan
-# 版と日付を設定し、生成と関連検査をまとめて実行（次回の版の例）
-python3 scripts/update.py prepare --version 8.76 --date 2026-10-25
-# すべての既存ゲーム検査を実行（公開直前や広範囲の変更時）
-python3 scripts/update.py check --full
-# 公開した後、6ファイルの一致を確認（不一致・通信失敗は終了コード1）
-python3 scripts/update.py verify-public
-```
+Python 3.10以上・Node.js・Gitが必要。Windowsでは環境に応じてpython3をpythonへ読み替える。Windows実機の動作は未確認。
 
-これらのコマンド自体は公開しない。公開は検査成功と差分確認後に行う。版番号と日付は `VERSION.txt` が唯一の編集元。アプリのビルド日・仕様の日付も自動生成。日付だけ変更する場合は `prepare --date YYYY-MM-DD` を使う。
+1. `python3 scripts/update.py doctor` で入力・管理情報・公開物・ロック・復旧ファイルを確認する。
+2. 下表の編集元とGAME_SPEC.mdを更新し、VERSION.txtの1行目を新しい版、2行目を公開日（YYYY-MM-DD）へ変更する。
+3. `python3 scripts/update.py prepare` で生成・関連検査をまとめて実行する。版・日付は `--version` と `--date` でも指定できる。
+4. `python3 scripts/update.py audit` で文書リンクと検査登録を確認。公開前は `python3 scripts/update.py check --full` で全ゲーム検査を行う。
+5. 差分を確認し、編集元・生成物・仕様・版情報を同じコミットへ保存する。
+6. 公開後、`python3 scripts/update.py verify-public` で6ファイル一致を確認し、配布用の制作指示書も同じ内容にする。
 
-`plan` と通常の `check` は未コミットの変更から関連検査を選ぶ。コミット後にその差分を調べるには `plan --base HEAD^` または `check --base HEAD^`。CIは `check --full` を使い、変更検知に依存せず全検査を行う。対象一覧は `scripts/checks.json` の1か所で管理する。
+ChatGPTへの更新依頼は検証後の公開同期まで含み、毎回の公開確認は不要。下書き・未公開の明示指定は優先する。コマンド自体はコミットや公開を行わない。GitHub保存と実際の公開配信を区別する。
 
-## エラーが出た時
-
-|表示|直し方|
-|---|---|
-|Sources missing from template|新規JS/CSSをsrc/index.template.htmlの正しい順番へ追加|
-|Duplicate source include|同じファイルの重複指定を取り除く|
-|Missing source include|ファイル名や移動先とテンプレート指定を一致させる|
-|Unresolved template placeholder|変数名の誤記を修正|
-|Out-of-sync release files|prepareを実行し、生成結果を確認|
-|JavaScript構文エラー|表示された行付近を直し、prepareを再実行|
-|公開照合が不一致|デプロイ完了を確認し、verify-publicを再実行。先に公開完了と案内しない|
-
-構文エラーでは生成物を上書きしない。テスト失敗は生成成功後にも起こり得るため、失敗した検査を直して再実行する。公開処理は自動では始まらない。
-
-## いつも使う手順
-
-1. 下表から編集元を選び、変更する。公開用 `index.html` は直接編集しない。
-2. 実装した変更を `GAME_SPEC.md` に記載し、README冒頭に変更点を書く。
-3. `VERSION.txt` の1行目を新版、2行目を公開日（YYYY-MM-DD）にする。版番号の正本はこのファイルだけ。
-4. リポジトリ直下で `python3 scripts/sync-release.py --write` を実行する。
-5. `python3 scripts/sync-release.py --check` と変更内容に対応する既存テストを実行する。
-6. `git diff` を確認し、編集元・生成物・仕様・版情報を同じコミットで保存する。
-7. 公開処理が完了したら、プレイURLと同階層の `VERSION.txt`・`release-manifest.json`・`GAME_SPEC.txt` を確認する。GitHubへの保存とPagesへの配信完了を区別する。
+`plan` と通常の `check` は未コミット変更を基準にする。コミット済みの変更は `--base HEAD^` 等で指定する。リネームの移動元・移動先は両方検査する。未分類のsrcは全ゲーム検査へ回す。Git情報がないZIP展開先でも `check --full` は利用できる。
 
 ## どこを編集するか
 
@@ -63,46 +37,33 @@ python3 scripts/update.py verify-public
 
 ファイルは既存の区切りで分けているため、一部の関連処理は複数ファイルにまたがる。関数名は `rg '関数名' src/game` で検索する。
 
-## 生成物と検査
+## 生成物・検査設定
 
-- `index.html`：CSSとJavaScriptを元の順番で埋め込む単一HTML。別ファイルの取得待ちや保存キー変更は追加しない。
-- `GAME_SPEC.txt`：GAME_SPEC.mdから生成する配布用テキスト。
-- `release-manifest.json`：公開用5ファイルのハッシュと版情報。手編集しない。
-- `python3 scripts/build-game.py --check`：編集元とHTMLだけの一致を検査。
-- `python3 scripts/test-source-build.py`：元コードとの同値性、連結順、未反映の変更を検査。
-- `python3 scripts/test-release-sync.py`：版・TXT・manifestの不一致を検査。
+- index.html、GAME_SPEC.txt、release-manifest.jsonは生成物。直接編集しない。
+- 版と日付はVERSION.txtが正本。アプリと仕様書の見出しへ自動反映する。版・日付だけの変更は仕様本文の更新として扱わない。
+- scripts/checks.jsonのalways/fullはローカルとCIの共通一覧。relatedの検査はalways/fullにも登録する。optionalは追加依存が必要な任意検査。
+- `build-game.py --check` は読み取り専用の一致検査。旧来の単独生成モードは廃止し、生成はprepareまたはsync-release.py --writeへ統一した。
+- `audit` はローカルMarkdownリンクと未登録の検査を検出する。外部URLの有効性や、ファイルが意味的に不要かどうかを自動判定しない。
 
-JavaScriptは分割後も同じscript内の共有スコープで実行する。ファイルの順番変更、module化、保存世代の変更は通常の整理とは別の変更として検証する。
+## エラー・中断からの復旧
+
+`doctor` は読み取り専用。不正な版・日付、壊れたmanifest、未生成・不一致の公開物、検査設定、ロックPIDと回復用フォルダーを表示する。編集中のファイルと生成物が不一致なら、内容を確認してprepareを実行する。
+
+|状況|対応|
+|---|---|
+|ソース追加忘れ・重複・欠落|src/index.template.htmlの指定と実ファイルを一致させる|
+|未解決のテンプレート変数|変数名を修正して再生成|
+|構文・検査エラー|表示された箇所を修正。成功するまで公開しない|
+|既存ロック|実際の更新プロセスを確認。稼働中のロックを削除しない|
+|.release-stage-*が残存|old/の回復用ファイルと公開物の整合性を確認し、復旧後に残存物を手動で解決|
+|文書リンク切れ・検査未登録|auditの表示位置やchecks.jsonを修正|
+|公開ファイル不一致|配信完了を確認しverify-publicを再実行。先に公開完了と案内しない|
+
+通常のI/O例外やPythonが捕捉できるCtrl+Cでは生成物を復元する。OS強制終了・停電では復旧処理を実行できない。ロックや回復用ファイルは自動削除せず、別の更新で上書きしない。prepareは関連検査が終わるまでロックを保持する。
 
 ## 公開先
 
-- リポジトリ： https://github.com/pococha2026/toplivermichi-kyushu
 - プレイ： https://pococha2026.github.io/toplivermichi-kyushu/
 - 最新仕様TXT： https://pococha2026.github.io/toplivermichi-kyushu/GAME_SPEC.txt
 
-最新版の共有には `?v=VERSION.txtの版番号` を付けられる。公開版の照合はmanifest記載の5ファイルのSHA-256で行う。ブラウザ自動デバッグは行わない。構文検査や画面生成テストを実機のタッチ・音の確認と呼ばない。
-
-## 更新依頼時の公開同期
-
-ユーザーの継続指示により、ChatGPTへ依頼した更新は検証後に既存公開版へ同期する。v8.75以降、通常の更新ごとに公開確認を取り直さない。GitHubへの反映だけで完了とせず、公開サイトの6ファイル一致と配布指示書の同期を確認する。下書き・未公開の指定がある場合はその指定を優先する。失敗や競合は隠さず未完了として報告する。ローカルのupdate.pyコマンド自体はコミット・公開を行わない。
-
-## v8.76 復旧と検査対象の扱い
-
-- index.htmlを失った場合も、srcと仕様があればprepareで再生成できる。srcが存在する状態でテンプレートを消した場合は明示エラーにする。
-- 通常の書込エラーは置換前へ復元する。復元も失敗した場合はエラーに表示された `.release-stage-…` 内の `old/` を復旧に使う。原因を確認する前にこのフォルダーを消さない。停電や強制終了、同時更新は別途確認が必要。
-- 検査設定不正やGit差分取得の失敗はprepareの生成前に停止する。
-- 未分類のsrcファイルは検査を省略せず全ゲーム検査へ回す。
-- ZIP展開等でGit情報がなくても `check --full` は実行可能。planや差分に基づくprepare/checkにはGit情報が必要。
-- 版や日付の見出しだけを直しても、ゲーム変更に必要な仕様本文の更新として扱わない。
-
-## v8.77 中断・同時更新で止まった場合
-
-```bash
-python3 scripts/update.py doctor
-```
-
-この診断はファイルを変更せず、不足した入力・既存ロックとPID・未解決の回復用ファイルを表示する。ロックがある時は実際の更新プロセスが動いていないか確認する。動いているロックは削除しない。異常終了による残存と確認できた場合は、回復用old/と公開物の整合性を確認してからロック・回復用フォルダーを手動で解決し、prepareとcheckをやり直す。診断結果だけで安全な削除を保証しない。
-
-Ctrl+CなどPythonが捕捉できる中断では生成物を復元する。停電・OSの強制終了は復元処理を実行できないため、診断と整合性確認が必要。prepareは関連検査が終わるまでロックを保持する。check --fullやverify-publicは公開処理ではなく読み取り検査である。
-
-ファイル名変更時はGitの移動元・移動先を両方調べる。検査基準にはHEAD、HEAD^、コミットSHA等を使える。Gitオプションのような文字列は基準コミットとして受け付けない。
+ブラウザ自動デバッグは行わない。構文・VM・画面生成検査を実機の描画・タッチ確認と同一視しない。

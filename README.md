@@ -1,20 +1,19 @@
-# トップライバーへの道 全国ツアー編（公開版 v8.77）
+# トップライバーへの道 全国ツアー編（公開版 v8.78）
 
 アイドルグループ「おやすみセカイ」を脱退したヒロインと主人公が全国を巡り、九州のS6到達から東京ドーム満員公演を目指す、昭和風ドットのスマホ向けRPGです。
 
 **プレイ： https://pococha2026.github.io/toplivermichi-kyushu/**
 
-- [更新ガイド・編集先一覧](docs/UPDATING.md)
+- [資料一覧](docs/INDEX.md) ／ [更新ガイド・編集先一覧](docs/UPDATING.md)
 - [現行仕様](GAME_SPEC.md) ／ [配布TXT](GAME_SPEC.txt)
 - [過去の更新履歴](docs/CHANGELOG.md)
 - [項目別デバッグの進捗](docs/debug-progress.json)
 
-## v8.77 今回の更新
+## v8.78 今回の更新
 
-- Ctrl+Cなど捕捉可能な中断でも生成物と版番号を復元。
-- 同時更新・未解決の回復用ファイルがある時は上書きせず停止。
-- `doctor` でロックと復旧ファイルを読み取り専用で診断。
-- ファイル名変更の移動元・移動先双方を検査対象に含め、不正なmanifestも明示エラーへ。
+- 現行版で不要な旧レビュー全文と重複メモ、計3ファイルを削除。必要な資料と検証履歴は[資料一覧](docs/INDEX.md)へ整理。
+- 旧履歴ページのリンク切れ15か所を修正し、文書リンク・検査登録の監査を追加。
+- 診断が不正な日付や壊れた管理情報を見逃す問題を修正。単独生成による同期・ロックの迂回も廃止。
 - ゲーム本体・画面・セーブ形式は維持。
 
 ## 更新の入口
@@ -26,8 +25,10 @@
 python3 scripts/update.py doctor
 # 変更箇所と関連検査を見る
 python3 scripts/update.py plan
-# 編集後に生成と検査（版と日付は次回更新の例）
-python3 scripts/update.py prepare --version 8.78 --date 2026-10-25
+# 編集後、VERSION.txtの版・日付を更新して生成と検査
+python3 scripts/update.py prepare
+# 文書リンク・検査登録の確認
+python3 scripts/update.py audit
 # 公開前の全検査
 python3 scripts/update.py check --full
 # 公開後の6ファイル照合

@@ -44,16 +44,13 @@ def render(root=ROOT):
 if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('--check', action='store_true')
+    parser.add_argument('--check', action='store_true', required=True, help='Read-only comparison; generate through update.py prepare')
     args = parser.parse_args()
     try:
         html = render()
         target = ROOT / 'index.html'
-        if args.check:
-            if target.read_text(encoding='utf-8') != html:
-                raise ValueError('index.html differs from src; run python3 scripts/update.py prepare')
-        else:
-            target.write_text(html, encoding='utf-8')
+        if target.read_text(encoding='utf-8') != html:
+            raise ValueError('index.html differs from src; run python3 scripts/update.py prepare')
         print('Game source build: ok')
     except (ValueError, OSError) as error:
         parser.exit(1, str(error) + '\n')

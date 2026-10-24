@@ -4,7 +4,8 @@
     "scripts/test-release-sync.py",
     "scripts/test-maintenance.py",
     "scripts/test-update-recovery.py",
-    "scripts/test-release-safety.py"
+    "scripts/test-release-safety.py",
+    "scripts/test-project-audit.py"
   ],
   "full": [
     "scripts/test-career.cjs",
@@ -65,5 +66,8 @@
     "src/index.template.html": [
       "scripts/test-map-travel-layout.cjs"
     ]
-  }
+  },
+  "optional": [
+    "scripts/test-regional-art.cjs"
+  ]
 }

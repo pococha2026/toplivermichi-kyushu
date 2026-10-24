@@ -1,5 +1,5 @@
 from pathlib import Path
-import importlib.util,json,tempfile,unittest
+import importlib.util,tempfile,unittest
 spec=importlib.util.spec_from_file_location('sync_release',Path(__file__).with_name('sync-release.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 class SyncTest(unittest.TestCase):
  def setUp(self):

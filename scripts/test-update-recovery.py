@@ -1,6 +1,6 @@
 """Reproduce update failures and protect recovery paths; no browser required."""
 from pathlib import Path
-import importlib.util,json,re,shutil,tempfile,unittest
+import importlib.util,re,shutil,tempfile,unittest
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,file):

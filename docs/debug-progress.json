@@ -1,5 +1,5 @@
 {
-  "version": "8.77",
+  "version": "8.78",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -103,5 +103,9 @@
   "releaseSafety": {
     "status": "Ctrl+C・prepare版戻し・同時更新・未復旧ファイル・不正manifest・リネームを再現後修正。6書込境界×3回の中断と3回のロック競合を反復",
     "report": "docs/debug-v8.77.json"
+  },
+  "repositoryCleanup": {
+    "status": "重複資料3点を削除、履歴リンク15箇所を修正。不正診断・CI登録漏れ・単独生成のすり抜けを修正し監査10テストが成功",
+    "report": "docs/debug-v8.78.json"
   }
 }

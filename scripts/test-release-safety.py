@@ -1,7 +1,7 @@
 """Interrupted writes, concurrent writers and real Git rename regression tests."""
 from pathlib import Path
 from contextlib import nullcontext
-import importlib.util,json,shutil,subprocess,tempfile,unittest
+import importlib.util,shutil,subprocess,tempfile,unittest
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
 def load(name,file):

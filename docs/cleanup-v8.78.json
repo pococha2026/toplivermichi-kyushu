@@ -1,0 +1,33 @@
+{
+  "version": "8.78",
+  "previous_commit": "820f2c3062d7a2db19a104140e23a3cbbc6e64b6",
+  "removed": [
+    {
+      "path": "docs/archive/review-v7.30.txt",
+      "bytes": 600788,
+      "sha256": "0913ca105715403035a7c36dfa1f069aa36eb2c914e1551edb68d33998971379",
+      "reason": "現行仕様へ統合済みの旧指示書・旧付録全文。ゲームと検査は読み込まず、旧文書版の混同を招く。"
+    },
+    {
+      "path": "docs/refactor-v8.74.md",
+      "bytes": 576,
+      "sha256": "7f486361a06a4e891c6fe3d5d0bc86b6691072b5c34251ca762267db1767b9db",
+      "reason": "分割時の一時的な完全一致確認メモ。最新検証記録とGit履歴で追跡可能。"
+    },
+    {
+      "path": "docs/maintenance-v8.75.json",
+      "bytes": 355,
+      "sha256": "4fee811439fb5c928fa1fe50aee8092c876a3a928a9d3dc7a4491e0d9b9d0e1e",
+      "reason": "参照のない旧更新処理サマリー。最新の検証記録で置き換え済み。"
+    }
+  ],
+  "removed_bytes": 601719,
+  "retained": [
+    "現行srcと生成公開物",
+    "全ゲーム・更新検査",
+    "地理とご当地品の参照資料",
+    "過去の不具合検証結果と更新履歴"
+  ],
+  "broken_history_links_fixed": 15,
+  "history_note": "Removed file contents remain retrievable from the previous Git commit; no duplicate archive copies retained."
+}
