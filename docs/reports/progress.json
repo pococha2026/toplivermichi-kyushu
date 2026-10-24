@@ -1,0 +1,134 @@
+{
+  "version": "8.81",
+  "iteration": 2,
+  "method": [
+    "再現・境界値確認",
+    "修正後に有効・無効操作を各3回反復",
+    "関連機能の回帰と保存・読込往復"
+  ],
+  "focused": [
+    {
+      "area": "図鑑・戻る",
+      "status": "修正後の3回反復が成功",
+      "fixes": [
+        "不正エリア・詳細IDの例外",
+        "負数ページの空表示",
+        "別画面の古い図鑑ボタン"
+      ]
+    },
+    {
+      "area": "所持品・売買・報酬",
+      "status": "修正後の3回反復が成功",
+      "fixes": [
+        "小数報酬が預かり所で切り上がる",
+        "存在しない品IDの在庫混入",
+        "配列・オブジェクトIDの暗黙変換"
+      ]
+    },
+    {
+      "area": "保存・読込",
+      "status": "修正後の3回反復が成功",
+      "fixes": [
+        "不正な袋・預かり所・装備在庫の受理",
+        "不正な遭遇・討伐記録の受理"
+      ],
+      "compatibility": "正常な記録と旧itemsVersion移行の往復を確認"
+    },
+    {
+      "area": "戦闘・オート・撤退・勝敗後の復帰",
+      "status": "再現、修正後3回反復、関連回帰が成功",
+      "fixes": [
+        "戦闘終了後の古い操作とnull参照",
+        "オートの二重予約と別戦闘への予約持越し",
+        "撤退後のオート状態残留",
+        "敗北復帰の重複適用",
+        "古い画面・ターンの操作拒否"
+      ],
+      "simulation": "205エリアと93ボス×3難度×3回。初期パーティーで入口条件を省略し、120手で打切り撤退。全ボス撃破の検証ではない。"
+    }
+  ],
+  "nextFocus": [
+    {
+      "priority": 1,
+      "area": "配信・準備・精算・再試行",
+      "status": "既存回帰を実施、重点的な新規探索は次回"
+    },
+    {
+      "priority": 2,
+      "area": "物語・依頼・移動・解放条件",
+      "status": "既存回帰を実施、重点的な新規探索は次回"
+    }
+  ],
+  "limitations": [
+    "実機の表示・タッチ操作は未検証",
+    "境界値で注入した不正入力を、通常UIで頻発する不具合と混同しない",
+    "全体に不具合がないとは判定しない"
+  ],
+  "mapUpdate": {
+    "status": "看板撤去・上部案内・保存トグルを3回反復",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.30.json"
+  },
+  "mapBoundaryDebug": {
+    "status": "修正後の3回反復と回帰成功",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.21.json"
+  },
+  "mapTravelLayout": {
+    "status": "移動中も常時表示へ変更。操作パッド2ボタン・A/中央決定の周辺調査を3回反復",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.50.json"
+  },
+  "terrainAndReturn": {
+    "status": "旧版の要件未達確認後、地形と状況別戻るを3回反復・関連回帰成功",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.60.json"
+  },
+  "mapAndCatalogUI": {
+    "status": "4ボタン、上部情報、描画中央座標と超レア分類を3回反復。全カード・保存記録の関連回帰成功",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.70.json"
+  },
+  "mapOverlayButtons": {
+    "status": "全141MAPの画面生成を3回確認し、指定4種類の削除とステータス・キャンバス保持を確認",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.71.json"
+  },
+  "retiredMapControls": {
+    "status": "画像の残存表示と公開コードの差を確認。旧DOM除去・復帰URL・版表示を3回反復",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.72.json"
+  },
+  "unifiedConfirm": {
+    "status": "中央決定へ集約し独立Aを撤去。中央決定・戻・残存A除去を3回反復し関連回帰成功",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.73.json"
+  },
+  "updateRecovery": {
+    "status": "欠落・検査漏れ・仕様更新すり抜けを再現後に修正。6出力境界のI/O失敗を各3回反復し復旧と関連回帰を確認",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.76.json"
+  },
+  "releaseSafety": {
+    "status": "Ctrl+C・prepare版戻し・同時更新・未復旧ファイル・不正manifest・リネームを再現後修正。6書込境界×3回の中断と3回のロック競合を反復",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.77.json"
+  },
+  "repositoryCleanup": {
+    "status": "重複資料3点を削除、履歴リンク15箇所を修正。不正診断・CI登録漏れ・単独生成のすり抜けを修正し監査10テストが成功",
+    "report": "docs/reports/archive.json",
+    "archive_entry": "debug-v8.78.json"
+  },
+  "sourceConsistency": {
+    "status": "編集元のみ変更、生成中編集、版戻しの編集消失、日付固定化、書式不一致、旧版への巻戻しを再現後修正。10テストと入力変更3回反復が成功",
+    "report": "docs/reports/release-8.79.json"
+  },
+  "verificationConsistency": {
+    "status": "検査中・公開照合中の変更、不完全manifest、更新ロックによる誤成功を再現後修正。10テストと公開照合時の入力変更3回反復が成功",
+    "report": "docs/reports/release-8.80.json"
+  },
+  "fileOrganization": {
+    "status": "45ファイルの移動・改名と31報告の統合後、元データのハッシュ一致、CLIの作業場所独立、再帰監査、設定・検査フォルダー追跡を検証",
+    "report": "docs/reports/release-8.81.json"
+  }
+}

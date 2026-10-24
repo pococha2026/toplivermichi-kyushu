@@ -1,4 +1,4 @@
-# トップライバーへの道 全国ツアー編（公開版 v8.80）
+# トップライバーへの道 全国ツアー編（公開版 v8.81）
 
 アイドルグループ「おやすみセカイ」を脱退したヒロインと主人公が全国を巡り、九州のS6到達から東京ドーム満員公演を目指す、昭和風ドットのスマホ向けRPGです。
 
@@ -6,15 +6,15 @@
 
 - [資料一覧](docs/INDEX.md) ／ [更新ガイド・編集先一覧](docs/UPDATING.md)
 - [現行仕様](GAME_SPEC.md) ／ [配布TXT](GAME_SPEC.txt)
-- [過去の更新履歴](docs/CHANGELOG.md)
-- [項目別デバッグの進捗](docs/debug-progress.json)
+- [過去の更新履歴](docs/history/CHANGELOG.md)
+- [項目別デバッグの進捗](docs/reports/progress.json)
 
-## v8.80 今回の更新
+## v8.81 今回の更新
 
-- 長い検査の途中で編集が入った場合、成功扱いにせず再検査へ。
-- 公開照合も確認前後の入力を比較し、途中変更があれば一致結果を破棄。
-- 不完全な管理情報、古いローカル生成物、更新中ロック、未解決の復旧ファイルを公開照合前に検出。
-- ゲーム本体・画面・保存形式は維持。
+- 更新ツール・設定・ゲーム検査・更新検査・参照資料を役割別フォルダーへ分別。
+- build.py・release.py・audit.pyへ内部処理を改名し、更新コマンドの入口をscripts/update.pyに統一。
+- 過去31版の検証記録をarchive.jsonへ統合。元データとの一致を照合し、旧31ファイルを削除。
+- 移動・改名45ファイルの対応表と資料の入口を整備。プレイURLと公開ルートの配布物は維持。
 
 ## 更新の入口
 
@@ -44,12 +44,13 @@ python3 scripts/update.py verify-public
 |`src/`|ゲームの編集元。HTMLテンプレート、CSS、データ・計算・描画・音・保存・画面・操作|
 |`VERSION.txt`|版番号と日付の正本|
 |`GAME_SPEC.md`|ゲーム仕様の編集元|
-|`scripts/update.py`|更新・検査・公開照合の入口|
-|`scripts/checks.json`|ローカルとCI共通の検査一覧|
+|`scripts/update.py`・`scripts/lib/`|更新の入口と内部処理|
+|`tests/`|ゲーム・更新処理・任意描画の検査|
+|`config/test-suites.json`|ローカルとCI共通の検査一覧|
 |`index.html`・`GAME_SPEC.txt`・`release-manifest.json`|自動生成する公開物。直接編集しない|
 |`docs/`|更新ガイド、変更履歴、資料、検証記録|
 
-生成と同期は従来の `python3 scripts/sync-release.py --write` ／ `--check` でも実行できます。変更に応じた検査は更新ガイドを参照してください。ブラウザ自動デバッグは行いません。
+生成と同期を個別に行う場合は `python3 scripts/lib/release.py --write` ／ `--check` でも実行できます。変更に応じた検査は更新ガイドを参照してください。ブラウザ自動デバッグは行いません。
 
 ## 更新依頼時の公開同期
 

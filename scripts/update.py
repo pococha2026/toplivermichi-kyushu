@@ -8,25 +8,25 @@ ROOT = Path(__file__).resolve().parents[1]
 PUBLIC = 'https://pococha2026.github.io/toplivermichi-kyushu/'
 
 def load_sync():
-    spec = importlib.util.spec_from_file_location('sync_release', ROOT/'scripts/sync-release.py')
+    spec = importlib.util.spec_from_file_location('sync_release', ROOT/'scripts/lib/release.py')
     module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
     return module
 
 def configuration(root=None):
     root=root or ROOT
-    config = json.loads((root/'scripts/checks.json').read_text(encoding='utf-8'))
+    config = json.loads((root/'config/test-suites.json').read_text(encoding='utf-8'))
     if not isinstance(config,dict) or not {'always','full','related'}.issubset(config) or set(config)-{'always','full','related','optional'}:
-        raise ValueError('checks.json requires always, full and related')
+        raise ValueError('test-suites.json requires always, full and related')
     if not isinstance(config['related'],dict) or not all(isinstance(k,str) and k for k in config['related']):
-        raise ValueError('checks.json related must map path prefixes to test lists')
+        raise ValueError('test-suites.json related must map path prefixes to test lists')
     lists=[config['always'],config['full'],*config['related'].values()]
     if any(not isinstance(group,list) or any(not isinstance(p,str) or not p for p in group) for group in lists):
-        raise ValueError('checks.json test groups must be lists of non-empty paths')
+        raise ValueError('test-suites.json test groups must be lists of non-empty paths')
     if any(not group for group in lists):
-        raise ValueError('checks.json test groups cannot be empty')
+        raise ValueError('test-suites.json test groups cannot be empty')
     optional=config.get('optional',[])
     if not isinstance(optional,list) or any(not isinstance(p,str) or not p for p in optional):
-        raise ValueError('checks.json optional must be a list of test paths')
+        raise ValueError('test-suites.json optional must be a list of test paths')
     if any(path not in config['always']+config['full'] for tests in config['related'].values() for path in tests):
         raise ValueError('Related tests must be included in always or full for CI')
     for path in [p for group in lists for p in group]+optional:
@@ -59,7 +59,8 @@ def changed_files(base='HEAD'):
 def verification_fingerprints(root):
     snapshot=load_sync().input_fingerprints(root)
     paths={root/'index.html',root/'GAME_SPEC.txt'}
-    paths.update(p for p in (root/'scripts').rglob('*') if p.is_file() and p.suffix in {'.py','.cjs','.json'} and '__pycache__' not in p.parts)
+    for directory in ['scripts','tests','config']:
+        paths.update(p for p in (root/directory).rglob('*') if p.is_file() and p.suffix in {'.py','.cjs','.json'} and '__pycache__' not in p.parts)
     paths.update(p for p in (root/'docs').rglob('*') if p.is_file() and p.suffix in {'.md','.json','.txt'})
     for path in sorted(paths):
         if not path.resolve().is_relative_to(root.resolve()):raise ValueError('Verification input escapes project: '+str(path))
@@ -109,14 +110,14 @@ def prepare(version=None, day=None):
 def doctor(root=None):
     root=root or ROOT
     issues=[]
-    for name in ['VERSION.txt','GAME_SPEC.md','README.md','src/index.template.html','scripts/checks.json']:
+    for name in ['VERSION.txt','GAME_SPEC.md','README.md','src/index.template.html','config/test-suites.json']:
         if not (root/name).is_file():issues.append({'kind':'missing','path':name})
     version=None
     if (root/'VERSION.txt').is_file():
         try:
             version=load_sync().read_release(root)
         except (OSError,ValueError) as error:issues.append({'kind':'invalid_version','detail':str(error)})
-    if (root/'scripts/checks.json').is_file():
+    if (root/'config/test-suites.json').is_file():
         try:configuration(root)
         except (OSError,ValueError) as error:issues.append({'kind':'invalid_checks','detail':str(error)})
     manifest=root/'release-manifest.json'
@@ -149,7 +150,7 @@ def doctor(root=None):
 
 def repository_audit(root=None):
     root=root or ROOT
-    spec=importlib.util.spec_from_file_location('project_audit',ROOT/'scripts/project-audit.py')
+    spec=importlib.util.spec_from_file_location('project_audit',ROOT/'scripts/lib/audit.py')
     module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
     return module.audit(root,configuration(root))
 

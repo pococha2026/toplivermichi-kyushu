@@ -1,6 +1,6 @@
 # 現行版の更新ガイド
 
-資料全体は[一覧](INDEX.md)、現在の仕様は[GAME_SPEC.md](../GAME_SPEC.md)を参照。過去版ごとの説明は[更新履歴](CHANGELOG.md)で確認する。
+資料全体は[一覧](INDEX.md)、現在の仕様は[GAME_SPEC.md](../GAME_SPEC.md)を参照。過去版ごとの説明は[更新履歴](history/CHANGELOG.md)で確認する。
 
 ## いつもの更新
 
@@ -41,8 +41,8 @@ ChatGPTへの更新依頼は検証後の公開同期まで含み、毎回の公�
 
 - index.html、GAME_SPEC.txt、release-manifest.jsonは生成物。直接編集しない。
 - 版と日付はVERSION.txtが正本。アプリと仕様書の見出しへ自動反映する。版・日付だけの変更は仕様本文の更新として扱わない。
-- scripts/checks.jsonのalways/fullはローカルとCIの共通一覧。relatedの検査はalways/fullにも登録する。optionalは追加依存が必要な任意検査。
-- `build-game.py --check` は読み取り専用の一致検査。旧来の単独生成モードは廃止し、生成はprepareまたはsync-release.py --writeへ統一した。
+- config/test-suites.jsonのalways/fullはローカルとCIの共通一覧。relatedの検査はalways/fullにも登録する。optionalは追加依存が必要な任意検査。
+- `python3 scripts/lib/build.py --check` は読み取り専用の一致検査。旧来の単独生成モードは廃止し、生成はprepareまたはscripts/lib/release.py --writeへ統一した。
 - `audit` はローカルMarkdownリンクと未登録の検査を検出する。外部URLの有効性や、ファイルが意味的に不要かどうかを自動判定しない。
 
 ## エラー・中断からの復旧
@@ -56,7 +56,7 @@ ChatGPTへの更新依頼は検証後の公開同期まで含み、毎回の公�
 |構文・検査エラー|表示された箇所を修正。成功するまで公開しない|
 |既存ロック|実際の更新プロセスを確認。稼働中のロックを削除しない|
 |.release-stage-*が残存|old/の回復用ファイルと公開物の整合性を確認し、復旧後に残存物を手動で解決|
-|文書リンク切れ・検査未登録|auditの表示位置やchecks.jsonを修正|
+|文書リンク切れ・検査未登録|auditの表示位置やtest-suites.jsonを修正|
 |公開ファイル不一致|配信完了を確認しverify-publicを再実行。先に公開完了と案内しない|
 
 通常のI/O例外やPythonが捕捉できるCtrl+Cでは生成物を復元する。OS強制終了・停電では復旧処理を実行できない。ロックや回復用ファイルは自動削除せず、別の更新で上書きしない。prepareは関連検査が終わるまでロックを保持する。
@@ -81,3 +81,20 @@ doctorはsrcと生成済みHTMLの差も検出する。版・日付の検証は�
 検査前に編集元・公開物・検査プログラム・資料の状態を記録し、各検査後にも確認する。`Inputs changed during checks` が出た場合は、その回の結果を公開判断に使わず、編集を終えて検査をやり直す。
 
 verify-publicは最初にローカルの整合性を調べる。古い生成物はprepareで更新し、実行中の更新や未解決の復旧状態があれば先に解決する。照合中の入力変更や新しいロックを検出すると6件の一致結果を無効にするため、落ち着いた状態で再実行する。照合は確認時点の一致であり、その後の編集を常時監視する機能ではない。
+
+## 役割別の配置（v8.81）
+
+|場所|用途|
+|---|---|
+|scripts/update.py|普段使う更新コマンド。入口は移動しない|
+|scripts/lib/|build.py（HTML生成）、release.py（配布物同期）、audit.py（文書・検査登録の監査）|
+|config/test-suites.json|ローカル・CIの共通検査設定|
+|tests/maintenance/|更新・保存復旧・公開確認などPythonの検査|
+|tests/game/|ゲーム動作のNode.js検査|
+|tests/support/|ゲームを検査用に読み込む共通処理|
+|tests/optional/|追加描画依存が必要な任意検査|
+|docs/data/|地理・ご当地品などの根拠データ|
+|docs/reports/|直近の検証、進捗、過去記録を統合したarchive.json|
+|docs/history/|過去の更新説明|
+
+旧ファイルの移動先と統合先は[対応表](structure-v8.81.json)を参照。過去31版の検証記録はarchive.jsonのreports内に元のファイル名をキーとして収録し、内容のハッシュを照合する。旧配置に重複コピーは残さない。公開用のルート6ファイルとプレイURLは維持する。

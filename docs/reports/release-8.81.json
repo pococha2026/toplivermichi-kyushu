@@ -1,0 +1,15 @@
+{
+  "version": "8.81",
+  "structure_record": "docs/structure-v8.81.json",
+  "moved_or_renamed_files": 45,
+  "consolidated_original_reports": 31,
+  "archive_entries_verified": 31,
+  "layout_regression_methods": 5,
+  "targeted_game_checks_passed": [
+    "tests/game/test-career.cjs",
+    "tests/game/test-regional.cjs"
+  ],
+  "runtime_unchanged_except_version": true,
+  "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+  "scope": "Path/configuration changes, canonical JSON content checks and Node VM game regressions. Physical-device rendering/touch not tested."
+}

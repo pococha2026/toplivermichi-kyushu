@@ -1,0 +1,76 @@
+{
+  "always": [
+    "tests/maintenance/test-source-build.py",
+    "tests/maintenance/test-release-sync.py",
+    "tests/maintenance/test-maintenance.py",
+    "tests/maintenance/test-update-recovery.py",
+    "tests/maintenance/test-release-safety.py",
+    "tests/maintenance/test-project-audit.py",
+    "tests/maintenance/test-source-consistency.py",
+    "tests/maintenance/test-verification-consistency.py",
+    "tests/maintenance/test-layout.py"
+  ],
+  "full": [
+    "tests/game/test-career.cjs",
+    "tests/game/test-av.cjs",
+    "tests/game/test-comprehensive.cjs",
+    "tests/game/test-interactions.cjs",
+    "tests/game/test-deep-regression.cjs",
+    "tests/game/test-stream-story.cjs",
+    "tests/game/test-broadcast.cjs",
+    "tests/game/test-broadcast-coach.cjs",
+    "tests/game/test-regional.cjs",
+    "tests/game/test-collection.cjs",
+    "tests/game/test-mobile-dex.cjs",
+    "tests/game/test-catalog-completeness.cjs",
+    "tests/game/test-focused-debug.cjs",
+    "tests/game/test-battle-focused.cjs",
+    "tests/game/test-national-map.cjs",
+    "tests/game/test-geographic-world.cjs",
+    "tests/game/test-world-wayfinding.cjs",
+    "tests/game/test-map-boundaries.cjs",
+    "tests/game/test-map-guidance.cjs",
+    "tests/game/test-map-travel-layout.cjs",
+    "tests/game/test-terrain-back.cjs",
+    "tests/game/test-map-catalog-ui.cjs",
+    "tests/game/test-retired-map-controls.cjs"
+  ],
+  "related": {
+    "src/game/data.js": [
+      "tests/game/test-comprehensive.cjs"
+    ],
+    "src/game/core.js": [
+      "tests/game/test-deep-regression.cjs",
+      "tests/game/test-national-map.cjs"
+    ],
+    "src/game/art.js": [
+      "tests/game/test-geographic-world.cjs"
+    ],
+    "src/game/audio.js": [
+      "tests/game/test-av.cjs"
+    ],
+    "src/game/save.js": [
+      "tests/game/test-focused-debug.cjs"
+    ],
+    "src/game/views.js": [
+      "tests/game/test-mobile-dex.cjs",
+      "tests/game/test-map-catalog-ui.cjs"
+    ],
+    "src/game/actions.js": [
+      "tests/game/test-interactions.cjs"
+    ],
+    "src/game/input.js": [
+      "tests/game/test-map-travel-layout.cjs",
+      "tests/game/test-retired-map-controls.cjs"
+    ],
+    "src/styles/": [
+      "tests/game/test-map-catalog-ui.cjs"
+    ],
+    "src/index.template.html": [
+      "tests/game/test-map-travel-layout.cjs"
+    ]
+  },
+  "optional": [
+    "tests/optional/test-regional-art.cjs"
+  ]
+}
