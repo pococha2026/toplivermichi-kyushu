@@ -1,0 +1,466 @@
+{
+  "groups": {
+    "verified-regional-data": {
+      "cases": 47,
+      "passed": 47,
+      "failed": 0
+    },
+    "local-shop-restriction": {
+      "cases": 65,
+      "passed": 65,
+      "failed": 0
+    },
+    "enemy-balance-and-identity": {
+      "cases": 10250,
+      "passed": 10250,
+      "failed": 0
+    },
+    "field-item-use": {
+      "cases": 154,
+      "passed": 154,
+      "failed": 0
+    },
+    "battle-item-use": {
+      "cases": 154,
+      "passed": 154,
+      "failed": 0
+    },
+    "purchase-local-item": {
+      "cases": 214,
+      "passed": 214,
+      "failed": 0
+    },
+    "added-food-enemy-drop": {
+      "cases": 84,
+      "passed": 84,
+      "failed": 0
+    },
+    "regional-drop-roll": {
+      "cases": 3,
+      "passed": 3,
+      "failed": 0
+    },
+    "full-bag-overflow": {
+      "cases": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "regional-guide-html": {
+      "cases": 47,
+      "passed": 47,
+      "failed": 0
+    },
+    "omuta-city-exclusivity": {
+      "cases": 65,
+      "passed": 65,
+      "failed": 0
+    },
+    "omuta-guide-and-unlock": {
+      "cases": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "omuta-selector-handler": {
+      "cases": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "soul-food-coverage": {
+      "cases": 47,
+      "passed": 47,
+      "failed": 0
+    }
+  },
+  "total": 11133,
+  "failed": 0,
+  "failures": [],
+  "regions": 47,
+  "newItems": 154,
+  "motifTypes": 295,
+  "regionalEnemySlots": 1227,
+  "scope": "Actual data, shops, field/battle use, drops and generated guide HTML in VM. Source metadata checked against pref pages separately. Real-device rendering not covered.",
+  "version": "7.43",
+  "otherChecks": {
+    "comprehensive": {
+      "designGroups": 21,
+      "groups": {
+        "area-definition": {
+          "cases": 205,
+          "passed": 205,
+          "failed": 0
+        },
+        "enemy-definition-and-difficulty": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "encounter-boundary": {
+          "cases": 20500,
+          "passed": 20500,
+          "failed": 0
+        },
+        "experience-level-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "mastery-rank-boundary": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "regional-reward": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "equipment-reference": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "skill-reference": {
+          "cases": 375,
+          "passed": 375,
+          "failed": 0
+        },
+        "map-dimensions-and-objects": {
+          "cases": 140,
+          "passed": 140,
+          "failed": 0
+        },
+        "quest-reference": {
+          "cases": 130,
+          "passed": 130,
+          "failed": 0
+        },
+        "shop-stock-reference": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "shop-quote-boundary": {
+          "cases": 24470,
+          "passed": 24470,
+          "failed": 0
+        },
+        "field-battle-creation": {
+          "cases": 615,
+          "passed": 615,
+          "failed": 0
+        },
+        "bag-stack-and-removal": {
+          "cases": 1560,
+          "passed": 1560,
+          "failed": 0
+        },
+        "bag-kind-capacity": {
+          "cases": 26,
+          "passed": 26,
+          "failed": 0
+        },
+        "layout-parameter": {
+          "cases": 360,
+          "passed": 360,
+          "failed": 0
+        },
+        "new-save-roundtrip": {
+          "cases": 66,
+          "passed": 66,
+          "failed": 0
+        },
+        "invalid-save-rejected": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "name-validation": {
+          "cases": 9,
+          "passed": 9,
+          "failed": 0
+        },
+        "combat-damage-invariants": {
+          "cases": 999,
+          "passed": 999,
+          "failed": 0
+        },
+        "invalid-bag-quantity": {
+          "cases": 22,
+          "passed": 22,
+          "failed": 0
+        }
+      },
+      "total": 67368,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual game code in a VM with mocked DOM/storage/audio surfaces. Data and parameter cases; not unique viewpoints, browser rendering or full playthroughs."
+    },
+    "interactions": {
+      "cases": 19,
+      "failed": 0
+    },
+    "deepRegression": {
+      "cases": 688,
+      "failed": 0
+    },
+    "releaseSync": {
+      "cases": 7,
+      "failed": 0
+    }
+  },
+  "functionalCasesTotal": 79215,
+  "art": {
+    "rendered": 1208,
+    "configurations": 302,
+    "uniqueFoodMotifs": 295,
+    "failed": 0,
+    "method": "Native canvas; contact sheet inspected. Includes Omuta shared prefecture motifs. Not browser or real-device layout."
+  },
+  "sourceVerification": {
+    "checked": "2026-10-24",
+    "individualOfficialPagesFetched": 47,
+    "namesMatched": 47,
+    "sources": [
+      {
+        "pref": "北海道",
+        "name": "ザンギ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/zangi_hokkaido.html"
+      },
+      {
+        "pref": "青森県",
+        "name": "イカメンチ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ika_menchi_aomori.html"
+      },
+      {
+        "pref": "岩手県",
+        "name": "お茶もち",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/28_11_iwate.html"
+      },
+      {
+        "pref": "宮城県",
+        "name": "油麩丼",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/aburafu_don_miyagi.html"
+      },
+      {
+        "pref": "秋田県",
+        "name": "だまこ鍋",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/29_4_akita.html"
+      },
+      {
+        "pref": "山形県",
+        "name": "だし",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/dashi_yamagata.html"
+      },
+      {
+        "pref": "福島県",
+        "name": "みそかんぷら",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/30_9_fukushima.html"
+      },
+      {
+        "pref": "茨城県",
+        "name": "つけけんちん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/tukekenchin_ibaraki.html"
+      },
+      {
+        "pref": "栃木県",
+        "name": "ちたけうどん（そば）",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/31_9_tochigi.html"
+      },
+      {
+        "pref": "群馬県",
+        "name": "ソースカツ丼",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/32_20_gunma.html"
+      },
+      {
+        "pref": "埼玉県",
+        "name": "ゼリーフライ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/33_8_saitama.html"
+      },
+      {
+        "pref": "千葉県",
+        "name": "さんが焼き",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/sanga_yaki_chiba.html"
+      },
+      {
+        "pref": "東京都",
+        "name": "親子丼",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/34_12_tokyo.html"
+      },
+      {
+        "pref": "神奈川県",
+        "name": "サンマーメン",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/35_16_kanagawa.html"
+      },
+      {
+        "pref": "山梨県",
+        "name": "吉田のうどん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/yoshida_no_udon_yama_nashi.html"
+      },
+      {
+        "pref": "長野県",
+        "name": "五平餅",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/gohei_mochi_nagano.html"
+      },
+      {
+        "pref": "静岡県",
+        "name": "黒はんぺんフライ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/36_1_shizuoka.html"
+      },
+      {
+        "pref": "新潟県",
+        "name": "タレかつ丼",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/tare_katsudon_niigata.html"
+      },
+      {
+        "pref": "富山県",
+        "name": "とろろ昆布のおにぎり",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/37_7_toyama.html"
+      },
+      {
+        "pref": "石川県",
+        "name": "めった汁",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/mettajiru_ishikawa.html"
+      },
+      {
+        "pref": "福井県",
+        "name": "厚揚げの煮たの",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/atsuage_nitano_fukui.html"
+      },
+      {
+        "pref": "岐阜県",
+        "name": "鶏ちゃん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/38_2_gifu.html"
+      },
+      {
+        "pref": "愛知県",
+        "name": "味噌おでん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/misooden_aichi.html"
+      },
+      {
+        "pref": "三重県",
+        "name": "いばら餅",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ibara_mochi_mie.html"
+      },
+      {
+        "pref": "滋賀県",
+        "name": "鯖そうめん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/saba_soumen_shiga.html"
+      },
+      {
+        "pref": "京都府",
+        "name": "にしん茄子／茄子とにしんの炊いたん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/nishinnasu_kyoto.html"
+      },
+      {
+        "pref": "大阪府",
+        "name": "串カツ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/39_28_osaka.html"
+      },
+      {
+        "pref": "兵庫県",
+        "name": "かつめし",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/40_4_hyogo.html"
+      },
+      {
+        "pref": "奈良県",
+        "name": "茶粥",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/chagayu_nara.html"
+      },
+      {
+        "pref": "和歌山県",
+        "name": "しらす丼",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/shirasu_don_wakayama.html"
+      },
+      {
+        "pref": "鳥取県",
+        "name": "いただき",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/itadaki_tottori.html"
+      },
+      {
+        "pref": "島根県",
+        "name": "うずめ飯",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/uzumemeshi_shimane.html"
+      },
+      {
+        "pref": "岡山県",
+        "name": "ホルモンうどん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/41_19_okayama.html"
+      },
+      {
+        "pref": "広島県",
+        "name": "あなご飯",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/42_30_hiroshima.html"
+      },
+      {
+        "pref": "山口県",
+        "name": "チキンチキンごぼう",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/43_17_yamaguchi.html"
+      },
+      {
+        "pref": "徳島県",
+        "name": "祖谷のでこまわし",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/44_3_tokushima.html"
+      },
+      {
+        "pref": "香川県",
+        "name": "まんばのけんちゃん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/manbano_kenchan_kagawa.html"
+      },
+      {
+        "pref": "愛媛県",
+        "name": "今治焼き鳥",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/imabari_yakitori_ehime.html"
+      },
+      {
+        "pref": "高知県",
+        "name": "田舎ずし",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/inakazushi_kochi.html"
+      },
+      {
+        "pref": "福岡県",
+        "name": "かしわめし",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/kashiwa_meshi_fukuoka.html"
+      },
+      {
+        "pref": "佐賀県",
+        "name": "呉豆腐のごま醤油かけ",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/45_14_saga.html"
+      },
+      {
+        "pref": "長崎県",
+        "name": "皿うどん",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/46_7_nagasaki.html"
+      },
+      {
+        "pref": "熊本県",
+        "name": "太平燕",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/taipiien_kumamoto.html"
+      },
+      {
+        "pref": "大分県",
+        "name": "りゅうきゅう",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ryukyu_oita.html"
+      },
+      {
+        "pref": "宮崎県",
+        "name": "おび天",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/obiten_miyazaki.html"
+      },
+      {
+        "pref": "鹿児島県",
+        "name": "鶏飯",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/keihan_kagoshima.html"
+      },
+      {
+        "pref": "沖縄県",
+        "name": "沖縄そば",
+        "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/47_20_okinawa.html"
+      }
+    ]
+  },
+  "compatibility": {
+    "previousFoodIdsPreserved": 107,
+    "additionalFoods": 47,
+    "allItems": 312
+  }
+}

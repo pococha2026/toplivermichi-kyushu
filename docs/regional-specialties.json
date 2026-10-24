@@ -1,7 +1,7 @@
 {
   "checked": "2026-10-24",
   "publisher": "農林水産省・JNTO・自治体・公式観光サイト",
-  "basis": "Official regional food and tourism sources. Original 94 IDs preserved; 10 additions have individual source links. Game effects and characters are fiction.",
+  "basis": "Official regional food and tourism sources. Original 94 IDs preserved; 10 additions have individual source links. Game effects and characters are fiction. v7.43: 47 additional local dishes, one per prefecture; all individual official recipe pages fetched and names verified on 2026-10-24. Soul food denotes familiar regional cuisine, not a universal official designation.",
   "regions": [
     {
       "id": "R01",
@@ -32,6 +32,14 @@
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ikameshi_hokkaido.html",
           "kind": "squid",
           "item": "RGX004"
+        },
+        {
+          "name": "ザンギ",
+          "sourceTitle": "ザンギ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/zangi_hokkaido.html",
+          "kind": "grill",
+          "item": "SFI001",
+          "series": "soul-food"
         }
       ]
     },
@@ -50,6 +58,14 @@
           "name": "けの汁",
           "sourceTitle": "けの汁",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aomori.html"
+        },
+        {
+          "name": "イカメンチ",
+          "sourceTitle": "イカメンチ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ika_menchi_aomori.html",
+          "kind": "grill",
+          "item": "SFI002",
+          "series": "soul-food"
         }
       ]
     },
@@ -75,6 +91,14 @@
           "source": "https://iwatetabi.jp/spots/6780/",
           "kind": "candy",
           "item": "RGX008"
+        },
+        {
+          "name": "お茶もち",
+          "sourceTitle": "お茶もち",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/28_11_iwate.html",
+          "kind": "candy",
+          "item": "SFI003",
+          "series": "soul-food"
         }
       ]
     },
@@ -100,6 +124,14 @@
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/traditional-foods/menu/sendai-dagasi.html",
           "kind": "candy",
           "item": "RGX007"
+        },
+        {
+          "name": "油麩丼",
+          "sourceTitle": "油麩丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/aburafu_don_miyagi.html",
+          "kind": "bowl",
+          "item": "SFI004",
+          "series": "soul-food"
         }
       ]
     },
@@ -118,6 +150,14 @@
           "name": "いぶりがっこ",
           "sourceTitle": "いぶりがっこ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/akita.html"
+        },
+        {
+          "name": "だまこ鍋",
+          "sourceTitle": "だまこ鍋",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/29_4_akita.html",
+          "kind": "stew",
+          "item": "SFI005",
+          "series": "soul-food"
         }
       ]
     },
@@ -136,6 +176,14 @@
           "name": "玉こんにゃく",
           "sourceTitle": "玉こんにゃく",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamagata.html"
+        },
+        {
+          "name": "だし",
+          "sourceTitle": "だし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/dashi_yamagata.html",
+          "kind": "stew",
+          "item": "SFI006",
+          "series": "soul-food"
         }
       ]
     },
@@ -161,6 +209,14 @@
           "source": "https://www.japan.travel/en/spot/2125/",
           "kind": "ramen",
           "item": "RGX002"
+        },
+        {
+          "name": "みそかんぷら",
+          "sourceTitle": "みそかんぷら",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/30_9_fukushima.html",
+          "kind": "stew",
+          "item": "SFI007",
+          "series": "soul-food"
         }
       ]
     },
@@ -179,6 +235,14 @@
           "name": "そぼろ納豆",
           "sourceTitle": "そぼろ納豆／しょぼろ納豆",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ibaraki.html"
+        },
+        {
+          "name": "つけけんちん",
+          "sourceTitle": "つけけんちん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/tukekenchin_ibaraki.html",
+          "kind": "stew",
+          "item": "SFI008",
+          "series": "soul-food"
         }
       ]
     },
@@ -197,6 +261,14 @@
           "name": "耳うどん",
           "sourceTitle": "耳うどん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tochigi.html"
+        },
+        {
+          "name": "ちたけうどん（そば）",
+          "sourceTitle": "ちたけうどん（そば）",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/31_9_tochigi.html",
+          "kind": "bowl",
+          "item": "SFI009",
+          "series": "soul-food"
         }
       ]
     },
@@ -215,6 +287,14 @@
           "name": "おきりこみ",
           "sourceTitle": "おきりこみ／おっきりこみ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/gunma.html"
+        },
+        {
+          "name": "ソースカツ丼",
+          "sourceTitle": "ソースカツ丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/32_20_gunma.html",
+          "kind": "bowl",
+          "item": "SFI010",
+          "series": "soul-food"
         }
       ]
     },
@@ -233,6 +313,14 @@
           "name": "煮ぼうとう",
           "sourceTitle": "煮ぼうとう／ひもかわ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/saitama.html"
+        },
+        {
+          "name": "ゼリーフライ",
+          "sourceTitle": "ゼリーフライ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/33_8_saitama.html",
+          "kind": "grill",
+          "item": "SFI011",
+          "series": "soul-food"
         }
       ]
     },
@@ -251,6 +339,14 @@
           "name": "ゆで落花生",
           "sourceTitle": "ゆで落花生",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/chiba.html"
+        },
+        {
+          "name": "さんが焼き",
+          "sourceTitle": "さんが焼き",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/sanga_yaki_chiba.html",
+          "kind": "grill",
+          "item": "SFI012",
+          "series": "soul-food"
         }
       ]
     },
@@ -269,6 +365,14 @@
           "name": "もんじゃ焼き",
           "sourceTitle": "もんじゃ焼き",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokyo.html"
+        },
+        {
+          "name": "親子丼",
+          "sourceTitle": "親子丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/34_12_tokyo.html",
+          "kind": "bowl",
+          "item": "SFI013",
+          "series": "soul-food"
         }
       ]
     },
@@ -287,6 +391,14 @@
           "name": "小田原かまぼこ",
           "sourceTitle": "小田原かまぼこ",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kanagawa.html"
+        },
+        {
+          "name": "サンマーメン",
+          "sourceTitle": "サンマーメン",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/35_16_kanagawa.html",
+          "kind": "bowl",
+          "item": "SFI014",
+          "series": "soul-food"
         }
       ]
     },
@@ -305,6 +417,14 @@
           "name": "鳥もつ煮",
           "sourceTitle": "鳥もつ煮",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamanasi.html"
+        },
+        {
+          "name": "吉田のうどん",
+          "sourceTitle": "吉田のうどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/yoshida_no_udon_yama_nashi.html",
+          "kind": "bowl",
+          "item": "SFI015",
+          "series": "soul-food"
         }
       ]
     },
@@ -323,6 +443,14 @@
           "name": "野沢菜漬",
           "sourceTitle": "野沢菜漬",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagano.html"
+        },
+        {
+          "name": "五平餅",
+          "sourceTitle": "五平餅",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/gohei_mochi_nagano.html",
+          "kind": "candy",
+          "item": "SFI016",
+          "series": "soul-food"
         }
       ]
     },
@@ -341,6 +469,14 @@
           "name": "安倍川もち",
           "sourceTitle": "安倍川もち",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shizuoka.html"
+        },
+        {
+          "name": "黒はんぺんフライ",
+          "sourceTitle": "黒はんぺんフライ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/36_1_shizuoka.html",
+          "kind": "grill",
+          "item": "SFI017",
+          "series": "soul-food"
         }
       ]
     },
@@ -359,6 +495,14 @@
           "name": "へぎそば",
           "sourceTitle": "へぎそば",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/niigata.html"
+        },
+        {
+          "name": "タレかつ丼",
+          "sourceTitle": "タレかつ丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/tare_katsudon_niigata.html",
+          "kind": "bowl",
+          "item": "SFI018",
+          "series": "soul-food"
         }
       ]
     },
@@ -384,6 +528,14 @@
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/37_1_toyama.html",
           "kind": "squid",
           "item": "RGX005"
+        },
+        {
+          "name": "とろろ昆布のおにぎり",
+          "sourceTitle": "とろろ昆布のおにぎり",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/37_7_toyama.html",
+          "kind": "stew",
+          "item": "SFI019",
+          "series": "soul-food"
         }
       ]
     },
@@ -402,6 +554,14 @@
           "name": "かぶらずし",
           "sourceTitle": "かぶらずし",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ishikawa.html"
+        },
+        {
+          "name": "めった汁",
+          "sourceTitle": "めった汁",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/mettajiru_ishikawa.html",
+          "kind": "stew",
+          "item": "SFI020",
+          "series": "soul-food"
         }
       ]
     },
@@ -420,6 +580,14 @@
           "name": "おろしそば",
           "sourceTitle": "おろしそば",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/fukui.html"
+        },
+        {
+          "name": "厚揚げの煮たの",
+          "sourceTitle": "厚揚げの煮たの",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/atsuage_nitano_fukui.html",
+          "kind": "stew",
+          "item": "SFI021",
+          "series": "soul-food"
         }
       ]
     },
@@ -452,6 +620,14 @@
           "source": "https://www.hidatakayama.or.jp/special/detail_290.html",
           "kind": "candy",
           "item": "RGX010"
+        },
+        {
+          "name": "鶏ちゃん",
+          "sourceTitle": "鶏ちゃん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/38_2_gifu.html",
+          "kind": "grill",
+          "item": "SFI022",
+          "series": "soul-food"
         }
       ]
     },
@@ -470,6 +646,14 @@
           "name": "味噌煮込みうどん",
           "sourceTitle": "味噌煮込みうどん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/aichi.html"
+        },
+        {
+          "name": "味噌おでん",
+          "sourceTitle": "味噌おでん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/misooden_aichi.html",
+          "kind": "stew",
+          "item": "SFI023",
+          "series": "soul-food"
         }
       ]
     },
@@ -488,6 +672,14 @@
           "name": "てこねずし",
           "sourceTitle": "てこねずし",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/mie.html"
+        },
+        {
+          "name": "いばら餅",
+          "sourceTitle": "いばら餅",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ibara_mochi_mie.html",
+          "kind": "candy",
+          "item": "SFI024",
+          "series": "soul-food"
         }
       ]
     },
@@ -506,6 +698,14 @@
           "name": "赤こんにゃく煮",
           "sourceTitle": "赤こんにゃく煮",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shiga.html"
+        },
+        {
+          "name": "鯖そうめん",
+          "sourceTitle": "鯖そうめん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/saba_soumen_shiga.html",
+          "kind": "bowl",
+          "item": "SFI025",
+          "series": "soul-food"
         }
       ]
     },
@@ -524,6 +724,14 @@
           "name": "水無月",
           "sourceTitle": "水無月",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kyoto.html"
+        },
+        {
+          "name": "にしん茄子／茄子とにしんの炊いたん",
+          "sourceTitle": "にしん茄子／茄子とにしんの炊いたん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/nishinnasu_kyoto.html",
+          "kind": "stew",
+          "item": "SFI026",
+          "series": "soul-food"
         }
       ]
     },
@@ -542,6 +750,14 @@
           "name": "きつねうどん",
           "sourceTitle": "きつねうどん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/osaka.html"
+        },
+        {
+          "name": "串カツ",
+          "sourceTitle": "串カツ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/39_28_osaka.html",
+          "kind": "grill",
+          "item": "SFI027",
+          "series": "soul-food"
         }
       ]
     },
@@ -560,6 +776,14 @@
           "name": "イカナゴのくぎ煮",
           "sourceTitle": "イカナゴのくぎ煮",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hyogo.html"
+        },
+        {
+          "name": "かつめし",
+          "sourceTitle": "かつめし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/40_4_hyogo.html",
+          "kind": "bowl",
+          "item": "SFI028",
+          "series": "soul-food"
         }
       ]
     },
@@ -578,6 +802,14 @@
           "name": "飛鳥鍋",
           "sourceTitle": "飛鳥鍋",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nara.html"
+        },
+        {
+          "name": "茶粥",
+          "sourceTitle": "茶粥",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/chagayu_nara.html",
+          "kind": "stew",
+          "item": "SFI029",
+          "series": "soul-food"
         }
       ]
     },
@@ -596,6 +828,14 @@
           "name": "めはりずし",
           "sourceTitle": "めはりずし",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/wakayama.html"
+        },
+        {
+          "name": "しらす丼",
+          "sourceTitle": "しらす丼",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/shirasu_don_wakayama.html",
+          "kind": "bowl",
+          "item": "SFI030",
+          "series": "soul-food"
         }
       ]
     },
@@ -614,6 +854,14 @@
           "name": "らっきょう漬け",
           "sourceTitle": "らっきょう漬け",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tottori.html"
+        },
+        {
+          "name": "いただき",
+          "sourceTitle": "いただき",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/itadaki_tottori.html",
+          "kind": "stew",
+          "item": "SFI031",
+          "series": "soul-food"
         }
       ]
     },
@@ -632,6 +880,14 @@
           "name": "しじみ汁",
           "sourceTitle": "しじみ汁",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/shimane.html"
+        },
+        {
+          "name": "うずめ飯",
+          "sourceTitle": "うずめ飯",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/uzumemeshi_shimane.html",
+          "kind": "bowl",
+          "item": "SFI032",
+          "series": "soul-food"
         }
       ]
     },
@@ -650,6 +906,14 @@
           "name": "ママカリの酢漬け",
           "sourceTitle": "ママカリの酢漬け",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okayama.html"
+        },
+        {
+          "name": "ホルモンうどん",
+          "sourceTitle": "ホルモンうどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/41_19_okayama.html",
+          "kind": "bowl",
+          "item": "SFI033",
+          "series": "soul-food"
         }
       ]
     },
@@ -668,6 +932,14 @@
           "name": "かきの土手鍋",
           "sourceTitle": "かきの土手鍋",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/hiroshima.html"
+        },
+        {
+          "name": "あなご飯",
+          "sourceTitle": "あなご飯",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/42_30_hiroshima.html",
+          "kind": "bowl",
+          "item": "SFI034",
+          "series": "soul-food"
         }
       ]
     },
@@ -686,6 +958,14 @@
           "name": "岩国寿司",
           "sourceTitle": "岩国寿司",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/yamaguchi.html"
+        },
+        {
+          "name": "チキンチキンごぼう",
+          "sourceTitle": "チキンチキンごぼう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/43_17_yamaguchi.html",
+          "kind": "stew",
+          "item": "SFI035",
+          "series": "soul-food"
         }
       ]
     },
@@ -704,6 +984,14 @@
           "name": "半田そうめん",
           "sourceTitle": "半田そうめん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/tokushima.html"
+        },
+        {
+          "name": "祖谷のでこまわし",
+          "sourceTitle": "祖谷のでこまわし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/44_3_tokushima.html",
+          "kind": "grill",
+          "item": "SFI036",
+          "series": "soul-food"
         }
       ]
     },
@@ -722,6 +1010,14 @@
           "name": "しょうゆ豆",
           "sourceTitle": "しょうゆ豆",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagawa.html"
+        },
+        {
+          "name": "まんばのけんちゃん",
+          "sourceTitle": "まんばのけんちゃん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/manbano_kenchan_kagawa.html",
+          "kind": "stew",
+          "item": "SFI037",
+          "series": "soul-food"
         }
       ]
     },
@@ -740,6 +1036,14 @@
           "name": "じゃこ天",
           "sourceTitle": "じゃこ天",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/ehime.html"
+        },
+        {
+          "name": "今治焼き鳥",
+          "sourceTitle": "今治焼き鳥",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/imabari_yakitori_ehime.html",
+          "kind": "grill",
+          "item": "SFI038",
+          "series": "soul-food"
         }
       ]
     },
@@ -758,6 +1062,14 @@
           "name": "皿鉢料理",
           "sourceTitle": "皿鉢料理",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kochi.html"
+        },
+        {
+          "name": "田舎ずし",
+          "sourceTitle": "田舎ずし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/inakazushi_kochi.html",
+          "kind": "stew",
+          "item": "SFI039",
+          "series": "soul-food"
         }
       ]
     },
@@ -810,6 +1122,14 @@
           "item": "OMI003",
           "hub": "KY17",
           "city": "大牟田市"
+        },
+        {
+          "name": "かしわめし",
+          "sourceTitle": "かしわめし",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/kashiwa_meshi_fukuoka.html",
+          "kind": "bowl",
+          "item": "SFI040",
+          "series": "soul-food"
         }
       ]
     },
@@ -835,6 +1155,14 @@
           "source": "https://www.asobo-saga.jp/galleries/detail/4e507602-a274-4fcc-a667-3f5e0c6f8814",
           "kind": "squid",
           "item": "RGX006"
+        },
+        {
+          "name": "呉豆腐のごま醤油かけ",
+          "sourceTitle": "呉豆腐のごま醤油かけ",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/45_14_saga.html",
+          "kind": "stew",
+          "item": "SFI041",
+          "series": "soul-food"
         }
       ]
     },
@@ -853,6 +1181,14 @@
           "name": "かんころ餅",
           "sourceTitle": "かんころ餅",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/nagasaki.html"
+        },
+        {
+          "name": "皿うどん",
+          "sourceTitle": "皿うどん",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/46_7_nagasaki.html",
+          "kind": "bowl",
+          "item": "SFI042",
+          "series": "soul-food"
         }
       ]
     },
@@ -871,6 +1207,14 @@
           "name": "いきなり団子",
           "sourceTitle": "いきなり団子",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kumamoto.html"
+        },
+        {
+          "name": "太平燕",
+          "sourceTitle": "太平燕",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/taipiien_kumamoto.html",
+          "kind": "bowl",
+          "item": "SFI043",
+          "series": "soul-food"
         }
       ]
     },
@@ -889,6 +1233,14 @@
           "name": "やせうま",
           "sourceTitle": "やせうま",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/oita.html"
+        },
+        {
+          "name": "りゅうきゅう",
+          "sourceTitle": "りゅうきゅう",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/ryukyu_oita.html",
+          "kind": "stew",
+          "item": "SFI044",
+          "series": "soul-food"
         }
       ]
     },
@@ -907,6 +1259,14 @@
           "name": "冷や汁",
           "sourceTitle": "冷や汁",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/miyazaki.html"
+        },
+        {
+          "name": "おび天",
+          "sourceTitle": "おび天",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/obiten_miyazaki.html",
+          "kind": "grill",
+          "item": "SFI045",
+          "series": "soul-food"
         }
       ]
     },
@@ -925,6 +1285,14 @@
           "name": "かるかん",
           "sourceTitle": "かるかん",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/kagoshima.html"
+        },
+        {
+          "name": "鶏飯",
+          "sourceTitle": "鶏飯",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/keihan_kagoshima.html",
+          "kind": "bowl",
+          "item": "SFI046",
+          "series": "soul-food"
         }
       ]
     },
@@ -943,6 +1311,14 @@
           "name": "サーターアンダーギー",
           "sourceTitle": "サーターアンダーギー",
           "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/area/okinawa.html"
+        },
+        {
+          "name": "沖縄そば",
+          "sourceTitle": "沖縄そば",
+          "source": "https://www.maff.go.jp/j/keikaku/syokubunka/k_ryouri/search_menu/menu/47_20_okinawa.html",
+          "kind": "bowl",
+          "item": "SFI047",
+          "series": "soul-food"
         }
       ]
     }
