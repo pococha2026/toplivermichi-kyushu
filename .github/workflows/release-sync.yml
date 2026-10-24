@@ -62,3 +62,6 @@ jobs:
 
       - name: Verify continuous streets, transport, direction signs and repeated navigation
         run: node scripts/test-world-wayfinding.cjs
+
+      - name: Verify repeated map input and context boundaries
+        run: node scripts/test-map-boundaries.cjs

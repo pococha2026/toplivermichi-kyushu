@@ -630,7 +630,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.20";
+const GAME_VERSION = "8.21";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -5184,10 +5184,10 @@ function bfs(m,sx,sy,goal,preferRoad=true){
 }
 
 function walkTo(x,y,pending,isNavigation=false){
-  const st=G.st, m=MAPS[st.mapId]; if(G.readOnly) return toast("閲覧のみのタブです。");
+  const st=G.st;if(!st||worldMoveReason(st))return;const m=MAPS[st.mapId];if(!m||!Number.isInteger(x)||!Number.isInteger(y)||x<0||y<0||x>=m.w||y>=m.h)return; if(G.readOnly) return toast("閲覧のみのタブです。");
   let path;
   const obj=objAt(m,x,y);
-  if(obj && !obj.walk){ if(Math.abs(obj.x-st.pos.x)+Math.abs(obj.y-st.pos.y)===1 || (Math.max(Math.abs(obj.x-st.pos.x),Math.abs(obj.y-st.pos.y))<=1)){ interact(obj); return; }
+  if(obj && !obj.walk){ if(Math.abs(obj.x-st.pos.x)+Math.abs(obj.y-st.pos.y)===1 || (Math.max(Math.abs(obj.x-st.pos.x),Math.abs(obj.y-st.pos.y))<=1)){if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;G.walk.path=[];G.walk.pending=null;} interact(obj); return; }
     path=bfs(m,st.pos.x,st.pos.y,(px,py)=>Math.abs(px-x)+Math.abs(py-y)===1); pending=obj; }
   else { if(x===st.pos.x&&y===st.pos.y) return; if(!walkable(m,x,y)){if(m.mapScope==='world')toast(worldOwnersAt(x,y).length?'未開放エリア：まだ移動できません。':'海・山には移動できません。');return;} path=bfs(m,st.pos.x,st.pos.y,(px,py)=>px===x&&py===y,m.mapScope!=='world'||!!obj||Object.hasOwn(m.walkRoadIndex,x+','+y)); }
   if(!path) return toast("そこへは行けません。");
@@ -5216,7 +5216,7 @@ function arrive(){
   } else if(o&&o.walk&&["door","cityEntry","worldExit"].includes(o.type)){ G.walk.path=[]; interact(o); }
   else refreshHere();
 }
-function exploreSong(){ const st=G.st; if(!st) return "title"; const m=MAPS[st.mapId]; if(zoneAt(m,st.pos.x,st.pos.y)) return "field"; if(m.kind==="in") return "home"; const hub=m.hub||st.mapId;if(NATIONAL_ENCORES.some(c=>c.id===hub))return "encore";const region=NATIONAL_CHAPTERS.findIndex(c=>c.hubs.includes(hub)||c.special===hub);if(region>0)return ['','chugoku','kinki','hokuriku','tohoku','kanto'][region];return m.hub==="KY02"?"kitakyushu":(HUBS[m.hub]&&HUBS[m.hub].song)||"fukuoka"; }
+function exploreSong(){ const st=G.st; if(!st) return "title"; const m=MAPS[st.mapId]; if(zoneAt(m,st.pos.x,st.pos.y)) return "field"; if(m.kind==="in") return "home"; const hub=hubOf(st.mapId)||st.mapId;if(NATIONAL_ENCORES.some(c=>c.id===hub))return "encore";const region=NATIONAL_CHAPTERS.findIndex(c=>c.hubs.includes(hub)||c.special===hub);if(region>0)return ['','chugoku','kinki','hokuriku','tohoku','kanto'][region];return hub==="KY02"?"kitakyushu":(HUBS[hub]&&HUBS[hub].song)||"fukuoka"; }
 function exploreBgm(){ SND.play(exploreSong()); }
 /* 「現在地・近く」の行だけを軽く更新する（内容が変わった時だけ書き換える） */
 function refreshHere(){

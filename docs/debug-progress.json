@@ -1,5 +1,5 @@
 {
-  "version": "8.20",
+  "version": "8.21",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -75,5 +75,9 @@
       "案内再開・切替・解除"
     ],
     "report": "docs/debug-v8.20.json"
+  },
+  "mapBoundaryDebug": {
+    "status": "修正後の3回反復と回帰成功",
+    "report": "docs/debug-v8.21.json"
   }
 }
