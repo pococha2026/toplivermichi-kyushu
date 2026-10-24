@@ -1,0 +1,217 @@
+{
+  "version": "7.45",
+  "reports": {
+    "collection": {
+      "groups": {
+        "totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "entry-status": {
+          "cases": 15321,
+          "passed": 15321,
+          "failed": 0
+        },
+        "permanent-item": {
+          "cases": 312,
+          "passed": 312,
+          "failed": 0
+        },
+        "permanent-gear": {
+          "cases": 4570,
+          "passed": 4570,
+          "failed": 0
+        },
+        "permanent-event-item": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "event-legacy-evidence": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "bag-direct": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "overflow": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "legacy": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "invalid-save": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "filter-counts": {
+          "cases": 18,
+          "passed": 18,
+          "failed": 0
+        },
+        "regional-progress": {
+          "cases": 96,
+          "passed": 96,
+          "failed": 0
+        },
+        "search": {
+          "cases": 5,
+          "passed": 5,
+          "failed": 0
+        },
+        "page-clamp": {
+          "cases": 4,
+          "passed": 4,
+          "failed": 0
+        },
+        "html-mobile": {
+          "cases": 6,
+          "passed": 6,
+          "failed": 0
+        },
+        "readonly": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "completion": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "encounter": {
+          "cases": 2,
+          "passed": 2,
+          "failed": 0
+        },
+        "exclusive-category": {
+          "cases": 4978,
+          "passed": 4978,
+          "failed": 0
+        },
+        "classification-totals": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      },
+      "total": 25424,
+      "failed": 0,
+      "failures": [],
+      "scope": "Actual collection acquisition hooks, save validation/migration, catalog filters and generated HTML in VM. No browser/device rendering."
+    },
+    "regional": {
+      "groups": {
+        "verified-regional-data": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "local-shop-restriction": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "enemy-balance-and-identity": {
+          "cases": 10250,
+          "passed": 10250,
+          "failed": 0
+        },
+        "field-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "battle-item-use": {
+          "cases": 154,
+          "passed": 154,
+          "failed": 0
+        },
+        "purchase-local-item": {
+          "cases": 214,
+          "passed": 214,
+          "failed": 0
+        },
+        "added-food-enemy-drop": {
+          "cases": 84,
+          "passed": 84,
+          "failed": 0
+        },
+        "regional-drop-roll": {
+          "cases": 3,
+          "passed": 3,
+          "failed": 0
+        },
+        "full-bag-overflow": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "regional-guide-html": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        },
+        "omuta-city-exclusivity": {
+          "cases": 65,
+          "passed": 65,
+          "failed": 0
+        },
+        "omuta-guide-and-unlock": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "omuta-selector-handler": {
+          "cases": 1,
+          "passed": 1,
+          "failed": 0
+        },
+        "soul-food-coverage": {
+          "cases": 47,
+          "passed": 47,
+          "failed": 0
+        }
+      },
+      "total": 11133,
+      "failed": 0,
+      "failures": [],
+      "regions": 47,
+      "newItems": 154,
+      "motifTypes": 295,
+      "regionalEnemySlots": 1227,
+      "scope": "Actual data, shops, field/battle use, drops and generated guide HTML in VM. Source metadata checked against pref pages separately. Real-device rendering not covered."
+    }
+  },
+  "otherChecks": {
+    "interactions": {
+      "total": 19,
+      "failed": 0
+    },
+    "releaseSync": {
+      "total": 7,
+      "failed": 0
+    }
+  },
+  "categories": {
+    "enemy": 10343,
+    "gear": 4570,
+    "consumable": 158,
+    "event": 96,
+    "local": 107,
+    "soul": 47
+  },
+  "ordinaryItemsTotal": 4824,
+  "scope": "Collection classification, exclusive membership, acquisition persistence, generated HTML and regional transaction regressions in VM. No browser/device rendering. Previous v7.44 broad regression results not counted again.",
+  "functionalCasesTotal": 36583,
+  "failed": 0
+}
