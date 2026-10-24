@@ -74,3 +74,6 @@ jobs:
 
       - name: Verify land traversal, hierarchical back and direct return
         run: node scripts/test-terrain-back.cjs
+
+      - name: Verify four-button dock, top map information and exclusive ultra catalog
+        run: node scripts/test-map-catalog-ui.cjs

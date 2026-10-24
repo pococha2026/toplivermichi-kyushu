@@ -1,5 +1,5 @@
 {
-  "version": "8.60",
+  "version": "8.70",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -79,5 +79,9 @@
   "terrainAndReturn": {
     "status": "旧版の要件未達確認後、地形と状況別戻るを3回反復・関連回帰成功",
     "report": "docs/debug-v8.60.json"
+  },
+  "mapAndCatalogUI": {
+    "status": "4ボタン、上部情報、描画中央座標と超レア分類を3回反復。全カード・保存記録の関連回帰成功",
+    "report": "docs/debug-v8.70.json"
   }
 }
