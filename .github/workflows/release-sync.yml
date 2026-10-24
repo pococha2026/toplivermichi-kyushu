@@ -53,3 +53,6 @@ jobs:
 
       - name: Verify repeated battle controls, automation and return paths
         run: node scripts/test-battle-focused.cjs
+
+      - name: Verify national overworld, city safety and travel compatibility
+        run: node scripts/test-national-map.cjs
