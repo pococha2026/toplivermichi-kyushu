@@ -10,7 +10,13 @@ def planned(root):
  if len(lines)!=2 or not re.fullmatch(r'\d+\.\d+(?:\.\d+)*',lines[0]):raise ValueError('VERSION.txt: expected version and date')
  from datetime import date
  date.fromisoformat(lines[1]);version,day=lines
- game=(root/'index.html').read_text();spec=(root/'GAME_SPEC.md').read_text();readme=(root/'README.md').read_text()
+ game=(root/'index.html').read_text()
+ if (root/'src/index.template.html').exists():
+  import importlib.util
+  module_spec=importlib.util.spec_from_file_location('build_game',ROOT/'scripts/build-game.py')
+  builder=importlib.util.module_from_spec(module_spec);module_spec.loader.exec_module(builder)
+  game=builder.render(root)
+ spec=(root/'GAME_SPEC.md').read_text();readme=(root/'README.md').read_text()
  if len(re.findall(r'const GAME_VERSION = "[0-9.]+";',game))!=1:raise ValueError('GAME_VERSION must be unique')
  game=re.sub(r'const GAME_VERSION = "[0-9.]+";',f'const GAME_VERSION = "{version}";',game)
  spec,n=re.subn(r'^改訂 v[0-9.]+｜',f'改訂 v{version}｜',spec,count=1,flags=re.M)

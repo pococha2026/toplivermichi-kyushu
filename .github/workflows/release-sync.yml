@@ -12,6 +12,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Verify generated release companions and JavaScript syntax
         run: python3 scripts/sync-release.py --check
+      - name: Verify editable source build and source mismatch detection
+        run: python3 scripts/test-source-build.py
       - name: Verify synchronization failure cases
         run: python3 scripts/test-release-sync.py
       - name: Verify activity preparation regression cases
