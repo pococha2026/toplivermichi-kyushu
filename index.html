@@ -623,7 +623,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.49";
+const GAME_VERSION = "7.50";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -4624,7 +4624,7 @@ function render(){
   if(G.endPager&&G.endPager.resetScroll){G.endPager.resetScroll=false;if(typeof window.scrollTo==="function")window.scrollTo(0,0);}
   PAD.restore();
   fitEndView();fitBattleView();
-  restoreSheetPosition();
+  restoreSheetPosition();stampBattleControls();
 }
 /* 戦闘中だけ、スティックの隣にオートボタンを出す（オート中は「停止」に切り替わる） */
 function syncDockAuto(){
@@ -5132,14 +5132,14 @@ function startBattle(run){
   if(!alive(run).length){toast("同行者を復活させてから挑みましょう。");return false;}
   if(run.kind==='boss'&&mainPropGate(G.st,run.bossId))return false;
   G.battleInspect=false;G.battleChoiceKey=null;G.battlePreview="";
-  G.auto=false;G.autoWait=false;G.autoAct=null; clearTimeout(G.autoT); G.autoLast=null;
+  stopBattleAutomation();
   const st=G.st; st.run=run; st.runSeq=run.seq;
   syncCollection(st);if(run.bossId&&BOSSES[run.bossId])st.collection.bosses[run.bossId]=true;for(const e of run.enemies) if(!e.boss) st.seen[e.id]=true;
   run.log=[`${run.enemies.map(e=>e.display).join("と")}が現れた！`,...(run.log||[])];
   G.cmd={};G.battleCommand=false;G.battlePicker=null;G.battlePanel="enemies";G.mobileForceFocus=false;G.battleFoePage=0;G.sheet=null;
   commit(); SND.sfx("enc");
   if(st.settings.reduceMotion){ G.screen="battle"; render(); }
-  else { const f=document.createElement("div"); f.className="flash"; document.body.appendChild(f); setTimeout(()=>{ f.remove(); G.screen="battle"; render(); },380); }
+  else { const f=document.createElement("div"); f.className="flash"; document.body.appendChild(f); setTimeout(()=>{f.remove();if(G.st!==st||st.run!==run||run.state!=="input"||G.screen!=="explore")return;G.screen="battle";render();},380); }
   SND.play(run.enemies.some(e=>e.boss)?"boss":"battle");
 }
 function partyCard(m,i,run){
@@ -5258,8 +5258,16 @@ function fxOn(el,cls,ms){ if(!el) return; const d=document.createElement("span")
 function pop(el,text,cls){ if(!el) return; const s=document.createElement("span"); s.className="pop "+cls; s.textContent=text; el.appendChild(s); setTimeout(()=>s.remove(),900); }
 function startBattleTimer(){ stopBattleTimer(); if(!G.st.settings.reduceMotion) G.battleTimer=setInterval(drawEnemies,150); }
 function stopBattleTimer(){ if(G.battleTimer){ clearInterval(G.battleTimer); G.battleTimer=0; } }
+const BATTLE_CONTROL_ACTIONS=new Set(['battleCommandOpen','mobileCmdType','pickActor','cmdType','cmdSet','battlePickerOpen','battlePickerSelect','mobileConfirm','confirmAct','autoOn','autoNext','autoOff','mobileAuto','doRetreat','defeatReturn','retreat','pauseBattle','toResult']);
+const BATTLE_CONTROL_RUNS=new WeakMap();let BATTLE_CONTROL_ID=0;
+function battleControlToken(){const run=G.st?.run;if(G.screen!=='battle'||!run)return '';let id=BATTLE_CONTROL_RUNS.get(run);if(!id){id=++BATTLE_CONTROL_ID;BATTLE_CONTROL_RUNS.set(run,id);}return JSON.stringify([id,G.battleRenderVersion||0,run.turn,run.state,G.cmd,G.auto,G.autoWait,G.sheet,!!G.dlg,G.battleInspect,G.battleCommand,G.battlePicker]);}
+function stampBattleControls(){if(G.screen!=='battle'||!G.st?.run)return;G.battleRenderVersion=(G.battleRenderVersion||0)+1;const key=battleControlToken();for(const el of document.querySelectorAll('[data-a],#nativeBattleTarget'))if(BATTLE_CONTROL_ACTIONS.has(el.dataset.a)||el.id==='nativeBattleTarget')el.dataset.battleKey=key;}
+function battleControlIsCurrent(el){const key=battleControlToken();return !!key&&el.dataset.battleKey===key;}
+function stopBattleAutomation(){clearTimeout(G.autoT);G.autoT=null;G.auto=false;G.autoWait=false;G.autoAct=null;G.autoLast=null;G.autoGeneration=(G.autoGeneration||0)+1;G.autoTicket=(G.autoTicket||0)+1;}
+function battleInputRun(){const run=G.st?.run;return !G.readOnly&&G.screen==='battle'&&run?.state==='input'&&!G.sheet&&!G.dlg&&!G.battleInspect?run:null;}
+function queueAutoStep(run,delay){clearTimeout(G.autoT);const ticket=G.autoTicket=(G.autoTicket||0)+1,state=G.st,generation=G.autoGeneration||0;if(!run||state?.run!==run)return;G.autoT=setTimeout(()=>{if(ticket!==G.autoTicket)return;autoStep(run,generation,state);},delay);}
 function confirmAct(forced){
-  const st=G.st, run=st.run; const a=run.party[G.cmd.actor]; const act=forced||buildAct(a); if(!act) return;
+  const run=battleInputRun();if(!run||G.auto&&!forced||!Number.isInteger(G.cmd?.actor))return false;const st=G.st,a=run.party[G.cmd.actor];if(!a||a.hp<=0||a.acted)return false;const act=forced||buildAct(a);if(!act)return false;
   const before={e:Object.fromEntries(run.enemies.map(e=>[e.slot,e.hp])), p:run.party.map(m=>m.hp)};
   run.fx=[];
   const r=applyAction(run,G.cmd.actor,act);
@@ -5277,28 +5285,29 @@ function confirmAct(forced){
   if(r.log.some(l=>l.startsWith("キラコメ"))) SND.sfx("kira");
   G.cmd={};
   if(run.state==="lost") setTimeout(()=>SND.jingle("lose",null),450);
-  if(run.state==="won"){G.auto=false;G.autoWait=false;G.autoLast=null;clearTimeout(G.autoT);toResult();return;}
-  commit(); render(); battleFx(before);
+  if(run.state==="won"){stopBattleAutomation();toResult();return true;}
+  commit(); render(); battleFx(before);return true;
 }
 /* ---- 戦闘オート（中断ボタンまで、戦闘終了まで自動で続く） ---- */
-function autoStep(){
-  clearTimeout(G.autoT);
+function autoStep(expectedRun=null,generation=null,expectedState=null){
+  if(expectedRun&&(G.st!==expectedState||G.st?.run!==expectedRun||generation!==(G.autoGeneration||0)))return;
+  G.autoTicket=(G.autoTicket||0)+1;clearTimeout(G.autoT);
   const st=G.st, run=st&&st.run;
   if(run&&!autoAllowed(run)){enforceAutoAvailability(run);render();return;}
   if(G.readOnly||!G.auto || G.screen!=="battle" || !run) { G.auto=false;G.autoWait=false;G.autoLast=null;return; }
   if(run.state!=="input"){ G.auto=false; G.autoLast=null; render(); return; }
-  if(G.sheet||G.dlg||G.battleInspect||G.battleCommand||G.battlePicker||document.hidden){ G.autoT=setTimeout(autoStep,400); return; }
+  if(G.sheet||G.dlg||G.battleInspect||G.battleCommand||G.battlePicker||document.hidden){ queueAutoStep(run,400); return; }
   const pick=aiChoose(run);
   if(!pick){ G.auto=false; render(); return toast("オートで選べる行動がありません。"); }
   G.autoLast=`${pick.name}：${pick.label}`;
   G.cmd={actor:pick.idx}; G.autoAct=pick.act;
   const tap=autoMode()==="tap"; G.autoWait=tap; if(tap) G.cursorSig="autoNext||||||";
   confirmAct(pick.act);
-  if(G.auto && run.state==="input"){ if(!tap) G.autoT=setTimeout(autoStep, st.settings.reduceMotion?250:650); }
+  if(G.auto && run.state==="input"){ if(!tap) queueAutoStep(run,st.settings.reduceMotion?250:650); }
   else { G.auto=false; G.autoWait=false; G.cursorSig=run.state==="won"?"resultDone||||||":run.state==="lost"?"defeatReturn||||||":null; render(); }
 }
 function toResult(){
-  const st=G.st, run=st.run;if(!run||run.state!=="won")return;const res=applyVictory(st,run);
+  const st=G.st,run=st?.run;if(G.readOnly||G.screen!=="battle"||!run||run.state!=="won")return;stopBattleAutomation();const res=applyVictory(st,run);
   if(res.levelAfter>res.levelBefore && Vof(res.levelAfter)>Vof(res.levelBefore)) res.notes.push("技能・装備の効果量が上昇（V"+Vof(res.levelAfter)+"）");
   const L0=res.levelBefore, L1=partyLevel(st);
   st.lastResult={seq:run.seq, kind:run.kind, bossId:run.bossId||null, turns:run.turn, ...res, log:(run.log||[]).slice(-80),
@@ -5956,20 +5965,20 @@ const ACT = {
   renameSave(){const r=setCharacterName(G.st,G.sheetData.cid,($("#renameInput")||{}).value||"");if(!r.ok)return toast(r.reason);finishRename();SND.sfx("ok");},
   renameDefault(){const cid=G.sheetData.cid;if(cid!=="hero"&&cid!=="moe"){const r=setCharacterName(G.st,cid,CHARS[cid].name);if(!r.ok)return toast(r.reason);delete G.st.names[cid];finishRename();}},
   mapZoom(el){const st=G.st;if(G.screen!=="explore"||G.sheet||G.dlg)return;st.settings.mapZoom=Math.max(1,Math.min(3,(st.settings.mapZoom||2)+Number(el.dataset.v)));G.walk.path=[];G.walk.pending=null;G.walk.prog=0;commit();render();},
-  battleCommandOpen(el){const run=G.st?.run;if(!run||run.state!=="input"||G.auto)return;mobileBattleActor(run);G.battleCommand=true;G.battlePicker=null;G.cursorSig=null;render();},
+  battleCommandOpen(el){const run=battleInputRun();if(!run||G.auto)return;mobileBattleActor(run);G.battleCommand=true;G.battlePicker=null;G.cursorSig=null;render();},
   battleCommandClose(){G.battleCommand=false;G.battlePicker=null;G.cursorSig="battleCommandOpen||||||";render();},
-  mobileMember(el){const run=G.st?.run,m=run?.party[Number(el.dataset.i)];if(!m)return;if(m.hp<=0||m.acted||G.auto)return openMobileBattleDetail("growth",m.name);G.cmd={actor:m.pos};G.battleCommand=true;G.cursorSig=null;render();},
-  battlePanel(){const p=mobilePlan(G.st.run),pages=Math.ceil(G.st.run.party.length/p.memberPage);if(G.battlePanel!=="party"){if((G.battleFoePage||0)+1<Math.ceil(G.st.run.enemies.length/p.foePage))G.battleFoePage=(G.battleFoePage||0)+1;else{G.battlePanel="party";G.battleMemberPage=0;}}else if((G.battleMemberPage||0)+1<pages)G.battleMemberPage++;else{G.battlePanel="enemies";G.battleMemberPage=0;G.battleFoePage=0;}render();},
-  mobileCmdType(el){const t=el.dataset.v;if(t&&!MOBILE_COMMANDS.some(([k])=>k===t))return;G.cmd={actor:G.cmd.actor,type:t};G.battleCommand=true;G.battlePicker=null;if(t==="meter"||t==="family")G.cmd={actor:G.cmd.actor,type:"other",o:t};if(t==="skill"||t==="item"){G.battlePicker=t;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;}G.cursorSig=null;render();},
-  battlePickerOpen(el){G.battlePicker=el.dataset.v;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;render();},
+  mobileMember(el){if(G.screen!=="battle"||!G.st?.run)return;const run=G.st?.run,m=run?.party[Number(el.dataset.i)];if(!m)return;if(m.hp<=0||m.acted||G.auto)return openMobileBattleDetail("growth",m.name);G.cmd={actor:m.pos};G.battleCommand=true;G.cursorSig=null;render();},
+  battlePanel(){if(G.screen!=="battle"||!G.st?.run)return;const p=mobilePlan(G.st.run),pages=Math.ceil(G.st.run.party.length/p.memberPage);if(G.battlePanel!=="party"){if((G.battleFoePage||0)+1<Math.ceil(G.st.run.enemies.length/p.foePage))G.battleFoePage=(G.battleFoePage||0)+1;else{G.battlePanel="party";G.battleMemberPage=0;}}else if((G.battleMemberPage||0)+1<pages)G.battleMemberPage++;else{G.battlePanel="enemies";G.battleMemberPage=0;G.battleFoePage=0;}render();},
+  mobileCmdType(el){if(!battleInputRun()||G.auto)return;const t=el.dataset.v;if(t&&!MOBILE_COMMANDS.some(([k])=>k===t))return;G.cmd={actor:G.cmd.actor,type:t};G.battleCommand=true;G.battlePicker=null;if(t==="meter"||t==="family")G.cmd={actor:G.cmd.actor,type:"other",o:t};if(t==="skill"||t==="item"){G.battlePicker=t;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;}G.cursorSig=null;render();},
+  battlePickerOpen(el){if(!battleInputRun()||G.auto||!['skill','item'].includes(el.dataset.v))return;G.battlePicker=el.dataset.v;G.battlePickerQuery="";G.battlePickerFilter="all";G.battlePickerPage=0;render();},
   battlePickerClose(){G.battlePicker=null;render();},
-  battlePickerSelect(el){const run=G.st.run,a=mobileBattleActor(run),id=el.dataset.v;if(G.battlePicker==="skill"){if(!mobileSkillCandidates(run,a).some(s=>s.id===id))return;G.cmd.skill=id;}else{if(!(run.bag||[]).some(it=>it.id===id&&it.n>0&&ITEMS[id]&&canUseJobItem(a.job,a.R,ITEMS[id])))return;G.cmd.item=id;}delete G.cmd.ally;delete G.cmd.target;delete G.cmd.mode;G.battlePicker=null;G.cursorSig=null;render();},
+  battlePickerSelect(el){const run=battleInputRun();if(!run||G.auto||!['skill','item'].includes(G.battlePicker))return;const a=mobileBattleActor(run),id=el.dataset.v;if(G.battlePicker==="skill"){if(!mobileSkillCandidates(run,a).some(s=>s.id===id))return;G.cmd.skill=id;}else{if(!(run.bag||[]).some(it=>it.id===id&&it.n>0&&ITEMS[id]&&canUseJobItem(a.job,a.R,ITEMS[id])))return;G.cmd.item=id;}delete G.cmd.ally;delete G.cmd.target;delete G.cmd.mode;G.battlePicker=null;G.cursorSig=null;render();},
   battlePickerSearch(){G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();},
   battlePickerPage(el){const n=Number(el.dataset.v);if(!Number.isInteger(n)||n<0||n>=G.battlePickerPages)return;G.battlePickerPage=n;render();},
   mobileInspect(el){ACT.battleInspect(el);},
-  mobileEnemyInfo(el){const e=G.st.run.enemies.find(e=>e.slot===Number(el.dataset.v));openMobileBattleDetail("foes",e&&(e.fullName||e.name));},
-  mobileAuto(){G.sheet=null;G.battleCommand=false;G.battlePicker=null;if(G.auto)ACT.autoOff();else ACT.autoOn();},
-  mobileConfirm(el){if(G.readOnly||G.mobileConfirmUntil>Date.now()||G.st?.run?.state!=="input")return;const a=mobileBattleActor(G.st.run),act=buildAct(a);if(!act)return;const valid=planAction(G.st.run,a.pos,act);if(!valid.ok){toast(valid.reason);render();return;}G.mobileConfirmUntil=Date.now()+280;if(el)el.disabled=true;G.battleCommand=false;G.battlePicker=null;confirmAct();if(G.st?.run?.state==="input")G.cursorSig="battleCommandOpen||||||";},
+  mobileEnemyInfo(el){if(G.screen!=="battle"||!G.st?.run)return;const e=G.st.run.enemies.find(e=>e.slot===Number(el.dataset.v));openMobileBattleDetail("foes",e&&(e.fullName||e.name));},
+  mobileAuto(){if(G.readOnly||G.screen!=="battle"||G.st?.run?.state!=="input"||G.dlg||G.sheet&&G.sheet!=="mobileBattleMenu")return;G.sheet=null;G.battleCommand=false;G.battlePicker=null;if(G.auto)ACT.autoOff();else ACT.autoOn();},
+  mobileConfirm(el){if(!battleInputRun()||G.auto||G.mobileConfirmUntil>Date.now())return;const a=mobileBattleActor(G.st.run),act=buildAct(a);if(!act)return;const valid=planAction(G.st.run,a.pos,act);if(!valid.ok){toast(valid.reason);render();return;}G.mobileConfirmUntil=Date.now()+280;if(el)el.disabled=true;G.battleCommand=false;G.battlePicker=null;confirmAct();if(G.st?.run?.state==="input")G.cursorSig="battleCommandOpen||||||";},
   systemHelp(){openSystemGuide();},
   guideSearch(){G.sheetData={...G.sheetData,q:($("#systemQuery")?.value||"").slice(0,100),cat:"all",page:0};render();},
   guideCategory(el){if(!SYSTEM_GUIDE_CATEGORIES[el.dataset.v])return;G.sheetData={...G.sheetData,cat:el.dataset.v,page:0};render();},
@@ -5997,31 +6006,31 @@ const ACT = {
     say([["",`依頼「${id} ${QUESTS[id].name}」を受けた。`],["もえ",QUESTS[id].main&&HUB_TEXT[QUESTS[id].hub]?HUB_TEXT[QUESTS[id].hub].accept:"一緒に考えよう。"],["",QUESTS[id].goal]]); },
   abandonQuest(el){ const st=G.st, id=el.dataset.v; st.quests[id]="available"; st.qprog[id]=0; st.activeQuest=null; G.sheet="quests";G.sheetData={};commit(); render(); toast("依頼を放棄した。受注費は戻りません。"); },
   bossGo(el){ startRegionalBoss(el.dataset.v); },
-  pickActor(el){ const i=+el.dataset.i; const m=G.st.run.party[i]; if(m.hp<=0||m.acted) return; G.cmd={actor:i}; render(); },
+  pickActor(el){const run=battleInputRun();if(!run||G.auto)return;const i=Number(el.dataset.i),m=Number.isInteger(i)?run.party[i]:null;if(!m||m.hp<=0||m.acted)return; G.cmd={actor:i}; render(); },
   liveLogPage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0&&n<G.liveLogPages){G.liveLogPage=n;if(G.auto){G.auto=false;G.autoWait=false;clearTimeout(G.autoT);}render();}},
   battleChoicePage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0&&n<G.battleChoicePages){G.battleChoicePage=n;render();}},
   battleInspect(el){checkSheetNavigation();G.battleInspectReturn=G.sheet==="mobileBattleMenu"?{frame:captureSheetFrame(),frames:SHEET_NAV.frames.slice(),state:G.st,context:sheetNavContext()}:null;if(G.sheet==="mobileBattleMenu")G.sheet=null;G.battleReturnCursor=G.cursorSig;G.battleInspect=true;G.endPager=null;render();const group=el.dataset.v;if(G.endPager){const i=G.endPager.pages.findIndex(p=>p.group===group);if(i>=0){G.endPager.index=i;render();}}},
   battleInspectClose(){const prev=G.battleInspectReturn;G.battleInspectReturn=null;G.battleInspect=false;G.endPager=null;G.cursorSig=G.battleReturnCursor||null;if(prev&&prev.state===G.st&&prev.context===sheetNavContext()&&G.st?.run?.state==="input"){resetSheetNavigation();SHEET_NAV.frames=prev.frames;restoreSheetFrame(prev.frame);}else render();},
-  cmdType(el){ const t=el.dataset.v; G.cmd={actor:G.cmd.actor, type:t}; render(); },
-  cmdSet(el){ const k=el.dataset.k; let v=el.dataset.v; if(k==="target"||k==="ally") v=+v; G.cmd[k]=v; if(k==="mode"||k==="item"||k==="skill"){ delete G.cmd.ally; delete G.cmd.target; } render(); },
-  confirmAct(el){ el.disabled=true; confirmAct(); },
-  autoOn(){ const run=G.st?.run; if(G.readOnly||G.screen!=="battle"||!autoAllowed(run)||run.state!=="input") return; G.battleCommand=false;G.battlePicker=null;G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); G.autoT=setTimeout(autoStep,300); },
-  autoNext(){ if(!G.auto||!G.autoWait) return; G.autoWait=false; G.cursorSig="autoOff||||||"; SND.sfx("ok"); autoStep(); },
-  autoMode(){ const st=G.st; const nv=autoMode()==="tap"?"timer":"tap"; if(st){ st.settings.autoAdvance=nv; commit(); } else { G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}; G.tmpSettings.autoAdvance=nv; }
+  cmdType(el){if(!battleInputRun()||G.auto)return;const t=el.dataset.v;if(!['attack','skill','item','guard','rest','family','meter','comment','other'].includes(t))return;G.cmd={actor:G.cmd.actor, type:t}; render(); },
+  cmdSet(el){if(!battleInputRun()||G.auto)return;const k=el.dataset.k;if(!['target','ally','mode','item','skill','line','o'].includes(k))return;let v=el.dataset.v; if(k==="target"||k==="ally") v=+v; G.cmd[k]=v; if(k==="mode"||k==="item"||k==="skill"){ delete G.cmd.ally; delete G.cmd.target; } render(); },
+  confirmAct(el){if(!battleInputRun()||G.auto)return;if(el)el.disabled=true;confirmAct();},
+  autoOn(){const run=battleInputRun();if(!run||G.auto||!autoAllowed(run))return;stopBattleAutomation(); G.battleCommand=false;G.battlePicker=null;G.auto=true; G.autoLast=null; G.cursorSig="autoOff||||||"; render(); SND.sfx("ok"); queueAutoStep(G.st?.run,300); },
+  autoNext(){if(!battleInputRun()||!G.auto||!G.autoWait)return; G.autoWait=false; G.cursorSig="autoOff||||||"; SND.sfx("ok"); autoStep(); },
+  autoMode(){if(G.readOnly)return;const st=G.st; const nv=autoMode()==="tap"?"timer":"tap"; if(st){ st.settings.autoAdvance=nv; commit(); } else { G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}; G.tmpSettings.autoAdvance=nv; }
     try{ localStorage.setItem("tlr-kyushu-autoadv",nv); }catch(e){}
-    if(G.auto){ if(nv==="timer"&&G.autoWait){ G.autoWait=false; G.cursorSig="autoOff||||||"; clearTimeout(G.autoT); G.autoT=setTimeout(autoStep,300); }
-      else if(nv==="tap"&&!G.autoWait){ clearTimeout(G.autoT); if(G.autoLast){ G.autoWait=true; G.cursorSig="autoNext||||||"; } else G.autoT=setTimeout(autoStep,300); } }
+    if(G.auto){ if(nv==="timer"&&G.autoWait){ G.autoWait=false; G.cursorSig="autoOff||||||"; clearTimeout(G.autoT); queueAutoStep(G.st?.run,300); }
+      else if(nv==="tap"&&!G.autoWait){clearTimeout(G.autoT);G.autoTicket=(G.autoTicket||0)+1; if(G.autoLast){ G.autoWait=true; G.cursorSig="autoNext||||||"; } else queueAutoStep(G.st?.run,300); } }
     render(); toast(nv==="tap"?"オートはタップで1手ずつ進みます。":"オートは一定時間で自動的に進みます。"); },
-  autoOff(){ G.auto=false; G.autoWait=false; clearTimeout(G.autoT); G.autoLast=null; G.cmd={}; G.cursorSig=null; render(); SND.sfx("cancel"); toast("オートを中断しました。手動で操作できます。"); },
+  autoOff(){if(G.readOnly||G.screen!=="battle"||G.st?.run?.state!=="input"||!G.auto)return;stopBattleAutomation();G.cmd={}; G.cursorSig=null; render(); SND.sfx("cancel"); toast("オートを中断しました。手動で操作できます。"); },
   toResult(){ toResult(); },
   resultDone(){ resultDone(); },
   resultDetails(){if(G.screen!=="result"||!G.st.lastResult)return;G.resultDetails=!G.resultDetails;G.endPager=null;render();},
   endPage(el){const p=G.endPager;if(!p||el.dataset.k!==p.key)return;const n=Number(el.dataset.v);if(!Number.isInteger(n)||n<0||n>=p.pages.length)return;p.index=n;G.cursorSig=n<p.pages.length-1?["endPage",p.key,String(n+1),"","","",""].join("|"):p.primary+"||||||";render();},
-  defeatReturn(){ const st=G.st; const run=st.run;if(G.readOnly||!run||run.state!=="lost")return; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
+  defeatReturn(){const st=G.st,run=st?.run;if(G.readOnly||G.screen!=="battle"||!run||run.state!=="lost")return;stopBattleAutomation();G.sheet=null;G.battleInspect=false;G.cmd={}; if(run.bag) st.bag=clone(run.bag); st.run=null; const m=MAPS[run.returnPos.map]; st.mapId=run.returnPos.map; st.pos={x:m.safeAnchor[0],y:m.safeAnchor[1]}; G.fol={...st.pos};
     const lost=run.kind==="challenge"?0:Math.floor(st.gold/2); st.gold-=lost; restoreAll(st); commit(); G.screen="explore"; exploreBgm(); render(); say([["",`安全な場所へ運ばれた。${run.kind==="challenge"?"特別挑戦の追加ペナルティはありません。":"所持ゴールドの半分（"+lost+"）を失った。"}`],["","全員のHPとMPが回復した。"]]); },
-  retreat(){ openSheet("retreat"); },
-  doRetreat(){ const st=G.st; const run=st.run;if(G.readOnly||!run||run.state!=="input")return; storeVitals(st,run); if(run.bag) st.bag=clone(run.bag); st.run=null; st.mapId=run.returnPos.map; st.pos={x:run.returnPos.x,y:run.returnPos.y}; G.sheet=null; commit(); G.screen="explore"; exploreBgm(); render(); toast("撤退した。"); },
-  pauseBattle(){if(G.readOnly||!G.st.run||G.st.run.state!=="input")return; commit(); openSheet("pause"); },
+  retreat(){if(!battleInputRun())return;openSheet("retreat");},
+  doRetreat(){const st=G.st,run=st?.run;if(G.readOnly||G.screen!=="battle"||G.sheet!=="retreat"||!run||run.state!=="input")return;stopBattleAutomation();G.battleInspect=false;G.cmd={}; storeVitals(st,run); if(run.bag) st.bag=clone(run.bag); st.run=null; st.mapId=run.returnPos.map; st.pos={x:run.returnPos.x,y:run.returnPos.y}; G.sheet=null; commit(); G.screen="explore"; exploreBgm(); render(); toast("撤退した。"); },
+  pauseBattle(){if(!battleInputRun())return; commit(); openSheet("pause"); },
   noop(){},
   shareCopyUrl(){ copyText(shareUrl(),"URLをコピーしました。LINEやDMに貼り付けて送れます。"); },
   shareCopyMsg(){ copyText(shareMessage(),"紹介文とURLをコピーしました。"); },
@@ -6163,7 +6172,7 @@ function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.se
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
 function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");delete s.slots;ensureJobSystem(s);ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.equip=previewEquipFor(s,m.cid,cs.job);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}if(s.run?.state==="input"){if(!alive(s.run).length){s.run.state="lost";s.run.log=[...(s.run.log||[]),"同行者が全員戦闘不能です。安全な場所へ戻れます。"]; }else if(s.run.enemies.every(e=>e.hp<=0))s.run.state="won";}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s);syncCollection(s); return s; }
 
-document.addEventListener("change",e=>{if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!=="")ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
+document.addEventListener("change",e=>{if(e.target.id==="battlePickerFilter"){G.battlePickerFilter=e.target.value;G.battlePickerQuery=($("#battleSearch")?.value||"").slice(0,60);G.battlePickerPage=0;render();}if(e.target.id==="nativeBattleTarget"&&e.target.value!==""&&battleControlIsCurrent(e.target))ACT.cmdSet({dataset:{k:e.target.dataset.k,v:e.target.value}});});
 document.addEventListener("submit",e=>{if(e.target.id==="battleSearchForm"){e.preventDefault();ACT.battlePickerSearch();}});
 document.addEventListener("submit",e=>{if(e.target.id==="helloWorkSearchForm"){e.preventDefault();ACT.helloWorkSearch();}});
 document.addEventListener("toggle",e=>{if(G.sheet==='collection')collectionDetailToggle(e.target);},true);
@@ -6178,6 +6187,7 @@ document.addEventListener("click",e=>{
   const el=e.target.closest("[data-a]"); if(!el||el.disabled) return;
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
+  if(BATTLE_CONTROL_ACTIONS.has(el.dataset.a)&&!battleControlIsCurrent(el))return;
   if(G.readOnly && !["collectionLocate","collectionDensity","collectionJump","collectionTop","collectionTab","collectionPage","collectionSearch","collectionClear","collectionFilter","regionalPref","broadcastFilter","broadcastSuggest","broadcastReuse","mobileEnemyInfo","mobileMember","battlePanel","mobileInspect","battlePickerSearch","battlePickerPage","battlePickerClose","systemHelp","guideSearch","guideCategory","guidePage","specialGuide","managePerson","manageStatusTab","manageEquipTab","manageSlot","manageSearch","manageClear","managePage","manageJobs","manageEquipOpen","equipStock","equipChoose","shopQty","eqSort","itSort","openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","liveLogPage","gearPage","gearFilter","partyReplaceSlot","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
