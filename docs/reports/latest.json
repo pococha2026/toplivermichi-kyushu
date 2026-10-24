@@ -1,13 +1,13 @@
 {
-  "version": "8.88",
+  "version": "8.89",
   "changes": [
-    "Framed enemy data / opaque sprite arena / progress messages / party data in requested order",
-    "HP/MP bars and narrow-screen vertical scroll",
-    "Embedded command/picker panes with retained enemy/party information and scroll restoration"
+    "Unlabelled enemy artwork, names retained only in data/aria",
+    "Compact party fields and expanded grouped progression log",
+    "Battle kind/ale strip below party",
+    "Help-menu-auto toolbar in dock or inline fallback"
   ],
-  "validation": "Three passes at seven viewport sizes, all UI modes, auto/log flow, canvas entry points, scroll restoration and CSS contracts; full regression.",
+  "validation": "Three passes over seven viewports/modes plus visible-label removal, grouped logs/no text loss, state strip, toolbar uniqueness/order and visibility, sprite pipeline and scroll restoration; full regression.",
   "limitations": [
-    "DOM structure/VM/mock canvas and CSS contracts only",
-    "No browser/device rendering or touch verification"
+    "VM/mock DOM and CSS contract checks; no browser/device rendering verification"
   ]
 }

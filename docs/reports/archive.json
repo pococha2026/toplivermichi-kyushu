@@ -12040,6 +12040,19 @@
       "limitations": [
         "VM/mock DOM and CSS contract; physical-device layout/touch unverified"
       ]
+    },
+    "release-8.88.json": {
+      "version": "8.88",
+      "changes": [
+        "Framed enemy data / opaque sprite arena / progress messages / party data in requested order",
+        "HP/MP bars and narrow-screen vertical scroll",
+        "Embedded command/picker panes with retained enemy/party information and scroll restoration"
+      ],
+      "validation": "Three passes at seven viewport sizes, all UI modes, auto/log flow, canvas entry points, scroll restoration and CSS contracts; full regression.",
+      "limitations": [
+        "DOM structure/VM/mock canvas and CSS contracts only",
+        "No browser/device rendering or touch verification"
+      ]
     }
   },
   "entry_sha256": {
@@ -12083,6 +12096,7 @@
     "release-8.84.json": "65488adb20369518ab00cdb62d50f35a433805a8c7092f40171e56cdac802e4f",
     "release-8.85.json": "e2361977474fb533434a8a0729e91d2dbc31cada31dbe1f58693cbadab542ff2",
     "release-8.86.json": "ab6075084a54756c7dfd66fa5f0b1168b4783fdda379f41cf3e422ba1fa796c4",
-    "release-8.87.json": "b7c4fa59f70ac02c5f68d5d94de0fb1b076b262b034967876416d6b04cf8325a"
+    "release-8.87.json": "b7c4fa59f70ac02c5f68d5d94de0fb1b076b262b034967876416d6b04cf8325a",
+    "release-8.88.json": "a496be32e1e1623230d4d4ad81960ce826c6c0524b649f91c7d9387a18a53d8a"
   }
 }
