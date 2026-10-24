@@ -41,3 +41,6 @@ jobs:
 
       - name: Verify collection acquisition, persistence and catalog filters
         run: node scripts/test-collection.cjs
+
+      - name: Verify mobile encyclopedia navigation and generated views
+        run: node scripts/test-mobile-dex.cjs
