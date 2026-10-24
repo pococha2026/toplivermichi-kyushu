@@ -38,3 +38,6 @@ jobs:
 
       - name: Verify regional item shops, combat, sources and drops
         run: node scripts/test-regional.cjs
+
+      - name: Verify collection acquisition, persistence and catalog filters
+        run: node scripts/test-collection.cjs
