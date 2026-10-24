@@ -599,7 +599,7 @@ body.reduce-motion .btn{transition:none}
 
 .world-nav-strip{display:flex;align-items:center;gap:5px;min-height:44px;padding:4px 6px;background:#102b3b;border:1px solid #b7ad7f;flex:none}.world-nav-strip>.btn{width:auto;min-width:44px;min-height:44px;padding:4px 6px;font-size:12px;flex:none}.world-nav-strip>span{min-width:0;flex:1;font-size:12px;line-height:1.3}.world-nav-strip b,.world-nav-strip small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.world-nav-strip b{color:#f1d482}.world-nav-strip small{font-size:11px}.short-map .world-nav-strip{padding:1px 4px;gap:3px}.short-map .world-nav-strip>span{font-size:11px}.short-map .world-nav-strip small{max-width:180px}
 
-.map-guidance{background:#142e3b;border:0;border-bottom:1px solid #637b80;padding:2px 5px;gap:5px;min-height:44px}.map-guidance-copy b{font-size:12px;color:#d9dfcf;font-weight:500}.map-guidance-copy em{font-style:normal;font-size:11px;color:#b9c9bb;margin-left:7px}.map-guidance-copy small{font-size:11px;color:#aebfc4}.map-guidance>.guidance-toggle{font-size:11px;min-width:64px}.guidance-off{justify-content:flex-end}.guidance-hidden-label{font-size:11px!important;color:#80969d}.short-map .map-guidance-copy em{margin-left:3px}
+.map-guidance{background:#142e3b;border:0;border-bottom:1px solid #637b80;padding:2px 5px;gap:5px;min-height:44px}.map-guidance-copy b{font-size:12px;color:#d9dfcf;font-weight:500}.map-guidance-copy em{font-style:normal;font-size:11px;color:#b9c9bb;margin-left:7px}.map-guidance-copy small{font-size:11px;color:#aebfc4}.guidance-hidden-label{font-size:11px!important;color:#80969d}.short-map .map-guidance-copy em{margin-left:3px}
 
 .map-guidance{min-height:36px;padding:0 4px;gap:4px}.map-guidance>.btn{min-height:36px;padding:2px 5px;font-size:11px}.map-guidance-copy b{font-size:11px;line-height:1.2}.map-guidance-copy small,.map-guidance-copy em{font-size:10px;line-height:1.2}
 
@@ -615,3 +615,6 @@ body.reduce-motion .btn{transition:none}
 /* Full status cards stay within the phone width; every value remains visible. */
 .status-roster-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0}.status-roster-values>div{min-width:0;padding:6px;border:1px solid var(--mist);background:#101820}.status-roster-values dt{font-size:12px;line-height:1.4;overflow-wrap:anywhere}.status-roster-values dd{font-size:16px;margin:2px 0 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.status-roster-card h3{overflow-wrap:anywhere}.status-roster-controls .row2{grid-column:1/-1}.status-roster-controls select{width:100%;min-width:0}
 @media(min-width:640px){.status-roster-values{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* One auto-move entry in the map header; the dock keeps the remaining three tools. */
+.dock #dockMenu{grid-column:1/-1}.dock .pbtn.b{display:grid;place-items:center;padding:0;margin:0;line-height:1;box-sizing:border-box}.dock .pbtn.b>b{display:grid;place-items:center;width:100%;height:100%;margin:0;padding:0;line-height:1;transform:none;text-align:center}

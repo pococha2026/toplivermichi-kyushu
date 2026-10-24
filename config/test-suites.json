@@ -35,7 +35,8 @@
     "tests/game/test-map-catalog-ui.cjs",
     "tests/game/test-retired-map-controls.cjs",
     "tests/game/test-equipment-advisor.cjs",
-    "tests/game/test-status-roster.cjs"
+    "tests/game/test-status-roster.cjs",
+    "tests/game/test-exterior-auto-move.cjs"
   ],
   "related": {
     "src/game/data.js": [
@@ -43,7 +44,8 @@
     ],
     "src/game/core.js": [
       "tests/game/test-deep-regression.cjs",
-      "tests/game/test-national-map.cjs"
+      "tests/game/test-national-map.cjs",
+      "tests/game/test-exterior-auto-move.cjs"
     ],
     "src/game/art.js": [
       "tests/game/test-geographic-world.cjs"
@@ -58,12 +60,14 @@
       "tests/game/test-mobile-dex.cjs",
       "tests/game/test-map-catalog-ui.cjs",
       "tests/game/test-equipment-advisor.cjs",
-      "tests/game/test-status-roster.cjs"
+      "tests/game/test-status-roster.cjs",
+      "tests/game/test-exterior-auto-move.cjs"
     ],
     "src/game/actions.js": [
       "tests/game/test-interactions.cjs",
       "tests/game/test-equipment-advisor.cjs",
-      "tests/game/test-status-roster.cjs"
+      "tests/game/test-status-roster.cjs",
+      "tests/game/test-exterior-auto-move.cjs"
     ],
     "src/game/input.js": [
       "tests/game/test-map-travel-layout.cjs",
@@ -71,10 +75,12 @@
     ],
     "src/styles/": [
       "tests/game/test-map-catalog-ui.cjs",
-      "tests/game/test-status-roster.cjs"
+      "tests/game/test-status-roster.cjs",
+      "tests/game/test-exterior-auto-move.cjs"
     ],
     "src/index.template.html": [
-      "tests/game/test-map-travel-layout.cjs"
+      "tests/game/test-map-travel-layout.cjs",
+      "tests/game/test-exterior-auto-move.cjs"
     ]
   },
   "optional": [

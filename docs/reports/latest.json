@@ -1,12 +1,13 @@
 {
-  "version": "8.86",
+  "version": "8.87",
   "changes": [
-    "All joined character full status cards",
-    "Per-field numeric and name/job/join-order sorting",
-    "2/4/8 character pages and return navigation"
+    "All walkable exterior tiles eligible except facility entrances; 1/24 rate retained",
+    "Always-on guidance without toggle or legacy save flag",
+    "Single auto-move header menu, retired dock guide",
+    "Centered return label"
   ],
-  "validation": "Three passes: individual formula agreement, every field both directions, stable ties, complete paging, readonly/save purity, battle vitals, invalid inputs and return state; full configured regression.",
+  "validation": "Three passes over world and local cells, entrance exceptions, actual road arrival combat, legacy setting migration, navigation resume and UI entry contracts; full regression.",
   "limitations": [
-    "VM/mock DOM; physical-device layout/touch unverified"
+    "VM/mock DOM and CSS contract; physical-device layout/touch unverified"
   ]
 }
