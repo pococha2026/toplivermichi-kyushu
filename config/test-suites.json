@@ -36,7 +36,8 @@
     "tests/game/test-retired-map-controls.cjs",
     "tests/game/test-equipment-advisor.cjs",
     "tests/game/test-status-roster.cjs",
-    "tests/game/test-exterior-auto-move.cjs"
+    "tests/game/test-exterior-auto-move.cjs",
+    "tests/game/test-battle-stack.cjs"
   ],
   "related": {
     "src/game/data.js": [
@@ -61,7 +62,8 @@
       "tests/game/test-map-catalog-ui.cjs",
       "tests/game/test-equipment-advisor.cjs",
       "tests/game/test-status-roster.cjs",
-      "tests/game/test-exterior-auto-move.cjs"
+      "tests/game/test-exterior-auto-move.cjs",
+      "tests/game/test-battle-stack.cjs"
     ],
     "src/game/actions.js": [
       "tests/game/test-interactions.cjs",
@@ -76,7 +78,8 @@
     "src/styles/": [
       "tests/game/test-map-catalog-ui.cjs",
       "tests/game/test-status-roster.cjs",
-      "tests/game/test-exterior-auto-move.cjs"
+      "tests/game/test-exterior-auto-move.cjs",
+      "tests/game/test-battle-stack.cjs"
     ],
     "src/index.template.html": [
       "tests/game/test-map-travel-layout.cjs",
