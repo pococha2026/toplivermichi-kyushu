@@ -783,6 +783,33 @@
           "source": "https://www.crossroadfukuoka.jp/en/spot/13220",
           "kind": "ramen",
           "item": "RGX003"
+        },
+        {
+          "name": "イカタル弁当",
+          "sourceTitle": "イカタル弁当",
+          "source": "https://one-plate.city.omuta.lg.jp/articles/detail/6b1e7dfa-8b55-41fe-8c20-ca894fb57ed4",
+          "kind": "bento",
+          "item": "OMI001",
+          "hub": "KY17",
+          "city": "大牟田市"
+        },
+        {
+          "name": "高専ダゴ",
+          "sourceTitle": "高専ダゴ",
+          "source": "https://one-plate.city.omuta.lg.jp/courses/detail/dbd4232a-5e8e-4f0e-a564-2b8d5ace16af",
+          "kind": "dago",
+          "item": "OMI002",
+          "hub": "KY17",
+          "city": "大牟田市"
+        },
+        {
+          "name": "草木饅頭",
+          "sourceTitle": "草木饅頭",
+          "source": "https://one-plate.city.omuta.lg.jp/gifts/detail/1de59f8c-0fe6-4caf-8e9f-b33f676a6247",
+          "kind": "manju",
+          "item": "OMI003",
+          "hub": "KY17",
+          "city": "大牟田市"
         }
       ]
     },
