@@ -23,3 +23,6 @@ jobs:
         run: node scripts/test-comprehensive.cjs
       - name: Verify transactions and automatic battle actions
         run: node scripts/test-interactions.cjs
+
+      - name: Verify boss rewards, equipment and navigation regressions
+        run: node scripts/test-deep-regression.cjs

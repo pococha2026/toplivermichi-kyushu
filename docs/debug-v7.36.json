@@ -1,0 +1,198 @@
+{
+  "version": "7.36",
+  "comprehensive": {
+    "designGroups": 21,
+    "groups": {
+      "area-definition": {
+        "cases": 205,
+        "passed": 205,
+        "failed": 0
+      },
+      "enemy-definition-and-difficulty": {
+        "cases": 10250,
+        "passed": 10250,
+        "failed": 0
+      },
+      "encounter-boundary": {
+        "cases": 20500,
+        "passed": 20500,
+        "failed": 0
+      },
+      "experience-level-boundary": {
+        "cases": 999,
+        "passed": 999,
+        "failed": 0
+      },
+      "mastery-rank-boundary": {
+        "cases": 999,
+        "passed": 999,
+        "failed": 0
+      },
+      "regional-reward": {
+        "cases": 999,
+        "passed": 999,
+        "failed": 0
+      },
+      "equipment-reference": {
+        "cases": 4570,
+        "passed": 4570,
+        "failed": 0
+      },
+      "skill-reference": {
+        "cases": 375,
+        "passed": 375,
+        "failed": 0
+      },
+      "map-dimensions-and-objects": {
+        "cases": 140,
+        "passed": 140,
+        "failed": 0
+      },
+      "quest-reference": {
+        "cases": 130,
+        "passed": 130,
+        "failed": 0
+      },
+      "shop-stock-reference": {
+        "cases": 65,
+        "passed": 65,
+        "failed": 0
+      },
+      "shop-quote-boundary": {
+        "cases": 24470,
+        "passed": 24470,
+        "failed": 0
+      },
+      "field-battle-creation": {
+        "cases": 615,
+        "passed": 615,
+        "failed": 0
+      },
+      "bag-stack-and-removal": {
+        "cases": 790,
+        "passed": 790,
+        "failed": 0
+      },
+      "bag-kind-capacity": {
+        "cases": 26,
+        "passed": 26,
+        "failed": 0
+      },
+      "layout-parameter": {
+        "cases": 360,
+        "passed": 360,
+        "failed": 0
+      },
+      "new-save-roundtrip": {
+        "cases": 66,
+        "passed": 66,
+        "failed": 0
+      },
+      "invalid-save-rejected": {
+        "cases": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "name-validation": {
+        "cases": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "combat-damage-invariants": {
+        "cases": 999,
+        "passed": 999,
+        "failed": 0
+      },
+      "invalid-bag-quantity": {
+        "cases": 22,
+        "passed": 22,
+        "failed": 0
+      }
+    },
+    "total": 66598,
+    "failed": 0,
+    "failures": [],
+    "scope": "Actual game code in a VM with mocked DOM/storage/audio surfaces. Data and parameter cases; not unique viewpoints, browser rendering or full playthroughs."
+  },
+  "new_deep_regressions": {
+    "groups": {
+      "boss-generation": {
+        "cases": 558,
+        "passed": 558,
+        "failed": 0
+      },
+      "boss-reward-idempotency": {
+        "cases": 93,
+        "passed": 93,
+        "failed": 0
+      },
+      "nonvictory-no-reward": {
+        "cases": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      "stale-result-return": {
+        "cases": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      "result-return-context": {
+        "cases": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      "equipment-remove-repeat": {
+        "cases": 6,
+        "passed": 6,
+        "failed": 0
+      },
+      "equipment-change-blocked": {
+        "cases": 4,
+        "passed": 4,
+        "failed": 0
+      },
+      "sheet-back-one-level": {
+        "cases": 3,
+        "passed": 3,
+        "failed": 0
+      },
+      "navigation-reset": {
+        "cases": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "progression-unlock-sequence": {
+        "cases": 10,
+        "passed": 10,
+        "failed": 0
+      }
+    },
+    "total": 688,
+    "failed": 0,
+    "failures": [],
+    "scope": "Actual boss construction/enemy action/reward/equipment/navigation code. DOM/render/save/audio calls mocked; boss victories synthetically marked, not full boss fights."
+  },
+  "interactions": {
+    "total": 19,
+    "passed": 19,
+    "failures": [],
+    "scope": "Actual transaction and auto-action functions; mocked UI, sound and persistence side effects."
+  },
+  "existing_regressions": {
+    "career": 16,
+    "audio": 13,
+    "release_sync": 7,
+    "failed": 0
+  },
+  "total_cases": 67341,
+  "final_failures": 0,
+  "fix": "resultDone now accepts only writable current result screen with a saved result and no battle/stream state. Before, direct stale invocation during battle changed screen to explore while keeping the run.",
+  "initial_deep_run": {
+    "cases": 682,
+    "failures": 7,
+    "game_failures": 3,
+    "harness_failures": 4,
+    "explanation": "3 stale result context failures reproduced in game logic. 3 missing mock DOM querySelector failures and 1 test registration error were harness problems. Harness repaired and additional 6 context tests added."
+  },
+  "limitations": "Actual boss construction/enemy action/reward/equipment/navigation code. DOM/render/save/audio calls mocked; boss victories synthetically marked, not full boss fights. No real device or cloud tests; boss victories flagged synthetically."
+}
