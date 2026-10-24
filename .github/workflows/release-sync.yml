@@ -26,3 +26,6 @@ jobs:
 
       - name: Verify boss rewards, equipment and navigation regressions
         run: node scripts/test-deep-regression.cjs
+
+      - name: Verify stream sequences, save consistency, jobs and narrative cases
+        run: node scripts/test-stream-story.cjs
