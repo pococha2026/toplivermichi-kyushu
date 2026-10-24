@@ -16,3 +16,5 @@ jobs:
         run: python3 scripts/test-release-sync.py
       - name: Verify activity preparation regression cases
         run: node scripts/test-career.cjs
+      - name: Verify music, sound effect and mix controls
+        run: node scripts/test-av.cjs

@@ -570,7 +570,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.32";
+const GAME_VERSION = "7.33";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -3974,6 +3974,8 @@ const ART = (()=>{
       "KY02-A1":[PAL.navy,PAL.sea,PAL.aqua], "KY02-A2":[PAL.slate,PAL.violet,PAL.mist], "KY02-A3":[PAL.ink,PAL.navy,PAL.violet] }[areaId] || (typeof AREA_SKY!=="undefined"&&AREA_SKY[areaId]) || [PAL.navy,PAL.slate,PAL.mist];
     band(g,0,14,sky[0],sky[1]); band(g,14,10,sky[1],sky[2]); band(g,24,10,sky[2],sky[2]);
     if(areaId==="KY02-A3"||areaId==="KY01-A3"){ for(let i=0;i<14;i++) px(g,Math.floor(r()*160),Math.floor(r()*20),1,1,PAL.cream); }
+    // Three restrained pixel silhouettes add distance without hiding the battle foreground.
+    for(let layer=0;layer<3;layer++){const color=mix(sky[1],sky[0],0.25+layer*0.16);for(let x=0;x<160;x+=8){const top=12+layer*5+Math.round(Math.sin(x/23+layer)*3);px(g,x,top,8,34-top,color);}}
     const sil=dark(sky[0],.55);
     switch(areaId){
       case "KY01-A1": for(let i=0;i<9;i++){ const h=8+Math.floor(r()*14); px(g,i*18,34-h,15,h,sil); px(g,i*18+3,34-h+3,2,2,PAL.gold); } px(g,20,22,2,12,PAL.ink); px(g,17,21,8,2,PAL.gold); break;
@@ -3989,6 +3991,9 @@ const ART = (()=>{
     const ground = areaId.endsWith("A2")?PAL.slate: areaId.endsWith("A3")?dark(PAL.violet,.2): PAL.forest;
     px(g,0,34,160,30,ground); for(let y=36,k=1;y<64;y+=k,k++) px(g,0,y,160,1,dark(ground,.25));
     for(let x=-40;x<=200;x+=24){ for(let y=34;y<64;y++){ const xx=Math.round(80+(x-80)*(1+(y-34)/12)); if(xx>=0&&xx<160) px(g,xx,y,1,1,dark(ground,.25)); } }
+    for(let i=0;i<18;i++){const x=Math.floor(r()*160),y=36+Math.floor(r()*26);px(g,x,y,2,1,light(ground,0.13));}
+    // Horizon edge and sparse foreground tufts preserve the original 160 x 64 grid.
+    px(g,0,34,160,1,light(ground,0.22));for(let i=0;i<9;i++){const x=(i*23+7)%160;px(g,x,60,1,3,dark(ground,0.38));px(g,x+1,59,1,3,dark(ground,0.3));}
     cache[key]=c; return c;
   }
   return { tile, mapLayer, person, object, enemy, flashOf, stage };
@@ -4005,6 +4010,12 @@ const SND = (()=>{
 
   /* 曲データ：lead は8分音符ごと（- は伸ばす、. は休符）。chords は1小節ごと */
   const SONGS = {
+    chugoku:{bpm:106,style:"harbor",chords:"F C Dm Am Bb F Gm C",lead:"A5 - C6 - F6 - E6 C6 | G5 - E5 - C6 - G5 - | A5 - D6 - F6 - E6 D6 | C6 - A5 - E5 - . . | D6 - F6 - Bb5 - A5 - | C6 - A5 - F5 - C6 - | Bb5 - D6 - G6 - F6 D6 | E6 - C6 - G5 - . ."},
+    kinki:{bpm:122,style:"town",chords:"D A Bm F#m G D Em A",lead:"F#5 A5 D6 - E6 D6 A5 - | C#6 - E6 - A5 - . . | D6 - F#6 - E6 D6 B5 - | A5 - C#6 - F#5 - . . | B5 D6 G6 - F#6 D6 B5 - | A5 - F#5 - D6 - A5 - | G5 B5 E6 - D6 B5 G5 - | A5 - C#6 - E6 - . ."},
+    hokuriku:{bpm:80,style:"soft",chords:"Eb Bb Cm Gm Ab Eb Fm Bb",lead:"G5 - Bb5 - Eb6 - - - | D6 - Bb5 - F5 - . . | G5 - C6 - Eb6 - D6 C6 | Bb5 - G5 - D5 - . . | C6 - Eb6 - Ab6 - G6 Eb6 | Bb5 - G5 - Eb5 - - - | Ab5 - C6 - F6 - Eb6 C6 | D6 - Bb5 - F5 - . ."},
+    tohoku:{bpm:96,style:"march",chords:"G D Em Bm C G Am D",lead:"B5 - D6 - G6 - F#6 D6 | A5 - F#5 - D6 - . . | B5 - E6 - G6 - F#6 E6 | D6 - B5 - F#5 - . . | E6 - G6 - C6 - B5 - | D6 - B5 - G5 - - - | C6 - E6 - A5 - C6 E6 | F#6 - D6 - A5 - . ."},
+    kanto:{bpm:132,style:"pop",chords:"C G Am Em F C Dm G",lead:"E6 - G6 - C6 D6 E6 G6 | B6 - A6 - G6 - D6 - | E6 - C6 - A5 B5 C6 E6 | G6 - E6 - B5 - . . | A6 - G6 - F6 E6 D6 C6 | E6 - G6 - C7 - G6 - | F6 - E6 - D6 - A5 - | B5 - D6 - G6 - . ."},
+    encore:{bpm:138,style:"march",chords:"Dm Bb F C Gm Dm Bb A7",lead:"D6 - A5 - F6 - E6 D6 | F6 - D6 - Bb5 - . . | A5 C6 F6 - G6 F6 C6 - | E6 - C6 - G5 - . . | G5 Bb5 D6 - G6 - F6 - | E6 D6 A5 - F6 - D6 - | Bb5 D6 F6 - A6 G6 F6 D6 | C#6 - E6 - A6 - . ."},
     title:{ bpm:88, style:"soft", chords:"C G Am Em F C Dm G F G Em Am Dm G C C",
       lead:"E5 - G5 - C6 - B5 A5 | G5 - - - D5 - G5 - | A5 - C6 - E6 - D6 C6 | B5 - - - G5 - - - | A5 - F5 - C6 - A5 - | G5 - E5 - C5 - E5 G5 | F5 - A5 - D6 - C6 A5 | B5 - - - - - . . | A5 - C6 - F6 - E6 C6 | D6 - - - B5 - G5 - | E6 - G6 - E6 - B5 - | C6 - - - A5 - E5 - | F5 - A5 - D6 - C6 A5 | B5 - D6 - G6 - F6 D6 | E6 - - - G5 - C6 - | C6 - - - - - . ." },
     fukuoka:{ bpm:120, style:"town", chords:"F C Dm Bb F C Bb C Bb C Am Dm Gm C F F",
@@ -4063,7 +4074,16 @@ const SND = (()=>{
     return { bpm:s.bpm, steps:bars.length*8, bars, lead, harm, st, bass:pat(st.bass), arp:pat(st.arp), hat:pat(st.hat), kick:pat(st.kick), snare:pat(st.snare) };
   }
   /* 音の通り道：パート別バス → 音色EQ → コンプレッサー → 出力。リバーブとディレイは送りで混ぜる */
-  let bgmOut=null, musicBus=null, sfxBus=null, revIn=null, dlyIn=null, dly=null;
+  let bgmOut=null, musicBus=null, sfxBus=null, revIn=null, dlyIn=null, dly=null, musicFx=null, effectFx=null;
+  const mix={bgm:0.65,sfx:0.65}, recentSfx=new Map();
+  function mixValue(value){const n=Number(value);return Number.isFinite(n)?Math.max(0,Math.min(1,n)):0.65;}
+  function ramp(node,value,seconds=0.06){if(!node||!ac)return;node.gain.cancelScheduledValues(ac.currentTime);node.gain.setValueAtTime(node.gain.value,ac.currentTime);node.gain.linearRampToValueAtTime(value,ac.currentTime+seconds);}
+  function setMix(bgm,sfx){mix.bgm=mixValue(bgm);mix.sfx=mixValue(sfx);ramp(musicBus,0.5*mix.bgm);ramp(sfxBus,0.75*mix.sfx);}
+  function makeEffects(output,buffer){
+    const rev=ac.createGain(),conv=ac.createConvolver(),lp=ac.createBiquadFilter(),wet=ac.createGain();conv.buffer=buffer;lp.type="lowpass";lp.frequency.value=4200;wet.gain.value=0.34;rev.connect(conv);conv.connect(lp);lp.connect(wet);wet.connect(output);
+    const send=ac.createGain(),delay=ac.createDelay(1.5),fb=ac.createGain(),dlp=ac.createBiquadFilter(),dw=ac.createGain();delay.delayTime.value=0.3;fb.gain.value=0.22;dlp.type="lowpass";dlp.frequency.value=2600;dw.gain.value=0.28;send.connect(delay);delay.connect(dlp);dlp.connect(fb);fb.connect(delay);dlp.connect(dw);dw.connect(output);
+    return {rev,send,delay};
+  }
   function impulse(sec,decay){ const len=Math.floor(ac.sampleRate*sec), b=ac.createBuffer(2,len,ac.sampleRate);
     for(let c=0;c<2;c++){ const d=b.getChannelData(c); for(let i=0;i<len;i++){ const t=i/len; d[i]=(Math.random()*2-1)*Math.pow(1-t,decay)*(i<ac.sampleRate*0.012?i/(ac.sampleRate*0.012):1); } } return b; }
   function init(){
@@ -4071,20 +4091,15 @@ const SND = (()=>{
     try{
       ac=new (window.AudioContext||window.webkitAudioContext)({latencyHint:"balanced"});
       const comp=ac.createDynamicsCompressor(); comp.threshold.value=-16; comp.knee.value=12; comp.ratio.value=3.5; comp.attack.value=0.004; comp.release.value=0.18;
-      master=ac.createGain(); master.gain.value=0.85; master.connect(comp); comp.connect(ac.destination);
+      master=ac.createGain(); master.gain.value=0; master.connect(comp); comp.connect(ac.destination);
       const low=ac.createBiquadFilter(); low.type="lowshelf"; low.frequency.value=140; low.gain.value=2.5;
       const high=ac.createBiquadFilter(); high.type="highshelf"; high.frequency.value=5200; high.gain.value=-5;
       low.connect(high); high.connect(master);
-      musicBus=ac.createGain(); musicBus.gain.value=0.5; musicBus.connect(low);
-      sfxBus=ac.createGain(); sfxBus.gain.value=0.75; sfxBus.connect(low);
+      musicBus=ac.createGain(); musicBus.gain.value=0.5*mix.bgm; musicBus.connect(low);
+      sfxBus=ac.createGain(); sfxBus.gain.value=0.75*mix.sfx; sfxBus.connect(low);
       bus=musicBus;
-      // リバーブ（小さめのホール）
-      const conv=ac.createConvolver(); conv.buffer=impulse(1.7,2.6); const revLp=ac.createBiquadFilter(); revLp.type="lowpass"; revLp.frequency.value=4200;
-      revIn=ac.createGain(); revIn.gain.value=1; const revOut=ac.createGain(); revOut.gain.value=0.55;
-      revIn.connect(conv); conv.connect(revLp); revLp.connect(revOut); revOut.connect(low);
-      // ディレイ（付点8分のこだま）
-      dlyIn=ac.createGain(); dly=ac.createDelay(1.5); dly.delayTime.value=0.3; const fb=ac.createGain(); fb.gain.value=0.3; const dLp=ac.createBiquadFilter(); dLp.type="lowpass"; dLp.frequency.value=2600; const dOut=ac.createGain(); dOut.gain.value=0.45;
-      dlyIn.connect(dly); dly.connect(dLp); dLp.connect(fb); fb.connect(dly); dLp.connect(dOut); dOut.connect(low); dOut.connect(revIn);
+      // Dry and wet signals share each channel's gain, so BGM 0 also silences its reverb.
+      const room=impulse(1.25,2.8);musicFx=makeEffects(musicBus,room);effectFx=makeEffects(sfxBus,room);revIn=musicFx.rev;dlyIn=musicFx.send;dly=musicFx.delay;
       const pulse=d=>{ const N=48, re=new Float32Array(N), im=new Float32Array(N); for(let n=1;n<N;n++) re[n]=2/(n*Math.PI)*Math.sin(n*Math.PI*d)*Math.exp(-n/36); return ac.createPeriodicWave(re,im); };
       waves={p25:pulse(.25), p12:pulse(.125), p50:pulse(.5)};
       noiseBuf=ac.createBuffer(1,ac.sampleRate*1,ac.sampleRate); const nd=noiseBuf.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i]=Math.random()*2-1;
@@ -4093,36 +4108,38 @@ const SND = (()=>{
   }
   /* 1音：オシレーター（2本で厚み）→ 音量エンベロープ → ローパス → 定位 → バス＋送り */
   function voice(f, t, dur, wave, vol, opt={}){
-    const out=opt.out||bgmOut||musicBus, A=opt.a??0.006, D=opt.d??0.08, S=opt.sus??0.7, R=opt.r??0.06;
-    const g=ac.createGain(), flt=ac.createBiquadFilter(); flt.type="lowpass"; flt.Q.value=opt.q??0.7;
+    const fx=opt.out===sfxBus?effectFx:musicFx,out=opt.out||bgmOut||musicBus, A=opt.a??0.006, D=opt.d??0.08, S=opt.sus??0.7, R=opt.r??0.06;
+    const nodes=[],endAt=t+Math.max(A+D,dur)+R+0.03;let active=0;
+    const watch=o=>{active++;o.onended=()=>{try{o.disconnect();}catch(e){}if(--active===0)for(const n of nodes)try{n.disconnect();}catch(e){}};return o;};
+    const g=ac.createGain(), flt=ac.createBiquadFilter();nodes.push(g,flt); flt.type="lowpass"; flt.Q.value=opt.q??0.7;
     const cut=opt.cutoff??4000; flt.frequency.setValueAtTime(cut+(opt.fenv||0),t); flt.frequency.exponentialRampToValueAtTime(Math.max(200,cut),t+Math.min(0.25,dur));
-    const pan=ac.createStereoPanner?ac.createStereoPanner():null; if(pan) pan.pan.value=opt.pan||0;
-    const mk=(det,lvl)=>{ const o=ac.createOscillator(); if(waves[wave]) o.setPeriodicWave(waves[wave]); else o.type=wave; o.frequency.setValueAtTime(f,t); o.detune.value=det;
+    const pan=ac.createStereoPanner?ac.createStereoPanner():null; if(pan){pan.pan.value=opt.pan||0;nodes.push(pan);}
+    const mk=(det,lvl)=>{ const o=watch(ac.createOscillator()); if(waves[wave]) o.setPeriodicWave(waves[wave]); else o.type=wave; o.frequency.setValueAtTime(f,t); o.detune.value=det;
       if(opt.slide) o.frequency.exponentialRampToValueAtTime(opt.slide,t+dur);
-      if(opt.vib && dur>0.22){ const l=ac.createOscillator(), lg=ac.createGain(); l.frequency.value=5.2; lg.gain.setValueAtTime(0,t); lg.gain.linearRampToValueAtTime(f*0.01,t+0.2); l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(t+dur+R+0.05); }
-      const og=ac.createGain(); og.gain.value=lvl; o.connect(og); og.connect(g); o.start(t); o.stop(t+dur+R+0.05); };
+      if(opt.vib && dur>0.22){ const l=watch(ac.createOscillator()), lg=ac.createGain();nodes.push(lg); l.frequency.value=5.2; lg.gain.setValueAtTime(0,t); lg.gain.linearRampToValueAtTime(f*0.01,t+0.2); l.connect(lg); lg.connect(o.frequency); l.start(t); l.stop(endAt); }
+      const og=ac.createGain();nodes.push(og); og.gain.value=lvl; o.connect(og); og.connect(g); o.start(t); o.stop(endAt); };
     if(opt.detune){ mk(-opt.detune,0.55); mk(opt.detune,0.55); } else mk(0,1);
-    if(opt.sub){ const o=ac.createOscillator(); o.type="sine"; o.frequency.setValueAtTime(f/2,t); const og=ac.createGain(); og.gain.value=0.6; o.connect(og); og.connect(g); o.start(t); o.stop(t+dur+R+0.05); }
+    if(opt.sub){ const o=watch(ac.createOscillator()); o.type="sine"; o.frequency.setValueAtTime(f/2,t); const og=ac.createGain();nodes.push(og); og.gain.value=0.6; o.connect(og); og.connect(g); o.start(t); o.stop(endAt); }
     g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+A); g.gain.linearRampToValueAtTime(vol*S,t+A+D);
     g.gain.setValueAtTime(vol*S,t+Math.max(A+D,dur)); g.gain.linearRampToValueAtTime(0.0001,t+Math.max(A+D,dur)+R);
     g.connect(flt); const last = pan? (flt.connect(pan),pan) : flt; last.connect(out);
-    if(opt.rev){ const s=ac.createGain(); s.gain.value=opt.rev; last.connect(s); s.connect(revIn); }
-    if(opt.dly){ const s=ac.createGain(); s.gain.value=opt.dly; last.connect(s); s.connect(dlyIn); }
+    if(opt.rev){ const s=ac.createGain();nodes.push(s); s.gain.value=opt.rev; last.connect(s); s.connect(fx.rev); }
+    if(opt.dly){ const s=ac.createGain();nodes.push(s); s.gain.value=opt.dly; last.connect(s); s.connect(fx.send); }
   }
   function noise(t, dur, vol, hp, opt={}){
-    const s=ac.createBufferSource(); s.buffer=noiseBuf; s.playbackRate.value=opt.rate||1;
+    const nodes=[],fx=opt.out===sfxBus?effectFx:musicFx;const s=ac.createBufferSource(); s.buffer=noiseBuf; s.playbackRate.value=opt.rate||1;
     const f=ac.createBiquadFilter(); f.type=opt.type||"highpass"; f.frequency.value=hp; f.Q.value=opt.q??0.7;
     const g=ac.createGain(); g.gain.setValueAtTime(vol,t); g.gain.exponentialRampToValueAtTime(0.001,t+dur);
     const pan=ac.createStereoPanner?ac.createStereoPanner():null; if(pan) pan.pan.value=opt.pan||0;
-    s.connect(f); f.connect(g); const last=pan?(g.connect(pan),pan):g; last.connect(opt.out||bgmOut||musicBus);
-    if(opt.rev){ const r=ac.createGain(); r.gain.value=opt.rev; last.connect(r); r.connect(revIn); }
+    nodes.push(s,f,g);if(pan)nodes.push(pan);s.onended=()=>{for(const n of nodes)try{n.disconnect();}catch(e){}};s.connect(f); f.connect(g); const last=pan?(g.connect(pan),pan):g; last.connect(opt.out||bgmOut||musicBus);
+    if(opt.rev){ const r=ac.createGain();nodes.push(r); r.gain.value=opt.rev; last.connect(r); r.connect(fx.rev); }
     s.start(t, Math.random()*0.5); s.stop(t+dur+0.02);
   }
   function kick(t,out){ voice(165,t,0.13,"sine",1.0,{slide:42,a:0.002,d:0.05,sus:0.6,r:0.12,cutoff:900,out}); noise(t,0.012,0.35,2500,{out}); }
   function snare(t,out){ noise(t,0.16,0.5,1900,{type:"bandpass",q:0.6,rev:0.28,out}); voice(195,t,0.06,"triangle",0.35,{slide:140,a:0.001,d:0.03,sus:0.4,r:0.06,cutoff:1500,out}); }
   function hat(t,k,out){ noise(t,0.035,0.16,7800,{pan:k%2?0.3:-0.3,out}); }
   function schedule(){
-    const S=song; if(!S||!ac) return; const sd=60/S.bpm/2;
+    const S=song; if(!S||!ac||!on||document.hidden) return; const sd=60/S.bpm/2;
     // 処理が詰まって予定時刻を過ぎたら、遅れた音をまとめて鳴らさず今の時刻から続ける（音の団子・途切れ防止）
     if(nextT < ac.currentTime-0.05){ const lag=Math.ceil((ac.currentTime-nextT)/sd); step+=lag; nextT+=lag*sd; if(nextT<ac.currentTime+0.03) nextT=ac.currentTime+0.03; }
     while(nextT < ac.currentTime+0.35){
@@ -4148,8 +4165,8 @@ const SND = (()=>{
     if(jingleT){ clearTimeout(jingleT); jingleT=null; }
     if(cur===name && (timer||!on)) return;
     cur=name; stopBgm();
-    if(!on||!ac||!SONGS[name]) return;
-    bgmOut=ac.createGain(); bgmOut.gain.value=1; bgmOut.connect(musicBus);
+    if(!on||!ac||document.hidden||!SONGS[name]) return;
+    bgmOut=ac.createGain(); bgmOut.gain.value=0; bgmOut.connect(musicBus);ramp(bgmOut,1,0.12);
     song=compile(SONGS[name]); step=0; nextT=ac.currentTime+0.06; if(dly) dly.delayTime.setValueAtTime(Math.min(1.2,60/song.bpm*0.75),ac.currentTime);
     schedule(); timer=setInterval(schedule,25);
   }
@@ -4164,14 +4181,15 @@ const SND = (()=>{
     clearTimeout(jingleT);
     const J=JINGLES[name]; if(!J) return;
     stopBgm(); cur=next||null;
-    if(!on||!ac){ return; }
+    if(!on||!ac||document.hidden){ return; }
+    bgmOut=ac.createGain();bgmOut.gain.value=1;bgmOut.connect(musicBus);const jingleOut=bgmOut;
     const sd=60/J.bpm/2; let t0=ac.currentTime+0.05, steps=0;
     const lane=(str,wave,vol,o)=>{ const toks=str.replace(/\|/g," ").trim().split(/\s+/); steps=Math.max(steps,toks.length);
-      toks.forEach((tk,i)=>{ const n=midi(tk); if(n==null) return; let len=1; while(toks[i+len]==="-") len++; voice(hz(n),t0+i*sd,sd*len*0.92,wave,vol,{vib:len>2,...o}); }); };
+      toks.forEach((tk,i)=>{ const n=midi(tk); if(n==null) return; let len=1; while(toks[i+len]==="-") len++; voice(hz(n),t0+i*sd,sd*len*0.92,wave,vol,{out:jingleOut,vib:len>2,...o}); }); };
     lane(J.lead,"p25",0.34,{detune:7,cutoff:3400,fenv:2000,q:1.2,rev:0.3,dly:0.15,sus:0.8,r:0.14});
     lane(J.harm,"p12",0.18,{pan:-0.35,cutoff:2600,rev:0.35,sus:0.7,r:0.12});
     lane(J.bass,"triangle",0.5,{sub:true,cutoff:1300,sus:0.9,r:0.08});
-    for(let i=0;i<steps;i+=4) kick(t0+i*sd);
+    for(let i=0;i<steps;i+=4) kick(t0+i*sd,jingleOut);
     jingleT=setTimeout(()=>{ jingleT=null; if(next){ const n=next; cur=null; play(n); } }, (steps*sd+0.25)*1000);
   }
   function stopBgm(){ if(timer){ clearInterval(timer); timer=null; }
@@ -4179,6 +4197,7 @@ const SND = (()=>{
     if(bgmOut&&ac){ const g=bgmOut; bgmOut=null; try{ g.gain.cancelScheduledValues(ac.currentTime); g.gain.setValueAtTime(g.gain.value,ac.currentTime); g.gain.linearRampToValueAtTime(0.0001,ac.currentTime+0.08); }catch(e){} setTimeout(()=>{ try{ g.disconnect(); }catch(e){} },700); } }
   /* 効果音とジングル */
   const SFX = {
+    treasure:[["p12",72,.06],["p12",79,.06],["p25",84,.08],["p25",91,.16]], equip:[["p50",60,.03],["p25",72,.04],["p12",79,.08]],
     ok:[["p50",84,.05]], cancel:[["p50",72,.05],["p50",67,.07]], hit:[["noise",.06],["p25",55,.05]],
     heal:[["p25",76,.05],["p25",81,.05],["p25",88,.09]], step:[["noise",.02]], buy:[["p25",79,.05],["p25",84,.09]],
     enc:[["p50",88,.04],["p50",76,.04],["p50",88,.04],["p50",76,.04],["p50",91,.12]],
@@ -4195,7 +4214,8 @@ const SND = (()=>{
     tsukon:[["p50",45,.06],["noise",.1],["p50",38,.08],["noise",.12],["p50",31,.25]]
   };
   function sfx(name){
-    if(!on||!ac) return; let t=ac.currentTime+0.01;
+    if(!on||!ac||document.hidden||!SFX[name]||mix.sfx===0)return;
+    const now=ac.currentTime,last=recentSfx.get(name);if(last!==undefined&&now-last<0.055)return;recentSfx.set(name,now);let t=now+0.01;
     for(const s of (SFX[name]||[])){
       if(s[0]==="noise"){ noise(t,s[1]+0.03,0.5,1200,{type:"bandpass",q:0.5,out:sfxBus,rev:0.15}); noise(t,0.02,0.3,5000,{out:sfxBus}); t+=s[1]; }
       else if(s[0]===null){ t+=s[1]; }
@@ -4203,13 +4223,13 @@ const SND = (()=>{
     }
   }
   function setOn(v){
-    if(v){ if(!init()){ on=false; return false; } if(ac.state==="suspended") ac.resume(); on=true; const c=cur; cur=null; if(c) play(c); }
-    else { on=false; stopBgm(); }
+    if(v){ if(!init()){ on=false; return false; } if(ac.state==="suspended") ac.resume().catch(()=>{}); on=true;ramp(master,0.85,0.04); const c=cur; cur=null; if(c) play(c); }
+    else { on=false;clearTimeout(jingleT);jingleT=null;stopBgm();ramp(master,0,0.025);recentSfx.clear(); }
     return on;
   }
-  function suspend(){ stopBgm(); if(ac&&ac.state==="running") ac.suspend().catch(()=>{}); }
-  function resume(){ if(on&&ac){ ac.resume().catch(()=>{}); const c=cur; cur=null; if(c) play(c); } }
-  return { play, jingle, sfx, setOn, suspend, resume, get on(){return on;}, get current(){return cur;} };
+  function suspend(){ clearTimeout(jingleT);jingleT=null;stopBgm();if(ac){ramp(master,0,0.02);if(ac.state==="running")ac.suspend().catch(()=>{});} }
+  function resume(){ if(on&&ac&&!document.hidden){ ac.resume().catch(()=>{});ramp(master,0.85,0.04); const c=cur; cur=null; if(c) play(c); } }
+  return { play, jingle, sfx, setOn, setMix, suspend, resume, get mix(){return {...mix};},get tracks(){return Object.keys(SONGS);},get on(){return on;}, get current(){return cur;} };
 })();
 
 /* ===== platform: 保存（IndexedDB＋世代）と排他 ===== */
@@ -4443,6 +4463,7 @@ function renderMobileBattleMenu(){const run=G.st.run;return '<p>'+esc(mobileBatt
 function render(){
   if(G.st){normalizeChapterLocation(G.st);ensureWorld(G.st);rememberSpecialUnlocks(G.st);}
   checkSheetNavigation();
+  syncAudioMix();
   syncMobileLayout();
   const root=$("#screen"); if(!root) return;
   stopBattleTimer();
@@ -4529,6 +4550,8 @@ function drawTitleArt(){
     const ph=now%7000; if(ph<700){ const k=ph/700, sx=150-k*90, sy=2+k*16; g.fillStyle=PAL.cream; g.fillRect(Math.round(sx),Math.round(sy),2,1); g.fillStyle="rgba(244,236,216,.5)"; g.fillRect(Math.round(sx)+2,Math.round(sy)-1,5,1); }
     for(let i=0;i<2;i++){ const x=Math.round(((now/110+i*110)%220)-40), y=6+i*8; g.fillStyle="rgba(244,236,216,.35)"; g.fillRect(x,y,20,3); g.fillRect(x+5,y-2,10,2); g.fillRect(x+3,y+3,15,1); }
   }
+  for(let i=0;i<10;i++){const x=i*17-2,h=6+(i*7)%11;g.fillStyle=PAL.navy;g.fillRect(x,48-h,13,h);g.fillStyle=PAL.gold;g.fillRect(x+3,49-h,2,1);}
+  g.fillStyle=PAL.ink;g.fillRect(0,55,160,9);g.fillStyle=PAL.gold;g.fillRect(0,55,160,1);for(let i=0;i<12;i++){g.fillStyle=i%2?PAL.aqua:PAL.coral;g.fillRect(4+i*14,58,2,1);}
   const b=still?0:Math.floor(now/520)%2;
   g.drawImage(ART.person("hero",PAL.ink,PAL.red,0,0,{}),58,34-b);
   g.drawImage(ART.person("moe",PAL.violet,PAL.cream,0,0,{long:true,ribbon:PAL.coral}),80,34-(1-b));
@@ -4737,13 +4760,14 @@ function drawMap(){
     else img=ART.object(o.type==='specialExit'?'door':o.type==='challenge'?'board':o.type==='studio'?'inn':o.type==='helloWork'?'shop':o.type,f);
     sprites.push({y:o.y,x:o.x,img});
   }
-  const moving=G.walk.path.length>0; const wf=moving?Math.floor(now/166)%4:0;
+  const moving=G.walk.path.length>0; const wf=!still&&moving?Math.floor(now/166)%4:0;
   const pp=playerPixel();
   // 同行者は最大4人。移動履歴を1マスずつ追い、待機者は描画しない。
   if(G.followMap!==st.mapId){G.followMap=st.mapId;G.followTrail=[];}
   const lead=st.party[0];for(const member of followerPositions(st,G.followTrail||[],G.walk.prog,moving)){sprites.push({y:member.y/16,px:{x:Math.round(member.x),y:Math.round(member.y)},img:charSprite(member.cid,member.dir,moving?(wf+2)%4:0)});}
   sprites.push({y:pp.y/16+0.01, px:pp, img:charSprite(lead,st.dir,wf)});
   sprites.sort((a,b)=>a.y-b.y);
+  for(const s of sprites){const x=(s.px?s.px.x:s.x*16)-cam.x,y=(s.px?s.px.y:s.y*16)-cam.y;g.fillStyle="rgba(16,24,32,.24)";g.fillRect(Math.round(x+3),Math.round(y+13),10,2);g.fillRect(Math.round(x+5),Math.round(y+12),6,1);}
   for(const s of sprites){ const x=s.px?s.px.x:s.x*16, y=s.px?s.px.y:s.y*16; g.drawImage(s.img,x-cam.x,y-8-cam.y); }
   // 施設のマーク（看板）：店・宿・建物の入口・出口などの上に表示
   for(const o of m.objects){ const F=FACILITY[o.type]; if(!F) continue; if(o.type==="door"&&o.walk) continue;
@@ -4761,7 +4785,7 @@ function drawMap(){
     }
   } else { const lg=g.createRadialGradient(VW/2,VH*0.4,4,VW/2,VH*0.4,Math.max(VW,VH)*0.7); lg.addColorStop(0,"rgba(213,179,76,0.10)"); lg.addColorStop(1,"rgba(213,179,76,0)"); g.fillStyle=lg; g.fillRect(0,0,VW,VH); }
   { const vg=g.createRadialGradient(VW/2,VH/2,Math.min(VW,VH)*0.35,VW/2,VH/2,Math.max(VW,VH)*0.75); vg.addColorStop(0,"rgba(16,24,32,0)"); vg.addColorStop(1,"rgba(16,24,32,0.32)"); g.fillStyle=vg; g.fillRect(0,0,VW,VH); }
-  if(moving){ const d=G.walk.path[G.walk.path.length-1]; const bl=Math.floor(now/250)%2; g.strokeStyle=bl?PAL.cream:PAL.gold; g.strokeRect(d.x*16-cam.x+3.5,d.y*16-cam.y+3.5,9,9); }
+  if(moving){ const d=G.walk.path[G.walk.path.length-1]; const bl=still?0:Math.floor(now/250)%2; g.strokeStyle=bl?PAL.cream:PAL.gold; g.strokeRect(d.x*16-cam.x+3.5,d.y*16-cam.y+3.5,9,9); }
 }
 function facBadge(o){ const F=FACILITY[o.type]; if(F) return `<span class="fac" style="background:${F.color}" aria-label="${F.name}">${F.mark}</span>`; if(o.type==="npc") return `<span class="fac npc" aria-label="人">話</span>`; return ""; }
 function drawSignMark(g,x,y,F){
@@ -4852,7 +4876,7 @@ function arrive(){
   } else if(o&&o.walk&&(o.type==="door")){ G.walk.path=[]; interact(o); }
   else refreshHere();
 }
-function exploreSong(){ const st=G.st; if(!st) return "title"; const m=MAPS[st.mapId]; if(zoneAt(m,st.pos.x,st.pos.y)) return "field"; if(m.kind==="in") return "home"; return m.hub==="KY02"?"kitakyushu":(HUBS[m.hub]&&HUBS[m.hub].song)||"fukuoka"; }
+function exploreSong(){ const st=G.st; if(!st) return "title"; const m=MAPS[st.mapId]; if(zoneAt(m,st.pos.x,st.pos.y)) return "field"; if(m.kind==="in") return "home"; const hub=m.hub||st.mapId;if(NATIONAL_ENCORES.some(c=>c.id===hub))return "encore";const region=NATIONAL_CHAPTERS.findIndex(c=>c.hubs.includes(hub)||c.special===hub);if(region>0)return ['','chugoku','kinki','hokuriku','tohoku','kanto'][region];return m.hub==="KY02"?"kitakyushu":(HUBS[m.hub]&&HUBS[m.hub].song)||"fukuoka"; }
 function exploreBgm(){ SND.play(exploreSong()); }
 /* 「現在地・近く」の行だけを軽く更新する（内容が変わった時だけ書き換える） */
 function refreshHere(){
@@ -4928,7 +4952,7 @@ function openBox(o){
   const ev=ITEM_EVENTS[o.box.slice(0,4)+"-BOX-"+o.box.slice(-1)]; let extra=[];
   if(ev){ const g=giveItem(st,ev[0],ev[1]); const nm=ITEMS[ev[0]].name;
     if(g.got) extra.push(["",`道具「${nm}」×${g.got}も入っていた！（非売品）`]); if(g.kept) extra.push(["",`道具袋がいっぱいのため、${nm}×${g.kept}は宿屋の預かり所へ送った。`]); }
-  commit(); SND.sfx("ok");
+  commit(); SND.sfx("treasure");
   say([["",`応援箱を開けた！ チケット＋40、記念カード「${BOX_CARDS[o.box]}」を手に入れた。`],...extra]);
 }
 function bossPrompt(bid){
@@ -5071,13 +5095,15 @@ function drawEnemies(){
   const f=still?0:Math.floor(now/500)%2;
   const bg=document.querySelector("canvas.stagebg"); if(bg){ const g=bg.getContext("2d"); g.imageSmoothingEnabled=false; g.drawImage(ART.stage(run.areaId, still?0:Math.floor(now/400)%4),0,0);
     if(!still){ for(let i=0;i<2;i++){ const x=Math.round(((now/70+i*100)%220)-30), y=4+i*7; g.fillStyle="rgba(244,236,216,.45)"; g.fillRect(x,y,18,3); g.fillRect(x+4,y-2,10,2); g.fillRect(x+3,y+3,14,1); } }
-    if(run.kind==="boss" && !still){ const a=(Math.sin(now/300)+1)/2; g.fillStyle=`rgba(184,75,75,${0.08+a*0.08})`; g.fillRect(0,0,160,64); } }
+    if(run.kind==="boss"){const a=still?0.12:0.1+(Math.sin(now/900)+1)*0.025;g.strokeStyle=`rgba(213,179,76,${a})`;g.strokeRect(1.5,1.5,157,61);} }
   document.querySelectorAll("canvas[data-enemy]").forEach(c=>{
     const e=run.enemies.find(x=>x.slot===+c.dataset.enemy); const g=c.getContext("2d"); g.imageSmoothingEnabled=false; g.clearRect(0,0,c.width,c.height);
     if(!e||e.hp<=0) return;
     let img = e.boss? ART.enemy(e.id,"",null,run.areaId,f,64,true) : ART.enemy(e.profile,e.species,e.attr,run.areaId,f);
-    if(G.flash && G.flash.until>now && G.flash.slots.includes(e.slot) && Math.floor(now/60)%2===0) img=ART.flashOf(img);
+    if(!still && G.flash && G.flash.until>now && G.flash.slots.includes(e.slot) && Math.floor(now/60)%2===0) img=ART.flashOf(img);
+    g.fillStyle="rgba(16,24,32,.28)";g.fillRect(Math.round(c.width*.22),c.height-3,Math.round(c.width*.56),2);
     g.drawImage(img,0,0);
+    if(e.boss){g.fillStyle=PAL.gold;g.fillRect(2,2,5,1);g.fillRect(2,2,1,5);g.fillRect(c.width-7,c.height-3,5,1);g.fillRect(c.width-3,c.height-7,1,5);}
   });
 }
 function dealtBy(before){ const run=G.st.run; return run && run.enemies.some(e=>e.hp<before.e[e.slot]); }
@@ -5308,7 +5334,7 @@ function systemGuideEntries(){
  add('mobileMap','start','スマホの地図：大きく見る・止まる・メニュー',p('地図の＋は拡大、−は縮小です。ふつうは1マス32pxで表示します。画面がとても狭い時は、入る大きさへ調整します。地面を短くタップすると、その場所へ歩きます。指をずらした時や長く押した時は移動しません。歩いている時に地図をタップすると止まります。')+p('上の街の名前と目的をタップすると、長い目的・保存の状況を全部読めます。「メニュー」から装備・編成・全国地図などを開けます。特別エリアの未クリア件数は、地図の右上から確認できます。'),'スマホ MAP 拡大 縮小 誤操作');
  add('mobileBattle','battle','スマホの戦闘画面：戦況と行動選択',p('戦況とは、敵や仲間の今の状態です。いつもの画面でHP・MP・敵の次の攻撃・エール・進行コメントを確認します。行動できる仲間か「行動を選ぶ」を押すと、行動選択へ進みます。選ぶだけではMPや行動回数は減りません。最後に「確定」を押すと実行します。')+p('勝利すると報酬画面へ進みます。普段は経験値・ゴールド・入手した品・大切な通知を表示します。レベルが上がった仲間だけ「成長」に最大HP・最大MP・攻撃力・防御力と5つの基礎能力の変更前・変更後・増加量を表示します。熟練度アップも知らせます。「詳細」で全員のHP・MP・JPや課題・倒した敵・進行コメントを確認でき、「簡略」で戻れます。長い内容はスクロールせず前後のページで読みます。')+p('小さい画面でも、文字やボタンをまとめて縮小しません。とても低い画面では「敵⇄味方」で表示を切り替えます。必要なら同じボタンで次の敵・仲間へ進み、全員を確認できます。敵や行動済みの仲間を押すと、その人の詳細が開きます。'),'スマホ レイアウト 戦況 スクロール');
  add('mobileChoices','skills','技がたくさんある時の選び方',p('「技・必殺技」を選ぶと、技の一覧が開きます。名前や効果の検索と、攻撃・回復・防護・必殺などの種類で探せます。前後のページで、今使える職業技・必殺技・装備の固有技を見られます。MP不足や再使用待ちは表示されます。')+p('技を選ぶと一覧が閉じ、使う相手を選ぶ画面へ戻ります。技のページ送りと相手選びは別です。とても狭い画面では、相手やコメントは選択欄を押して選びます。予測を押すと効果を詳しく読めます。戻るボタンで一覧→行動選択→戦況の順に戻れます。'),'検索 技 道具 対象選択 ページ送り');
- add('mobileControls','save','スマホの操作・進行コメント・画面回転',p('Aボタンとスティック中心の短いタップは、同じ決定です。中心を長く押す・ドラッグする・途中で指の入力が取り消される時は、決定しません。アプリを切り替えた後に移動入力が残らないよう停止します。')+p('進行コメントは矢印で前後を読めます。本文を押すと全文の確認画面へ進みます。画面の向きを変えた時は、選択中の技や入力中の検索文字を保ちながら組み直します。画面がとても低い時やキーボードを開いた時は、操作パネルを一時的に隠して本文を優先します。'),'画面回転 横画面 ジョイスティック キーボード');
+ add('mobileControls','save','スマホの操作・進行コメント・画面回転',p('Aボタンとスティック中心の短いタップは、同じ決定です。中心を長く押す・ドラッグする・途中で指の入力が取り消される時は、決定しません。アプリを切り替えた後に移動入力が残らないよう停止します。')+p('進行コメントは矢印で前後を読めます。本文を押すと全文の確認画面へ進みます。画面の向きを変えた時は、選択中の技や入力中の検索文字を保ちながら組み直します。設定でBGMと効果音を個別に0・35・65・100％へ調整できます。消音は両方を止めます。演出を減らす設定では背景・人物・移動先の点滅を止めます。画面がとても低い時やキーボードを開いた時は、操作パネルを一時的に隠して本文を優先します。'),'画面回転 横画面 ジョイスティック キーボード');
  add('jobEvents','growth','ハローワーク：職業イベントと転職',p('街の地図の「職」がハローワークです。道しるべから歩いて行けます。職業イベントは22職に1件ずつあり、各3段階の状況判断を進めます。違う選択は助言を読んでやり直せます。途中で閉じても記録され、別の街のハローワークで続けられます。')+p('1件クリアすると、その職業が仲間全員の転職先に追加されます。イベントと転職は無料で、経験値やゴールドの繰り返し報酬はありません。今の職業は続けられますが、別の職業へ移る時は専用イベントをクリアしてください。前に使っていた職業も、転職先に選ぶにはイベントのクリアが必要です。')+p('職業ごとの記事にイベント名と、その職業の能力・技を載せています。'),'ジョブ 解放 解禁 転職 職業イベント ハローワーク');
  for(const job of JOB_IDS){const j=JOBS[job],mp=JOB_MP[job];add('job-'+job,'jobs',j.name+'：職業の使い方',p('転職解放：ハローワークの専用イベント「'+esc(JOB_EVENT_DATA[job][0])+'」をクリア。'+esc(JOB_EVENT_DATA[job][1]))+p(esc(j.field)+'。基本技「'+esc(j.skill)+'」／MP'+j.cost+'。')+p(esc(j.desc(Kof(1)))+'（熟練度1の例）')+p('職業特性「'+esc(JOB_TRAITS[job].name)+'」：'+esc(JOB_TRAITS[job].desc))+p('最大MPの土台：初期'+mp[0]+'＋切り捨て((本人Lv－1)×'+mp[1]+')。さらに熟練度・装備を加算。永続ボーナス：熟練度999なら'+esc(jobBonusDescription(job))+'。')+p('技を覚える目安：'+Object.values(EXTRA_SKILLS).filter(sk=>sk.job===job&&!sk.baseJob).map(sk=>esc(sk.name)+'＝Lv'+sk.level+(sk.rank?'・熟練度'+sk.rank:'')).join('／')),job+' 固有技 職業専用 '+j.skill);}
  for(const sk of Object.values(EXTRA_SKILLS)){const job=sk.job&&JOBS[sk.job],source=sk.ultra?Object.values(ULTRA_GEAR).find(it=>it.skill===sk.id):null;add('skill-'+sk.id,'skills',sk.name, p((job?esc(job.name)+'の技。':'')+(sk.character?'人物固有の必殺技。職業は問いません。':'')+'習得・使用条件：本人Lv'+sk.level+(sk.rank?'以上、元職の熟練度'+sk.rank+'以上':'以上')+(sk.character?'、その人物の絆エピソード第1話':'')+(source?'、'+esc(source.name)+'を装備中のみ使用可能':'')+'。')+p('消費MP：'+(sk.ultimate?'最大MPの25％（最低8）＋エール35':sk.cost)+'。再使用待ち：'+(sk.ultimate?'1人1戦1回・3ターン目以降':sk.cooldown+'ターン')+'。')+guideTechDetail(sk),sk.id+' '+(job?.name||'')+' 熟練度'+(sk.rank||1)+' Lv'+sk.level+' '+(sk.ultra?'超レア装備':'職業固有技'));}
@@ -5446,6 +5472,7 @@ function renderSettings(){
     ${setCard("難易度", D.name, Object.entries(DIFFICULTY).map(([k,v])=>({label:v.name, on:s.difficulty===k, attrs:`data-a="setOpt" data-k="difficulty" data-v="${k}"`, disabled:busy&&s.difficulty!==k})), diffDesc[s.difficulty]+"報酬・地域の強さ・物語は共通です。", busy?"戦闘中は変更できません（戦闘開始時に固定）。":"")}
     <h3 class="label setgroup">音と画面</h3>
     ${setCard("BGM・効果音", snd?"ON":"OFF（消音）", [{label:"ON",on:snd,attrs:`data-a="toggleSound"`},{label:"OFF",sub:"消音",on:!snd,attrs:`data-a="toggleSound"`}], snd?"音楽と効果音が鳴ります。":"音は鳴りません。文字と画面表示だけで遊べます。")}
+    ${[['bgm','BGM音量'],['sfx','効果音音量']].map(([key,label])=>{const value=audioMixSettings()[key];return setCard(label,Math.round(value*100)+'%',[[0,'0%'],[0.35,'35%'],[0.65,'65%'],[1,'100%']].map(([v,l])=>({label:l,on:value===v,attrs:`data-a="audioLevel" data-k="${key}" data-v="${v}"`})),key==='bgm'?'旋律と伴奏、残響をまとめて調整します。':'決定・攻撃・回復・宝箱などを調整します。');}).join('')}
     ${setCard("演出を減らす", rm?"ON":"OFF", [{label:"OFF",sub:"通常",on:!rm,attrs:`data-a="setOpt" data-k="reduceMotion" data-v="false"`},{label:"ON",sub:"控えめ",on:rm,attrs:`data-a="setOpt" data-k="reduceMotion" data-v="true"`}], rm?"画面の揺れ・点滅・アニメーションを止め、切り替えを速くします。":"被弾時の揺れや点滅などの演出を表示します。")}
     <h3 class="label setgroup">操作</h3>
     ${setCard("戦闘オートの進め方", am==="tap"?"タップで次へ":"自動で次へ", [{label:"自動で次へ",sub:"一定時間で進む",on:am==="timer",attrs:`data-a="autoMode"`},{label:"タップで次へ",sub:"1手ずつ止まる",on:am==="tap",attrs:`data-a="autoMode"`}], am==="tap"?"1手ごとに止まります。メッセージ欄・次へ・Aボタンで進みます。":"約0.65秒ごとに自動で次の行動へ進みます。", "全戦闘で使用できます。ボス戦・特別チャレンジの課題は自動達成されません。戦闘中もオート画面上部で切替できます。")}
@@ -5853,6 +5880,7 @@ const ACT = {
   shareCopyMsg(){ copyText(shareMessage(),"紹介文とURLをコピーしました。"); },
   shareNative(){ try{ navigator.share({title:"トップライバーへの道", text:SHARE_TEXT, url:shareUrl()}).catch(e=>{ if(!e||e.name!=="AbortError") copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); }); }catch(e){ copyText(shareUrl(),"共有メニューが使えないため、URLをコピーしました。"); } },
   moeTalk(){ G.moeLine=chatLine("moe"); commit(); render(); drawMiniSprites(); },
+  audioLevel(el){const key=el.dataset.k,value=Number(el.dataset.v);if(!['bgm','sfx'].includes(key)||![0,0.35,0.65,1].includes(value))return;const m=audioMixSettings();m[key]=value;const settings=G.st?G.st.settings:(G.tmpSettings=G.tmpSettings||{});settings[key==='bgm'?'bgmVolume':'sfxVolume']=value;try{localStorage.setItem('tlr-audio-mix',JSON.stringify(m));}catch(e){}if(G.st)commit();SND.setMix(m.bgm,m.sfx);if(key==='sfx'&&value>0)SND.sfx('ok');render();},
   setOpt(el){ const k=el.dataset.k; let v=el.dataset.v; if(v==="true")v=true; if(v==="false")v=false; const s=G.st?G.st.settings:(G.tmpSettings=G.tmpSettings||{difficulty:"std",sound:soundPref(),reduceMotion:false}); s[k]=v; if(G.st) commit(); render();
     const msg = k==="difficulty"?`難易度を「${DIFFICULTY[v].name}」にしました。`: k==="reduceMotion"?`演出を減らす：${v?"ON":"OFF"}にしました。`: k==="dock"?`ジョイコントローラーを${v?"表示":"非表示に"}しました。`: k==="moveSpeed"?`移動の速さを「${v==="fast"?"速い":"ふつう"}」にしました。`:""; if(msg) toast(msg); SND.sfx("ok"); },
   calibLift(){ VFIT.calibrate(false); },
@@ -5892,7 +5920,7 @@ const ACT = {
     commit(); G.sheetData={...G.sheetData,mode:"change",cid,job:j}; render(); drawMiniSprites(); toast(`${charName(st,cid)}のジョブを${JOBS[j].name}にした。`); },
   setEquip(el){ const st=G.st,cid=el.dataset.c,s=el.dataset.s,id=el.dataset.v||null;if(G.readOnly||st.run||st.stream||streamPending()||!isSafe())return toast("安全地帯で装備を変更してください。");if(!st.roster.includes(cid)||!["w","a","acc"].includes(s)||id&&(!EQUIP[id]||EQUIP[id].slot!==s||!canEquipC(st,cid,EQUIP[id])))return toast("この装備は職業・熟練度・部位の条件を満たしていません。");if(st.equip[cid][s]===id)return toast("装備は変更済みです。");let took="",donor=null;if(id&&availableCount(st,id)<=0){donor=st.roster.find(c=>c!==cid&&st.equip[c]&&st.equip[c][s]===id);if(!donor)return toast("未装備の在庫がありません。");took=charName(st,donor);}
     if(!eqChangeOk(st,t=>{if(donor)t.equip[donor][s]=null;t.equip[cid][s]=id;})) return toast(`装備品の持ち物が${EQ_KINDS}種類でいっぱいのため外せません。いらない装備品を捨てるか売ってください。`);
-    const old=st.equip[cid][s];if(donor)st.equip[donor][s]=null;st.equip[cid][s]=id; commit(); SND.sfx("ok");
+    const old=st.equip[cid][s];if(donor)st.equip[donor][s]=null;st.equip[cid][s]=id; commit(); SND.sfx("equip");
     if(G.sheet==="equip") G.sheetData={cid}; else G.sheetData={cid,view:""};
     render(); drawMiniSprites(); toast(id?(took?`${took}から付け替えて、${charName(st,cid)}は${EQUIP[id].name}を装備した。`:`${charName(st,cid)}は${EQUIP[id].name}を装備した。`):`${charName(st,cid)}は${EQUIP[old].name}を外した。`); },
   eqSort(el){if(!['type','job','power','price'].includes(el.dataset.v))return;G.eqSort=el.dataset.v;if(['equip','shop'].includes(G.sheet))G.sheetData={...G.sheetData,uiSort:el.dataset.v,uiPage:0};render();drawMiniSprites();},
@@ -5970,6 +5998,8 @@ function validateState(s){
 
 function autoMode(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.autoAdvance==="tap"||s.autoAdvance==="timer")) return s.autoAdvance; try{ const v=localStorage.getItem("tlr-kyushu-autoadv"); if(v==="tap"||v==="timer") return v; }catch(e){} return "timer"; }
 function padSide(){ const s=G.st?G.st.settings:G.tmpSettings; if(s&&(s.padSide==="left"||s.padSide==="right")) return s.padSide; try{ const v=localStorage.getItem("tlr-kyushu-pad"); if(v==="left"||v==="right") return v; }catch(e){} return "right"; }
+function audioMixSettings(){const saved=G.st?.settings||G.tmpSettings||{};let fallback={};try{fallback=JSON.parse(localStorage.getItem('tlr-audio-mix')||'{}')||{};}catch(e){}const valid=v=>typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=1;return {bgm:valid(saved.bgmVolume)?saved.bgmVolume:valid(fallback.bgm)?fallback.bgm:0.65,sfx:valid(saved.sfxVolume)?saved.sfxVolume:valid(fallback.sfx)?fallback.sfx:0.65};}
+function syncAudioMix(){const m=audioMixSettings();SND.setMix(m.bgm,m.sfx);return m;}
 function soundIsOn(){ if(G.soundWant!=null) return G.soundWant; if(G.st&&G.st.settings) return G.st.settings.sound!==false; return soundPref(); }
 function soundPref(){ try{ return localStorage.getItem("tlr-kyushu-sound")!=="0"; }catch(e){ return true; } }
 function migrate(s){if(!currentSaveState(s))throw Error("初期化前の記録は引き継げません");delete s.slots;ensureJobSystem(s);ensureNarrative(s,true);s.gearEventDone=s.gearEventDone||{};s.challenges=s.challenges||{};s.festivals=s.festivals||{};s.townBattles=s.townBattles||{};s.names=s.names||{};ensureCharacterStories(s);s.pendingNames=(s.pendingNames||[]).filter(c=>s.roster.includes(c)); migrateExperience(s);ensureMemberXp(s);normalizeRequiredParty(s);syncPartyExperience(s); try{ fixQuestChain(s); }catch(e){} if(s.profile&&!s.profile.career) s.profile.career="社会福祉士"; if(s.profile&&!s.profile.heroine) s.profile.heroine={...HEROINE_DEFAULT}; if(!s.itemsVersion){ s.bag=INITIAL_ITEMS.map(([id,n])=>({id,n})); s.keep=[]; s.itemsVersion=1; s.gameVersion=GAME_VERSION; } if(s.run&&!s.run.bag) s.run.bag=clone(s.bag); if(s.settings&&s.settings.soundV!==2){ s.settings.sound=true; s.settings.soundV=2; } if(s.vitals===undefined) s.vitals=null; s.jobs.moe=s.jobs.moe||"J08"; s.jp.moe=s.jp.moe||{}; s.equip.moe=s.equip.moe||{w:null,a:null,acc:null}; s.settings=Object.assign({difficulty:"std",sound:soundPref(),reduceMotion:false},s.settings||{}); s.scenes=s.scenes||{}; s.cards=s.cards||[]; for(const c of s.roster)s.equip[c]=previewEquipFor(s,c,s.jobs[c]);learnEquipped(s);if(s.run){s.run.levelCap=progressionCap(s);s.run.L=partyLevel(s);s.run.V=Vof(s.run.L);for(const m of s.run.party){const cs=charStats(s,m.cid,s.run.L);m.name=charName(s,m.cid);m.L=cs.L;m.V=cs.V;m.jobRanks=clone(s.jp[m.cid]);m.wAtk=cs.wAtk;m.accAtk=cs.accAtk;m.armorD=cs.armorD;m.R=cs.R;m.S=cs.S;m.maxHP=cs.maxHP;m.hp=Math.min(m.hp,m.maxHP);m.defBase=cs.defBase;m.str=cs.base.str;m.crit=cs.crit;m.eva=cs.eva;m.cha=cs.cha;m.chaStat=cs.base.cha;m.maxC=m.maxMP=cs.startC;m.c=Math.min(m.maxC,m.c);m.equip=previewEquipFor(s,m.cid,cs.job);m.extraSkills=cs.extraSkills;m.commentA=cs.commentA;m.rest=cs.rest;m.meter=cs.meter;m.family=cs.family;m.pouch=cs.pouch;m.skillReady=m.skillReady||{};}}if(s.run?.state==="input"){if(!alive(s.run).length){s.run.state="lost";s.run.log=[...(s.run.log||[]),"同行者が全員戦闘不能です。安全な場所へ戻れます。"]; }else if(s.run.enemies.every(e=>e.hp<=0))s.run.state="won";}s.gameVersion=GAME_VERSION;normalizeChapterLocation(s);ensureVitals(s);ensureWorld(s);rememberSpecialUnlocks(s); return s; }
