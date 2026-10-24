@@ -614,6 +614,8 @@ body.reduce-motion .btn{transition:none}
 .world-nav-strip{display:flex;align-items:center;gap:5px;min-height:44px;padding:4px 6px;background:#102b3b;border:1px solid #b7ad7f;flex:none}.world-nav-strip>.btn{width:auto;min-width:44px;min-height:44px;padding:4px 6px;font-size:12px;flex:none}.world-nav-strip>span{min-width:0;flex:1;font-size:12px;line-height:1.3}.world-nav-strip b,.world-nav-strip small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.world-nav-strip b{color:#f1d482}.world-nav-strip small{font-size:11px}.short-map .world-nav-strip{padding:1px 4px;gap:3px}.short-map .world-nav-strip>span{font-size:11px}.short-map .world-nav-strip small{max-width:180px}
 
 .map-guidance{background:#142e3b;border:0;border-bottom:1px solid #637b80;padding:2px 5px;gap:5px;min-height:44px}.map-guidance-copy b{font-size:12px;color:#d9dfcf;font-weight:500}.map-guidance-copy em{font-style:normal;font-size:11px;color:#b9c9bb;margin-left:7px}.map-guidance-copy small{font-size:11px;color:#aebfc4}.map-guidance>.guidance-toggle{font-size:11px;min-width:64px}.guidance-off{justify-content:flex-end}.guidance-hidden-label{font-size:11px!important;color:#80969d}.short-map .map-guidance-copy em{margin-left:3px}
+
+.map-guidance{min-height:36px;padding:0 4px;gap:4px}.map-guidance>.btn{min-height:36px;padding:2px 5px;font-size:11px}.map-guidance-copy b{font-size:11px;line-height:1.2}.map-guidance-copy small,.map-guidance-copy em{font-size:10px;line-height:1.2}.walking-focus .mobile-pstrip,.walking-focus .mobile-quick,.walking-focus .here{display:none!important}.walking-focus .map-heading{min-height:44px;padding:2px 6px}.walking-focus .map-heading .goal,.walking-focus .map-heading .xsave{display:none}.walking-focus .mapwrap{flex:1 1 auto;min-height:0}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -632,7 +634,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.30";
+const GAME_VERSION = "8.40";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -4758,7 +4760,7 @@ function systemHelpPlace(){
 function systemHelpButton(place,cls=''){return systemHelpPlace()===place?'<button class="btn map-help-button '+cls+'" data-a="systemHelp" aria-label="ゲームシステム解説"><span>解説</span></button>':'';}
 function renderMobileMenu(){return '<p>行きたい項目を選んでください。街を歩かずに開ける項目だけをまとめています。</p><div class="mobile-menu-grid">'+EXPLORATION_MENU.map(([k,n])=>'<button class="btn" data-a="openSheet" data-k="'+k+'">'+n+'</button>').join('')+'</div>';}
 function renderMobileMapInfo(){const st=G.st,m=MAPS[st.mapId],a=zoneAt(m,st.pos.x,st.pos.y);return '<h3>'+esc(m.name)+'</h3><p>'+esc(objective())+'</p><p>'+st.day+'日目／保存：'+esc(G.saveStatus)+'</p><p>'+esc(mapScopeText())+'</p><p>'+esc(a?AREAS[a].name+'：適正Lv'+recommendedAreaLevel(AREAS[a]):'安全地帯')+'</p><p>地面を短くタップすると移動。建物や住民を選ぶと近づいて調べます。指をずらして離した時は移動しません。地図の＋／−で大きさを変えられます。</p>'+specialReminder(st,false);}
-function mobileMapGeometry(width,height,zoom=2){const A=Math.max(16,width-8),H=Math.max(16,height-8),scale=Math.min([1,2,3].includes(zoom)?zoom:2,Math.max(1,Math.floor(Math.min(A,H)/16)));return {scale,cols:Math.max(1,Math.min(28,Math.floor(A/(16*scale)))),rows:Math.max(1,Math.min(20,Math.floor(H/(16*scale))))};}
+function mobileMapGeometry(width,height,zoom=2,travel=false){const A=Math.max(16,width-8),H=Math.max(16,height-8),scale=Math.min([1,2,3].includes(zoom)?zoom:2,Math.max(1,Math.floor(Math.min(A,H)/16)));return {scale,cols:Math.max(1,Math.min(travel?36:28,Math.floor(A/(16*scale)))),rows:Math.max(1,Math.min(travel?36:20,Math.floor(H/(16*scale))))};}
 function mobileMapTile(e,r,cam,vw,vh){if(!r.width||!r.height||e.clientX<r.left||e.clientX>=r.left+r.width||e.clientY<r.top||e.clientY>=r.top+r.height)return null;return {x:Math.floor(((e.clientX-r.left)*vw*16/r.width+cam.x)/16),y:Math.floor(((e.clientY-r.top)*vh*16/r.height+cam.y)/16)};}
 function mobileMapPointerDown(e){if(e.isPrimary===false){MOBILE_UI.mapPress=null;return;}if(e.button>0)return;MOBILE_UI.mapPress={id:e.pointerId,x:e.clientX,y:e.clientY,at:Date.now(),camera:camera(),moving:!!G.walk.path.length,moved:false};}
 function mobileMapPointerMove(e){const p=MOBILE_UI.mapPress;if(p&&p.id===e.pointerId&&Math.hypot(e.clientX-p.x,e.clientY-p.y)>12)p.moved=true;}
@@ -5057,10 +5059,13 @@ function hereHtml(){
   return `${ar?`<span class="tag danger">遭遇エリア</span> ${esc(ar.name)}（挑戦目安Lv${requiredAreaLevel(ar)}・適正Lv${recommendedAreaLevel(ar)}）`:`<span class="tag safe">安全地帯</span> ${esc(m.name)}`}${m.mapScope==='world'?`<span class="small">／${esc(WORLD_TERRAIN[tileAt(m,st.pos.x,st.pos.y)]?.[0]||'地形')}</span>`:''}${near.length?`<span class="small">／近く：${near.map(o=>esc(o.label)).join("・")}</span>`:""}`;
 }
 function nearbyObjects(){ const st=G.st, m=MAPS[st.mapId]; return m.objects.filter(o=>Math.max(Math.abs(o.x-st.pos.x),Math.abs(o.y-st.pos.y))<=1 && o.type!=="tower"); }
+function mapTravelActive(){return !!(G.st&&G.screen==='explore'&&!G.readOnly&&!document.hidden&&!G.sheet&&!G.dlg&&!G.lock&&G.walk?.path?.length);}
+function resizeExploreCanvas(){const wrap=$('.mapwrap'),cv=$('#map');if(!wrap||!cv||!G.st)return;const geo=mobileMapGeometry(wrap.clientWidth||358,wrap.clientHeight||240,G.st.settings.mapZoom||2,mapTravelActive());G.scale=geo.scale;G.vw=geo.cols;G.vh=geo.rows;if(cv.width!==G.vw*16*G.scale)cv.width=G.vw*16*G.scale;if(cv.height!==G.vh*16*G.scale)cv.height=G.vh*16*G.scale;cv.style.width=cv.width+'px';cv.style.height=cv.height+'px';}
+function syncMapTravelLayout(force=false){const root=$('.mobile-explore');if(!root)return;const active=mapTravelActive();if(!force&&root._travelFocus===active)return;root._travelFocus=active;root.classList.toggle('walking-focus',active);resizeExploreCanvas();}
+
 function mountCanvas(){
  const wrap=$(".mapwrap"),cv=$("#map");if(!wrap||!cv)return;G.cv=cv;
- const geo=mobileMapGeometry(wrap.clientWidth||358,wrap.clientHeight||240,G.st.settings.mapZoom||2);G.scale=geo.scale;G.vw=geo.cols;G.vh=geo.rows;G.hereLast=null;
- cv.width=G.vw*16*G.scale;cv.height=G.vh*16*G.scale;cv.style.width=cv.width+"px";cv.style.height=cv.height+"px";
+ syncMapTravelLayout(true);G.hereLast=null;
  cv.addEventListener('pointerdown',mobileMapPointerDown);cv.addEventListener('pointermove',mobileMapPointerMove);cv.addEventListener('pointerup',mobileMapPointerEnd);cv.addEventListener('pointercancel',()=>{MOBILE_UI.mapPress=null;});cv.addEventListener('contextmenu',e=>e.preventDefault());
  drawMap();startLoop();
 }
@@ -5077,6 +5082,7 @@ function playerPixel(){
   const k=G.scale||1; return {x:Math.round(x*k)/k, y:Math.round(y*k)/k};
 }
 function drawMap(){
+  syncMapTravelLayout();
   const cv=G.cv; if(!cv||!cv.isConnected) return; const g=cv.getContext("2d"); g.setTransform(G.scale,0,0,G.scale,0,0); g.imageSmoothingEnabled=false;
   const VW=G.vw*16, VH=G.vh*16;
   const st=G.st, m=MAPS[st.mapId]; const cam=camera(); const now=performance.now();
@@ -5160,7 +5166,7 @@ function chainHeld(){
 function startLoop(){
   cancelAnimationFrame(G.raf); G.lastTs=0;
   const loop=ts=>{
-    if(G.screen!=="explore"||document.hidden){ G.raf=0; return; }
+    if(G.screen!=="explore"||document.hidden){syncMapTravelLayout(); G.raf=0; return; }
     const dt = G.lastTs? Math.min(50, ts-G.lastTs) : 16; G.lastTs=ts; G.frame++;
     const w=G.walk;
     if(w.path.length && !G.dlg && !G.sheet && !G.lock){
@@ -5200,7 +5206,7 @@ function walkTo(x,y,pending,isNavigation=false){
     path=bfs(m,st.pos.x,st.pos.y,(px,py)=>Math.abs(px-x)+Math.abs(py-y)===1); pending=obj; }
   else { if(x===st.pos.x&&y===st.pos.y) return; if(!walkable(m,x,y)){if(m.mapScope==='world')toast(worldOwnersAt(x,y).length?'未開放エリア：まだ移動できません。':'海・山には移動できません。');return;} path=bfs(m,st.pos.x,st.pos.y,(px,py)=>px===x&&py===y,m.mapScope!=='world'||!!obj||Object.hasOwn(m.walkRoadIndex,x+','+y)); }
   if(!path) return toast("そこへは行けません。");
-  if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;}G.walk.path=path; G.walk.prog=0; G.walk.pending=pending||(obj&&obj.walk?obj:null);
+  if(m.mapScope==='world'&&!isNavigation){G.worldNav=null;G.worldNavState=null;}G.walk.path=path; G.walk.prog=0; G.walk.pending=pending||(obj&&obj.walk?obj:null);syncMapTravelLayout();
 }
 function onMapTap(e){if(G.sheet||G.dlg||G.screen!=='explore'||G.readOnly)return;const cv=G.cv;if(!cv)return;const p=mobileMapTile(e,cv.getBoundingClientRect(),camera(),G.vw,G.vh),m=MAPS[G.st.mapId];if(p&&p.x>=0&&p.y>=0&&p.x<m.w&&p.y<m.h)walkTo(p.x,p.y);}
 

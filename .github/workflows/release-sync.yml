@@ -68,3 +68,6 @@ jobs:
 
       - name: Verify sign removal, top guidance and saved display toggle
         run: node scripts/test-map-guidance.cjs
+
+      - name: Verify movement focus layout and restoration
+        run: node scripts/test-map-travel-layout.cjs
