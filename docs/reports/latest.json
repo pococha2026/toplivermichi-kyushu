@@ -1,13 +1,20 @@
 {
-  "version": "8.90",
-  "reference": "User-provided IMG_3806.jpeg",
-  "changes": [
-    "Stronger region borders, spacing and typography hierarchy",
-    "Explicit low-HP and empty-MP markers",
-    "Compact log arrows and unbroken menu label"
+  "version": "8.91",
+  "reference": [
+    "IMG_3808.jpeg",
+    "IMG_3809.jpeg",
+    "IMG_3810.jpeg",
+    "IMG_3811.jpeg"
   ],
-  "validation": "Battle UI regression, warning thresholds, CSS contracts and full configured checks.",
+  "changes": [
+    "Non-shrinking sheet contents and explicit atlas height",
+    "Two-column sheet tabs and consistent borders",
+    "Collapsible people picker before relationship graph",
+    "Full-width log body and separate navigation row",
+    "Clear enemy HP rows and selected ally outline"
+  ],
+  "validation": "Focused generated UI, log text preservation, diagram/atlas contracts and full configured regression.",
   "limitations": [
-    "Reference image inspected; updated browser/device rendering unverified"
+    "Updated browser/device rendering and touch unverified"
   ]
 }

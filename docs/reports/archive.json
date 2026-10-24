@@ -12066,6 +12066,19 @@
       "limitations": [
         "VM/mock DOM and CSS contract checks; no browser/device rendering verification"
       ]
+    },
+    "release-8.90.json": {
+      "version": "8.90",
+      "reference": "User-provided IMG_3806.jpeg",
+      "changes": [
+        "Stronger region borders, spacing and typography hierarchy",
+        "Explicit low-HP and empty-MP markers",
+        "Compact log arrows and unbroken menu label"
+      ],
+      "validation": "Battle UI regression, warning thresholds, CSS contracts and full configured checks.",
+      "limitations": [
+        "Reference image inspected; updated browser/device rendering unverified"
+      ]
     }
   },
   "entry_sha256": {
@@ -12111,6 +12124,7 @@
     "release-8.86.json": "ab6075084a54756c7dfd66fa5f0b1168b4783fdda379f41cf3e422ba1fa796c4",
     "release-8.87.json": "b7c4fa59f70ac02c5f68d5d94de0fb1b076b262b034967876416d6b04cf8325a",
     "release-8.88.json": "a496be32e1e1623230d4d4ad81960ce826c6c0524b649f91c7d9387a18a53d8a",
-    "release-8.89.json": "0b2b09e6d2a8168577ffa2c49e13f090e847760fc125534a6a91445f9e015f02"
+    "release-8.89.json": "0b2b09e6d2a8168577ffa2c49e13f090e847760fc125534a6a91445f9e015f02",
+    "release-8.90.json": "a6f4814459aab9c75ec49f1f452993e69db127cd3f9a34826f297d3b43db9ac3"
   }
 }
