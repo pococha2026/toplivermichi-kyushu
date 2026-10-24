@@ -11869,6 +11869,139 @@
       "runtime_unchanged_except_version": true,
       "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
       "scope": "Static references, Python fixture/CLI tests and existing Node VM regressions; no browser or physical-device touch checks."
+    },
+    "release-8.79.json": {
+      "version": "8.79",
+      "cleanup": {
+        "additional_files_removed": [],
+        "exact_duplicate_files_found": [],
+        "removed_content": [
+          "duplicate metadata validation in prepare, planned generation and doctor",
+          "unused json import in maintenance tests",
+          "second read of each source body during template validation"
+        ],
+        "retained": "Remaining files supply runtime, source data, regression coverage or documented history."
+      },
+      "initial_reproductions": {
+        "methods": 5,
+        "failed": 5
+      },
+      "additional_reproductions": [
+        "concurrent VERSION edit lost during rollback",
+        "manual VERSION edit bypassed previous-release rollback guard",
+        "partial temporary version write left truncated input"
+      ],
+      "after_fix": {
+        "consistency_test_methods": 10,
+        "repeated_concurrent_input_checks": 3,
+        "failed": 0
+      },
+      "runtime_unchanged_except_version": true,
+      "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+      "scope": "Python/CLI fixtures and Node VM regressions; no physical-device touch, OS force-kill or power-loss verification."
+    },
+    "release-8.80.json": {
+      "version": "8.80",
+      "initial_reproductions": {
+        "test_methods": 5,
+        "failed": 5
+      },
+      "verification_consistency_tests": 10,
+      "repeated_public_source_change_cases": 3,
+      "scope": [
+        "Reject incomplete manifests and inconsistent local artifacts before HTTP requests",
+        "Refuse active writers and pending recovery data",
+        "Discard remote matches if local source, artifacts or locks change",
+        "Reject check-program success when inputs change"
+      ],
+      "runtime_unchanged_except_version": true,
+      "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+      "limitations": "Snapshot-based checks; not continuous monitoring, browser/device touch, power-loss or force-kill testing."
+    },
+    "release-8.81.json": {
+      "version": "8.81",
+      "structure_record": "docs/structure-v8.81.json",
+      "moved_or_renamed_files": 45,
+      "consolidated_original_reports": 31,
+      "archive_entries_verified": 31,
+      "layout_regression_methods": 5,
+      "targeted_game_checks_passed": [
+        "tests/game/test-career.cjs",
+        "tests/game/test-regional.cjs"
+      ],
+      "runtime_unchanged_except_version": true,
+      "runtime_sha256_excluding_version": "83a2b77d2a9bd20d6b78f7cdb554b0202f2841a23202dc1c8dc19c14108b607d",
+      "scope": "Path/configuration changes, canonical JSON content checks and Node VM game regressions. Physical-device rendering/touch not tested."
+    },
+    "cleanup-8.78.json": {
+      "version": "8.78",
+      "previous_commit": "820f2c3062d7a2db19a104140e23a3cbbc6e64b6",
+      "removed": [
+        {
+          "path": "docs/archive/review-v7.30.txt",
+          "bytes": 600788,
+          "sha256": "0913ca105715403035a7c36dfa1f069aa36eb2c914e1551edb68d33998971379",
+          "reason": "現行仕様へ統合済みの旧指示書・旧付録全文。ゲームと検査は読み込まず、旧文書版の混同を招く。"
+        },
+        {
+          "path": "docs/refactor-v8.74.md",
+          "bytes": 576,
+          "sha256": "7f486361a06a4e891c6fe3d5d0bc86b6691072b5c34251ca762267db1767b9db",
+          "reason": "分割時の一時的な完全一致確認メモ。最新検証記録とGit履歴で追跡可能。"
+        },
+        {
+          "path": "docs/maintenance-v8.75.json",
+          "bytes": 355,
+          "sha256": "4fee811439fb5c928fa1fe50aee8092c876a3a928a9d3dc7a4491e0d9b9d0e1e",
+          "reason": "参照のない旧更新処理サマリー。最新の検証記録で置き換え済み。"
+        }
+      ],
+      "removed_bytes": 601719,
+      "retained": [
+        "現行srcと生成公開物",
+        "全ゲーム・更新検査",
+        "地理とご当地品の参照資料",
+        "過去の不具合検証結果と更新履歴"
+      ],
+      "broken_history_links_fixed": 15,
+      "history_note": "Removed file contents remain retrievable from the previous Git commit; no duplicate archive copies retained."
     }
+  },
+  "entry_sha256": {
+    "debug-v7.35.json": "f1802b95d0ffbe6229144059798d40535aa5f8a2cf3002d5220c5e67e0b31b70",
+    "debug-v7.36.json": "530be68749d4af21045064de60677fffae681983c788e4860e252a097952e21c",
+    "debug-v7.37.json": "ccbf17a6e99e1c0ddc1ae15c7532f4328fdc0571daa818a54034c8e5c3666977",
+    "debug-v7.38.json": "839d5fb7f42361979a0c115ce448173c61a58fc761473a059ef3f7dba16aead2",
+    "debug-v7.39.json": "2d6f319841fc501dadb7ff1bcf0d1b709a2a5ef4b429d21ba5918e2433fe8be9",
+    "debug-v7.40.json": "7d8cef459c2676b94d1f569c852e07f803acbedf7870c6732187bcf6ca78ecca",
+    "debug-v7.41.json": "99d487771226b3bf13382bb5420f2a70c004708a3871732669f87cd99f385b7e",
+    "debug-v7.42.json": "99d8149ac3ef13219b6e4d080c5f5fe850d0190295d61f82ac2ff1cc0886ead6",
+    "debug-v7.43.json": "61e28eb2aa1ada729ef39090314e57ffe879b4113c213841c0b1033348b6a8a2",
+    "debug-v7.44.json": "a9e6c134960b0921be0aa993a683eac9ca603ea369c0327abe09a86252bdccd3",
+    "debug-v7.45.json": "d8ea6f9a71819adbb6d9c5f82f412e64414d5084b8bf3f8d63de91b73bacbba6",
+    "debug-v7.46.json": "089916097566194f404d9ecfe5e742db83bab3d8d1f56245d1e53d47607c48b4",
+    "debug-v7.47.json": "21b7f6ba1487103c5bed2ff06514cc995b7925d38f7ed5ad045f2b881fc845b3",
+    "debug-v7.48.json": "081e56d69baae0e424ba195fa18818db1506f10a0f61ab32df539d236bbf38b4",
+    "debug-v7.49.json": "fa1540c7bf8fd27a3638c585c50f9cb08243a737a3a676df7c5b6ec0e79d131e",
+    "debug-v7.50.json": "fd5f8bbd011de36bc03df9aab9b50b99a0758765b1a5fa87e94844c5a60f9553",
+    "debug-v8.00.json": "c37ce4948e2acfb800555d73d79565f8ab75ae31cfeedf028d586aba18078432",
+    "debug-v8.10.json": "f88efec160bf568b12a7076208071993e3def7fa89221f47f3186c32c143b036",
+    "debug-v8.20.json": "386c379ebf181cfbce4f8f3e672a0fd1ac06b70c6db210f784ee0569205cae07",
+    "debug-v8.21.json": "113f1ff345dd852582d2ae97c322b2858ef5583d50accd8ac7e40c7ccddf113e",
+    "debug-v8.30.json": "a8f04d771917b3269969a3fe44b036790325ceb6d77faa42c99167562acb3f51",
+    "debug-v8.40.json": "8730c0d1bf9d087b7d9f469edad6067a009d3fed770933f8e3b24a86f6a34f59",
+    "debug-v8.50.json": "012cfa27406eda468e23c3006560f9d4b006462c681f7a6007550bfb593efbcc",
+    "debug-v8.60.json": "6c1569948b5b1188d25ef4a26b820c86c1a05f340595595c4730bf017ec4efc6",
+    "debug-v8.70.json": "cf11e58775d5cd2b38750a478723a84a5e49763776a4389e809e9e99cdcc3c1a",
+    "debug-v8.71.json": "e9234c03d43a4b6f72231f5d10d3ca85e4474885dbfa16df6e180fc3c3c149ff",
+    "debug-v8.72.json": "a370d1048727a9830b803cc27f1d342523e394706a12fc12ec5a99dd3e88641b",
+    "debug-v8.73.json": "7587aa97044c9b3e91d6a05463f9befdda5b8da7eb41ea52fc6d2f7c6c5eaac1",
+    "debug-v8.76.json": "9af7fcb6a5ace7558ea5e08560b0d6be2dedd6a9883cea0c3eecb3599a9cd75d",
+    "debug-v8.77.json": "46eae6d740fbb1b454143f7eb327b6afb7626e1690df4f8deffd9b257102b424",
+    "debug-v8.78.json": "406f94c0d50f3026a5a2768e438136197be30a8151748aee5bee8ac2684027be",
+    "release-8.79.json": "0aba8c4fb37a9bd660c6a31ed3520fd76365d46907fbd564c3fb015ef358ef59",
+    "release-8.80.json": "641e6c428bdaf48722446122ded99fdf01a67fbc1d918bf1d301054e034ba3e6",
+    "release-8.81.json": "98bb5496805e77432c01088094da90c3c8068a7cac7c0fd128822404a91931d9",
+    "cleanup-8.78.json": "83f5a64ab126267c2e3da0b8f2dc9923c2ce64704267e229172759d0377a0f1e"
   }
 }

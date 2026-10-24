@@ -121,14 +121,17 @@
   },
   "sourceConsistency": {
     "status": "編集元のみ変更、生成中編集、版戻しの編集消失、日付固定化、書式不一致、旧版への巻戻しを再現後修正。10テストと入力変更3回反復が成功",
-    "report": "docs/reports/release-8.79.json"
+    "report": "docs/reports/archive.json",
+    "archive_entry": "release-8.79.json"
   },
   "verificationConsistency": {
     "status": "検査中・公開照合中の変更、不完全manifest、更新ロックによる誤成功を再現後修正。10テストと公開照合時の入力変更3回反復が成功",
-    "report": "docs/reports/release-8.80.json"
+    "report": "docs/reports/archive.json",
+    "archive_entry": "release-8.80.json"
   },
   "fileOrganization": {
     "status": "45ファイルの移動・改名と31報告の統合後、元データのハッシュ一致、CLIの作業場所独立、再帰監査、設定・検査フォルダー追跡を検証",
-    "report": "docs/reports/release-8.81.json"
+    "report": "docs/reports/archive.json",
+    "archive_entry": "release-8.81.json"
   }
 }

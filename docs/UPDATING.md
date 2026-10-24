@@ -97,4 +97,11 @@ verify-publicは最初にローカルの整合性を調べる。古い生成物�
 |docs/reports/|直近の検証、進捗、過去記録を統合したarchive.json|
 |docs/history/|過去の更新説明|
 
-旧ファイルの移動先と統合先は[対応表](structure-v8.81.json)を参照。過去31版の検証記録はarchive.jsonのreports内に元のファイル名をキーとして収録し、内容のハッシュを照合する。旧配置に重複コピーは残さない。公開用のルート6ファイルとプレイURLは維持する。
+旧ファイルの移動先と統合先は[対応表](history/file-layout-8.81.json)を参照。過去31版の検証記録はarchive.jsonのreports内に元のファイル名をキーとして収録し、内容のハッシュを照合する。旧配置に重複コピーは残さない。公開用のルート6ファイルとプレイURLは維持する。
+
+## 検証記録の整理（v8.82）
+
+- 現行版の記録は `docs/reports/latest.json` を更新する。版ごとの新規ファイルは増やさない。
+- 次版を作る際は、旧latest.jsonをarchive.jsonのreportsへ元の版が分かるキーで移し、entry_sha256も更新してから現行記録を書き込む。同じキーを上書きしない。
+- archive.jsonのハッシュはJSONのキーを整列し、空白なし・UTF-8・ensure_ascii=Falseで計算する。test-layout.pyで全収録内容を照合する。
+- ファイル配置の過去の対応表はdocs/history/に置く。現行の編集先はこのガイドで確認する。

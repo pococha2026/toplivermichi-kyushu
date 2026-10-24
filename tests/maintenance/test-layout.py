@@ -5,18 +5,28 @@ ROOT=Path(__file__).resolve().parents[2]
 spec=importlib.util.spec_from_file_location('layout_update',ROOT/'scripts/update.py');update=importlib.util.module_from_spec(spec);spec.loader.exec_module(update)
 class LayoutTest(unittest.TestCase):
  def test_archived_report_contents_match_original_digests(self):
-  record=json.loads((ROOT/'docs/structure-v8.81.json').read_text())
+  record=json.loads((ROOT/'docs/history/file-layout-8.81.json').read_text())
   reports=json.loads((ROOT/'docs/reports/archive.json').read_text())['reports']
-  self.assertEqual(set(record['consolidated_reports']),set(reports))
+  self.assertTrue(set(record['consolidated_reports']).issubset(reports))
   for name,expected in record['archive_entry_sha256'].items():
    with self.subTest(name=name):
     actual=hashlib.sha256(json.dumps(reports[name],sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
     self.assertEqual(actual,expected)
+ def test_complete_archive_integrity(self):
+  archive=json.loads((ROOT/'docs/reports/archive.json').read_text())
+  self.assertEqual(set(archive['reports']),set(archive['entry_sha256']))
+  for name,value in archive['reports'].items():
+   with self.subTest(name=name):
+    digest=hashlib.sha256(json.dumps(value,sort_keys=True,separators=(',',':'),ensure_ascii=False).encode()).hexdigest()
+    self.assertEqual(digest,archive['entry_sha256'][name])
  def test_moved_files_have_one_active_location(self):
-  record=json.loads((ROOT/'docs/structure-v8.81.json').read_text())
+  record=json.loads((ROOT/'docs/history/file-layout-8.81.json').read_text())
   for old,new in record['moved'].items():
    with self.subTest(old=old,new=new):
-    self.assertFalse((ROOT/old).exists());self.assertTrue((ROOT/new).is_file())
+    self.assertFalse((ROOT/old).exists())
+    if (ROOT/new).is_file():continue
+    archive=json.loads((ROOT/'docs/reports/archive.json').read_text())['reports']
+    self.assertTrue(new.startswith('docs/reports/') and Path(new).name in archive,new)
  def test_update_entry_works_outside_repository_directory(self):
   with tempfile.TemporaryDirectory() as d:
    result=subprocess.run([sys.executable,str(ROOT/'scripts/update.py'),'audit'],cwd=d,capture_output=True,text=True)

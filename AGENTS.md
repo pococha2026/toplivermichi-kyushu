@@ -22,4 +22,4 @@
 
 - 資料の入口はdocs/INDEX.md。update.py auditで文書リンク・検査登録を確認し、不要ファイルは参照と役割を確認してから削除する。履歴資料を現行仕様と混同しない。
 
-- 役割別の配置はdocs/UPDATING.md、移動先はdocs/structure-v8.81.jsonを参照。過去の検証JSONはdocs/reports/archive.jsonへ統合し、元データのハッシュを維持する。検査の共通入口はscripts/update.py、設定はconfig/test-suites.json。
+- 役割別の配置はdocs/UPDATING.md、移動先はdocs/history/file-layout-8.81.jsonを参照。過去の検証JSONはdocs/reports/archive.jsonへ統合し、元データのハッシュを維持する。検査の共通入口はscripts/update.py、設定はconfig/test-suites.json。
