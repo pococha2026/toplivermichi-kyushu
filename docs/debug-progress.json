@@ -1,5 +1,5 @@
 {
-  "version": "8.71",
+  "version": "8.72",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -87,5 +87,9 @@
   "mapOverlayButtons": {
     "status": "全141MAPの画面生成を3回確認し、指定4種類の削除とステータス・キャンバス保持を確認",
     "report": "docs/debug-v8.71.json"
+  },
+  "retiredMapControls": {
+    "status": "画像の残存表示と公開コードの差を確認。旧DOM除去・復帰URL・版表示を3回反復",
+    "report": "docs/debug-v8.72.json"
   }
 }

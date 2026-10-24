@@ -1,0 +1,30 @@
+{
+  "version": "8.72",
+  "generatedAt": "2026-10-24T10:06:55.752697+00:00",
+  "observed": {
+    "attachment": "IMG_3805.jpegに旧4ボタンが表示されている",
+    "publicBefore": "ルート・index.html・版付きURLはv8.71で、探索テンプレートに旧4ボタンはないことを取得して確認",
+    "cacheControl": "max-age=600",
+    "clientVersion": "画像の実行版・URLは確認できない。旧ページまたは別配布面の可能性は未確定。"
+  },
+  "reports": {
+    "retiredControls": {
+      "total": 24,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three passes of injected legacy DOM cleanup/idempotence, fresh URL query/hash preservation and rendered version/removed controls. CSS selector contract checked, no browser/device rendering. Exact pageshow handler tested for initial loads and restored public/preview pages."
+    },
+    "controls": {
+      "total": 72,
+      "failed": 0,
+      "failures": [],
+      "scope": "Three passes of persistent layout, rendered menu, dock visibility, actual A and joystick center/key handlers, cancel and dialog confirmation in VM. DOM dimensions and events mocked; physical-device layout and touch unverified."
+    }
+  },
+  "additionalChecks": {
+    "releaseSync": 7
+  },
+  "total": 103,
+  "failed": 0,
+  "scope": "旧DOMの注入・除去、CSSの対象指定、版付きURL、公開/プレビューのページ復帰分岐と関連操作を3回反復。実機での旧画面の再現・修正後表示は未確認。新コードは開き直して読み込む必要がある。"
+}

@@ -621,6 +621,8 @@ body.reduce-motion .btn{transition:none}
 .dock-tools .explore-dock-button{width:100%;min-width:44px;height:44px;min-height:44px;padding:2px;font-size:12px;letter-spacing:0;line-height:1.2;white-space:normal;overflow-wrap:anywhere;display:flex;align-items:center;justify-content:center;text-align:center;box-sizing:border-box}.dock-tools:has(.explore-dock-button:not([hidden])){display:grid;grid-template-columns:repeat(2,minmax(44px,1fr));gap:4px}.mobile-explore .menu-grid.compact-map-menu{grid-template-columns:repeat(2,minmax(0,1fr))}.mobile-explore .compact-map-menu>.btn{display:block!important;grid-column:auto!important}
 .map-guidance-copy .map-location-info{display:block;font-size:10px;line-height:1.4;color:#c2d1d3;white-space:normal;overflow-wrap:anywhere}.map-location-info .tag{font-size:10px;padding:0 3px}.map-location-info .small{font-size:10px}.fac{display:inline-flex;vertical-align:middle}.map-tools .btn,.fac{text-align:center;align-items:center;justify-content:center}.map-guidance-copy{min-width:0}
 
+.mobile-explore .map-tools [data-k="world"],.mobile-explore .map-tools [data-a="worldReturn"],.mobile-explore .map-tools [data-a="mapZoom"]{display:none!important}
+
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -639,7 +641,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.71";
+const GAME_VERSION = "8.72";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -4668,7 +4670,7 @@ window.addEventListener("beforeunload",e=>{ if(CLOUD.dirty()){ CLOUD.flush(); e.
 function setSave(t){ G.saveStatus=t; const el=document.getElementById("saveStat"); if(el) el.textContent=t; }
 let releaseSaveLock=null;
 window.addEventListener("pagehide",()=>{ if(G.st&&!G.readOnly) commit(); if(releaseSaveLock){ releaseSaveLock(); releaseSaveLock=null; } });
-window.addEventListener("pageshow",e=>{ if(e.persisted) location.reload(); });
+window.addEventListener("pageshow",e=>{if(e.persisted){if(IS_PUBLIC)location.replace(freshGameUrl(location.href));else location.reload();}});
 function acquireLock(){
   try{ if(navigator.locks){ navigator.locks.request(SAVE_LOCK_NAME,{ifAvailable:true}, lock=>{ if(!lock){ G.readOnly=true; setSave("未保存：別のタブで起動中です。他のタブを閉じて再読み込みしてください。"); render(); return; } return new Promise(resolve=>{ releaseSaveLock=resolve; }); }); } }catch(e){}
 }
@@ -4772,7 +4774,7 @@ function mobileMapPointerDown(e){if(e.isPrimary===false){MOBILE_UI.mapPress=null
 function mobileMapPointerMove(e){const p=MOBILE_UI.mapPress;if(p&&p.id===e.pointerId&&Math.hypot(e.clientX-p.x,e.clientY-p.y)>12)p.moved=true;}
 function mobileMapPointerEnd(e){const p=MOBILE_UI.mapPress;MOBILE_UI.mapPress=null;if(!p||p.id!==e.pointerId||e.type!=='pointerup'||p.moved||Date.now()-p.at>650||G.sheet||G.dlg)return;if(p.moving){G.walk.path=[];G.walk.pending=null;G.walk.prog=0;drawMap();return;}onMapTap(e);}
 function renderMobilePartyStrip(){const st=G.st;return '<button class="pstrip mobile-pstrip" data-a="openSheet" data-k="status" aria-label="全員のHP・MPとステータスを詳しく見る"><span class="pstop"><span>Lv'+partyLevel(st)+'／'+progressionCap(st)+'　'+compactNumber(st.gold)+'G</span><span>状態を詳しく ▶</span></span><span class="mobile-mini-grid" style="--members:'+st.party.length+'">'+st.party.map(cid=>{const s=charStats(st,cid,partyLevel(st)),v=vitalOf(cid);return '<span class="mobile-mini '+(v.hp<=0?'ko':isLow(v.hp,s.maxHP)?'low':'')+'" aria-label="'+esc(charName(st,cid))+' HP'+v.hp+'/'+s.maxHP+' MP'+v.c+'/'+s.startC+'"><b>'+esc(charName(st,cid))+'</b><span>HP '+compactNumber(v.hp)+'</span><span class="bar"><i style="width:'+Math.round(v.hp/s.maxHP*100)+'%"></i></span><span>MP '+compactNumber(v.c)+'</span><span class="bar mp"><i style="width:'+Math.round(v.c/s.startC*100)+'%"></i></span></span>';}).join('')+'</span></button>';}
-function renderMobileExplore(){const st=G.st,m=MAPS[st.mapId],pending=specialProgress(st).total,plan=mobilePlan();return '<section class="explore mobile-explore '+(plan.available<380?'short-map ':'')+(plan.wide&&plan.available<420?'wide-map ':'')+'"><header class="xhead"><button class="map-heading" data-a="openSheet" data-k="mobileMapInfo" aria-label="場所・目的・保存状況を詳しく見る"><b>'+esc(m.name)+'</b><span class="map-scope">'+esc(mapScopeText())+'</span><span class="goal">'+esc(objective())+'</span><span class="xsave">'+st.day+'日目／保存：'+esc(G.saveStatus)+'</span></button>'+systemHelpButton('map','map-head-help')+'</header>'+renderWorldNavigation()+'<div class="mapwrap"><canvas id="map" aria-label="'+esc(m.name)+'の地図。短いタップで移動、ドラッグでは移動しません。"></canvas><nav class="map-tools" aria-label="地図の補助操作">'+(m.mapScope==='city'?'<button class="btn" data-a="leaveCity">街外へ</button>':'')+(pending?'<button class="btn special-alert" data-a="openSheet" data-k="specialTracker">特別 '+pending+'</button>':'')+'</nav></div>'+renderMobilePartyStrip()+(plan.dock===0?'<nav class="menu-grid mobile-quick compact-map-menu" aria-label="メニュー"><button class="btn" data-a="openSheet" data-k="guide">道しるべ</button><button class="btn" data-a="openSheet" data-k="mobileMenu">メニュー</button><button class="btn" data-a="openSheet" data-k="quests">依頼事</button><button class="btn" data-a="openSheet" data-k="settings">設定・保存</button></nav>':'')+'</section>';}
+function renderMobileExplore(){const st=G.st,m=MAPS[st.mapId],pending=specialProgress(st).total,plan=mobilePlan();return '<section class="explore mobile-explore '+(plan.available<380?'short-map ':'')+(plan.wide&&plan.available<420?'wide-map ':'')+'"><header class="xhead"><button class="map-heading" data-a="openSheet" data-k="mobileMapInfo" aria-label="場所・目的・保存状況を詳しく見る"><b>'+esc(m.name)+'</b><span class="map-scope">'+esc(mapScopeText())+'</span><span class="goal">'+esc(objective())+'</span><span class="xsave">'+st.day+'日目／v'+GAME_VERSION+'／保存：'+esc(G.saveStatus)+'</span></button>'+systemHelpButton('map','map-head-help')+'</header>'+renderWorldNavigation()+'<div class="mapwrap"><canvas id="map" aria-label="'+esc(m.name)+'の地図。短いタップで移動、ドラッグでは移動しません。"></canvas><nav class="map-tools" aria-label="地図の補助操作">'+(m.mapScope==='city'?'<button class="btn" data-a="leaveCity">街外へ</button>':'')+(pending?'<button class="btn special-alert" data-a="openSheet" data-k="specialTracker">特別 '+pending+'</button>':'')+'</nav></div>'+renderMobilePartyStrip()+(plan.dock===0?'<nav class="menu-grid mobile-quick compact-map-menu" aria-label="メニュー"><button class="btn" data-a="openSheet" data-k="guide">道しるべ</button><button class="btn" data-a="openSheet" data-k="mobileMenu">メニュー</button><button class="btn" data-a="openSheet" data-k="quests">依頼事</button><button class="btn" data-a="openSheet" data-k="settings">設定・保存</button></nav>':'')+'</section>';}
 function mobileBattleActor(run){const c=G.cmd,a=run.party[c.actor];if(!a||a.hp<=0||a.acted){const next=run.party.find(m=>m.hp>0&&!m.acted);G.cmd={actor:next?.pos??null};return next;}return a;}
 function mobileBattleHeader(run,plan){const d=trialOf(run.challengeId),label=run.cue?.active?({guard:'2人ガード',comment:'2人コメント',damage:'2人攻撃'}[run.cue.kind]+' '+run.cue.bits.length+'/2'):d?'特別挑戦':run.enemies.some(e=>e.boss)?'ボス戦':'通常戦闘',chain=run.kiraDone?'キラコメ済':'キラ'+run.chain.stage+'/3';return '<header class="mobile-bhead"><div><b>T'+run.turn+' '+esc(DIFFICULTY[run.difficulty].name)+'</b> <span>'+label+'</span><div class="mobile-gauge"><span>エール <b>'+run.A+'</b></span><span class="bar ale"><i style="width:'+run.A+'%"></i></span><span>連携'+run.B+'・'+chain+'</span></div></div>'+(plan.focus?'<button class="btn" data-a="battlePanel">'+(G.battlePanel==='party'?'味方':'敵')+' ⇄</button>':'')+systemHelpButton('battle')+'<button class="btn" data-a="openSheet" data-k="mobileBattleMenu">メニュー</button></header>';}
 function mobileEnemyCard(run,e){const t=enemyAction(run,e),target=t.target!=null?run.party[t.target]:null,next=e.hp<=0?'撃破':t.type==='c'?'ため・攻撃なし':t.type==='a'?'全員に'+t.power:(target?mobileName(target.name,4):'1人')+'に'+t.power;return '<button class="mobile-enemy '+(e.hp<=0?'down':'')+'" id="ec'+e.slot+'" data-a="mobileEnemyInfo" data-v="'+e.slot+'" aria-label="'+esc(e.display)+' HP'+e.hp+'/'+e.maxHP+' '+esc(next)+'。詳しく見る"><canvas data-enemy="'+e.slot+'" width="'+(e.boss?64:32)+'" height="'+(e.boss?64:32)+'" class="esprite '+(e.boss?'boss':'')+'" aria-hidden="true"></canvas><b class="enemy-name">'+esc(e.display)+'</b><span class="enemy-hp">HP '+e.hp+'<small>／'+e.maxHP+(e.rarity>1?' ★'+e.rarity:'')+'</small></span><span class="bar enemy"><i style="width:'+Math.round(e.hp/e.maxHP*100)+'%"></i></span><span class="enemy-next">'+esc(next)+(t.heavy?' !':'')+'</span></button>';}
@@ -4805,6 +4807,9 @@ function renderMobileCommand(run,plan=mobilePlan(run)){const a=mobileBattleActor
 function openMobileBattleDetail(group,name){ACT.battleInspect({dataset:{v:group}});if(G.endPager&&name){const i=G.endPager.pages.findIndex(p=>p.group===group&&p.blocks.some(b=>b.includes(esc(name))));if(i>=0){G.endPager.index=i;render();}}}
 function renderMobileBattleMenu(){const run=G.st.run;return '<p>'+esc(mobileBattleRule(run))+'</p><div class="mobile-menu-grid"><button class="btn" data-a="mobileInspect" data-v="rules">ルール・課題</button><button class="btn" data-a="mobileInspect" data-v="foes">敵の詳細</button><button class="btn" data-a="mobileInspect" data-v="growth">味方の詳細</button><button class="btn" data-a="mobileInspect" data-v="support">応援・連携</button><button class="btn" data-a="mobileInspect" data-v="log">進行コメント全文</button>'+'<button class="btn" data-a="mobileAuto">'+(G.auto?'オート停止':'オート開始')+'</button>'+'<button class="btn" data-a="pauseBattle">休止・保存</button></div>';}
 
+const RETIRED_MAP_CONTROL_SELECTOR='.mobile-explore .map-tools [data-k="world"],.mobile-explore .map-tools [data-a="worldReturn"],.mobile-explore .map-tools [data-a="mapZoom"]';
+function removeRetiredMapControls(root=document){for(const el of root.querySelectorAll(RETIRED_MAP_CONTROL_SELECTOR))el.remove();}
+function freshGameUrl(href,stamp=Date.now()){const u=new URL(href);u.searchParams.set('v',GAME_VERSION);u.searchParams.set('refresh',String(stamp));return u.href;}
 function render(){
   if(G.st){normalizeChapterLocation(G.st);ensureWorld(G.st);rememberSpecialUnlocks(G.st);}
   checkSheetNavigation();
@@ -4828,7 +4833,7 @@ function render(){
   document.body.classList.toggle("stick-left", padSide()==="left");
   document.body.classList.toggle("reduce-motion", !!(G.st&&G.st.settings.reduceMotion));
   root.innerHTML = heroSub(html + systemHelpButton('floating','help-fallback') + renderSheet() + renderDialog()) + `<div id="toast" class="toast" role="status" hidden></div>`;
-  if(s==="explore") mountCanvas();
+  if(s==="explore"){removeRetiredMapControls(root);mountCanvas();}
   if(s==="battle"&&G.st.run&&G.st.run.state==="input"){ drawEnemies(); startBattleTimer(); }
   if(s==="new") mountNew();
   if(s==="title"){ drawTitleArt(); if(!G.titleRaf) G.titleRaf=requestAnimationFrame(titleLoop); }
@@ -5894,7 +5899,7 @@ const SHARE_ARTIFACT_URL = "https://claude.ai/artifact/G1jFAs8yyUcJhtvgKragNh";
 const SHARE_TEXT = "最大4人で戦う、ターン制バトルの昭和風ドットRPG『トップライバーへの道』";
 function shareUrl(){
   if(window.TLR_SHARE_URL) return String(window.TLR_SHARE_URL);
-  if(IS_PUBLIC){ try{ return location.origin+location.pathname; }catch(e){} } // 公開版：今開いているページのURL
+  if(IS_PUBLIC){ try{ return location.origin+location.pathname+"?v="+encodeURIComponent(GAME_VERSION); }catch(e){} } // 公開版：今開いているページのURL
   return SHARE_ARTIFACT_URL;
 }
 function shareMessage(){ return `${SHARE_TEXT}\n${shareUrl()}`; }

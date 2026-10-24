@@ -77,3 +77,6 @@ jobs:
 
       - name: Verify four-button dock, top map information and exclusive ultra catalog
         run: node scripts/test-map-catalog-ui.cjs
+
+      - name: Verify retired map control cleanup and restored-page refresh URLs
+        run: node scripts/test-retired-map-controls.cjs
