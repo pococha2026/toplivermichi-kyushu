@@ -625,6 +625,10 @@ body.reduce-motion .btn{transition:none}
 
 #dock [data-pad="a"]{display:none!important}
 
+
+/* Full status cards stay within the phone width; every value remains visible. */
+.status-roster-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0}.status-roster-values>div{min-width:0;padding:6px;border:1px solid var(--mist);background:#101820}.status-roster-values dt{font-size:12px;line-height:1.4;overflow-wrap:anywhere}.status-roster-values dd{font-size:16px;margin:2px 0 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.status-roster-card h3{overflow-wrap:anywhere}.status-roster-controls .row2{grid-column:1/-1}.status-roster-controls select{width:100%;min-width:0}
+@media(min-width:640px){.status-roster-values{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -643,7 +647,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "8.85";
+const GAME_VERSION = "8.86";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -5098,14 +5102,49 @@ function shopQuote(st,d,context=false){
 }
 function shopResults(st,d){const cid=manageCid(st,d),tab=d.tab||'buy',f=d.uiFilter||'all';let ids=shopPool(st,d);ids=tab==='item'?sortItems(ids):[...sortEq(ids.filter(id=>EQUIP[id])),...sortItems(ids.filter(id=>ITEMS[id]))];ids=ids.filter(id=>{const it=ITEMS[id]||EQUIP[id],eq=!!EQUIP[id];return manageMatch(it.name+' '+(it.text||'')+' '+(it.job?JOBS[it.job].name:'共有'),d.uiQuery)&&(f==='all'||['w','a','acc'].includes(f)&&eq&&it.slot===f||f==='usable'&&eq&&canEquipC(st,cid,it)||f==='afford'&&shopQuote(st,{...d,item:id,qty:1}).max>0||f==='heal'&&!eq&&it.cat!=='攻撃'||f==='attack'&&!eq&&it.cat==='攻撃'||f==='sellable'&&shopQuote(st,{...d,item:id,qty:1}).max>0);});return managePage(ids,d);}
 function shopListReturn(notice=null){const d=G.sheetData||{};let index=-1;for(let i=SHEET_NAV.frames.length-1;i>=0;i--){const f=SHEET_NAV.frames[i];if(f.sheet==='shop'&&f.data.shop===d.shop&&(f.data.tab||'buy')===(d.tab||'buy')&&!f.data.item){index=i;break;}}if(index>=0){const f=SHEET_NAV.frames[index];SHEET_NAV.frames.length=index;restoreSheetFrame({...f,data:{...f.data,notice}});}else{G.sheetData={...d,item:null,qty:1,notice};render();}}
+/* All joined characters share one numeric registry for display and sorting. */
+const STATUS_ROSTER_FIELDS=[
+ ['level','個人Lv'],['rank','職業熟練度'],['hp','現在HP'],['maxHP','最大HP'],['mp','現在MP'],['maxMP','最大MP'],
+ ...STAT_KEYS.map(k=>['base_'+k,STAT_NAMES[k]]),
+ ['atk','攻撃力'],['defTotal','防御力'],['crit','会心率','%'],['eva','回避率','%'],['cha','魅力補正','%'],
+ ['skill','技能強化'],['comment','応援コメントのエール'],['rest','ひと息のMP回復'],['meter','メーター突破の威力'],['family','ファミリー応援の回復'],['pouch','回復・蘇生道具の倍率','倍'],
+ ['xp','累計経験値'],['nextXP','次のLvまでEXP'],['jp','現在職の熟練度経験値'],['nextJP','次の熟練度までJP'],['mastery','熟練度による基礎能力補正','%'],
+ ['gearCrit','装備の会心率補正','%'],['weaponAtk','武器の攻撃係数'],['accessoryAtk','アクセサリーの攻撃係数'],['armorDef','防具の防御係数'],['jobWeapon','職業専用武器装備'],
+ ...STAT_KEYS.map(k=>['raw_'+k,'職業基礎・'+STAT_NAMES[k]]),
+ ...STAT_KEYS.map(k=>['permanent_'+k,'永続補正・'+STAT_NAMES[k],'%'])
+];
+function statusRosterActive(d={}){return d.statusMode==='roster'||d.statusMode!=='single'&&!d.cid&&!d.uiTab&&!d.view;}
+function statusRosterRow(st,cid,index){
+ const s=charStats(st,cid,partyLevel(st)),actor=st.run?.party.find(a=>a.cid===cid),v=actor||st.vitals?.[cid],xp=st.memberXp?.[cid]??st.xp,jp=jpOf(st,cid,s.job),cap=progressionCap(st);
+ const values={level:s.L,rank:s.R,hp:v?Math.max(0,Math.min(s.maxHP,v.hp)):s.maxHP,maxHP:s.maxHP,mp:v?Math.max(0,Math.min(s.startC,actor?actor.c:v.c)):s.startC,maxMP:s.startC,
+ atk:s.atk,defTotal:s.defTotal,crit:s.crit,eva:s.eva,cha:s.cha,skill:s.S,comment:18+s.commentA+(s.job==='J22'?6:0),rest:4+s.rest,
+ meter:24+6*s.L+s.V*s.meter+Math.floor(s.base.cha/3),family:Math.ceil((12+s.family)*s.V*(1+s.cha/100)),pouch:s.pouch?2:1,
+ xp,nextXP:s.L<cap?Math.max(0,xpFor(s.L+1)-xp):0,jp,nextJP:s.R<cap?Math.max(0,jpFor(s.R+1)-jp):0,mastery:s.mastery,gearCrit:s.gearCrit,weaponAtk:s.wAtk,accessoryAtk:s.accAtk,armorDef:s.armorD,jobWeapon:s.jobWeapon?1:0};
+ for(const k of STAT_KEYS){values['base_'+k]=s.base[k];values['raw_'+k]=s.rawBase[k];values['permanent_'+k]=s.permanent[k];}
+ return {cid,index,name:charName(st,cid),job:JOBS[s.job].name,party:st.party.includes(cid),values,equip:{...st.equip[cid]}};
+}
+function statusRosterResults(st,d={}){
+ // charStats remembers learned skills; use a display snapshot so sorting stays read-only.
+ const source=clone(st),rows=source.roster.map((cid,i)=>statusRosterRow(source,cid,i));
+ const keys=['order','name','job',...STATUS_ROSTER_FIELDS.map(x=>x[0])],sort=keys.includes(d.rosterSort)?d.rosterSort:'order',dir=['asc','desc'].includes(d.rosterDir)?d.rosterDir:'asc',sign=dir==='desc'?-1:1;
+ rows.sort((a,b)=>{const delta=sort==='order'?a.index-b.index:['name','job'].includes(sort)?a[sort].localeCompare(b[sort],'ja',{numeric:true}):a.values[sort]-b.values[sort];return sign*delta||a.index-b.index;});
+ const size=[2,4,8].includes(Number(d.rosterSize))?Number(d.rosterSize):4,pages=Math.max(1,Math.ceil(rows.length/size)),n=Number(d.rosterPage),page=Number.isFinite(n)?Math.max(0,Math.min(pages-1,Math.trunc(n))):0;
+ return {rows,sort,dir,size,pages,page,visible:rows.slice(page*size,(page+1)*size)};
+}
+function renderStatusRoster(st,d){
+ const r=statusRosterResults(st,d),options=[['order','加入順'],['name','名前'],['job','職業'],...STATUS_ROSTER_FIELDS.map(([k,n])=>[k,n])];
+ const pager=()=>'<nav class="m-pages" aria-label="全キャラ一覧のページ"><button class="btn" data-a="statusRosterPage" data-v="'+(r.page-1)+'" '+(!r.page?'disabled':'')+'>◀ 前</button><span role="status">全'+r.rows.length+'人・'+(r.page+1)+'／'+r.pages+'ページ</span><button class="btn" data-a="statusRosterPage" data-v="'+(r.page+1)+'" '+(r.page>=r.pages-1?'disabled':'')+'>次 ▶</button></nav>';
+ return '<div class="m-view"><h3>全キャラ一覧</h3><p class="small">加入済みの仲間全員（控えを含む）の能力を表示します。装備・現在職・熟練度を反映した値です。</p><div class="m-search status-roster-controls"><label>並べ替える項目<select id="statusRosterSort">'+options.map(([k,n])=>'<option value="'+k+'" '+(r.sort===k?'selected':'')+'>'+esc(n)+'</option>').join('')+'</select></label><div class="row2"><button class="btn '+(r.dir==='desc'?'primary':'')+'" data-a="statusRosterDirection" data-v="desc" aria-pressed="'+(r.dir==='desc')+'">大きい順・逆順</button><button class="btn '+(r.dir==='asc'?'primary':'')+'" data-a="statusRosterDirection" data-v="asc" aria-pressed="'+(r.dir==='asc')+'">小さい順・通常順</button></div><label>1ページの人数<select id="statusRosterSize">'+[2,4,8].map(n=>'<option value="'+n+'" '+(r.size===n?'selected':'')+'>'+n+'人</option>').join('')+'</select></label></div>'+pager()+'<div class="m-list">'+r.visible.map(row=>'<article class="m-card status-roster-card" data-status-cid="'+row.cid+'"><h3>'+esc(row.name)+'</h3><p>'+esc(row.job)+'／'+(row.party?'同行中':'控え')+'</p><dl class="status-roster-values">'+STATUS_ROSTER_FIELDS.map(([key,label,unit])=>'<div><dt>'+esc(label)+'</dt><dd data-status-key="'+key+'">'+(key==='jobWeapon'?(row.values[key]?'あり':'なし'):manageNumber(row.values[key])+(unit||''))+'</dd></div>').join('')+'</dl><p class="small">'+Object.entries(EQ_SLOT_NAME).map(([slot,n])=>n+'：'+esc(row.equip[slot]?EQUIP[row.equip[slot]].name:'装備なし')).join('／')+'</p><button class="btn" data-a="statusRosterOpen" data-c="'+row.cid+'">'+esc(row.name)+'の個別ステータス・技を見る</button></article>').join('')+'</div>'+pager()+'<p class="small">職業基礎は熟練度・永続補正を加える前の値です。永続補正は過去の職業で得た補正率。次まで0 EXP／JPは現在の上限に到達した場合も含みます。</p></div>';
+}
+
 function renderStatus(){
- const st=G.st,d=G.sheetData||{},cid=manageCid(st,d),s=charStats(st,cid,partyLevel(st)),actor=st.run?.party.find(a=>a.cid===cid),v=actor?{hp:actor.hp,c:actor.c}:vitalOf(cid),tab=['stats','skills','profile','job'].includes(d.uiTab)?d.uiTab:d.view==='job'?'job':'stats',jp=jpOf(st,cid,s.job),xp=st.memberXp?.[cid]??st.xp,cap=progressionCap(st);
+ const st=G.st,d=G.sheetData||{};if(statusRosterActive(d))return renderStatusRoster(st,d);const cid=manageCid(st,d),s=charStats(st,cid,partyLevel(st)),actor=st.run?.party.find(a=>a.cid===cid),v=actor?{hp:actor.hp,c:actor.c}:vitalOf(cid),tab=['stats','skills','profile','job'].includes(d.uiTab)?d.uiTab:d.view==='job'?'job':'stats',jp=jpOf(st,cid,s.job),xp=st.memberXp?.[cid]??st.xp,cap=progressionCap(st);
  let body='';
  if(tab==='skills'){const r=manageSkills(st,cid,d);body='<p class="small">習得済みでも、戦闘ではMP・再使用待ち・必殺技の条件を満たす必要があります。</p>'+manageSearch(d,[['all','すべて'],['known','習得済み'],['locked','これから覚える'],['ultra','超レアの技'],['ultimate','人物の必殺技']])+managePager(r)+r.visible.map(sk=>`<article class="m-card"><div class="m-card-title"><b>${esc(sk.name)}</b><span class="tag">MP ${sk.current?sk.cost:skillMpCost({...s,maxC:s.startC},sk)}</span></div><p class="${sk.locked?'warn':'good'}">${sk.locked?(sk.ultimate?'未習得：仲間の物語 第1話で習得':'未習得：Lv'+sk.level+(sk.rank?'・熟練度'+sk.rank:'')+'で習得'):sk.ultra?'対応する超レアを装備中のみ使用可':'習得済み'+(sk.baseJob?'・前の職業から引き継ぎ':'')}</p><p>${esc(sk.desc)}</p>${sk.cooldown?`<p class="small">再使用まで${sk.cooldown}ターン</p>`:''}</article>`).join('')+(!r.items.length?manageEmpty():'')+managePager(r);}
  else if(tab==='profile')body=`<article class="m-card"><p>${esc([CHARS[cid].age?CHARS[cid].age+'歳':'',CHARS[cid].from||''].filter(Boolean).join('／'))}</p><p>経歴：${esc(cid==='hero'?(st.profile.career||CHARS[cid].career):CHARS[cid].career)}</p><p>${esc(CHARS[cid].pocoRole||'')}</p></article>`+characterProfileHtml(st,cid);
  else if(tab==='job')body=`<article class="m-card"><b>職業特性「${esc(JOB_TRAITS[s.job].name)}」</b><p>${esc(JOB_TRAITS[s.job].desc)}</p><p>伸び方：${gradeText(s.job)}</p><p>転職は街のハローワークで職業イベントをクリアしてから行います。</p><button class="btn" data-a="manageJobs">職業・転職条件を見る</button></article>${inheritanceHtml(st,cid)}<article class="m-card"><h3>熟練度のいまの効果</h3><p>基礎能力の補正 ＋${s.mastery}％／熟練度による最大MP ＋${Math.floor(s.R/2)}／技能強化 ${s.S}</p><p>${MASTERY_STEPS.find(n=>n>s.R)?'次の技能強化は熟練度'+MASTERY_STEPS.find(n=>n>s.R):'技能強化は最終段階です。'}</p><p>専用道具：${esc(ITEMS['JI'+s.job.slice(1)].name)}／熟練度10以上の本人が使用できます。</p><button class="btn" data-a="manageStatusTab" data-v="skills">習得技・これから覚える技を調べる</button></article>`;
  else body=manageStats(s,v)+`<div class="m-progress"><p>個人Lv <b>${s.L}/${cap}</b>　${s.L<cap?'次まで '+manageNumber(Math.max(0,xpFor(s.L+1)-xp))+' EXP':'現在の上限に到達'}</p><p>熟練度 <b>${s.R}/${cap}</b>　${s.R<cap?'次まで '+manageNumber(Math.max(0,jpFor(s.R+1)-jp))+' JP':'現在の上限に到達'}</p></div><h3 class="label">いまの装備</h3><div class="m-list">${Object.entries(EQ_SLOT_NAME).map(([slot,name])=>{const id=st.equip[cid][slot];return `<button class="btn m-card" data-a="manageEquipOpen" data-v="${slot}"><small>${name}</small><b>${id?esc(EQUIP[id].name):'装備なし'}</b><span>比較・変更する ▶</span></button>`;}).join('')}</div><details class="m-details"><summary>基礎能力・全能力・成長のくわしい説明</summary><p>累計経験値 ${manageNumber(xp)}／現在の職業の熟練度経験値 ${manageNumber(jp)}</p>${st.lastMpGrowth?.members?.some(m=>m.cid===cid)?`<p class="good">直近の最大MP：${st.lastMpGrowth.members.filter(m=>m.cid===cid).map(m=>m.before+' → '+m.after+'（＋'+(m.after-m.before)+'）').join('／')}</p>`:''}${statBlockHtml(s)}${statTableHtml(s,s.L)}<p>攻撃力はちからと装備、防御力は身の守りと防具を合計した数値です。HP・MPは宿屋や道具で回復します。</p>${progressionHtml(st)}</details>`;
- return `<div class="m-view"><p class="m-summary">パーティLv <b>${partyLevel(st)}/${cap}</b>　${manageNumber(st.gold)}G</p>${managePerson(st,cid)}<div class="m-card-title"><div class="m-identity"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><h3>${esc(charName(st,cid))}</h3><p>${esc(JOBS[s.job].name)}・${st.party.includes(cid)?'同行中':'控え'}${v.hp<=0?'・戦闘不能':''}</p></div></div><button class="btn" data-a="renameOpen" data-c="${cid}" ${st.run||st.stream||G.readOnly?'disabled':''}>名前変更</button></div>${manageTabs([['stats','能力・装備'],['skills','技'],['profile','人物'],['job','職業']],tab,'manageStatusTab')}${body}</div>`;
+ return `<div class="m-view"><button class="btn" data-a="statusRosterMode">全キャラ一覧を開く</button><p class="m-summary">パーティLv <b>${partyLevel(st)}/${cap}</b>　${manageNumber(st.gold)}G</p>${managePerson(st,cid)}<div class="m-card-title"><div class="m-identity"><canvas class="sprite-md" data-char="${cid}" width="16" height="24" aria-hidden="true"></canvas><div><h3>${esc(charName(st,cid))}</h3><p>${esc(JOBS[s.job].name)}・${st.party.includes(cid)?'同行中':'控え'}${v.hp<=0?'・戦闘不能':''}</p></div></div><button class="btn" data-a="renameOpen" data-c="${cid}" ${st.run||st.stream||G.readOnly?'disabled':''}>名前変更</button></div>${manageTabs([['stats','能力・装備'],['skills','技'],['profile','人物'],['job','職業']],tab,'manageStatusTab')}${body}</div>`;
 }
 function heroSprite(dir,frame,gender){ const f=(gender||G.st.profile.gender)==="女性"; return ART.person("hero",f?PAL.brown:PAL.ink,PAL.red,dir,frame,{long:f}); }
 function heroineSprite(dir,frame,gender){ const g=gender||heroineOf(G.st).gender; return g==="男性"? ART.person("moe",PAL.violet,PAL.cream,dir,frame,{}) : ART.person("moe",PAL.violet,PAL.cream,dir,frame,{long:true,ribbon:PAL.coral}); }
@@ -6205,6 +6244,12 @@ const ACT = {
   broadcastSuggest(){if(G.sheet!=='streamSetup'||!G.st)return;const d=G.sheetData,p=broadcastForecast(G.st,d).find(x=>x.policy===d.policy)||broadcastForecast(G.st,d)[1],m=p.scenarios[1];G.sheetData={...d,viewerGoal:broadcastGoalFor(m.viewers),incomeGoal:broadcastGoalFor(m.net)};render();},
   broadcastReuse(){if(G.sheet!=='streamSetup'||!G.st)return;const r=G.st.broadcastStats?.history?.[0];if(!r)return;G.sheetData={...G.sheetData,policy:r.policy,theme:r.theme,style:r.style,viewerGoal:r.goal,incomeGoal:r.incomeGoal};render();},
   broadcastFilter(el){if(G.sheet!=='broadcastHistory'||!['all','passed','failed'].includes(el.dataset.v))return;G.sheetData={...G.sheetData,broadcastFilter:el.dataset.v};render();},
+  statusRosterMode(){if(G.sheet!=='status')return;openSheet('status',{...G.sheetData,statusMode:'roster'});},
+  statusRosterOpen(el){if(G.sheet!=='status'||!G.st.roster.includes(el.dataset.c))return;openSheet('status',{cid:el.dataset.c,statusMode:'single'});},
+  statusRosterSort(el){if(G.sheet!=='status'||!statusRosterActive(G.sheetData)||!['order','name','job',...STATUS_ROSTER_FIELDS.map(x=>x[0])].includes(el.dataset.v))return;G.sheetData={...G.sheetData,rosterSort:el.dataset.v,rosterDir:['order','name','job'].includes(el.dataset.v)?'asc':'desc',rosterPage:0};render();},
+  statusRosterDirection(el){if(G.sheet!=='status'||!statusRosterActive(G.sheetData)||!['asc','desc'].includes(el.dataset.v))return;G.sheetData={...G.sheetData,rosterDir:el.dataset.v,rosterPage:0};render();},
+  statusRosterPage(el){if(G.sheet!=='status'||!statusRosterActive(G.sheetData))return;const r=statusRosterResults(G.st,G.sheetData),page=Number(el.dataset.v);if(!Number.isInteger(page)||page<0||page>=r.pages)return;G.sheetData={...G.sheetData,rosterPage:page};render();const sh=$('.sheet');if(sh)sh.scrollTop=0;},
+  statusRosterSize(el){if(G.sheet!=='status'||!statusRosterActive(G.sheetData)||![2,4,8].includes(Number(el.dataset.v)))return;G.sheetData={...G.sheetData,rosterSize:Number(el.dataset.v),rosterPage:0};render();},
   managePerson(el){if(!['status','equip','shop'].includes(G.sheet)||!G.st.roster.includes(el.dataset.v))return;G.sheetData={...G.sheetData,cid:el.dataset.v,eqChoice:null,eqKey:null,notice:null,uiPage:0};render();},
   manageStatusTab(el){if(G.sheet!=='status'||!['stats','skills','profile','job'].includes(el.dataset.v))return;G.sheetData={...G.sheetData,uiTab:el.dataset.v,uiQuery:'',uiFilter:'all',uiPage:0};render();},
   manageEquipTab(el){if(G.sheet!=='equip'||!['characters','stock'].includes(el.dataset.v))return;G.sheetData={equipTab:el.dataset.v,uiQuery:'',uiFilter:'all',uiPage:0};render();},
@@ -6424,7 +6469,7 @@ const ACT = {
   streamLeave(){ G.st.stream=null; commit(); G.screen="explore"; exploreBgm(); render(); },
   streamFinish(el){ return streamFinish(el?.dataset.token); }
 };
-for(const name of ['shopSuggest','collectionLocate','collectionDensity','collectionJump','collectionTop','collectionTab','collectionPage','collectionSearch','collectionClear','collectionFilter','regionalPref','broadcastFilter','broadcastSuggest','broadcastReuse','guideSearch','guideCategory','guidePage','itemView','itemDrop','itemDropNo','partyView','equipView','eqDrop','eqDropNo','dexNav','shopTab','questFilter','questDetail','helloWorkMode','helloWorkCharacter','helloWorkJob','helloWorkSearch','helloWorkPage','storyPage','eventPage','geoSelect','geoMove','geoPage','relationFocus','relationPage','relationMode','peoplePage','gearPage','gearFilter','showBackup','managePerson','manageStatusTab','manageEquipTab','manageSlot','manageSearch','manageClear','managePage','equipStock','equipChoose','eqSort','itSort'])ACT[name]=recordSheetAction(name,ACT[name]);
+for(const name of ['statusRosterSort','statusRosterDirection','statusRosterPage','statusRosterSize','shopSuggest','collectionLocate','collectionDensity','collectionJump','collectionTop','collectionTab','collectionPage','collectionSearch','collectionClear','collectionFilter','regionalPref','broadcastFilter','broadcastSuggest','broadcastReuse','guideSearch','guideCategory','guidePage','itemView','itemDrop','itemDropNo','partyView','equipView','eqDrop','eqDropNo','dexNav','shopTab','questFilter','questDetail','helloWorkMode','helloWorkCharacter','helloWorkJob','helloWorkSearch','helloWorkPage','storyPage','eventPage','geoSelect','geoMove','geoPage','relationFocus','relationPage','relationMode','peoplePage','gearPage','gearFilter','showBackup','managePerson','manageStatusTab','manageEquipTab','manageSlot','manageSearch','manageClear','managePage','equipStock','equipChoose','eqSort','itSort'])ACT[name]=recordSheetAction(name,ACT[name]);
 function drawMiniSprites(){
   document.querySelectorAll("canvas[data-char]").forEach(c=>{ const g=c.getContext("2d"); g.clearRect(0,0,16,24); const id=c.dataset.char; g.drawImage(id==="moe"?heroineSprite(0,0):charSprite(id,0,0),0,0); });
   document.querySelectorAll("canvas[data-dex]").forEach(c=>{ const [a,i]=c.dataset.dex.split("|"); const e=enemyDef(a,+i); const g=c.getContext("2d"); g.imageSmoothingEnabled=false; g.drawImage(ART.enemy(e.profile,e.species,e.attr,a,0),0,0); });
@@ -6498,7 +6543,7 @@ document.addEventListener("click",e=>{
   if(el.getAttribute("aria-disabled")==="true") return;
   const f=ACT[el.dataset.a]; if(!f) return;
   if(BATTLE_CONTROL_ACTIONS.has(el.dataset.a)&&!battleControlIsCurrent(el))return;
-  if(G.readOnly && !["shopSuggest","collectionLocate","collectionDensity","collectionJump","collectionTop","collectionTab","collectionPage","collectionSearch","collectionClear","collectionFilter","regionalPref","broadcastFilter","broadcastSuggest","broadcastReuse","mobileEnemyInfo","mobileMember","battlePanel","mobileInspect","battlePickerSearch","battlePickerPage","battlePickerClose","systemHelp","guideSearch","guideCategory","guidePage","specialGuide","managePerson","manageStatusTab","manageEquipTab","manageSlot","manageSearch","manageClear","managePage","manageJobs","manageEquipOpen","equipStock","equipChoose","shopQty","eqSort","itSort","openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","liveLogPage","gearPage","gearFilter","partyReplaceSlot","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
+  if(G.readOnly && !["statusRosterMode","statusRosterOpen","statusRosterSort","statusRosterDirection","statusRosterPage","statusRosterSize","shopSuggest","collectionLocate","collectionDensity","collectionJump","collectionTop","collectionTab","collectionPage","collectionSearch","collectionClear","collectionFilter","regionalPref","broadcastFilter","broadcastSuggest","broadcastReuse","mobileEnemyInfo","mobileMember","battlePanel","mobileInspect","battlePickerSearch","battlePickerPage","battlePickerClose","systemHelp","guideSearch","guideCategory","guidePage","specialGuide","managePerson","manageStatusTab","manageEquipTab","manageSlot","manageSearch","manageClear","managePage","manageJobs","manageEquipOpen","equipStock","equipChoose","shopQty","eqSort","itSort","openSheet","closeSheet","questFilter","questDetail","dlgNext","dlgBack","dlgSkip","toTitle","dexNav","partyView","shopTab","shopItem","equipView","itemView","endPage","battleInspect","battleInspectClose","battleChoicePage","liveLogPage","gearPage","gearFilter","partyReplaceSlot","noop","shareCopyUrl","shareCopyMsg","shareNative"].includes(el.dataset.a)) return toast("別のタブで遊んでいるため、このタブは閲覧のみです。");
   f(el);
   if(el.dataset.a==="openSheet") drawMiniSprites();
 });
@@ -6509,6 +6554,8 @@ function rememberRenameInput(e){if(G.sheet==='rename'&&e.target?.id==='renameInp
 document.addEventListener('input',rememberRenameInput);
 document.addEventListener('compositionend',rememberRenameInput);
 document.addEventListener('keydown',e=>{if(e.target?.id==='renameInput'&&G.sheet==='rename'&&e.key==='Enter'&&!e.isComposing&&e.keyCode!==229&&!e.repeat){e.preventDefault();rememberRenameInput(e);ACT.renameSave();}});
+
+document.addEventListener('change',e=>{if(e.target.id==='statusRosterSort')ACT.statusRosterSort({dataset:{v:e.target.value}});if(e.target.id==='statusRosterSize')ACT.statusRosterSize({dataset:{v:e.target.value}});});
 /* ===== 操作パネルの位置合わせ：表示枠の下が画面外に出ている分（--vcut）だけ持ち上げる ===== */
 const VFIT=(()=>{
   /* 3段構え：①実測（IntersectionObserver） ②iPhoneアプリ枠の推定 ③利用者が一度だけ合わせた値（最優先・端末に永久保存） */

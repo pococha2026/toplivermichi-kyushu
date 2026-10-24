@@ -611,3 +611,7 @@ body.reduce-motion .btn{transition:none}
 
 #dock [data-pad="a"]{display:none!important}
 
+
+/* Full status cards stay within the phone width; every value remains visible. */
+.status-roster-values{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin:10px 0}.status-roster-values>div{min-width:0;padding:6px;border:1px solid var(--mist);background:#101820}.status-roster-values dt{font-size:12px;line-height:1.4;overflow-wrap:anywhere}.status-roster-values dd{font-size:16px;margin:2px 0 0;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.status-roster-card h3{overflow-wrap:anywhere}.status-roster-controls .row2{grid-column:1/-1}.status-roster-controls select{width:100%;min-width:0}
+@media(min-width:640px){.status-roster-values{grid-template-columns:repeat(3,minmax(0,1fr))}}
