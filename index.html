@@ -623,7 +623,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.48";
+const GAME_VERSION = "7.49";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
@@ -1845,7 +1845,7 @@ function partyStatLine(st,cid,L){const s=charStats(st,cid,L);return `Lv${s.L}／
 /* ---- レアドロップ ---- */
 const RARE_ITEMS = {1:["IT126","IT102","IT104"],2:["IT126","IT127","IT129","IT125"],3:["IT127","IT129","IT125","IT117","IT128","IT130"]};
 function rareTier(q){ return q<25?1:q<45?2:3; }
-function giveGear(st,id,res,why){ res.gear=res.gear||[];
+function giveGear(st,id,res,why){ if(typeof id!=='string'||!Object.prototype.hasOwnProperty.call(EQUIP,id))return false;res.gear=res.gear||[];
   if(eqCanAdd(st,id,1)){ st.owned[id]=Math.min(8,(st.owned[id]||0)+1); res.gear.push({id,why});collectionMark(st,id); return true; }
   st.keep=st.keep||[]; if(st.keep.length<KEEP_MAX){ st.keep.push(id); res.gear.push({id,why,kept:true});collectionMark(st,id); return true; } return false; }
 function rareDrop(st, run, e, res){
@@ -3440,6 +3440,7 @@ function giftCheck(st,job,kind,res){
 /* ---- 装備品の持ち物（未装備の在庫）：最大20種類、1種類は装備中を含め8個まで ---- */
 function eqStockKinds(st){ return Object.keys(st.owned).filter(id=>availableCount(st,id)>0).length; }
 function eqCanAdd(st,id,n){ // 在庫へn個加えられるか
+  if(typeof id!=='string'||!Object.prototype.hasOwnProperty.call(EQUIP,id)||!Number.isSafeInteger(n)||n<=0)return false;
   if((st.owned[id]||0)+n>8) return false;
   if(availableCount(st,id)>0) return true;
   return eqStockKinds(st) < EQ_KINDS;
@@ -3682,7 +3683,7 @@ function aiChoose(run){
 
 /* ---- 道具袋（20種類×各9個。入らない分は預かり所へ） ---- */
 function bagCount(bag,id){ const e=(bag||[]).find(x=>x.id===id); return e?e.n:0; }
-function bagRoom(bag,id){ const e=bag.find(x=>x.id===id); if(e) return BAG_STACK-e.n; return bag.length<BAG_KINDS?BAG_STACK:0; }
+function bagRoom(bag,id){ if(typeof id!=='string'||!Object.prototype.hasOwnProperty.call(ITEMS,id))return 0;const e=bag.find(x=>x.id===id); if(e) return BAG_STACK-e.n; return bag.length<BAG_KINDS?BAG_STACK:0; }
 /* v7.44: permanent collection records; optional for legacy saves. */
 const COLLECTION_BAGS=new WeakMap();
 function collectionMark(st,id){if(!Object.prototype.hasOwnProperty.call(ITEMS,id)&&!Object.prototype.hasOwnProperty.call(EQUIP,id)&&!Object.prototype.hasOwnProperty.call(EVENT_ITEMS,id))return;const c=st.collection||(st.collection={version:1,items:{},gear:{},bosses:{}});if(EVENT_ITEMS[id]){c.events=c.events||{};c.events[id]=true;}else (ITEMS[id]?c.items:c.gear)[id]=true;}
@@ -3721,9 +3722,10 @@ function renderCollection(){
  }).join('')+(!r.list.length?'<div class="collection-empty"><b>条件に合う項目がありません</b><p>「解除」で絞り込みを戻せます。未入手（記録なし）の品も名前で検索できます。</p><button class="btn" data-a="collectionClear">条件を解除</button></div>':'')+'</div>'+pager(true)+'<form id="collectionJumpForm" class="collection-jump"><label>ページ指定<input id="collectionPageNumber" type="number" inputmode="numeric" min="1" max="'+r.pages+'" value="'+(r.page+1)+'" aria-label="移動するページ番号"></label><button class="btn" data-a="collectionJump" type="button">移動</button><button class="btn" data-a="collectionTop" type="button">条件へ戻る ↑</button></form><details class="collection-note"><summary>記録の見方・旧セーブの引き継ぎ</summary><p>敵は遭遇で登録し、討伐は別に表示。アイテムは一度入手すれば使う・売る・捨てる後も記録が残ります。装備品・消費アイテム・イベントアイテム・ご当地品・ソウルフードは重複せず別集計です。</p><p>旧セーブは現在の持ち物・装備・預かり所と既存の敵記録、事件帳の明確な取得記録を反映します。追加前に使い切った・売った品の履歴がない場合は復元できません。「未入手（記録なし）」は入手記録がない状態です。通常のセーブ・バックアップに含まれます。</p></details></section>';
 }
 
-function bagAdd(bag,id,n){ if(!Number.isSafeInteger(n)||n<=0)return 0; const add=Math.min(n,bagRoom(bag,id)); if(add<=0) return 0; const e=bag.find(x=>x.id===id); if(e) e.n+=add; else bag.push({id,n:add}); const owner=collectionBagOwner(bag);if(owner)collectionMark(owner,id);return add; }
+function bagAdd(bag,id,n){ if(typeof id!=='string'||!Object.prototype.hasOwnProperty.call(ITEMS,id)||!Number.isSafeInteger(n)||n<=0)return 0; const add=Math.min(n,bagRoom(bag,id)); if(add<=0) return 0; const e=bag.find(x=>x.id===id); if(e) e.n+=add; else bag.push({id,n:add}); const owner=collectionBagOwner(bag);if(owner)collectionMark(owner,id);return add; }
 function bagRemove(bag,id,n){ if(!Number.isSafeInteger(n)||n<=0)return 0; const i=bag.findIndex(x=>x.id===id); if(i<0) return 0; const r=Math.min(n,bag[i].n); bag[i].n-=r; if(bag[i].n<=0) bag.splice(i,1); return r; }
 function giveItem(st,id,n,res,why){
+  if(typeof id!=='string'||!Object.prototype.hasOwnProperty.call(ITEMS,id)||!Number.isSafeInteger(n)||n<=0)return {got:0,kept:0,lost:0};
   st.bag=st.bag||[]; st.keep=st.keep||[];
   const got=bagAdd(st.bag,id,n); let rest=n-got, kept=0;
   while(rest>0 && st.keep.length<KEEP_MAX){ st.keep.push(id); rest--; kept++; }
@@ -5769,8 +5771,11 @@ function renderRecord(){
     <h3 class="label">配信記録</h3>${Object.entries(PREF_NAMES).filter(([pr])=>st.streamBest[pr]!=null||pr==="PR01").map(([pr,n])=>`<p>${n}の配信反応：${st.streamBest[pr]!=null?streamGrade(st.streamBest[pr]):"未配信"}</p>`).join("")}
     ${st.lastResult?`<h3 class="label">直前の戦闘結果</h3><p class="small">経験値＋${st.lastResult.xp}・${st.lastResult.gold}ゴールド・${st.lastResult.jp.map(j=>`${esc(j.name)} 熟練度経験値＋${j.gain}`).join("、")}</p>`:""}`;
 }
+function normalizedDexData(data={}){if(!data||typeof data!=='object'||Array.isArray(data))data={};const area=Object.prototype.hasOwnProperty.call(AREAS,data.area)?data.area:'KY01-A1',raw=Number(data.page),page=Number.isInteger(raw)&&Number.isFinite(raw)?Math.max(0,Math.min(4,raw)):0;let detail=null;if(typeof data.detail==='string'){const bits=data.detail.split('|'),i=Number(bits[1]);if(bits.length===2&&Object.prototype.hasOwnProperty.call(AREAS,bits[0])&&/^(0|[1-4]?[0-9])$/.test(bits[1])&&Number.isInteger(i)&&i>=0&&i<AREAS[bits[0]].list.length)detail=bits[0]+'|'+i;}return {area,page,detail};}
+function validNormalEnemyId(id){if(typeof id!=='string')return false;const m=/^EN-(.+)-(\d{3})$/.exec(id);return !!m&&Object.prototype.hasOwnProperty.call(AREAS,m[1])&&Number(m[2])>=1&&Number(m[2])<=AREAS[m[1]].list.length;}
+function validateInventoryState(s){const obj=v=>v&&typeof v==='object'&&!Array.isArray(v),validBag=bag=>Array.isArray(bag)&&bag.length<=BAG_KINDS&&new Set(bag.map(e=>e?.id)).size===bag.length&&bag.every(e=>obj(e)&&typeof e.id==='string'&&Object.prototype.hasOwnProperty.call(ITEMS,e.id)&&Number.isSafeInteger(e.n)&&e.n>=1&&e.n<=BAG_STACK);if((s.itemsVersion||s.bag!==undefined)&&!validBag(s.bag))throw Error('bad item bag');if(s.run?.bag!==undefined&&!validBag(s.run.bag))throw Error('bad battle item bag');if(s.keep!==undefined&&(!Array.isArray(s.keep)||s.keep.length>KEEP_MAX||s.keep.some(id=>typeof id!=='string'||!Object.prototype.hasOwnProperty.call(ITEMS,id)&&!Object.prototype.hasOwnProperty.call(EQUIP,id))))throw Error('bad storage items');if(!obj(s.owned)||Object.entries(s.owned).some(([id,n])=>!Object.prototype.hasOwnProperty.call(EQUIP,id)||!Number.isSafeInteger(n)||n<0||n>8))throw Error('bad equipment stock');if(!obj(s.seen)||Object.entries(s.seen).some(([id,v])=>!validNormalEnemyId(id)||typeof v!=='boolean'))throw Error('bad enemy encounter records');if(!obj(s.killCount)||Object.values(s.killCount).some(n=>!Number.isSafeInteger(n)||n<0))throw Error('bad enemy kill records');}
 function renderDex(){
-  const st=G.st; const d=G.sheetData; const area=d.area||"KY01-A1"; const page=d.page||0;
+  const st=G.st; const d=normalizedDexData(G.sheetData);const area=d.area,page=d.page;
   if(d.detail){
     const [a,i]=d.detail.split("|"); const e=enemyDef(a,+i); const seen=st.seen[e.id];
     const q=e.q,stats=fieldEnemyStats(e,q); const steps=stats.cycle.map(({t,p})=>t==="c"?"ため":`${t==="s"?"単体":"全体"}${p}`).join(" → ");
@@ -6081,7 +6086,7 @@ const ACT = {
   collectionDensity(el){if(G.sheet!=='collection'||!['compact','comfortable'].includes(el.dataset.v))return;const r=collectionResults(G.st,G.sheetData),first=r.page*r.size;G.sheetData.cdensity=el.dataset.v;const next=collectionResults(G.st,G.sheetData);G.sheetData.cpage=Math.floor(first/next.size);render();},
   collectionJump(){if(G.sheet!=='collection')return;const n=Number($('#collectionPageNumber')?.value),r=collectionResults(G.st,G.sheetData);if(!Number.isInteger(n)||n<1||n>r.pages)return toast('1～'+r.pages+'のページ番号を指定してください。');ACT.collectionPage({dataset:{v:String(n-1)}});},
   collectionTop(){if(G.sheet!=='collection')return;const sheet=$('.sheet');if(sheet)sheet.scrollTop=0;$('#collectionCategory')?.focus({preventScroll:true});},
-  dexNav(el){ const k=el.dataset.k, v=el.dataset.v; if(k==="area"){ G.sheetData={area:v,page:0}; } else if(k==="page"){ G.sheetData.page=+v; } else { G.sheetData.detail=v||null; } render(); drawMiniSprites(); const s=$(".sheet"); if(s) s.scrollTop=0; },
+  dexNav(el){if(G.sheet!=='dex')return;const k=el.dataset.k,v=el.dataset.v;if(k==='area'){if(!Object.prototype.hasOwnProperty.call(AREAS,v))return;G.sheetData={area:v,page:0};}else if(k==='page'){const n=Number(v);if(!Number.isInteger(n)||n<0||n>4)return;G.sheetData={...normalizedDexData(G.sheetData),page:n,detail:null};}else if(k==='detail'){if(v&&!normalizedDexData({detail:v}).detail)return;G.sheetData={...normalizedDexData(G.sheetData),detail:v||null};}else return;render();drawMiniSprites();const sheet=$('.sheet');if(sheet)sheet.scrollTop=0; },
   gearPage(el){const n=Number(el.dataset.v);if(Number.isInteger(n)&&n>=0){G.sheetData.gearPage=n;render();}},
   gearFilter(el){if(!['gearSource','gearGroup','gearSlot'].includes(el.dataset.k))return;G.sheetData[el.dataset.k]=el.dataset.v;G.sheetData.gearPage=0;render();},
   gearEventAccept(el){if(!acceptGearEvent(G.st,el.dataset.v))return toast('今は受注できません。');commit();render();toast('装備依頼を受注しました。');},
@@ -6144,7 +6149,7 @@ function validateState(s){
   if(s.gearEvent&&(!obj(s.gearEvent)||EQUIP[s.gearEvent.id]?.gearSource!=='event'||!Number.isInteger(s.gearEvent.wins)||s.gearEvent.wins<0))throw Error('bad gear event');
   if(s.run&&s.run.challengeId&&!trialOf(s.run.challengeId))throw Error("bad challenge");
   if(s.run&&(!Array.isArray(s.run.party)||!s.run.party.length||!Array.isArray(s.run.enemies)||!s.run.enemies.length||!obj(s.run.returnPos)||!MAPS[s.run.returnPos.map]))throw Error("bad battle");
-  validateBattleSnapshot(s.run,s.roster);
+  validateInventoryState(s);validateBattleSnapshot(s.run,s.roster);
   if(s.stream&&(!HUBS[s.stream.hub]||!STREAM_THEMES[s.stream.theme]||!CHARS[s.stream.host]||!Array.isArray(s.stream.requestIds)||s.stream.requestIds.length!==4||s.stream.requestIds.some(k=>!STREAM_ACTS[k])||!Array.isArray(s.stream.used)||!Array.isArray(s.stream.picks)||!num(s.stream.score)||!Number.isInteger(s.stream.hand)||s.stream.hand<0||s.stream.hand>4))throw Error("bad stream");
   validateStreamSnapshot(s.stream);
   validateBroadcastData(s);

@@ -47,3 +47,6 @@ jobs:
 
       - name: Verify all encyclopedia cards and cross-category discovery
         run: node scripts/test-catalog-completeness.cjs
+
+      - name: Verify focused repeated navigation, inventory and save regressions
+        run: node scripts/test-focused-debug.cjs
