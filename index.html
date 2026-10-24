@@ -552,6 +552,45 @@ body.in-explore #screen,body.in-battle #screen,body.in-end #screen{max-width:520
 .m-search{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:6px;padding:8px;background:#101820;border:1px solid var(--mist);margin:10px 0}.m-search>label:first-child{grid-column:1/-1}.m-search>label:nth-child(2){grid-column:1/-1}.m-search>.btn{text-align:center;padding:6px}.m-pages{display:grid;grid-template-columns:76px minmax(0,1fr) 76px;gap:6px;align-items:center;margin:8px 0;text-align:center;font-size:14px}.m-pages .btn{text-align:center;padding:5px}.m-list{display:flex;flex-direction:column;gap:8px}.m-card{padding:10px;border:1px solid var(--mist);background:#142330;display:block;overflow-wrap:anywhere}.m-card>span,.m-card>small,.m-card>b{display:block;margin:3px 0}.m-card>.ktag{display:inline-block;font-size:12px;line-height:1.4;margin:2px 4px 2px 0}.m-card .m-card-title{margin:2px 0 8px}.m-card.on{border:2px solid var(--gold);background:#253849}.m-roster .m-card{padding:8px;font-size:15px}.m-gain{display:flex!important;gap:4px 10px;flex-wrap:wrap;font-size:14px;font-variant-numeric:tabular-nums}.m-notice{padding:10px;border:1px solid var(--gold);background:#101820;line-height:1.5}.m-diff{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 6px;padding:8px;border:1px solid var(--mist);background:#101820;font-size:14px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.m-diff>div{grid-column:1/-1;font-size:17px}.m-diff small{display:inline;font-size:13px}.m-actions{display:grid;gap:8px;margin:12px 0}.m-actions .btn{text-align:center;min-height:48px}.m-quantity{display:grid;grid-template-columns:minmax(44px,1fr) 44px minmax(36px,auto) 44px minmax(44px,1fr);gap:3px;align-items:center;text-align:center;margin:12px 0}.m-quantity .btn{text-align:center;padding:3px;font-size:14px}.m-total{padding:10px;background:#101820;border:2px solid var(--gold);font-variant-numeric:tabular-nums}.m-total b{font-size:20px}.m-view .sortbar{flex-wrap:wrap}.m-view .chip{min-width:44px;min-height:44px;font-size:14px;padding:6px}.m-view .m-card .btn{max-width:100%}
 @media(max-width:359px){.m-pages{grid-template-columns:56px minmax(0,1fr) 56px;gap:4px}.m-pages>span{overflow-wrap:anywhere;line-height:1.3}.m-compare{grid-template-columns:1fr}.m-card-title{align-items:flex-start;flex-wrap:wrap}.m-roster{grid-template-columns:1fr}.m-quantity{grid-template-columns:44px minmax(30px,1fr) 44px}.m-quantity>.btn:nth-child(1){grid-column:1;grid-row:2}.m-quantity>.btn:nth-child(2){grid-column:1;grid-row:1}.m-quantity>b{grid-column:2;grid-row:1}.m-quantity>.btn:nth-child(4){grid-column:3;grid-row:1}.m-quantity>.btn:nth-child(5){grid-column:2/4;grid-row:2}.m-total b{font-size:18px}}
 
+
+/* v7.34: 静的な舞台装飾。枠の寸法・操作領域・進行処理は維持する。 */
+:root{--ui-edge:#cbb879;--ui-shine:#f9ebc1;--ui-deep:#111e30;--ui-panel:#20374d}
+html{background:#0b121d}
+body{background:radial-gradient(ellipse at 50% 0,#263951 0,#101820 70%);background-attachment:fixed}
+.win{border-color:var(--ui-shine);background:linear-gradient(145deg,#2b435c,#182a3d 72%);box-shadow:inset 0 0 0 1px #0b1522,inset 0 0 0 3px #b49a5a,inset 0 0 0 5px #263b50,0 8px 24px #0007}
+.sheet{scrollbar-color:#b49a5a #122133;scrollbar-width:thin}
+.sheet-head{background:linear-gradient(90deg,#29425b,#182b40);border-bottom:1px solid #b49a5a;box-shadow:0 3px 0 #10182080}
+.sheet-head .label{color:#ffe3a0;text-shadow:1px 2px #081321}
+.label{color:#f0d389;text-shadow:1px 2px #0b1524}
+h3.label{border-bottom:1px solid #657786;padding-bottom:4px}
+.btn{background:linear-gradient(180deg,#263a50,#142335);border-color:#8b9fac #516879 #344b60 #a8b9bc;box-shadow:inset 0 1px #dce7ec30,inset 0 -2px #07132190;transition:border-color .12s,background-color .12s; text-shadow:0 1px #0008}
+.btn.primary{background:linear-gradient(180deg,#b55253,#78323e);border-color:#f9dfb0 #cc9c71 #854f49 #f1cf9b;box-shadow:inset 0 1px #ffedce50,inset 0 -2px #4c182c}
+.btn.on,.chip.on,.jcard.on{border-color:#ffe09a;background:linear-gradient(135deg,#52462b,#293643);box-shadow:inset 3px 0 #f5ce72,inset 0 1px #ffeab02b}
+.btn.danger{background:linear-gradient(180deg,#6c303b,#45212d);border-color:#ed9c88;color:#fff0e8}
+.btn:disabled,.btn[aria-disabled="true"]{opacity:1;background:#24313e;border-color:#526170;color:#a8b5bf;box-shadow:none;text-shadow:none}
+.btn:focus-visible,.chip:focus-visible,.input:focus-visible{outline:3px solid #ffe19a;outline-offset:2px}
+.btn:active:not(:disabled):not([aria-disabled="true"]){box-shadow:inset 0 2px 3px #0009;border-color:#ffe19a}
+@media(hover:hover){.btn:hover:not(:disabled):not([aria-disabled="true"]){border-color:#ffe6ae;background-image:linear-gradient(180deg,#36516c,#1d3248)}.btn.primary:hover:not(:disabled){background-image:linear-gradient(180deg,#c46360,#8b3a46)}}
+.menu-grid .btn,.mobile-menu-grid .btn{border-radius:3px;background-image:linear-gradient(135deg,#304a62,#182c40);box-shadow:inset 0 1px #cfe5ed35,inset 0 -2px #091724}
+.mobile-menu-grid .btn{border-left-color:#d4ba77}
+.menu-grid .btn.primary,.mobile-menu-grid .btn.primary{background-image:linear-gradient(135deg,#a95557,#6e3040)}
+.status,.xhead,.mobile-bhead{background:linear-gradient(115deg,#233c51,#122333);border-color:#c2ae79;box-shadow:inset 0 1px #f5e4b333,inset 0 -2px #071724}
+.mapwrap,#titleArt{border-color:#dfce9e;box-shadow:inset 0 0 0 1px #263f56,0 3px 10px #0005}
+.qcard,.jcard,.setcard,.m-card{background:linear-gradient(135deg,#243d51,#152738);border-color:#758a98;box-shadow:inset 0 1px #b9d2dd20,inset 3px 0 #9c8752}
+.m-card.on{background:linear-gradient(135deg,#3c4b4c,#22364b);border-color:#e9ce8d;box-shadow:inset 3px 0 #ffd888}
+.m-summary,.m-notice,.m-total,.m-diff,.m-search,.qsummary{background:linear-gradient(120deg,#162b3c,#0d1c2c);box-shadow:inset 0 1px #c9e2ee22}
+.m-total,.m-notice,.qsummary{border-color:#d6bd7e}
+.m-total b{color:#ffe2a0}
+.statgrid .sg{background:linear-gradient(#213b50,#142737);border-color:#586f80}
+.tag,.ktag{background:#101f30;color:#ecddbb;border-color:#7d8b92}
+.tag.danger{color:#ffb69f;border-color:#ed9c88}.tag.safe{color:#a7e5d7;border-color:#83b9ae}
+.input{background:#102134;border-color:#a4b6bd;box-shadow:inset 0 2px 4px #0005}
+.toast{background:linear-gradient(135deg,#293e52,#122236);border-color:#efce7e;box-shadow:0 4px 18px #0009;color:#fff0ce}
+.dock{background:linear-gradient(180deg,#263c51,#101d2b);border-top-color:#c9b77f;box-shadow:0 -3px 12px #0005}
+.bar{box-shadow:inset 0 1px 2px #0008}.bar i{box-shadow:inset 0 1px #ffffff40}
+@media(prefers-reduced-motion:reduce){.btn{transition:none}}
+body.reduce-motion .btn{transition:none}
+@media(forced-colors:active){.win,.btn,.m-card,.status,.xhead{background:Canvas;color:CanvasText;border-color:CanvasText;box-shadow:none;text-shadow:none}.btn:disabled{color:GrayText;border-color:GrayText}.btn.on{border-color:Highlight}.btn:focus-visible{outline-color:Highlight}}
 </style>
 <main id="screen" aria-live="off"></main>
 <div id="dock" class="dock" aria-label="ジョイコントローラー">
@@ -570,7 +609,7 @@ const ITEM_DROPS={"EN-KY02-A3-001":["IT001",8],"EN-KY01-A1-001":["IT001",8],"EN-
 const ITEM_EVENTS={"M17":["IT056",5],"S01":["IT017",2],"DB04初回撃破":["IT026",1],"M10":["IT029",2],"KY02-BOX-B":["IT030",1],"S06":["IT041",3],"EX01-BOX-B":["IT044",2],"M06":["IT053",2],"M14":["IT054",2],"M16":["IT056",3],"S02":["IT058",2],"DB08初回撃破":["IT065",1],"KY01-BOX-A":["IT067",1],"M12":["IT068",1],"S04":["IT087",3],"KY03-BOX-B":["IT093",3],"DB06初回撃破":["IT098",2],"M01":["IT100",3]};
 
 /* ===== data: 全定義（福岡編で使う範囲） ===== */
-const GAME_VERSION = "7.33";
+const GAME_VERSION = "7.34";
 const SCHEMA_VERSION = 6;
 /* One deliberate global reset. Keep this epoch unchanged in future normal releases. */
 const SAVE_EPOCH='2026-10-23-reset-1';
