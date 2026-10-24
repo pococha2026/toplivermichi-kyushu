@@ -59,3 +59,6 @@ jobs:
 
       - name: Verify geographic positions, terrain art and bounded world rendering
         run: node scripts/test-geographic-world.cjs
+
+      - name: Verify continuous streets, transport, direction signs and repeated navigation
+        run: node scripts/test-world-wayfinding.cjs
