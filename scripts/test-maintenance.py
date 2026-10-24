@@ -49,7 +49,10 @@ class MaintenanceTest(unittest.TestCase):
         from unittest.mock import patch
         original=(self.root/'VERSION.txt').read_bytes()
         class BrokenSync:
-            def validate(self,*args,**kwargs):raise ValueError('generation blocked')
+            def release_lock(self,*args):
+                from contextlib import nullcontext
+                return nullcontext()
+            def _validate(self,*args,**kwargs):raise ValueError('generation blocked')
         with patch.object(update,'ROOT',self.root),patch.object(update,'load_sync',return_value=BrokenSync()),patch.object(update,'changed_files',return_value=[]),patch.object(update,'selected_checks',return_value=[]):
             with self.assertRaisesRegex(ValueError,'generation blocked'):
                 update.prepare('99.01','2027-01-02')
@@ -57,7 +60,7 @@ class MaintenanceTest(unittest.TestCase):
     def test_prepare_rejects_version_rollback(self):
         from unittest.mock import patch
         original=(self.root/'VERSION.txt').read_bytes()
-        with patch.object(update,'ROOT',self.root):
+        with patch.object(update,'ROOT',self.root),patch.object(update,'load_sync',return_value=sync):
             with self.assertRaisesRegex(ValueError,'rollback'):
                 update.prepare('0.01')
         self.assertEqual((self.root/'VERSION.txt').read_bytes(),original)

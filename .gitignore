@@ -2,3 +2,5 @@ __pycache__/
 *.pyc
 
 .release-stage-*/
+
+.release-update.lock

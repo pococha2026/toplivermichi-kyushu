@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Generate release companions or reject a stale/mismatched game/spec bundle."""
 from pathlib import Path
-import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile
+import argparse, hashlib, json, os, re, shutil, subprocess, sys, tempfile, time, uuid
+from contextlib import contextmanager
 ROOT=Path(__file__).resolve().parents[1]
 def digest(data): return hashlib.sha256(data).hexdigest()
 def game_body(html):
@@ -36,10 +37,39 @@ def planned(root):
  manifest={'version':version,'date':day,'files':{k:digest(v) for k,v in sorted(files.items())},'game_logic_sha256':digest(game_body(game).encode()),'spec_content_sha256':digest(spec_body(spec).encode())}
  return files,manifest
 
+@contextmanager
+def release_lock(root):
+ path=root/'.release-update.lock';token=uuid.uuid4().hex
+ try:fd=os.open(path,os.O_CREAT|os.O_EXCL|os.O_WRONLY,0o600)
+ except FileExistsError:raise ValueError(f'Release locked: {path}; run update.py doctor and resolve the existing update first') from None
+ try:
+  with os.fdopen(fd,'w',encoding='utf-8') as stream:
+   json.dump({'pid':os.getpid(),'started':time.time(),'token':token},stream);stream.flush()
+  pending=list(root.glob('.release-stage-*'))
+  if pending:raise ValueError('Unresolved recovery files: '+', '.join(str(p) for p in pending)+'; run update.py doctor')
+  yield
+ finally:
+  # Never remove a lock that was replaced by another process or operator.
+  if path.exists():
+   try:owner=json.loads(path.read_text(encoding='utf-8')).get('token')
+   except (OSError,ValueError,AttributeError):owner=None
+   if owner==token:path.unlink()
+
 def validate(root,write=False):
+ if not write:return _validate(root,False)
+ with release_lock(root):return _validate(root,True)
+
+def _validate(root,write=False):
  files,manifest=planned(root);mp=root/'release-manifest.json'
  if write and mp.exists():
   previous=json.loads(mp.read_text(encoding='utf-8'))
+  expected={'index.html','GAME_SPEC.md','GAME_SPEC.txt','README.md','VERSION.txt'}
+  if not isinstance(previous,dict) or not isinstance(previous.get('files'),dict) or set(previous['files'])!=expected:
+   raise ValueError('Invalid release manifest: expected the complete file hash mapping')
+  hashes=[*previous['files'].values(),previous.get('game_logic_sha256')]
+  if 'spec_content_sha256' in previous:hashes.append(previous['spec_content_sha256'])
+  if any(not isinstance(h,str) or not re.fullmatch('[0-9a-f]{64}',h) for h in hashes):
+   raise ValueError('Invalid release manifest: malformed SHA-256')
   raw_spec=(root/'GAME_SPEC.md').read_bytes()
   same_spec=(previous['spec_content_sha256']==manifest['spec_content_sha256']) if 'spec_content_sha256' in previous else (previous.get('files',{}).get('GAME_SPEC.md')==digest(raw_spec))
   if previous.get('game_logic_sha256')!=manifest['game_logic_sha256'] and same_spec:
@@ -71,13 +101,13 @@ def write_bundle(root,files):
    if (root/name).exists():shutil.copy2(root/name,folder/'old'/name)
   for name in files:
    os.replace(folder/'new'/name,root/name);replaced.append(name)
- except OSError as original:
+ except BaseException as original:
   errors=[]
   for name in reversed(replaced):
    try:
     if (folder/'old'/name).exists():os.replace(folder/'old'/name,root/name)
     else:(root/name).unlink(missing_ok=True)
-   except OSError as error:errors.append(str(error))
+   except BaseException as error:errors.append(type(error).__name__+': '+str(error))
   if errors:
    keep=True
    raise OSError(f'{original}; rollback incomplete; recovery files: {folder}; '+ '; '.join(errors)) from original

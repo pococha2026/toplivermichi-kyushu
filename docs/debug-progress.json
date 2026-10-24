@@ -1,5 +1,5 @@
 {
-  "version": "8.76",
+  "version": "8.77",
   "iteration": 2,
   "method": [
     "再現・境界値確認",
@@ -99,5 +99,9 @@
   "updateRecovery": {
     "status": "欠落・検査漏れ・仕様更新すり抜けを再現後に修正。6出力境界のI/O失敗を各3回反復し復旧と関連回帰を確認",
     "report": "docs/debug-v8.76.json"
+  },
+  "releaseSafety": {
+    "status": "Ctrl+C・prepare版戻し・同時更新・未復旧ファイル・不正manifest・リネームを再現後修正。6書込境界×3回の中断と3回のロック競合を反復",
+    "report": "docs/debug-v8.77.json"
   }
 }

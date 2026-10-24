@@ -82,7 +82,7 @@ class RecoveryTest(unittest.TestCase):
     def test_prepare_config_failure_keeps_all_outputs(self):
         (self.root/'scripts').mkdir();(self.root/'scripts/checks.json').write_text('{"always":"broken"}')
         before=self.snapshot()
-        with patch.object(update,'ROOT',self.root),patch.object(update,'changed_files',return_value=[]):
+        with patch.object(update,'ROOT',self.root),patch.object(update,'load_sync',return_value=sync),patch.object(update,'changed_files',return_value=[]):
             with self.assertRaisesRegex(ValueError,'checks.json'):
                 update.prepare('99.01','2027-01-02')
         self.assertEqual(before,self.snapshot())

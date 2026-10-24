@@ -3,7 +3,8 @@
     "scripts/test-source-build.py",
     "scripts/test-release-sync.py",
     "scripts/test-maintenance.py",
-    "scripts/test-update-recovery.py"
+    "scripts/test-update-recovery.py",
+    "scripts/test-release-safety.py"
   ],
   "full": [
     "scripts/test-career.cjs",

@@ -45,7 +45,8 @@ def selected_checks(changed, full=False):
     return list(dict.fromkeys(tests))
 
 def changed_files(base='HEAD'):
-    tracked = subprocess.check_output(['git','diff','--name-only','-z',base,'--'],cwd=ROOT).decode().split('\0')
+    revision=subprocess.check_output(['git','rev-parse','--verify','--end-of-options',base+'^{commit}'],cwd=ROOT,stderr=subprocess.PIPE).decode().strip()
+    tracked = subprocess.check_output(['git','diff','--no-renames','--name-only','-z',revision,'--'],cwd=ROOT).decode().split('\0')
     untracked = subprocess.check_output(['git','ls-files','--others','--exclude-standard','-z'],cwd=ROOT).decode().split('\0')
     return sorted(set(filter(None,tracked+untracked)))
 
@@ -62,22 +63,39 @@ def run_checks(full=False, base='HEAD', tests=None):
     print(f'OK: {len(tests)} check programs; device rendering/touch not verified',flush=True)
 
 def prepare(version=None, day=None):
-    target = ROOT/'VERSION.txt'; original = target.read_bytes()
-    old_version, old_day = original.decode().splitlines()
-    version, day = version or old_version, day or old_day
-    # Reject accidental rollback. Re-running the same version is permitted.
-    if not all(x.isdecimal() for x in version.split('.')) or len(version.split('.')) < 2:
-        raise ValueError('Invalid version')
-    if tuple(map(int,version.split('.'))) < tuple(map(int,old_version.split('.'))):
-        raise ValueError('Version rollback is not allowed')
-    tests=selected_checks(changed_files())
-    try:
-        target.write_text(version+'\n'+day+'\n',encoding='utf-8')
-        load_sync().validate(ROOT,write=True)
-    except Exception:
-        target.write_bytes(original)
-        raise
-    run_checks(tests=tests)
+    sync=load_sync()
+    with sync.release_lock(ROOT):
+        target = ROOT/'VERSION.txt'; original = target.read_bytes()
+        old_version, old_day = original.decode().splitlines()
+        version, day = version or old_version, day or old_day
+        if not all(x.isdecimal() for x in version.split('.')) or len(version.split('.')) < 2:
+            raise ValueError('Invalid version')
+        if tuple(map(int,version.split('.'))) < tuple(map(int,old_version.split('.'))):
+            raise ValueError('Version rollback is not allowed')
+        tests=selected_checks(changed_files())
+        try:
+            target.write_text(version+'\n'+day+'\n',encoding='utf-8')
+            sync._validate(ROOT,write=True)
+        except BaseException:
+            target.write_bytes(original)
+            raise
+        run_checks(tests=tests)
+
+def doctor(root=None):
+    root=root or ROOT
+    issues=[]
+    for name in ['VERSION.txt','GAME_SPEC.md','README.md','src/index.template.html','scripts/checks.json']:
+        if not (root/name).is_file():issues.append({'kind':'missing','path':name})
+    lock=root/'.release-update.lock'
+    if lock.exists():
+        item={'kind':'lock','path':str(lock),'action':'Check the update process before manually resolving this lock; never delete an active lock.'}
+        try:
+            owner=json.loads(lock.read_text(encoding='utf-8'));item['pid']=owner.get('pid');item['started']=owner.get('started')
+        except (OSError,ValueError,AttributeError):item['detail']='Unreadable lock metadata'
+        issues.append(item)
+    for folder in sorted(root.glob('.release-stage-*')):
+        issues.append({'kind':'recovery','path':str(folder),'action':'Inspect old/ backups and restore a consistent release before removing the folder.'})
+    return {'status':'blocked' if issues else 'ok','issues':issues,'read_only':True}
 
 def verify_public(root=ROOT, base=PUBLIC, opener=urlopen):
     manifest = json.loads((root/'release-manifest.json').read_text(encoding='utf-8'))
@@ -105,12 +123,16 @@ def main():
     p.add_argument('--full',action='store_true');p.add_argument('--base',default='HEAD')
     p = commands.add_parser('plan',help='Show changed files and relevant checks')
     p.add_argument('--base',default='HEAD')
+    commands.add_parser('doctor',help='Read-only diagnosis of missing inputs, locks and recovery files')
     p = commands.add_parser('verify-public',help='Compare published bytes with local release')
     p.add_argument('--url',default=PUBLIC)
     args = parser.parse_args()
     try:
         if args.action=='prepare':prepare(args.version,args.date)
         elif args.action=='check':run_checks(args.full,args.base)
+        elif args.action=='doctor':
+            result=doctor();print(json.dumps(result,ensure_ascii=False,indent=2))
+            return 0 if result['status']=='ok' else 1
         elif args.action=='plan':
             changed=changed_files(args.base)
             print(json.dumps({'changed':changed,'checks':selected_checks(changed)},ensure_ascii=False,indent=2))
